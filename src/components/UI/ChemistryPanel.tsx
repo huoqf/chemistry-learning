@@ -231,7 +231,7 @@ function FormulaSection({ formulas }: { formulas: Formula[] }) {
             return (
               <div
                 key={i}
-                className="rounded-md px-3 py-2"
+                className="rounded-md px-2 py-2"
                 style={{ backgroundColor: style.bg, borderLeft: `3px solid ${style.border}` }}
               >
                 <div className="flex items-center gap-2 mb-1">

@@ -74,19 +74,19 @@ export function buildUnitCellQuantities(
 export const unitCellFormulas = [
   {
     name: '晶胞密度计算核心公式',
-    latex: '\\rho = \\frac{N \\cdot M}{N_A \\cdot V_{\\text{cell}}} = \\frac{N \\cdot M}{N_A \\cdot a^3 \\cdot 10^{-30}}',
+    latex: '\\begin{aligned} \\rho &= \\frac{N\\cdot M}{N_A\\cdot V_{\\text{cell}}} \\\\ &= \\frac{N\\cdot M}{N_A\\cdot a^3\\cdot10^{-30}} \\end{aligned}',
     level: 'core' as const,
     condition: '边长 a 单位为 pm 时 (1 pm = 10⁻¹⁰ cm)',
   },
   {
     name: '均摊法计算公式',
-    latex: 'N = N_{\\text{顶}} \\times \\frac{1}{8} + N_{\\text{棱}} \\times \\frac{1}{4} + N_{\\text{面}} \\times \\frac{1}{2} + N_{\\text{体}} \\times 1',
+    latex: '\\begin{aligned} N &= N_{\\text{顶}}\\times\\frac{1}{8} + N_{\\text{棱}}\\times\\frac{1}{4} \\\\ &\\quad + N_{\\text{面}}\\times\\frac{1}{2} + N_{\\text{体}}\\times1 \\end{aligned}',
     level: 'core' as const,
     condition: '立方晶胞通用',
   },
   {
     name: '空间利用率公式',
-    latex: '\\eta = \\frac{V_{\\text{原子}}} {V_{\\text{晶胞}}} \\times 100\\%',
+    latex: '\\eta = \\frac{V_{\\text{原子}}}{V_{\\text{晶胞}}}\\times100\\%',
     level: 'important' as const,
   },
 ]

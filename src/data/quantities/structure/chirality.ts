@@ -51,13 +51,13 @@ export const chiralityFormulas = [
   },
   {
     name: '手性碳原子判断准则',
-    latex: '*C \\implies sp^3\\text{杂化且连 4 个不同基团}',
+    latex: '\\begin{aligned} &*C \\implies sp^3\\text{杂化} \\\\ &\\text{且连 4 个不同基团} \\end{aligned}',
     level: 'core' as const,
     condition: '若包含 2 个相同基团(如 -CH₃)，则存在镜像对称面，无手性',
   },
   {
     name: '顺反异构（几何异构）生成条件',
-    latex: 'R_1R_2C = CR_3R_4 \\quad (R_1 \\neq R_2, R_3 \\neq R_4)',
+    latex: '\\begin{aligned} &R_1R_2C = CR_3R_4 \\\\ &(R_1 \\neq R_2,\\ R_3 \\neq R_4) \\end{aligned}',
     level: 'core' as const,
     condition: 'C=C双键旋转受阻，每个双键碳连2个不同基团',
   },

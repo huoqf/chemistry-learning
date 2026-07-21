@@ -81,19 +81,19 @@ export const leChatelierFormulas: Array<{ name: string; latex: string; condition
   },
   {
     name: '正向移动判据',
-    latex: 'Q_c < K \\implies \\text{正向移动}',
+    latex: '\\begin{aligned} Q_c &< K \\\\ &\\implies \\text{正向移动} \\end{aligned}',
     level: 'important',
     condition: '反应物浓度大或生成物浓度小',
   },
   {
     name: '平衡状态判据',
-    latex: 'Q_c = K \\implies \\text{化学平衡}',
+    latex: '\\begin{aligned} Q_c &= K \\\\ &\\implies \\text{化学平衡} \\end{aligned}',
     level: 'core',
     condition: 'v(\\text{正}) = v(\\text{逆})',
   },
   {
     name: '逆向移动判据',
-    latex: 'Q_c > K \\implies \\text{逆向移动}',
+    latex: '\\begin{aligned} Q_c &> K \\\\ &\\implies \\text{逆向移动} \\end{aligned}',
     level: 'important',
     condition: '生成物浓度大或反应物浓度小',
   },

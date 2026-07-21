@@ -185,13 +185,13 @@ export function buildHybridQuantities(params: Record<string, number>): Chemistry
 export const hybridizationFormulas = [
   {
     name: '杂化轨道成分计算公式',
-    latex: '\\text{s \\%} = \\frac{1}{1 + n} \\times 100\\%, \\quad \\text{p \\%} = \\frac{n}{1 + n} \\times 100\\%',
+    latex: '\\begin{aligned} \\text{s\\%} &= \\frac{1}{1+n}\\times100\\% \\\\ \\text{p\\%} &= \\frac{n}{1+n}\\times100\\% \\end{aligned}',
     level: 'core' as const,
     condition: '对 spⁿ 杂化轨道，n 为参与杂化的 p 轨道个数 (sp: 50%/50%, sp²: 33.3%/66.7%, sp³: 25%/75%)',
   },
   {
     name: '杂化轨道数与 VSEPR 电子对数关系',
-    latex: 'N_{\\text{hybrid}} = \\text{中心原子 } \\sigma \\text{ 键数} + \\text{孤电子对数}',
+    latex: '\\begin{aligned} N_{\\text{hybrid}} &= \\sigma\\text{键数} \\\\ &+ \\text{孤电子对数} \\end{aligned}',
     level: 'core' as const,
     condition: 'N=2 为 sp 杂化(180°), N=3 为 sp² 杂化(120°), N=4 为 sp³ 杂化(109.5°)',
   },

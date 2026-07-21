@@ -1,5 +1,14 @@
 import { test, expect } from '@playwright/test'
 
+const ANIMATION_PAGES = [
+  { id: 'anim-le-chatelier', title: '勒夏特列原理与化学平衡移动' },
+  { id: 'anim-collision-theory', title: '碰撞理论与反应速率影响因素' },
+  { id: 'anim-hybrid-orbital', title: '杂化轨道理论' },
+  { id: 'anim-vsepr', title: 'VSEPR 模型' },
+  { id: 'anim-unit-cell-calculation', title: '晶胞结构与密度计算' },
+  { id: 'anim-chirality', title: '手性分子与立体异构' },
+]
+
 test.describe('高中化学学习系统 - 页面基础渲染检查', () => {
   test('首页正常加载', async ({ page }) => {
     await page.goto('/')
@@ -62,4 +71,34 @@ test.describe('高中化学学习系统 - 页面基础渲染检查', () => {
     await expect(page.getByText('相对压强 P(P₀)')).toBeVisible()
     await expect(page.getByText('外加 NO₂ 浓度(mol/L)')).toBeVisible()
   })
+
+  for (const { id, title } of ANIMATION_PAGES) {
+    test(`右屏公式区无横向滚动条 — ${title}`, async ({ page }) => {
+      await page.goto(`/#/animation/${id}`)
+      await page.waitForLoadState('networkidle')
+      await expect(page.locator('text=Loading...')).toHaveCount(0, { timeout: 10000 })
+
+      // 等待 KaTeX 公式渲染完成
+      await page.waitForSelector('.katex', { timeout: 10000 })
+
+      // 定位右屏公式区容器（ThreePanel 右侧 ChemistryPanel 中的公式卡片）
+      const formulaCards = page.locator('.katex').locator('..')
+      const cardCount = await formulaCards.count()
+      expect(cardCount).toBeGreaterThan(0)
+
+      // 检查每个公式卡片的 scrollWidth 不超过 clientWidth + 滚动条宽度（避免垂直滚动条占位导致的误判）
+      const overflows = await formulaCards.evaluateAll((cards) =>
+        cards.map((card) => ({
+          scrollWidth: card.scrollWidth,
+          clientWidth: card.clientWidth,
+          // 垂直滚动条通常占 12~17px，允许该范围内的差异
+          overflow: card.scrollWidth > card.clientWidth + 20,
+        }))
+      )
+
+      for (const info of overflows) {
+        expect(info.overflow, `公式卡片横向溢出: scrollWidth=${info.scrollWidth}, clientWidth=${info.clientWidth}`).toBe(false)
+      }
+    })
+  }
 })
