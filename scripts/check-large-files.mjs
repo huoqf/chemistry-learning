@@ -14,7 +14,6 @@ const HARD_LIMIT = 1000
 
 const ALLOWLIST = new Set([
   'src/data/knowledgeTree.ts',
-  'src/features/structure/vsepr-model/data/vseprData.ts',
 ])
 
 function walk(dir) {
