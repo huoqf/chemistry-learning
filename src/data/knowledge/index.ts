@@ -1,0 +1,5 @@
+export { inorganicKnowledge } from './inorganic'
+export { reactionPrincipleKnowledge } from './reaction-principle'
+export { organicKnowledge } from './organic'
+export { structureKnowledge } from './structure'
+export { experimentKnowledge } from './experiment'

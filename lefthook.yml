@@ -1,0 +1,35 @@
+# lefthook.yml — Git hooks 管理器
+# 文档：https://github.com/evilmartians/lefthook
+
+pre-commit:
+  parallel: true
+  commands:
+    typecheck:
+      run: npx tsc --noEmit
+      stage_fixed: true
+    check-font-size:
+      run: node scripts/check-font-size.mjs
+    check-no-raf:
+      run: node scripts/check-no-raf.mjs
+    check-no-marker:
+      run: node scripts/check-no-marker.mjs
+
+pre-push:
+  commands:
+    test:
+      run: npm run test:run
+    build:
+      run: npm run build
+    check-large-files:
+      run: node scripts/check-large-files.mjs
+
+commit-msg:
+  commands:
+    conventional:
+      run: |
+        $msg = Get-Content .git/COMMIT_EDITMSG -Raw
+        if ($msg -notmatch '^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?: .+') {
+          Write-Host "Commit message must follow Conventional Commits format"
+          Write-Host "Example: feat: add equilibrium animation"
+          exit 1
+        }

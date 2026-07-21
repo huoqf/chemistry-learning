@@ -1,0 +1,5 @@
+{
+  "_comment": "check-no-marker.mjs 白名单。每项记录文件路径、原因和预期清除日期。",
+  "_format": { "file": "相对项目根的路径", "reason": "为何豁免", "targetDate": "计划迁移截止日（YYYY-MM-DD）" },
+  "entries": []
+}
