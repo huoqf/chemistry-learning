@@ -68,6 +68,10 @@ export type ControlMeta =
       unit?: string
       description?: string
       resetOnChange?: boolean
+      /** 滑块轨道标注点（支持冲突自动避让） */
+      marks?: ParamMark[]
+      /** 是否显示数字输入框（可直接编辑数值） */
+      showInput?: boolean
     })
   | (ControlCondition & {
       type: 'segmented'

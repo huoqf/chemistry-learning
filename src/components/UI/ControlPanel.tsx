@@ -150,6 +150,8 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
               step={control.step ?? 0.1}
               unit={control.unit ?? ''}
               description={control.description}
+              marks={control.marks}
+              showInput={control.showInput}
               onChange={(nextValue) => handleValueChange(control, nextValue)}
               disabled={disabled}
             />

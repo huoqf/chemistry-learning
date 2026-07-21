@@ -36,6 +36,7 @@
 | AnimationControls | 播放控制条 | isPlaying, speed, time, maxTime | <AnimationControls isPlaying={p} speed={s} time={t} maxTime={tMax} /> |
 | Button / SegmentedControl / ToggleSwitch | 基础控件 | — | 详见源码 interface |
 | Slider | 数值范围选择 | value, min, max, onChange | <Slider value={v} min={0} max={10} step={0.1} onChange={setV} /> |
+| Slider (marks) | 带标注的滑块（冲突自动避让） | marks, showInput | <Slider value={v} min={-5} max={5} marks={[{value:0,label:'0',variant:'zero'}]} showInput onChange={setV} /> |
 | KatexFormula | KaTeX 公式渲染 | formula, mode | 可直接作为 ParamControl / ControlPanel 的 label 传入 |
 
 ---

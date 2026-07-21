@@ -3,6 +3,7 @@
  */
 export { Button } from './Button'
 export { Slider } from './Slider'
+export type { ParamMark, ParamMarkVariant } from './Slider'
 export { ToggleSwitch } from './ToggleSwitch'
 export { OptionButton } from './OptionButton'
 export { SegmentedControl } from './SegmentedControl'
