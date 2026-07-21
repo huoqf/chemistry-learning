@@ -10,6 +10,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     importance: 'basic',
     animationIds: [],
     prerequisites: [],
+    interactionTags: ['3d-rotate'],
   },
   {
     id: 'methane',
@@ -19,6 +20,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['organic-intro'],
+    interactionTags: ['3d-rotate', 'bond-break'],
   },
   {
     id: 'ethylene',
@@ -28,6 +30,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['organic-intro'],
+    interactionTags: ['3d-rotate', 'bond-break'],
   },
   {
     id: 'acetylene',
@@ -37,6 +40,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['organic-intro'],
+    interactionTags: ['3d-rotate', 'bond-break'],
   },
   {
     id: 'benzene',
@@ -46,6 +50,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['organic-intro'],
+    interactionTags: ['3d-rotate', 'bond-break'],
   },
   {
     id: 'ethanol',
@@ -55,6 +60,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['organic-intro'],
+    interactionTags: ['bond-break'],
   },
   {
     id: 'acetic-acid',
@@ -64,6 +70,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['organic-intro'],
+    interactionTags: ['bond-break'],
   },
   // ── 选择性必修三：有机化学基础 ──
   {
@@ -74,6 +81,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['organic-intro'],
+    interactionTags: ['3d-rotate'],
   },
   {
     id: 'isomerism',
@@ -83,6 +91,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['organic-structure'],
+    interactionTags: ['3d-rotate'],
   },
   {
     id: 'chirality',
@@ -92,6 +101,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: ['anim-chirality'],
     prerequisites: ['isomerism'],
+    interactionTags: ['3d-rotate'],
   },
   {
     id: 'organic-spectroscopy',
@@ -101,6 +111,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['organic-structure'],
+    interactionTags: ['chart-analysis'],
   },
   {
     id: 'nomenclature',
@@ -110,6 +121,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['organic-structure'],
+    interactionTags: ['3d-rotate'],
   },
   {
     id: 'halogenated-hydrocarbon',
@@ -119,6 +131,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['organic-structure'],
+    interactionTags: ['bond-break'],
   },
   {
     id: 'alcohol-phenol',
@@ -128,6 +141,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['ethanol', 'organic-structure'],
+    interactionTags: ['bond-break'],
   },
   {
     id: 'aldehyde',
@@ -137,6 +151,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['organic-structure'],
+    interactionTags: ['bond-break'],
   },
   {
     id: 'carboxylic-acid-ester',
@@ -146,6 +161,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['acetic-acid', 'organic-structure'],
+    interactionTags: ['bond-break'],
   },
   {
     id: 'polymerization',
@@ -155,6 +171,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['ethylene'],
+    interactionTags: ['bond-break'],
   },
   {
     id: 'organic-synthesis',
@@ -164,6 +181,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     importance: 'hard',
     animationIds: [],
     prerequisites: ['halogenated-hydrocarbon', 'aldehyde', 'carboxylic-acid-ester'],
+    interactionTags: ['bond-break'],
   },
   {
     id: 'biomacromolecule',
@@ -173,6 +191,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     importance: 'basic',
     animationIds: [],
     prerequisites: ['polymerization'],
+    interactionTags: ['3d-rotate'],
   },
   {
     id: 'synthetic-polymer',
@@ -182,5 +201,6 @@ export const organicKnowledge: KnowledgeNode[] = [
     importance: 'basic',
     animationIds: [],
     prerequisites: ['polymerization'],
+    interactionTags: ['bond-break'],
   },
 ]

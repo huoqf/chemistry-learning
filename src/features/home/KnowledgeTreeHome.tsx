@@ -15,7 +15,23 @@ import { knowledgeTree, resolveAnimationIds } from '@/data/knowledgeTree'
 import { getAnimationConfig, getAnimationCount, loadExtendedRegistry } from '@/data/animationRegistry'
 import { useProgressStore } from '@/stores'
 import { colors } from '@/theme'
-import type { KnowledgeNode } from '@/data/types'
+import type { KnowledgeNode, InteractionType } from '@/data/types'
+
+// ── 交互类型标签配置 ──────────────────────────────────────────────────────
+
+const INTERACTION_MAP: Record<
+  InteractionType,
+  { label: string; bg: string; text: string; border: string }
+> = {
+  '3d-rotate':       { label: '3D旋转',    bg: 'bg-indigo-50',  text: 'text-indigo-700',  border: 'border-indigo-200' },
+  'bond-break':      { label: '断键推演',  bg: 'bg-rose-50',    text: 'text-rose-700',    border: 'border-rose-200' },
+  'particle-sandbox':{ label: '粒子沙盒',  bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' },
+  'ion-flow':        { label: '离子流向',  bg: 'bg-sky-50',     text: 'text-sky-700',     border: 'border-sky-200' },
+  'valence-matrix':  { label: '价类矩阵',  bg: 'bg-amber-50',   text: 'text-amber-700',   border: 'border-amber-200' },
+  'crystal-cell':    { label: '晶胞结构',  bg: 'bg-violet-50',  text: 'text-violet-700',  border: 'border-violet-200' },
+  'macro-experiment':{ label: '宏观实验',  bg: 'bg-orange-50',  text: 'text-orange-700',  border: 'border-orange-200' },
+  'chart-analysis':  { label: '图表分析',  bg: 'bg-slate-50',   text: 'text-slate-700',   border: 'border-slate-200' },
+}
 
 /**
  * 高中化学 5 大高考学科板块配置
@@ -396,6 +412,19 @@ export function KnowledgeTreeHome() {
                                           已掌握
                                         </span>
                                       )}
+                                      {node.interactionTags?.map((tag) => {
+                                        const cfg = INTERACTION_MAP[tag]
+                                        if (!cfg) return null
+                                        return (
+                                          <span
+                                            key={tag}
+                                            className={`text-[10px] px-1.5 py-0.5 rounded font-medium border ${cfg.bg} ${cfg.text} ${cfg.border}`}
+                                            title={cfg.label}
+                                          >
+                                            {cfg.label}
+                                          </span>
+                                        )
+                                      })}
                                     </div>
                                     <h4 className="text-xs font-bold text-neutral-800 group-hover:text-blue-600 transition-colors leading-tight">
                                       {node.title}
@@ -426,6 +455,19 @@ export function KnowledgeTreeHome() {
                                       <span className="text-[10px] px-1.5 py-0.5 rounded font-medium border border-neutral-200 bg-neutral-100 text-neutral-500">
                                         规划中
                                       </span>
+                                      {node.interactionTags?.map((tag) => {
+                                        const cfg = INTERACTION_MAP[tag]
+                                        if (!cfg) return null
+                                        return (
+                                          <span
+                                            key={tag}
+                                            className={`text-[10px] px-1.5 py-0.5 rounded font-medium border opacity-60 ${cfg.bg} ${cfg.text} ${cfg.border}`}
+                                            title={cfg.label}
+                                          >
+                                            {cfg.label}
+                                          </span>
+                                        )
+                                      })}
                                     </div>
                                     <h4 className="text-xs font-bold text-neutral-600 leading-tight">
                                       {node.title}

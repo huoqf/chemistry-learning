@@ -9,6 +9,7 @@ export const structureKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: [],
+    interactionTags: ['chart-analysis'],
   },
   {
     id: 'electron-configuration',
@@ -18,6 +19,7 @@ export const structureKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['atomic-structure'],
+    interactionTags: ['chart-analysis'],
   },
   {
     id: 'periodic-law',
@@ -27,6 +29,7 @@ export const structureKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['atomic-structure'],
+    interactionTags: ['chart-analysis'],
   },
   {
     id: 'periodic-table',
@@ -36,6 +39,7 @@ export const structureKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['periodic-law'],
+    interactionTags: ['chart-analysis'],
   },
   {
     id: 'chemical-bond-theory',
@@ -45,6 +49,7 @@ export const structureKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['electron-configuration'],
+    interactionTags: ['3d-rotate'],
   },
   {
     id: 'coordination-bond',
@@ -54,6 +59,7 @@ export const structureKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['chemical-bond-theory'],
+    interactionTags: ['3d-rotate'],
   },
   {
     id: 'hybridization',
@@ -63,6 +69,7 @@ export const structureKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['chemical-bond-theory'],
+    interactionTags: ['3d-rotate'],
   },
   {
     id: 'vsepr',
@@ -72,6 +79,7 @@ export const structureKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['hybridization'],
+    interactionTags: ['3d-rotate'],
   },
   {
     id: 'molecular-polarity',
@@ -81,6 +89,7 @@ export const structureKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['vsepr'],
+    interactionTags: ['3d-rotate'],
   },
   {
     id: 'intermolecular-force',
@@ -90,6 +99,7 @@ export const structureKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['molecular-polarity'],
+    interactionTags: ['3d-rotate'],
   },
   {
     id: 'hydrogen-bond',
@@ -99,6 +109,7 @@ export const structureKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['intermolecular-force'],
+    interactionTags: ['3d-rotate'],
   },
   {
     id: 'crystal-structure',
@@ -108,6 +119,7 @@ export const structureKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['chemical-bond-theory'],
+    interactionTags: ['crystal-cell', '3d-rotate'],
   },
   {
     id: 'ionic-crystal',
@@ -117,6 +129,7 @@ export const structureKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['crystal-structure'],
+    interactionTags: ['crystal-cell', '3d-rotate'],
   },
   {
     id: 'atomic-crystal',
@@ -126,6 +139,7 @@ export const structureKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['crystal-structure'],
+    interactionTags: ['crystal-cell', '3d-rotate'],
   },
   {
     id: 'molecular-crystal',
@@ -135,6 +149,7 @@ export const structureKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['crystal-structure'],
+    interactionTags: ['crystal-cell', '3d-rotate'],
   },
   {
     id: 'metallic-crystal',
@@ -144,6 +159,7 @@ export const structureKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['crystal-structure'],
+    interactionTags: ['crystal-cell', '3d-rotate'],
   },
   {
     id: 'unit-cell-calculation',
@@ -153,5 +169,6 @@ export const structureKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['crystal-structure', 'ionic-crystal', 'atomic-crystal'],
+    interactionTags: ['crystal-cell', 'chart-analysis'],
   },
 ]

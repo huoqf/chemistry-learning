@@ -91,6 +91,11 @@ export const structureAnimations = defineAnimations({
     ],
     formulas: hybridizationFormulas,
     gaokaoPoints: hybridizationExamPoints,
+    tripleRepresentation: {
+      micro: true,
+      macro: false,
+      symbol: true,
+    },
   },
   'anim-vsepr': {
     title: 'VSEPR 模型 3D 构型演示',
@@ -184,6 +189,11 @@ export const structureAnimations = defineAnimations({
     ],
     formulas: vseprFormulas,
     gaokaoPoints: vseprExamPoints,
+    tripleRepresentation: {
+      micro: true,
+      macro: false,
+      symbol: true,
+    },
   },
   'anim-unit-cell-calculation': {
     title: '晶胞结构与密度计算',
@@ -269,6 +279,11 @@ export const structureAnimations = defineAnimations({
     ],
     formulas: unitCellFormulas,
     gaokaoPoints: unitCellExamPoints,
+    tripleRepresentation: {
+      micro: true,
+      macro: false,
+      symbol: true,
+    },
   },
   'anim-chirality': {
     title: '手性分子与立体异构 3D 对比',
@@ -346,5 +361,10 @@ export const structureAnimations = defineAnimations({
     ],
     formulas: chiralityFormulas,
     gaokaoPoints: chiralityExamPoints,
+    tripleRepresentation: {
+      micro: true,
+      macro: false,
+      symbol: true,
+    },
   },
 })

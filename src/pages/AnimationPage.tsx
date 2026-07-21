@@ -111,6 +111,25 @@ export default function AnimationPage() {
           <span className="font-medium">返回</span>
         </button>
         <h1 className="text-xl font-bold text-neutral-800">{config.title}</h1>
+        {config.tripleRepresentation && (
+          <div className="flex items-center gap-1.5 ml-auto">
+            {config.tripleRepresentation.micro && (
+              <span className="text-[10px] px-2 py-0.5 rounded-full font-medium border border-sky-200 bg-sky-50 text-sky-700">
+                微观
+              </span>
+            )}
+            {config.tripleRepresentation.macro && (
+              <span className="text-[10px] px-2 py-0.5 rounded-full font-medium border border-orange-200 bg-orange-50 text-orange-700">
+                宏观
+              </span>
+            )}
+            {config.tripleRepresentation.symbol && (
+              <span className="text-[10px] px-2 py-0.5 rounded-full font-medium border border-slate-200 bg-slate-50 text-slate-700">
+                符号
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       <ThreePanel

@@ -1,6 +1,16 @@
 import type { LazyExoticComponent, ComponentType, ReactNode } from 'react'
 import type { SceneLayoutProfile } from '@/scene'
 
+export type InteractionType =
+  | '3d-rotate'
+  | 'bond-break'
+  | 'particle-sandbox'
+  | 'ion-flow'
+  | 'valence-matrix'
+  | 'crystal-cell'
+  | 'macro-experiment'
+  | 'chart-analysis'
+
 export interface KnowledgeNode {
   id: string
   title: string
@@ -12,6 +22,8 @@ export interface KnowledgeNode {
   parentId?: string
   /** 跳转动画时注入的参数覆盖，合并到 defaultParams 之上 */
   animationParams?: Record<string, number>
+  /** 交互功能标签：标识该考点支持的动画交互类型 */
+  interactionTags?: InteractionType[]
 }
 
 export type ParamImportance = 'core' | 'advanced' | 'display'
@@ -180,4 +192,10 @@ export interface AnimationConfig<P extends Record<string, number> = Record<strin
   gaokaoPoints?: Array<{ text: string; importance: 'gaokao' | 'hard' | 'core' | 'basic' | 'extend' }>
   /** 右侧屏：警示信息 */
   warnings?: Array<{ text: string; level: 'info' | 'warning' | 'danger' }>
+  /** "微观-宏观-符号"三重表征支持 */
+  tripleRepresentation?: {
+    micro: boolean
+    macro: boolean
+    symbol: boolean
+  }
 }

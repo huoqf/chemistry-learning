@@ -10,6 +10,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: [],
+    interactionTags: ['chart-analysis'],
   },
   {
     id: 'molar-mass',
@@ -19,6 +20,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['amount-of-substance'],
+    interactionTags: ['chart-analysis'],
   },
   {
     id: 'gas-molar-volume',
@@ -28,6 +30,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['amount-of-substance'],
+    interactionTags: ['chart-analysis'],
   },
   {
     id: 'molar-concentration',
@@ -37,6 +40,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['amount-of-substance'],
+    interactionTags: ['chart-analysis'],
   },
   {
     id: 'avogadro-constant',
@@ -46,6 +50,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['amount-of-substance', 'molar-mass', 'gas-molar-volume'],
+    interactionTags: ['chart-analysis'],
   },
   // ── 必修一：离子反应与胶体 ──
   {
@@ -56,6 +61,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'basic',
     animationIds: [],
     prerequisites: [],
+    interactionTags: ['macro-experiment'],
   },
   {
     id: 'electrolyte',
@@ -65,6 +71,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: [],
+    interactionTags: ['ion-flow'],
   },
   {
     id: 'ionic-equation',
@@ -74,6 +81,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['electrolyte'],
+    interactionTags: ['ion-flow'],
   },
   {
     id: 'ion-coexistence',
@@ -83,6 +91,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['ionic-equation'],
+    interactionTags: ['ion-flow'],
   },
   // ── 必修一：氧化还原 ──
   {
@@ -93,6 +102,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: [],
+    interactionTags: ['valence-matrix'],
   },
   {
     id: 'redox-electron-transfer',
@@ -102,6 +112,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['redox-basic'],
+    interactionTags: ['valence-matrix'],
   },
   {
     id: 'redox-equation',
@@ -111,6 +122,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['redox-electron-transfer'],
+    interactionTags: ['valence-matrix'],
   },
   // ── 必修一：金属及其化合物 ──
   {
@@ -121,6 +133,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['redox-basic'],
+    interactionTags: ['macro-experiment', 'valence-matrix'],
   },
   {
     id: 'aluminum',
@@ -130,6 +143,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['redox-basic'],
+    interactionTags: ['macro-experiment', 'valence-matrix'],
   },
   {
     id: 'iron',
@@ -139,6 +153,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['redox-basic'],
+    interactionTags: ['macro-experiment', 'valence-matrix'],
   },
   {
     id: 'copper',
@@ -148,6 +163,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['redox-basic'],
+    interactionTags: ['macro-experiment', 'valence-matrix'],
   },
   {
     id: 'manganese-chromium',
@@ -157,6 +173,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['redox-basic'],
+    interactionTags: ['macro-experiment', 'valence-matrix'],
   },
   // ── 必修一：非金属及其化合物 ──
   {
@@ -167,6 +184,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['redox-basic'],
+    interactionTags: ['macro-experiment', 'valence-matrix'],
   },
   {
     id: 'sulfur',
@@ -176,6 +194,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['redox-basic'],
+    interactionTags: ['macro-experiment', 'valence-matrix'],
   },
   {
     id: 'nitrogen',
@@ -185,6 +204,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['redox-basic'],
+    interactionTags: ['macro-experiment', 'valence-matrix'],
   },
   {
     id: 'silicon',
@@ -194,6 +214,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'basic',
     animationIds: [],
     prerequisites: [],
+    interactionTags: ['macro-experiment', 'valence-matrix'],
   },
   // ── 必修二：化学键 ──
   {
@@ -204,6 +225,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: [],
+    interactionTags: ['3d-rotate'],
   },
   {
     id: 'ionic-bond',
@@ -213,6 +235,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['chemical-bond', 'electrolyte'],
+    interactionTags: ['3d-rotate'],
   },
   {
     id: 'covalent-bond',
@@ -222,5 +245,6 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['chemical-bond'],
+    interactionTags: ['3d-rotate'],
   },
 ]

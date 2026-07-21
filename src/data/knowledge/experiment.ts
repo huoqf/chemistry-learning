@@ -9,6 +9,7 @@ export const experimentKnowledge: KnowledgeNode[] = [
     importance: 'basic',
     animationIds: [],
     prerequisites: [],
+    interactionTags: ['macro-experiment'],
   },
   {
     id: 'lab-instruments',
@@ -18,6 +19,7 @@ export const experimentKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: [],
+    interactionTags: ['macro-experiment'],
   },
   {
     id: 'gas-preparation',
@@ -27,6 +29,7 @@ export const experimentKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['lab-instruments'],
+    interactionTags: ['macro-experiment'],
   },
   {
     id: 'separation-purification',
@@ -36,6 +39,7 @@ export const experimentKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['lab-instruments'],
+    interactionTags: ['macro-experiment'],
   },
   {
     id: 'extraction-distillation',
@@ -45,6 +49,7 @@ export const experimentKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['separation-purification'],
+    interactionTags: ['macro-experiment'],
   },
   {
     id: 'recrystallization',
@@ -54,6 +59,7 @@ export const experimentKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['separation-purification'],
+    interactionTags: ['macro-experiment'],
   },
   {
     id: 'solution-preparation',
@@ -63,6 +69,7 @@ export const experimentKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['molar-concentration', 'lab-instruments'],
+    interactionTags: ['macro-experiment'],
   },
   {
     id: 'titration',
@@ -72,6 +79,7 @@ export const experimentKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['ph-calculation', 'lab-instruments'],
+    interactionTags: ['macro-experiment'],
   },
   {
     id: 'ion-identification',
@@ -81,6 +89,7 @@ export const experimentKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['ionic-equation'],
+    interactionTags: ['macro-experiment'],
   },
   {
     id: 'quantitative-analysis',
@@ -90,6 +99,7 @@ export const experimentKnowledge: KnowledgeNode[] = [
     importance: 'hard',
     animationIds: [],
     prerequisites: ['titration', 'solution-preparation'],
+    interactionTags: ['macro-experiment'],
   },
   {
     id: 'experiment-design',
@@ -99,5 +109,6 @@ export const experimentKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['gas-preparation', 'separation-purification', 'ion-identification'],
+    interactionTags: ['macro-experiment'],
   },
 ]

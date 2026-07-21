@@ -10,6 +10,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: [],
+    interactionTags: ['chart-analysis'],
   },
   {
     id: 'enthalpy',
@@ -19,6 +20,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['reaction-energy'],
+    interactionTags: ['chart-analysis'],
   },
   {
     id: 'thermochemical-equation',
@@ -28,6 +30,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['enthalpy'],
+    interactionTags: ['chart-analysis'],
   },
   {
     id: 'hess-law',
@@ -37,6 +40,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['enthalpy'],
+    interactionTags: ['chart-analysis'],
   },
   // ── 化学反应速率 ──
   {
@@ -47,6 +51,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: [],
+    interactionTags: ['particle-sandbox', 'chart-analysis'],
   },
   {
     id: 'rate-factors',
@@ -56,6 +61,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['reaction-rate'],
+    interactionTags: ['particle-sandbox', 'chart-analysis'],
   },
   {
     id: 'rate-theory',
@@ -63,8 +69,9 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     chapter: '选择性必修一',
     module: '反应原理',
     importance: 'hard',
-    animationIds: [],
+    animationIds: ['anim-collision-theory'],
     prerequisites: ['rate-factors'],
+    interactionTags: ['particle-sandbox', 'chart-analysis'],
   },
   // ── 化学平衡 ──
   {
@@ -75,6 +82,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['reaction-rate'],
+    interactionTags: ['particle-sandbox', 'chart-analysis'],
   },
   {
     id: 'equilibrium-constant',
@@ -84,6 +92,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['chemical-equilibrium'],
+    interactionTags: ['particle-sandbox', 'chart-analysis'],
   },
   {
     id: 'le-chatelier',
@@ -93,6 +102,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: ['anim-le-chatelier'],
     prerequisites: ['chemical-equilibrium'],
+    interactionTags: ['particle-sandbox', 'chart-analysis'],
   },
   {
     id: 'equilibrium-calculation',
@@ -102,6 +112,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['equilibrium-constant'],
+    interactionTags: ['particle-sandbox', 'chart-analysis'],
   },
   {
     id: 'kp-calculation',
@@ -111,6 +122,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['equilibrium-calculation', 'rate-factors'],
+    interactionTags: ['particle-sandbox', 'chart-analysis'],
   },
   // ── 水溶液中的离子反应与平衡 ──
   {
@@ -121,6 +133,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['electrolyte', 'chemical-equilibrium'],
+    interactionTags: ['ion-flow', 'chart-analysis'],
   },
   {
     id: 'ionization-equilibrium',
@@ -130,6 +143,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['weak-electrolyte', 'equilibrium-constant'],
+    interactionTags: ['ion-flow', 'chart-analysis'],
   },
   {
     id: 'water-ionization',
@@ -139,6 +153,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'core',
     animationIds: [],
     prerequisites: ['weak-electrolyte'],
+    interactionTags: ['ion-flow', 'chart-analysis'],
   },
   {
     id: 'ph-calculation',
@@ -148,6 +163,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['water-ionization'],
+    interactionTags: ['ion-flow', 'chart-analysis'],
   },
   {
     id: 'salt-hydrolysis',
@@ -157,6 +173,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['weak-electrolyte', 'ionic-equation'],
+    interactionTags: ['ion-flow', 'chart-analysis'],
   },
   {
     id: 'hydrolysis-application',
@@ -166,6 +183,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'hard',
     animationIds: [],
     prerequisites: ['salt-hydrolysis'],
+    interactionTags: ['ion-flow', 'chart-analysis'],
   },
   {
     id: 'chemical-conservation',
@@ -175,6 +193,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['salt-hydrolysis', 'ionization-equilibrium'],
+    interactionTags: ['ion-flow', 'chart-analysis'],
   },
   {
     id: 'precipitation-equilibrium',
@@ -184,6 +203,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['chemical-equilibrium'],
+    interactionTags: ['ion-flow', 'chart-analysis'],
   },
   // ── 电化学 ──
   {
@@ -194,6 +214,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['redox-electron-transfer'],
+    interactionTags: ['ion-flow'],
   },
   {
     id: 'electrolysis',
@@ -203,6 +224,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['primary-cell'],
+    interactionTags: ['ion-flow'],
   },
   {
     id: 'metal-corrosion',
@@ -212,6 +234,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'gaokao',
     animationIds: [],
     prerequisites: ['primary-cell'],
+    interactionTags: ['ion-flow'],
   },
   {
     id: 'electrochemical-application',
@@ -221,5 +244,6 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     importance: 'hard',
     animationIds: [],
     prerequisites: ['primary-cell', 'electrolysis'],
+    interactionTags: ['ion-flow'],
   },
 ]
