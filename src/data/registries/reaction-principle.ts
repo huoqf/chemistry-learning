@@ -2,6 +2,10 @@ import { lazyWithPreload as lazy } from '@/utils/lazyWithPreload'
 import { defineAnimations } from '../defineAnimations'
 import { leChatelierFormulas, leChatelierExamPoints } from '../quantities/reaction-principle/leChatelier'
 import { collisionTheoryFormulas, collisionTheoryExamPoints } from '../quantities/reaction-principle/collisionTheory'
+import { electrochemicalFormulas, electrochemicalExamPoints } from '../quantities/reaction-principle/electrochemicalApplication'
+import { primaryCellFormulas, primaryCellExamPoints } from '../quantities/reaction-principle/primaryCell'
+import { electrolyticCellFormulas, electrolyticCellExamPoints } from '../quantities/reaction-principle/electrolyticCell'
+
 
 export const reactionPrincipleAnimations = defineAnimations({
   'anim-le-chatelier': {
@@ -128,4 +132,231 @@ export const reactionPrincipleAnimations = defineAnimations({
       symbol: true,
     },
   },
+  'anim-electrochemical-application': {
+    title: '电化学综合应用与多池联动分析',
+    knowledgeId: 'electrochemical-application',
+    Component: lazy(() => import('@/features/reaction-principle/electrochemical-application')),
+    controlsMode: 'timed',
+    defaultParams: {
+      current: 1.5,
+      c0: 1.0,
+      mode: 0,
+      membraneType: 0,
+    } as const,
+    paramMeta: [
+      {
+        key: 'current',
+        label: '电路电流 I',
+        min: 0.5,
+        max: 3.0,
+        step: 0.1,
+        unit: 'A',
+        group: '电路参数',
+        description: '增大电流加快电子转移速率与电极反应',
+      },
+      {
+        key: 'c0',
+        label: '初始电解质浓度',
+        min: 0.2,
+        max: 2.0,
+        step: 0.1,
+        unit: 'mol/L',
+        group: '溶液参数',
+        description: '电解质浓度影响溶液导电性与产物生成速率',
+      },
+    ],
+    controlMeta: [
+      {
+        type: 'segmented',
+        key: 'mode',
+        group: '电化学模式',
+        resetOnChange: true,
+        options: [
+          { label: '双池盐桥原电池', value: 0 },
+          { label: '离子交换膜电解池', value: 1 },
+          { label: '串联电化学池', value: 2 },
+        ],
+      },
+      {
+        type: 'segmented',
+        key: 'membraneType',
+        group: '交换膜选择',
+        resetOnChange: true,
+        showIf: 'mode',
+        showIfValue: 1,
+        options: [
+          { label: '阳离子膜 (Na⁺/H⁺)', value: 0 },
+          { label: '阴离子膜 (Cl⁻)', value: 1 },
+          { label: '质子交换膜 (H⁺)', value: 2 },
+        ],
+      },
+      {
+        type: 'tip',
+        group: '教学指引',
+        variant: 'primary',
+        content: '高考核心突破：① 电子不下水（仅在导线流动），离子不上天（仅在溶液/膜内迁移）；② 膜电解池看穿膜选择性离子；③ 串联池各极转移电子数 n(e⁻) 处处相等。',
+      },
+    ],
+    maxTime: 10,
+    formulas: electrochemicalFormulas,
+    gaokaoPoints: electrochemicalExamPoints,
+    tripleRepresentation: {
+      micro: true,
+      macro: true,
+      symbol: true,
+    },
+  },
+  'anim-primary-cell': {
+    title: '原电池工作原理与高考经典模型分析',
+    knowledgeId: 'primary-cell',
+    Component: lazy(() => import('@/features/reaction-principle/primary-cell')),
+    controlsMode: 'timed',
+    defaultParams: {
+      cellType: 0,
+      electrolyteType: 0,
+      loadType: 0,
+      current: 1.5,
+    } as const,
+    paramMeta: [
+      {
+        key: 'current',
+        label: '电路电流 I',
+        min: 0.5,
+        max: 3.0,
+        step: 0.1,
+        unit: 'A',
+        group: '电路参数',
+        description: '调整外电路电流大小，影响电子转移速率与反应消耗速度',
+      },
+    ],
+    controlMeta: [
+      {
+        type: 'segmented',
+        key: 'cellType',
+        group: '原电池模型选择',
+        resetOnChange: true,
+        options: [
+          { label: '经典单槽 (Zn-Cu)', value: 0 },
+          { label: '盐桥双槽 (Zn-Cu)', value: 1 },
+          { label: '氢氧燃料电池', value: 2 },
+          { label: '铅蓄电池放电', value: 3 },
+        ],
+      },
+      {
+        type: 'segmented',
+        key: 'electrolyteType',
+        group: '介质性质 (燃料电池)',
+        resetOnChange: true,
+        showIf: 'cellType',
+        showIfValue: 2,
+        options: [
+          { label: '碱性介质 (KOH)', value: 0 },
+          { label: '酸性介质 (H₂SO₄)', value: 1 },
+        ],
+      },
+      {
+        type: 'segmented',
+        key: 'loadType',
+        group: '外电路负载',
+        resetOnChange: false,
+        options: [
+          { label: '小灯泡', value: 0 },
+          { label: '电流表', value: 1 },
+          { label: '电动机', value: 2 },
+        ],
+      },
+      {
+        type: 'tip',
+        group: '教学要点提示',
+        variant: 'primary',
+        content: '负极失电子发生氧化反应，正极得电子发生还原反应。内电路离子迁移遵循“阳正阴负”规律。',
+      },
+    ],
+    maxTime: 10,
+    formulas: primaryCellFormulas,
+    gaokaoPoints: primaryCellExamPoints,
+    tripleRepresentation: {
+      micro: true,
+      macro: true,
+      symbol: true,
+    },
+  },
+  'anim-electrolytic-cell': {
+    title: '电解池工作原理与高考经典模型分析',
+    knowledgeId: 'electrolysis',
+    Component: lazy(() => import('@/features/reaction-principle/electrolytic-cell')),
+    controlsMode: 'timed',
+    defaultParams: {
+      cellType: 0,
+      anodeMaterial: 0,
+      membraneType: 0,
+      current: 1.5,
+    } as const,
+    paramMeta: [
+      {
+        key: 'current',
+        label: '外接电流 I',
+        min: 0.5,
+        max: 3.0,
+        step: 0.1,
+        unit: 'A',
+        group: '电路参数',
+        description: '调整直流电源输出电流，影响电子转移速度与产物生成速率',
+      },
+    ],
+    controlMeta: [
+      {
+        type: 'segmented',
+        key: 'cellType',
+        group: '高考经典电解模型',
+        resetOnChange: true,
+        options: [
+          { label: 'CuCl₂ 电解 (惰性)', value: 0 },
+          { label: 'CuSO₄ 电解 (放氧生酸)', value: 1 },
+          { label: '饱和食盐水 (氯碱工业)', value: 2 },
+          { label: '粗铜精炼与电镀 (活性)', value: 3 },
+          { label: '熔融 Al₂O₃ 电解炼铝', value: 4 },
+        ],
+      },
+      {
+        type: 'segmented',
+        key: 'anodeMaterial',
+        group: '阳极材料选择 (CuSO₄)',
+        resetOnChange: true,
+        showIf: 'cellType',
+        showIfValue: 1,
+        options: [
+          { label: '惰性石墨 C', value: 0 },
+          { label: '活性铜电极 Cu', value: 1 },
+        ],
+      },
+      {
+        type: 'segmented',
+        key: 'membraneType',
+        group: '离子交换膜 (氯碱工业)',
+        resetOnChange: true,
+        showIf: 'cellType',
+        showIfValue: 2,
+        options: [
+          { label: '阳离子交换膜 (Na⁺穿过)', value: 0 },
+          { label: '无交换膜 (普通单槽)', value: 1 },
+        ],
+      },
+      {
+        type: 'tip',
+        group: '电解池规律提示',
+        variant: 'primary',
+        content: '阳极接电源正极失电子氧化（阳朝正）；阴极接电源负极得电子还原（阴朝负）。溶液中“阴朝阳，阳朝阴”。',
+      },
+    ],
+    maxTime: 10,
+    formulas: electrolyticCellFormulas,
+    gaokaoPoints: electrolyticCellExamPoints,
+    tripleRepresentation: {
+      micro: true,
+      macro: true,
+      symbol: true,
+    },
+  },
 })
+

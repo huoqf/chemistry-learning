@@ -66,7 +66,7 @@ describe('全量高中化学通用组件单元测试 (ExtendedComponents)', () =
   })
 
   it('批次 3 组件顺利渲染', () => {
-    const { container: c11 } = renderWithSvg(<ElectrochemCellApparatus x={0} y={0} cellType="galvanic" leftElectrode="Zn" rightElectrode="Cu" />)
+    const { container: c11 } = renderWithSvg(<ElectrochemCellApparatus x={0} y={0} cellType="galvanic" leftElectrode="Zn" rightElectrode="Cu" showCircuit={true} />)
     expect(c11.querySelector('circle')).toBeTruthy()
 
     const { container: c12 } = renderWithSvg(<SaltBridgeApparatus x={0} y={0} label="KCl 盐桥" />)

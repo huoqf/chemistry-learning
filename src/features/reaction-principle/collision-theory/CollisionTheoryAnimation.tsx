@@ -58,7 +58,7 @@ export default function CollisionTheoryAnimation() {
   return (
     <div
       ref={containerRef}
-      className="w-full h-full flex items-center justify-center bg-slate-50/60"
+      className="w-full h-full flex items-center justify-center bg-transparent"
     >
       <ParticleScene
         particles={world.particles}

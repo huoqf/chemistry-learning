@@ -20,18 +20,23 @@ export interface ElectrochemCellApparatusProps {
   fillLevel?: number
   /** 溶液颜色 */
   fillColor?: string
+  /** 是否绘制器材内置的外电路与简易仪表，默认 false (解耦供 Scene 自由自定义电路) */
+  showCircuit?: boolean
+  /** 是否绘制器材内置的简易电极板，默认 true */
+  showElectrodes?: boolean
   /** 字体缩放函数 */
   font?: FontScaler
 }
 
 /**
- * ElectrochemCellApparatus — 原电池 / 电解池组件
+ * ElectrochemCellApparatus — 原电池 / 电解池基础槽体器皿组件
  *
  * 适用高中化学场景：
- * - 原电池反应 (锌铜原电池、电子流动)
- * - 电解池反应 (电解 CuCl₂ 溶液、电解食盐水)
+ * - 原电池反应容器（单槽/电解槽）
+ * - 电解池反应容器
  *
- * 颜色：`SCENE_COLORS.industrialEquipment.electrolyticCell`
+ * 规范解耦设计：
+ * - `showCircuit`: 默认 `false`。避免在槽体器材内强制画导线与仪表，方便 Scene 上层灵活自由编排 `<ElectronFlowPath>`、`<ExternalLoadApparatus>` 或 `<DcPowerSupplyApparatus>`。
  */
 export function ElectrochemCellApparatus({
   x,
@@ -43,6 +48,8 @@ export function ElectrochemCellApparatus({
   rightElectrode = 'Cu',
   fillLevel = 0.65,
   fillColor = SCENE_COLORS.reagent.solution,
+  showCircuit = false,
+  showElectrodes = true,
   font = (n) => n,
 }: ElectrochemCellApparatusProps) {
   const w = width
@@ -57,8 +64,8 @@ export function ElectrochemCellApparatus({
   const rightX = w * 0.75
 
   return (
-    <g transform={`translate(${x}, ${y})`}>
-      {/* 1. 电容器槽体 */}
+    <g transform={`translate(${x}, ${y})`} className="electrochem-cell-apparatus">
+      {/* 1. 槽体容器 */}
       <rect
         x={0}
         y={containerY}
@@ -83,58 +90,72 @@ export function ElectrochemCellApparatus({
         />
       )}
 
-      {/* 2. 左右电极板 (阴极/阳极, 正极/负极) */}
-      {/* 左电极 */}
-      <rect
-        x={leftX - 6}
-        y={containerY - 10}
-        width={12}
-        height={containerH * 0.8}
-        fill={SCENE_COLORS.materials.iron}
-        stroke={SCENE_COLORS.materials.metalBorder}
-        strokeWidth={STROKE.reference}
-      />
-      {/* 右电极 */}
-      <rect
-        x={rightX - 6}
-        y={containerY - 10}
-        width={12}
-        height={containerH * 0.8}
-        fill={SCENE_COLORS.materials.metal}
-        stroke={SCENE_COLORS.materials.metalBorder}
-        strokeWidth={STROKE.reference}
-      />
+      {/* 2. 左右简易电极板 (可通过 showElectrodes 关闭) */}
+      {showElectrodes && (
+        <g>
+          {/* 左电极 */}
+          <rect
+            x={leftX - 6}
+            y={containerY - 10}
+            width={12}
+            height={containerH * 0.8}
+            fill={SCENE_COLORS.materials.iron}
+            stroke={SCENE_COLORS.materials.metalBorder}
+            strokeWidth={STROKE.reference}
+          />
+          {/* 右电极 */}
+          <rect
+            x={rightX - 6}
+            y={containerY - 10}
+            width={12}
+            height={containerH * 0.8}
+            fill={SCENE_COLORS.materials.metal}
+            stroke={SCENE_COLORS.materials.metalBorder}
+            strokeWidth={STROKE.reference}
+          />
+        </g>
+      )}
 
-      {/* 3. 外电路导线与仪表 (电流表 G 或 电源 +/-) */}
-      <path
-        d={`
-          M ${leftX} ${containerY - 10}
-          L ${leftX} 15
-          L ${w * 0.5 - 15} 15
-          M ${w * 0.5 + 15} 15
-          L ${rightX} 15
-          L ${rightX} ${containerY - 10}
-        `}
-        fill="none"
-        stroke={SCENE_COLORS.materials.metalBorder}
-        strokeWidth={STROKE.objectLine}
-      />
+      {/* 3. 仅当 showCircuit === true 时才绘制内置简易外电路与仪表 */}
+      {showCircuit && (
+        <g>
+          <path
+            d={`
+              M ${leftX} ${containerY - 10}
+              L ${leftX} 15
+              L ${w * 0.5 - 15} 15
+              M ${w * 0.5 + 15} 15
+              L ${rightX} 15
+              L ${rightX} ${containerY - 10}
+            `}
+            fill="none"
+            stroke={SCENE_COLORS.materials.metalBorder}
+            strokeWidth={STROKE.objectLine}
+          />
 
-      {/* 中央外接仪表或电源 */}
-      <circle cx={w * 0.5} cy={15} r={14} fill={SCENE_COLORS.materials.glass} stroke={SCENE_COLORS.materials.metalBorder} strokeWidth={STROKE.objectLine} />
-      <text
-        x={w * 0.5}
-        y={20}
-        textAnchor="middle"
-        fontSize={font(FONT.small)}
-        fill={SCENE_COLORS.labels.chemicalFormula}
-        fontWeight="bold"
-      >
-        {cellType === 'galvanic' ? 'A' : 'DC'}
-      </text>
+          <circle
+            cx={w * 0.5}
+            cy={15}
+            r={14}
+            fill={SCENE_COLORS.materials.glass}
+            stroke={SCENE_COLORS.materials.metalBorder}
+            strokeWidth={STROKE.objectLine}
+          />
+          <text
+            x={w * 0.5}
+            y={20}
+            textAnchor="middle"
+            fontSize={font(FONT.small)}
+            fill={SCENE_COLORS.labels.chemicalFormula}
+            fontWeight="bold"
+          >
+            {cellType === 'galvanic' ? 'A' : 'DC'}
+          </text>
+        </g>
+      )}
 
-      {/* 电极材料标注 */}
-      {!isTiny && (
+      {/* 4. 电极材料标注 (仅在绘制简易电极时显示) */}
+      {showElectrodes && !isTiny && (
         <g fontSize={font(FONT.small)} fill={SCENE_COLORS.labels.chemicalFormula} fontWeight="bold">
           <text x={leftX} y={containerY - 15} textAnchor="middle">{leftElectrode}</text>
           <text x={rightX} y={containerY - 15} textAnchor="middle">{rightElectrode}</text>

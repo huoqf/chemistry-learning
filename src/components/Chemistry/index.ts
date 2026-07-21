@@ -92,6 +92,21 @@ export type { SaltBridgeApparatusProps } from './SaltBridgeApparatus'
 export { IonMembraneApparatus } from './IonMembraneApparatus'
 export type { IonMembraneApparatusProps } from './IonMembraneApparatus'
 
+export { DcPowerSupplyApparatus } from './DcPowerSupplyApparatus'
+export type { DcPowerSupplyApparatusProps } from './DcPowerSupplyApparatus'
+
+export { ExternalLoadApparatus } from './ExternalLoadApparatus'
+export type { ExternalLoadApparatusProps, LoadType } from './ExternalLoadApparatus'
+
+export { ElectronFlowPath } from './ElectronFlowPath'
+export type { ElectronFlowPathProps } from './ElectronFlowPath'
+
+export { ElectrodePlateApparatus } from './ElectrodePlateApparatus'
+export type { ElectrodePlateApparatusProps, ElectrodeMaterial } from './ElectrodePlateApparatus'
+
+export { ElectrodeReactionBadge } from './ElectrodeReactionBadge'
+export type { ElectrodeReactionBadgeProps } from './ElectrodeReactionBadge'
+
 export { PhMeterApparatus } from './PhMeterApparatus'
 export type { PhMeterApparatusProps } from './PhMeterApparatus'
 

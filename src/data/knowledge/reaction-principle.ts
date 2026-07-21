@@ -222,7 +222,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     chapter: '选择性必修一',
     module: '反应原理',
     importance: 'gaokao',
-    animationIds: [],
+    animationIds: ['anim-electrolytic-cell'],
     prerequisites: ['primary-cell'],
     interactionTags: ['ion-flow'],
   },

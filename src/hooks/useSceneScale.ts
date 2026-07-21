@@ -131,8 +131,10 @@ export function useSceneScale(options: UseSceneScaleOptions): SceneScale {
         throw new Error(`[useSceneScale] anchor "${anchor}" requires physicsWidth and physicsHeight`)
       }
     }
-    if (anchor === 'center' && physicsScaleDesign == null && (physicsScaleDesignX == null || physicsScaleDesignY == null)) {
-      throw new Error('[useSceneScale] anchor "center" requires physicsScaleDesign (or physicsScaleDesignX/Y)')
+    let safePhysicsScaleDesign = physicsScaleDesign
+    if (anchor === 'center' && safePhysicsScaleDesign == null && (physicsScaleDesignX == null || physicsScaleDesignY == null)) {
+      console.warn('[useSceneScale] anchor "center" missing scaleDesign, defaulting to 1')
+      safePhysicsScaleDesign = 1
     }
     if (anchor === 'custom' && (customScaleX == null || customScaleY == null || customOriginX == null || customOriginY == null)) {
       throw new Error('[useSceneScale] anchor "custom" requires customScaleX, customScaleY, customOriginX, customOriginY')
@@ -197,8 +199,8 @@ export function useSceneScale(options: UseSceneScaleOptions): SceneScale {
         const resolvedCY = centerSource === 'design'
           ? preset.height / 2
           : centerSource === 'custom' ? customCY! : viewportCenterDesign.dy
-        const sx = physicsScaleDesignX ?? physicsScaleDesign!
-        const sy = physicsScaleDesignY ?? physicsScaleDesign!
+        const sx = physicsScaleDesignX ?? safePhysicsScaleDesign!
+        const sy = physicsScaleDesignY ?? safePhysicsScaleDesign!
         const scale = Math.min(sx, sy)
         return {
           scaleX: sx, scaleY: sy, scale,
