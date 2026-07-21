@@ -46,6 +46,7 @@ vi.mock('@/data/knowledgeTree', () => ({
       animationIds: [],
     },
   ],
+  resolveAnimationIds: vi.fn(),
 }))
 
 vi.mock('@/data/animationRegistry', () => ({
@@ -56,6 +57,7 @@ vi.mock('@/data/animationRegistry', () => ({
     return undefined
   },
   getAnimationCount: () => 1,
+  loadExtendedRegistry: () => Promise.resolve(),
 }))
 
 vi.mock('@/stores', () => ({
