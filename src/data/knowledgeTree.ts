@@ -39,6 +39,8 @@ export function resolveAnimationIds(
         'anim-le-chatelier',
         'anim-unit-cell-calculation',
         'anim-vsepr',
+        'anim-hybrid-orbital',
+        'anim-chirality',
       ]
 
   for (const animId of animIds) {

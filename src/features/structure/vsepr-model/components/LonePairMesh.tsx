@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
-import { Html } from '@react-three/drei'
 import { SCENE_COLORS } from '@/theme'
 
 interface LonePairMeshProps {
@@ -9,7 +8,7 @@ interface LonePairMeshProps {
   scale?: number
 }
 
-export function LonePairMesh({ position, label = '孤电子对', scale = 1 }: LonePairMeshProps) {
+export function LonePairMesh({ position, scale = 1 }: LonePairMeshProps) {
   // 计算旋转四元数，使拉长的椭球体朝向 position 方向
   const { direction, length, quaternion } = useMemo(() => {
     const dir = new THREE.Vector3(...position)
@@ -57,15 +56,6 @@ export function LonePairMesh({ position, label = '孤电子对', scale = 1 }: Lo
         <sphereGeometry args={[1, 16, 16]} />
         <meshStandardMaterial color={SCENE_COLORS.materials.glassBorder} emissive={SCENE_COLORS.materials.glassBorder} emissiveIntensity={0.6} />
       </mesh>
-
-      {/* 标注 */}
-      {label && (
-        <Html position={[0, 0.7 * scale, 0]} center distanceFactor={10}>
-          <div className="px-1.5 py-0.5 rounded bg-amber-500/90 text-white text-[10px] whitespace-nowrap shadow-sm pointer-events-none border border-amber-300/40 font-bold">
-            : {label}
-          </div>
-        </Html>
-      )}
     </group>
   )
 }

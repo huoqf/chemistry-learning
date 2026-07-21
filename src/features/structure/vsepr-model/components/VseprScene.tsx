@@ -119,7 +119,7 @@ export function VseprScene({
   const [selectedNode, setSelectedNode] = useState<string | null>(null)
 
   // 区分单键配体 (H, F, Cl) 与双键/重键配体 (O, S) 的化学精准描述
-  const isMultipleBondLigand = molecule.ligandValence === 0 // O/S 单电子数记 0
+  const isMultipleBondLigand = molecule.ligandValence === 2 // O/S 结合电子数记 2 (形成重键)
 
   const selectedInfo = selectedNode === 'central'
     ? {

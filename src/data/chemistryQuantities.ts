@@ -38,10 +38,14 @@ export function registerQuantityBuilder(animationId: string, builder: QuantityBu
 import { buildLeChatelierQuantities } from './quantities/reaction-principle/leChatelier'
 import { buildUnitCellQuantities } from './quantities/structure/unitCellCalculation'
 import { buildVseprQuantities } from './quantities/structure/vsepr'
+import { buildHybridQuantities } from './quantities/structure/hybridization'
+import { buildChiralityQuantities } from './quantities/structure/chirality'
 
 registerQuantityBuilder('anim-le-chatelier', buildLeChatelierQuantities)
 registerQuantityBuilder('anim-unit-cell-calculation', buildUnitCellQuantities)
 registerQuantityBuilder('anim-vsepr', buildVseprQuantities)
+registerQuantityBuilder('anim-hybrid-orbital', buildHybridQuantities)
+registerQuantityBuilder('anim-chirality', buildChiralityQuantities)
 
 
 /** 预加载（惰性注册入口） */

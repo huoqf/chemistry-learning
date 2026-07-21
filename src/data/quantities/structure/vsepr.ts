@@ -1,15 +1,11 @@
 import type { ChemistryQuantity } from '../../chemistryQuantities'
 import { VSEPR_PRESETS } from '../../../features/structure/vsepr-model/data/vseprData'
-
-const PRESET_KEYS = [
-  'co2', 'bf3', 'so2', 'ch4', 'nh3', 'h2o',
-  'pcl5', 'sf4', 'clf3', 'xef2', 'sf6', 'xef4',
-]
+import { VSEPR_PRESET_KEYS } from '../../../features/structure/vsepr-model/hooks/useVseprChemistry'
 
 export function buildVseprQuantities(params: Record<string, number>): ChemistryQuantity[] {
   const rawIdx = params.presetIdx ?? 0
-  const safeIdx = Math.min(Math.max(0, Math.floor(rawIdx)), PRESET_KEYS.length - 1)
-  const key = PRESET_KEYS[safeIdx] || 'co2'
+  const safeIdx = Math.min(Math.max(0, Math.floor(rawIdx)), VSEPR_PRESET_KEYS.length - 1)
+  const key = VSEPR_PRESET_KEYS[safeIdx] || 'co2'
   const mol = VSEPR_PRESETS[key] || VSEPR_PRESETS.co2
 
   return [
@@ -51,9 +47,9 @@ export function buildVseprQuantities(params: Record<string, number>): ChemistryQ
 export const vseprFormulas = [
   {
     name: 'VSEPR 孤电子对计算公式',
-    latex: 'n = \\frac{1}{2} (a - x - b \\cdot y)',
+    latex: 'n = \\frac{1}{2} (a - x - m \\cdot y)',
     level: 'core' as const,
-    condition: 'a:中心原子价电子数, x:电荷, b:配体数, y:配体单电子数(H/卤素=1, O/S=0)',
+    condition: 'a:中心最外层电子数, x:电荷, m:配体数, y:配体结合电子数(H/卤素=1, O/S=2)',
   },
   {
     name: '价电子对总数与杂化轨道关系',
@@ -69,7 +65,7 @@ export const vseprExamPoints = [
     importance: 'gaokao' as const,
   },
   {
-    text: '【配体单电子数 y】H 和卤素原子作为配体时，y = 1；O 和 S 作为配体时，y = 0。阳离子减去电荷数，阴离子加上电荷数。',
+    text: '【配体结合电子数 y】H 和卤素原子作为配体时，y = 1；O 和 S 作为配体时，y = 2。阳离子减去电荷数 x，阴离子加上电荷绝对值。',
     importance: 'gaokao' as const,
   },
   {

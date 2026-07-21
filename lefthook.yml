@@ -26,10 +26,4 @@ pre-push:
 commit-msg:
   commands:
     conventional:
-      run: |
-        $msg = Get-Content .git/COMMIT_EDITMSG -Raw
-        if ($msg -notmatch '^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?: .+') {
-          Write-Host "Commit message must follow Conventional Commits format"
-          Write-Host "Example: feat: add equilibrium animation"
-          exit 1
-        }
+      run: node scripts/check-conventional-commit.mjs

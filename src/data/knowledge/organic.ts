@@ -90,7 +90,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     chapter: '选择性必修三',
     module: '有机化学',
     importance: 'gaokao',
-    animationIds: [],
+    animationIds: ['anim-chirality'],
     prerequisites: ['isomerism'],
   },
   {
