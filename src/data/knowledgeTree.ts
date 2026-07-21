@@ -1,4 +1,4 @@
-import type { KnowledgeNode } from './types'
+import type { KnowledgeNode, AnimationConfig } from './types'
 import {
   inorganicKnowledge,
   reactionPrincipleKnowledge,
@@ -19,24 +19,30 @@ export const knowledgeTree: KnowledgeNode[] = [
 /**
  * 根据 AnimationConfig.knowledgeId 反向自动注入 animationIds。
  * 新增动画只需在 registries/ 中定义 config 并设置 knowledgeId，
- * 无需手动维护 knowledge 节点的 animationIds。
+ * 无需手动维护 knowledge 节点的 animationIds，也无需修改本文件。
+ *
+ * @param nodes 知识树节点
+ * @param registry 可选：完整注册表（懒加载后传入），用于动态发现所有动画 ID。
+ *                 不传时回退到 getAnimationConfig 逐个查询。
  */
-export function resolveAnimationIds(nodes: KnowledgeNode[]): void {
+export function resolveAnimationIds(
+  nodes: KnowledgeNode[],
+  registry?: Record<string, AnimationConfig>,
+): void {
   const nodeById = new Map<string, KnowledgeNode>()
   nodes.forEach(n => nodeById.set(n.id, n))
 
-  // 遍历已注册动画，按 knowledgeId 注入
-  const knownAnimIds = new Set<string>()
-  nodes.forEach(n => n.animationIds.forEach(id => knownAnimIds.add(id)))
+  // 动画 ID 来源：优先用传入的 registry（完整），否则回退到已知列表
+  const animIds: string[] = registry
+    ? Object.keys(registry)
+    : [
+        'anim-le-chatelier',
+        'anim-unit-cell-calculation',
+        'anim-vsepr',
+      ]
 
-  // 从 registry 动态发现（AppInitializer 已预加载）
-  const registryIds = [
-    'anim-le-chatelier',
-    'anim-unit-cell-calculation',
-  ]
-
-  for (const animId of registryIds) {
-    const config = getAnimationConfig(animId)
+  for (const animId of animIds) {
+    const config = registry?.[animId] ?? getAnimationConfig(animId)
     if (!config) continue
     const kid = typeof config.knowledgeId === 'string' ? config.knowledgeId : config.knowledgeId[0]
     const node = nodeById.get(kid)

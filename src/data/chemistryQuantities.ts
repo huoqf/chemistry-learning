@@ -37,9 +37,11 @@ export function registerQuantityBuilder(animationId: string, builder: QuantityBu
 
 import { buildLeChatelierQuantities } from './quantities/reaction-principle/leChatelier'
 import { buildUnitCellQuantities } from './quantities/structure/unitCellCalculation'
+import { buildVseprQuantities } from './quantities/structure/vsepr'
 
 registerQuantityBuilder('anim-le-chatelier', buildLeChatelierQuantities)
 registerQuantityBuilder('anim-unit-cell-calculation', buildUnitCellQuantities)
+registerQuantityBuilder('anim-vsepr', buildVseprQuantities)
 
 
 /** 预加载（惰性注册入口） */

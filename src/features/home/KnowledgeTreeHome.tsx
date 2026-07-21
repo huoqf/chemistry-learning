@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Lock,
@@ -11,8 +11,8 @@ import {
   TestTube,
   CheckCircle2,
 } from 'lucide-react'
-import { knowledgeTree } from '@/data/knowledgeTree'
-import { getAnimationConfig, getAnimationCount } from '@/data/animationRegistry'
+import { knowledgeTree, resolveAnimationIds } from '@/data/knowledgeTree'
+import { getAnimationConfig, getAnimationCount, loadExtendedRegistry } from '@/data/animationRegistry'
 import { useProgressStore } from '@/stores'
 import { colors } from '@/theme'
 import type { KnowledgeNode } from '@/data/types'
@@ -127,9 +127,20 @@ const IMPORTANCE_MAP: Record<
 export function KnowledgeTreeHome() {
   const navigate = useNavigate()
   const { masteredKnowledge, setTotalCounts } = useProgressStore()
+  const [, setRegistryReady] = useState(false)
 
   useEffect(() => {
-    setTotalCounts(getAnimationCount(), knowledgeTree.length)
+    let active = true
+    loadExtendedRegistry().then(() => {
+      resolveAnimationIds(knowledgeTree)
+      if (active) {
+        setTotalCounts(getAnimationCount(), knowledgeTree.length)
+        setRegistryReady(true)
+      }
+    })
+    return () => {
+      active = false
+    }
   }, [setTotalCounts])
 
   // 统计节点

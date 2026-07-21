@@ -15,9 +15,9 @@ export async function loadExtendedRegistry(): Promise<void> {
       Object.assign(fullRegistry, reactionPrincipleAnimations, structureAnimations)
       extendedLoaded = true
 
-      // 注册表装载完成后自动关联知识树
+      // 注册表装载完成后自动关联知识树（传入完整 registry，动态发现所有动画）
       const { resolveAnimationIds, knowledgeTree } = await import('./knowledgeTree')
-      resolveAnimationIds(knowledgeTree)
+      resolveAnimationIds(knowledgeTree, fullRegistry)
     })()
   }
   await extendedPromise

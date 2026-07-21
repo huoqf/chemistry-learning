@@ -397,7 +397,10 @@ export function build<Topic>Quantities(
 
 ### 3C：知识树（src/data/knowledgeTree.ts）
 
-确认 knowledgeId 对应的节点已存在，或添加新节点。
+**自动关联，无需手动操作**。`resolveAnimationIds()` 会在 registry 懒加载完成后自动遍历所有已注册动画，按 `knowledgeId` 注入到知识树节点。只需确保：
+
+1. 注册表中的 `knowledgeId` 与 `knowledge/<domain>.ts` 中的节点 `id` 一致
+2. 如果是全新知识领域，需在 `knowledge/<domain>.ts` 中新增节点并在 `knowledge/index.ts` 中导出
 
 ---
 
