@@ -40,6 +40,7 @@ export function createCaF2Data(): CrystalTypeData {
 
   // F⁻ 占 8 个内部四面体空隙 (8 x 1 = 8)
   // F⁻ 离子半径 133 pm > Ca²⁺ 离子半径 99 pm
+  // 渲染半径适当缩小以避免四面体空隙内视觉重叠
   const fFracs: [number, number, number][] = [
     [0.25, 0.25, 0.25], [0.75, 0.25, 0.25],
     [0.25, 0.75, 0.25], [0.75, 0.75, 0.25],
@@ -51,7 +52,7 @@ export function createCaF2Data(): CrystalTypeData {
       id: `f-tetra-${i}`,
       element: 'F⁻',
       fracPos: pos,
-      radius: 0.23,
+      radius: 0.18,
       color: ATOM_COLORS.F,
       label: '内部 F⁻ (贡献 1)',
       sharingRatio: 1,
@@ -80,7 +81,7 @@ export function createCaF2Data(): CrystalTypeData {
     molarMass: 78.08,
     zValue: 4,
     coordNumber: 8,
-    packingEfficiency: 65.0,
+    packingEfficiency: 58.3,
     atoms,
     bonds,
     description: '萤石结构：Ca²⁺ 占顶点与面心(N=4)，F⁻ 占8个内部小立方体/四面体空隙(N=8)，配位数 8:4',

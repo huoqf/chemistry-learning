@@ -227,7 +227,7 @@ export const structureAnimations = defineAnimations({
         step: 0.1,
         unit: 'g/mol',
         group: '化学组成',
-        description: '改变组成元素的相对原子/分子质量',
+        description: '改变组成元素的相对式量/摩尔质量',
       },
     ],
     controlMeta: [
