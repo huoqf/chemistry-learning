@@ -15,6 +15,9 @@ import {
   RotaryKilnEquipment,
   LeachingReactorEquipment,
   AbsorptionTowerEquipment,
+  DistillationFlaskApparatus,
+  AdapterApparatus,
+  OxidationBridgeArrow,
 } from '../index'
 
 function renderWithSvg(ui: React.ReactElement) {
@@ -126,4 +129,27 @@ describe('高考化工流程核心设备组件 (Equipment)', () => {
     const { container } = renderWithSvg(<AbsorptionTowerEquipment x={0} y={0} status="running" />)
     expect(container.querySelector('g')).toBeTruthy()
   })
+
+  it('DistillationFlaskApparatus 具支蒸馏烧瓶正确渲染并响应 fillLevel', () => {
+    const { container } = renderWithSvg(
+      <DistillationFlaskApparatus x={50} y={50} fillLevel={0.4} hasStopper={true} />
+    )
+    expect(container.querySelector('path')).toBeTruthy()
+    expect(container.querySelector('polygon')).toBeTruthy()
+  })
+
+  it('AdapterApparatus 牛角管正确渲染', () => {
+    const { container } = renderWithSvg(<AdapterApparatus x={100} y={100} showDrop={true} />)
+    expect(container.querySelector('path')).toBeTruthy()
+    expect(container.querySelector('circle')).toBeTruthy()
+  })
+
+  it('OxidationBridgeArrow 双线桥箭头正确渲染', () => {
+    const { container } = renderWithSvg(
+      <OxidationBridgeArrow startPos={[0, 0]} endPos={[100, 0]} label="失 2e⁻" />
+    )
+    expect(container.querySelector('path')).toBeTruthy()
+    expect(container.querySelector('text')?.textContent).toBe('失 2e⁻')
+  })
 })
+

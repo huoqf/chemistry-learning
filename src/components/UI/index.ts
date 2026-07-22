@@ -22,6 +22,8 @@ export { AnimationControls } from './AnimationControls'
 export { PageTransition } from './PageTransition'
 export { ChemistryPanel } from './ChemistryPanel'
 export { ErrorBoundary } from './ErrorBoundary'
+export { ScoringCardSection } from './ScoringCardSection'
+export { GaokaoVariantQuiz } from './GaokaoVariantQuiz'
 
 export interface DiscoveryStepData {
   title: string

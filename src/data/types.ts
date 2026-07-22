@@ -24,6 +24,8 @@ export interface KnowledgeNode {
   animationParams?: Record<string, number>
   /** 交互功能标签：标识该考点支持的动画交互类型 */
   interactionTags?: InteractionType[]
+  /** 关联的高考提分母题专题 ID 列表 */
+  relatedModelIds?: string[]
 }
 
 export type ParamImportance = 'core' | 'advanced' | 'display'

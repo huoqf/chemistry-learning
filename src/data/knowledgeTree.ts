@@ -41,6 +41,7 @@ export function resolveAnimationIds(
         'anim-vsepr',
         'anim-hybrid-orbital',
         'anim-chirality',
+        'anim-isomerism',
       ]
 
   for (const animId of animIds) {
@@ -54,8 +55,31 @@ export function resolveAnimationIds(
   }
 }
 
+import { gaokaoModels } from './gaokaoModels'
+
+// 反向自动绑定高考提分母题关系
+function resolveGaokaoModelAssociations(nodes: KnowledgeNode[]): void {
+  const nodeById = new Map<string, KnowledgeNode>()
+  nodes.forEach(n => nodeById.set(n.id, n))
+
+  for (const model of gaokaoModels) {
+    for (const kid of model.relatedKnowledgeIds) {
+      const node = nodeById.get(kid)
+      if (node) {
+        if (!node.relatedModelIds) {
+          node.relatedModelIds = []
+        }
+        if (!node.relatedModelIds.includes(model.id)) {
+          node.relatedModelIds.push(model.id)
+        }
+      }
+    }
+  }
+}
+
 // 启动时自动解析
 resolveAnimationIds(knowledgeTree)
+resolveGaokaoModelAssociations(knowledgeTree)
 
 export const knowledgeIndex: Record<string, KnowledgeNode> = {}
 

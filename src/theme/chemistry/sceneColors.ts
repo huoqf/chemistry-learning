@@ -57,6 +57,7 @@ export const SCENE_COLORS = {
     condenser: '#BAE6FD',          // 冷凝管 (外套管)
     condenserInner: '#7DD3FC',     // 冷凝管 (内芯)
     distillationFlask: '#E0F2FE',  // 蒸馏烧瓶
+    adapter: '#E0F2FE',            // 接液管/牛角管
   },
 
   // ── 复杂反应与气体发生装置 ──

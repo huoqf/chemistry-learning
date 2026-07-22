@@ -22,6 +22,8 @@ export interface AtomMeshProps {
   onSelect?: () => void
   /** 悬浮状态改变回调 */
   onHoverChange?: (isHovered: boolean) => void
+  /** 自定义 emissive 颜色（非选中态），用于浅色原子增加可见度 */
+  emissiveColor?: string
 }
 
 export function AtomMesh({
@@ -31,6 +33,7 @@ export function AtomMesh({
   isSelected = false,
   onSelect,
   onHoverChange,
+  emissiveColor,
 }: AtomMeshProps) {
   const highlightColor = CHEMISTRY_COLORS.concentration
   const meshColor = useMemo(
@@ -58,8 +61,8 @@ export function AtomMesh({
           color={meshColor}
           roughness={0.25}
           metalness={0.2}
-          emissive={isSelected ? highlightColor : CANVAS_COLORS.labelText}
-          emissiveIntensity={isSelected ? 0.45 : 0}
+          emissive={isSelected ? highlightColor : (emissiveColor ?? CANVAS_COLORS.labelText)}
+          emissiveIntensity={isSelected ? 0.45 : (emissiveColor ? 0.15 : 0)}
         />
       </mesh>
     </group>

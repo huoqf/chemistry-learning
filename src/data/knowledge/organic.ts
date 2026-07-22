@@ -182,6 +182,7 @@ export const organicKnowledge: KnowledgeNode[] = [
     animationIds: [],
     prerequisites: ['halogenated-hydrocarbon', 'aldehyde', 'carboxylic-acid-ester'],
     interactionTags: ['bond-break'],
+    relatedModelIds: ['model-organic-retrosynthesis'],
   },
   {
     id: 'biomacromolecule',

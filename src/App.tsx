@@ -4,6 +4,7 @@ import Layout from './app/Layout';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
 const AnimationPage = lazy(() => import('./pages/AnimationPage'));
+const GaokaoToolPage = lazy(() => import('./pages/GaokaoToolPage'));
 
 function RouteFallback() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
           <Route element={<Suspense fallback={<RouteFallback />}> <Outlet /> </Suspense>}>
             <Route path="/" element={<HomePage />} />
             <Route path="/animation/:id" element={<AnimationPage />} />
+            <Route path="/gaokao-tool/:id" element={<GaokaoToolPage />} />
           </Route>
         </Route>
       </Routes>

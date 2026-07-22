@@ -78,8 +78,9 @@ export const experimentKnowledge: KnowledgeNode[] = [
     module: '化学实验',
     importance: 'gaokao',
     animationIds: [],
-    prerequisites: ['ph-calculation', 'lab-instruments'],
-    interactionTags: ['macro-experiment'],
+    prerequisites: ['ph-calculation', 'solution-preparation'],
+    interactionTags: ['macro-experiment', 'chart-analysis'],
+    relatedModelIds: ['model-titration-error-purity'],
   },
   {
     id: 'ion-identification',

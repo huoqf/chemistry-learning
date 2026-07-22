@@ -4,6 +4,7 @@ import { unitCellFormulas, unitCellExamPoints } from '../quantities/structure/un
 import { vseprFormulas, vseprExamPoints } from '../quantities/structure/vsepr'
 import { hybridizationFormulas, hybridizationExamPoints } from '../quantities/structure/hybridization'
 import { chiralityFormulas, chiralityExamPoints } from '../quantities/structure/chirality'
+import { isomerismFormulas, isomerismExamPoints } from '../quantities/structure/isomerism'
 import { VSEPR_PRESETS } from '@/features/structure/vsepr-model/data/vseprData'
 import { VSEPR_PRESET_KEYS } from '@/features/structure/vsepr-model/hooks/useVseprChemistry'
 
@@ -367,4 +368,129 @@ export const structureAnimations = defineAnimations({
       symbol: true,
     },
   },
+  'anim-isomerism': {
+    title: '同分异构体 (2D减碳树 ↔ 3D球棍联动)',
+    knowledgeId: 'isomerism',
+    Component: lazy(() => import('@/features/structure/isomerism')),
+    controlsMode: 'param',
+    defaultParams: {
+      isomerType: 0,
+      selectedIndex: 0,
+      showEquivalentH: 1,
+    } as const,
+    controlMeta: [
+      {
+        type: 'segmented',
+        key: 'isomerType',
+        label: '探究分子体系选择',
+        group: '分子体系',
+        options: [
+          { label: '戊烷 (C₅H₁₂)', value: 0 },
+          { label: '丁醇/丁醚 (C₄H₁₀O)', value: 1 },
+          { label: '羧酸/酯 (C₃H₆O₂)', value: 2 },
+          { label: '芳香族 (C₇H₈O)', value: 3 },
+          { label: '丁烯/环烷 (C₄H₈)', value: 4 },
+        ],
+        onChangeSideEffect: { setParams: { selectedIndex: 0 } },
+      },
+      {
+        type: 'segmented',
+        key: 'selectedIndex',
+        label: '异构体切换',
+        group: '戊烷 C₅H₁₂ 构造异构体',
+        showIf: 'isomerType',
+        showIfValue: 0,
+        options: [
+          { label: '正戊烷', value: 0, description: '戊烷 · 沸点 36.1°C · 3 种等效氢' },
+          { label: '异戊烷', value: 1, description: '2-甲基丁烷 · 沸点 27.8°C · 4 种等效氢' },
+          { label: '新戊烷', value: 2, description: '2,2-二甲基丙烷 · 沸点 9.5°C · 1 种等效氢' },
+        ],
+      },
+      {
+        type: 'segmented',
+        key: 'selectedIndex',
+        label: '异构体切换',
+        group: '丁醇 & 丁醚 C₄H₁₀O 异构体 (全集 7 种)',
+        showIf: 'isomerType',
+        showIfValue: 1,
+        options: [
+          { label: '1-丁醇', value: 0, description: '丁-1-醇 (伯醇) · 5 种等效氢 · 117.7°C' },
+          { label: '2-丁醇', value: 1, description: '丁-2-醇 (仲醇/含手性碳) · 5 种等效氢 · 99.5°C' },
+          { label: '异丁醇', value: 2, description: '2-甲基丙-1-醇 (伯醇) · 4 种等效氢 · 108.0°C' },
+          { label: '叔丁醇', value: 3, description: '2-甲基丙-2-醇 (叔醇) · 2 种等效氢 (9:1) · 82.5°C' },
+          { label: '二乙醚', value: 4, description: '对称醚 (CH₃CH₂OCH₂CH₃) · 2 种等效氢 · 34.6°C' },
+          { label: '甲丙醚', value: 5, description: '不对称醚 (CH₃OCH₂CH₂CH₃) · 4 种等效氢 · 38.8°C' },
+          { label: '甲异丙醚', value: 6, description: '支链醚 (CH₃OCH(CH₃)₂) · 3 种等效氢 · 31.0°C' },
+        ],
+      },
+      {
+        type: 'segmented',
+        key: 'selectedIndex',
+        label: '异构体切换',
+        group: '羧酸 & 酯 C₃H₆O₂ 官能团类别异构',
+        showIf: 'isomerType',
+        showIfValue: 2,
+        options: [
+          { label: '丙酸', value: 0, description: 'CH₃CH₂COOH (弱酸) · 3 种等效氢 · 141.2°C' },
+          { label: '甲酸乙酯', value: 1, description: 'HCOOCH₂CH₃ (能发生银镜反应) · 3 种等效氢 · 54.0°C' },
+          { label: '乙酸甲酯', value: 2, description: 'CH₃COOCH₃ (普通酯) · 2 种等效氢 · 56.9°C' },
+          { label: '2-羟基丙醛', value: 3, description: 'HOCH₂CH₂CHO (羟基醛) · 4 种等效氢 · 120.0°C' },
+        ],
+      },
+      {
+        type: 'segmented',
+        key: 'selectedIndex',
+        label: '异构体切换',
+        group: '芳香族 C₇H₈O 异构 (高考极高频 5 种)',
+        showIf: 'isomerType',
+        showIfValue: 3,
+        options: [
+          { label: '邻甲酚', value: 0, description: '2-甲基苯酚 (FeCl₃显紫) · 5 种等效氢 · 191.0°C' },
+          { label: '间甲酚', value: 1, description: '3-甲基苯酚 (FeCl₃显紫) · 5 种等效氢 · 202.0°C' },
+          { label: '对甲酚', value: 2, description: '4-甲基苯酚 (高度对称) · 3 种等效氢 · 201.9°C' },
+          { label: '苯甲醇', value: 3, description: '芳香醇 (C₆H₅CH₂OH) · 4 种等效氢 · 205.0°C' },
+          { label: '苯甲醚', value: 4, description: '芳香醚 (C₆H₅OCH₃) · 3 种等效氢 · 154.0°C' },
+        ],
+      },
+      {
+        type: 'segmented',
+        key: 'selectedIndex',
+        label: '异构体切换',
+        group: '丁烯 & 环烷 C₄H₈ 烯烃与环状异构',
+        showIf: 'isomerType',
+        showIfValue: 4,
+        options: [
+          { label: '1-丁烯', value: 0, description: 'CH₂=CH-CH₂-CH₃ · 4 种等效氢 · -6.3°C' },
+          { label: '顺-2-丁烯', value: 1, description: '(Z)-丁-2-烯 (顺式立体) · 2 种等效氢 · 3.7°C' },
+          { label: '反-2-丁烯', value: 2, description: '(E)-丁-2-烯 (反式立体) · 2 种等效氢 · 0.9°C' },
+          { label: '异丁烯', value: 3, description: 'CH₂=C(CH₃)₂ · 2 种等效氢 · -6.9°C' },
+          { label: '环丁烷', value: 4, description: '环状饱和烃 · 1 种等效氢 (全等) · 12.5°C' },
+        ],
+      },
+      {
+        type: 'segmented',
+        key: 'showEquivalentH',
+        label: '等效氢染色高亮',
+        group: '等效氢分析',
+        options: [
+          { label: '开启等效氢高亮', value: 1 },
+          { label: '关闭染色', value: 0 },
+        ],
+      },
+      {
+        type: 'tip',
+        group: '双视角教学指引',
+        variant: 'primary',
+        content: '中屏左半区为 2D 减碳法平面碳骨架树，右半区为 3D 空间球棍模型，支持 360° 拖拽旋转对比。在左屏切换异构体可同步联动两侧视角。',
+      },
+    ],
+    formulas: isomerismFormulas,
+    gaokaoPoints: isomerismExamPoints,
+    tripleRepresentation: {
+      micro: true,
+      macro: true,
+      symbol: true,
+    },
+  },
 })
+

@@ -13,7 +13,10 @@
 | ChemistryVectorArrow | 化学矢量箭头（浓度/速率等，禁止 pixelLength，长度通过 refMagnitudes 归一化） | originDesign, vector, type, sceneScale | <ChemistryVectorArrow originDesign={pos} vector={v} type="concentration" sceneScale={ss} /> |
 | VectorDefs | 箭头 marker 定义 | — | <VectorDefs /> |
 
-> 化学器材组件（烧杯、试管、分子模型等）待后续开发时补充到本表。
+| DistillationFlaskApparatus | 具支蒸馏烧瓶（液体蒸馏与石油分馏，带高考考点支管口） | x, y | <DistillationFlaskApparatus x={100} y={150} fillLevel={0.4} /> |
+| AdapterApparatus | 牛角管/接液管（蒸馏冷凝流出接收） | x, y | <AdapterApparatus x={260} y={180} showDrop={true} /> |
+| OxidationBridgeArrow | 氧化还原双线桥/单线桥箭头（化合价升降与电子转移） | startPos, endPos, label | <OxidationBridgeArrow startPos={[100,80]} endPos={[200,80]} label="失 2e⁻" /> |
+| CarbonChain2D | 2D 平面碳骨架与同分异构体树（减碳法、等效氢高亮） | isomer | <CarbonChain2D isomer={currentIsomer} showEquivalentH={true} /> |
 
 ---
 

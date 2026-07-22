@@ -11,6 +11,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     animationIds: [],
     prerequisites: [],
     interactionTags: ['chart-analysis'],
+    relatedModelIds: ['model-avogadro-constant'],
   },
   {
     id: 'molar-mass',

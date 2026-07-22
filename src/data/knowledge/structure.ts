@@ -30,6 +30,7 @@ export const structureKnowledge: KnowledgeNode[] = [
     animationIds: [],
     prerequisites: ['atomic-structure'],
     interactionTags: ['chart-analysis'],
+    relatedModelIds: ['model-element-periodic-property'],
   },
   {
     id: 'periodic-table',
@@ -172,3 +173,5 @@ export const structureKnowledge: KnowledgeNode[] = [
     interactionTags: ['crystal-cell', 'chart-analysis'],
   },
 ]
+
+

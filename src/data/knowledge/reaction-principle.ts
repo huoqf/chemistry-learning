@@ -41,6 +41,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     animationIds: [],
     prerequisites: ['enthalpy'],
     interactionTags: ['chart-analysis'],
+    relatedModelIds: ['model-hess-law'],
   },
   // ── 化学反应速率 ──
   {

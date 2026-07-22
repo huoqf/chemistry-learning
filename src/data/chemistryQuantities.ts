@@ -36,6 +36,7 @@ export function registerQuantityBuilder(animationId: string, builder: QuantityBu
 }
 
 import { buildLeChatelierQuantities } from './quantities/reaction-principle/leChatelier'
+import { buildCollisionTheoryQuantities } from './quantities/reaction-principle/collisionTheory'
 import { buildElectrochemicalApplicationQuantities } from './quantities/reaction-principle/electrochemicalApplication'
 import { buildPrimaryCellQuantities } from './quantities/reaction-principle/primaryCell'
 import { buildElectrolyticCellQuantities } from './quantities/reaction-principle/electrolyticCell'
@@ -43,8 +44,10 @@ import { buildUnitCellQuantities } from './quantities/structure/unitCellCalculat
 import { buildVseprQuantities } from './quantities/structure/vsepr'
 import { buildHybridQuantities } from './quantities/structure/hybridization'
 import { buildChiralityQuantities } from './quantities/structure/chirality'
+import { buildIsomerismQuantities } from './quantities/structure/isomerism'
 
 registerQuantityBuilder('anim-le-chatelier', buildLeChatelierQuantities)
+registerQuantityBuilder('anim-collision-theory', buildCollisionTheoryQuantities)
 registerQuantityBuilder('anim-electrochemical-application', buildElectrochemicalApplicationQuantities)
 registerQuantityBuilder('anim-primary-cell', buildPrimaryCellQuantities)
 registerQuantityBuilder('anim-electrolytic-cell', buildElectrolyticCellQuantities)
@@ -52,6 +55,8 @@ registerQuantityBuilder('anim-unit-cell-calculation', buildUnitCellQuantities)
 registerQuantityBuilder('anim-vsepr', buildVseprQuantities)
 registerQuantityBuilder('anim-hybrid-orbital', buildHybridQuantities)
 registerQuantityBuilder('anim-chirality', buildChiralityQuantities)
+registerQuantityBuilder('anim-isomerism', buildIsomerismQuantities)
+
 
 
 

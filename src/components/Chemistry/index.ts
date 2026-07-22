@@ -152,3 +152,27 @@ export type { IonMigrationProps } from './IonMigration'
 
 // 类型导出
 export type { ChargeSign } from './types'
+
+// ── 高考解题与记忆强化通用组件 ──
+export { ValenceMatrixCanvas } from './ValenceMatrixCanvas'
+export type { MatrixItem } from './ValenceMatrixCanvas'
+
+// ── 提纯分离与蒸馏补全组件 ──
+export { DistillationFlaskApparatus } from './DistillationFlaskApparatus'
+export type { DistillationFlaskApparatusProps } from './DistillationFlaskApparatus'
+
+export { AdapterApparatus } from './AdapterApparatus'
+export type { AdapterApparatusProps } from './AdapterApparatus'
+
+export { OxidationBridgeArrow } from './OxidationBridgeArrow'
+export type { OxidationBridgeArrowProps } from './OxidationBridgeArrow'
+
+export { CarbonChain2D } from './CarbonChain2D'
+export type { CarbonChain2DProps, IsomerNode, CarbonNode, CarbonBond } from './CarbonChain2D'
+
+export { ContrastCanvas } from './ContrastCanvas'
+
+export { FlashCardCanvas } from './FlashCardCanvas'
+
+export { ReagentStepCanvas } from './ReagentStepCanvas'
+

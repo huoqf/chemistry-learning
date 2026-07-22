@@ -78,7 +78,7 @@ fontSize={11}              -> fontSize={font(11)}
 | `computeHistory(0, time)` — 随 time 动态采样 | 全量预计算 `computeHistory(0, MAX_TIME)`，再 `.filter(p => p.time <= time)`，图表加 `xDomain={[0, MAX_TIME]}` |
 | `stopCondition: (_, t) => t >= N` — 纯时间截断 | 改为化学条件判断（如正逆速率之差 < 阈值），或直接移除 `stopCondition` |
 | `equilibriumReached` / 提示状态未随 reset 清空 | `handleReset`、`setParams`、`updateParam` 每个分支均需 `setState(false)` |
-| 画布组件手写 `bg-slate-900`、`bg-gray-800` 等深色背景 | 删除，继承 `AnimationSvgCanvas` 系统背景 |
+| 画布组件或其包裹 `div` 手写任意背景色类名（包括深色 `bg-slate-900`、`bg-gray-800`，也包括浅灰色 `bg-gray-50`、`bg-slate-100`、`bg-neutral-100`、`bg-white` 等） | 全部删除；`AnimationSvgCanvas` 自身无背景，背景由 `ThreePanel` 中屏的 Light Theme 容器统一提供，**画布区及图表区任何包裹 `div` 都不得自写背景色** |
 | `\text{}` 中文超过 6 字 / 单条公式包含完整判断逻辑 | 拆分为多条独立短公式；中文描述迁移至 `controlMeta tip` |
 
 ---

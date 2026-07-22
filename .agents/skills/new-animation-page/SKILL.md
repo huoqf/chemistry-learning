@@ -547,7 +547,7 @@ import { withAlpha } from '@/theme/chemistry/colors'
 - [ ] **布局**：preset 正确（full/splitV/splitH/splitHw/square）；无手写 `h-[xxxpx]` 固定高度，多图表使用 `flex-1 min-h-0` 弹性平分；主屏与图表区用 `overflow-hidden`，无多余滚动条；无 viewBox+vp.transform 双重缩放；坐标走 worldToDesign
 
 - [ ] **组件**：矢量箭头用 VectorArrow/ChemistryVectorArrow；图表用 BaseChart 等；器材用现有组件（选用前核对组件视觉外观与适用语义）
-- [ ] **颜色**：无 hex 硬编码；化学量用 CHEMISTRY_COLORS，器材用 SCENE_COLORS，网格/轴线用 CANVAS_COLORS；SVG 字号用 font(N)；画布区域无自写深色背景类名
+- [ ] **颜色**：无 hex 硬编码；化学量用 CHEMISTRY_COLORS，器材用 SCENE_COLORS，网格/轴线用 CANVAS_COLORS；SVG 字号用 font(N)；**画布区及图表区包裹 `div` 无任何自写背景色类名**（含 `bg-gray-50`、`bg-slate-100`、`bg-white` 等浅色，以及 `bg-slate-900`、`bg-gray-800` 等深色，背景一律由系统 Light Theme 统一提供）
 - [ ] **时序图**：history 基于固定全量时间轴预计算；图表显式传入 xDomain；stopCondition 使用化学条件判断（非时间截断）；stopCondition 触发的状态在所有 reset 路径中同步清空
 - [ ] **右屏公式**：单条 LaTeX 中 \text{} 内中文不超过 6 字；多条判断条件已拆分为多条独立短公式
 - [ ] **Registry**：动画表已注册（defaultParams as const，controlsMode 正确）；化学量构建器已实现并注册；知识点已确认

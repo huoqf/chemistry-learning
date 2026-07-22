@@ -49,7 +49,7 @@
 | 直接 requestAnimationFrame(...) | useAnimationLifecycle / src/utils/animation.ts |
 | 写死 scale = 0.8 | useSceneScale({ vp, preset, anchor }) |
 | 任何魔法数字坐标 | worldToDesign() from @/scene |
-| 画布区域手写 `bg-slate-900`、`bg-gray-800` 等背景色 | 不写背景，继承 `AnimationSvgCanvas` 系统 Light Theme |
+| **画布区或图表区的任何包裹 `div` 手写背景色**（深色如 `bg-slate-900`/`bg-gray-800`，或浅灰色如 `bg-gray-50`/`bg-slate-100`/`bg-neutral-100`/`bg-white`） | 全部删除；背景一律由系统 Light Theme 统一提供，`AnimationSvgCanvas` 自身无背景 |
 
 ### 铁律 2：新页面布局唯一路径
 
@@ -190,7 +190,9 @@ const history = fullHistory.filter(p => p.time <= time)
 
 **状态生命周期**：`stopCondition` 触发的所有衍生状态（如 `equilibriumReached`）必须在 `handleReset`、`setParams`、`updateParam` 每个重置路径中同步清空。
 
-**LaTeX 文本**：`\text{}` 内中文不超过 6 字；多条判断条件必须拆为多条独立短公式，禁止将整段判断逻辑写在单条 LaTeX 字符串中（导致右屏横向溢出）。
+### 铁律 9：双视角平行板块与高考母题双向关联
+
+系统采用**双视角平行导航**（教材章节知识树 + 高考解题母题专题）。所有新增的高考母题与记忆矩阵专题必须在 `src/data/gaokaoModels.ts` 独立注册，并保持与 `knowledgeTree.ts` 原有教材节点的 `relatedModelIds` 双向互通；**严禁直接修改或破坏现有 3D 页面及教材节点路由**。
 
 ---
 
