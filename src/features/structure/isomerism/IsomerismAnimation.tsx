@@ -17,8 +17,8 @@ const PENTANE_ISOMERS: IsomerNode[] = [
     boilingPoint: 36.1,
     hnmrPeaks: [
       { group: 1, delta: 0.9, count: 6, multiplicity: '三重峰 (t)' },
-      { group: 2, delta: 1.3, count: 4, multiplicity: '五重峰 (m)' },
-      { group: 3, delta: 1.5, count: 2, multiplicity: '五重峰 (m)' },
+      { group: 2, delta: 1.3, count: 4, multiplicity: '六重峰 (h)' },
+      { group: 3, delta: 1.5, count: 2, multiplicity: '五重峰 (q)' },
     ],
     nodes: [
       { id: 'c1', label: 'CH₃', x: 50, y: 240, equivalentHydrogenGroup: 1 },
