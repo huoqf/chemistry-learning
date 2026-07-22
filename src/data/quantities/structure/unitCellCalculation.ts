@@ -45,7 +45,7 @@ export function buildUnitCellQuantities(
   return [
     {
       key: 'zValue',
-      label: '晶胞均占原子/分子数 N',
+      label: '化学式项数 Z',
       value: zValue,
       unit: '',
       colorKey: 'concentration',

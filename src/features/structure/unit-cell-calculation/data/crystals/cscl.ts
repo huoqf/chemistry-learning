@@ -10,12 +10,13 @@ export function createCsClData(): CrystalTypeData {
   const atoms: AtomSpec[] = []
 
   // Cl⁻ 占 8 顶点 (8 x 1/8 = 1)
+  // Cl⁻ 离子半径 181 pm > Cs⁺ 离子半径 167 pm
   getCornerFracs().forEach((pos, i) => {
     atoms.push({
       id: `cl-corner-${i}`,
       element: 'Cl⁻',
       fracPos: pos,
-      radius: 0.24,
+      radius: 0.26,
       color: ATOM_COLORS.Cl,
       label: '顶点 Cl⁻ (贡献 1/8)',
       sharingRatio: 0.125,
@@ -28,14 +29,14 @@ export function createCsClData(): CrystalTypeData {
     id: 'cs-body-0',
     element: 'Cs⁺',
     fracPos: [0.5, 0.5, 0.5] as const,
-    radius: 0.26,
+    radius: 0.24,
     color: ATOM_COLORS.K,
     label: '体心 Cs⁺ (贡献 1)',
     sharingRatio: 1,
     locationType: 'body',
   })
 
-  // 配位连线 (体心 Cs⁺ 到 8 个顶点 Cl⁻)
+  // 离子键连线 (体心 Cs⁺ 到 8 个顶点 Cl⁻)
   const bonds: BondSpec[] = []
   for (let i = 0; i < 8; i++) {
     bonds.push({ fromIndex: 8, toIndex: i })

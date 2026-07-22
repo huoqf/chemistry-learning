@@ -10,12 +10,13 @@ export function createCaF2Data(): CrystalTypeData {
   const atoms: AtomSpec[] = []
 
   // Ca²⁺ 占 8 顶点 (8 x 1/8 = 1)
+  // Ca²⁺ 离子半径 99 pm < F⁻ 离子半径 133 pm
   getCornerFracs().forEach((pos, i) => {
     atoms.push({
       id: `ca-corner-${i}`,
       element: 'Ca²⁺',
       fracPos: pos,
-      radius: 0.23,
+      radius: 0.16,
       color: ATOM_COLORS.Ca,
       label: '顶点 Ca²⁺ (贡献 1/8)',
       sharingRatio: 0.125,
@@ -29,7 +30,7 @@ export function createCaF2Data(): CrystalTypeData {
       id: `ca-face-${i}`,
       element: 'Ca²⁺',
       fracPos: pos,
-      radius: 0.23,
+      radius: 0.16,
       color: ATOM_COLORS.Ca,
       label: '面心 Ca²⁺ (贡献 1/2)',
       sharingRatio: 0.5,
@@ -38,6 +39,7 @@ export function createCaF2Data(): CrystalTypeData {
   })
 
   // F⁻ 占 8 个内部四面体空隙 (8 x 1 = 8)
+  // F⁻ 离子半径 133 pm > Ca²⁺ 离子半径 99 pm
   const fFracs: [number, number, number][] = [
     [0.25, 0.25, 0.25], [0.75, 0.25, 0.25],
     [0.25, 0.75, 0.25], [0.75, 0.75, 0.25],
@@ -49,7 +51,7 @@ export function createCaF2Data(): CrystalTypeData {
       id: `f-tetra-${i}`,
       element: 'F⁻',
       fracPos: pos,
-      radius: 0.16,
+      radius: 0.23,
       color: ATOM_COLORS.F,
       label: '内部 F⁻ (贡献 1)',
       sharingRatio: 1,

@@ -261,8 +261,8 @@ export const structureAnimations = defineAnimations({
         key: 'showBonds',
         group: '连线显示',
         options: [
-          { label: '显示配位键', value: 1 },
-          { label: '隐藏配位键', value: 0 },
+          { label: '显示化学键', value: 1 },
+          { label: '隐藏化学键', value: 0 },
         ],
       },
       {

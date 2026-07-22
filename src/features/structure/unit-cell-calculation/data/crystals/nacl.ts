@@ -63,7 +63,7 @@ export function createNaClData(): CrystalTypeData {
     })
   })
 
-  // 近邻配位键 (体心 Na⁺ 到 6 个面心 Cl⁻)
+  // 近邻离子键 (体心 Na⁺ 到 6 个面心 Cl⁻)
   const bonds = [
     { fromIndex: 14, toIndex: 8 },
     { fromIndex: 14, toIndex: 9 },
