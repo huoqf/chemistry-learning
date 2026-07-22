@@ -105,4 +105,12 @@ describe('KnowledgeTreeHome 高考化学主页知识地图组件测试', () => {
     expect(screen.getByText('甲烷与烷烃')).toBeInTheDocument()
     expect(screen.getByText('酸碱中和滴定')).toBeInTheDocument()
   })
+
+  it('支持切换至高考高频解题母题与记忆矩阵视图', async () => {
+    const { fireEvent } = await import('@testing-library/react')
+    renderWithRouter(<KnowledgeTreeHome />)
+    const gaokaoTab = screen.getByText('🎯 视角 B：高考高频解题母题与记忆矩阵')
+    fireEvent.click(gaokaoTab)
+    expect(screen.getByText('高考高频解题母题与记忆强化矩阵')).toBeInTheDocument()
+  })
 })

@@ -23,3 +23,5 @@ export { useUniqueSvgId } from './useUniqueSvgId'
 export { useDevicePixelRatio, setupCanvasDPR } from './useCanvasDPR'
 
 export { useTimedPulse } from './useTimedPulse'
+
+export { useRadioGroup } from './useRadioGroup'

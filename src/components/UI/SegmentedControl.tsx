@@ -1,4 +1,5 @@
-import type { FC, ReactNode } from 'react'
+import { useCallback, type FC, type ReactNode } from 'react'
+import { useRadioGroup } from '@/hooks/useRadioGroup'
 
 interface SegmentedControlOption {
   label: string | ReactNode
@@ -22,6 +23,26 @@ export const SegmentedControl: FC<SegmentedControlProps> = ({
   label,
   className = '',
 }) => {
+  const keys = options.map((o) => String(o.value))
+  const stringValue = String(value)
+
+  const { getItemProps, registerRef } = useRadioGroup({
+    value: stringValue,
+    keys,
+    onChange: (key) => {
+      const opt = options.find((o) => String(o.value) === key)
+      if (opt && !disabled) onChange(opt.value)
+    },
+    direction: 'linear',
+  })
+
+  const setRef = useCallback(
+    (key: string) => (el: HTMLButtonElement | null) => {
+      registerRef(key, el)
+    },
+    [registerRef],
+  )
+
   // Tailwind 无法识别模板字符串中的动态类名，必须使用完整类名映射
   const colsMap: Record<number, string> = {
     2: 'grid-cols-2',
@@ -39,13 +60,17 @@ export const SegmentedControl: FC<SegmentedControlProps> = ({
         </span>
       )}
       <div
+        role="radiogroup"
         className={`grid ${colsClass} gap-1 p-1 bg-neutral-100 rounded-lg`}
       >
         {options.map((opt) => {
           const isActive = opt.value === value
+          const itemProps = getItemProps(String(opt.value))
           return (
             <button
               key={opt.value}
+              ref={setRef(String(opt.value))}
+              {...itemProps}
               onClick={() => {
                 if (!disabled && !isActive) onChange(opt.value)
               }}

@@ -38,7 +38,7 @@ describe('ControlPanel', () => {
       },
     ], { reactionType: 0 })
 
-    fireEvent.click(screen.getByRole('button', { name: '不可逆' }))
+    fireEvent.click(screen.getByRole('radio', { name: '不可逆' }))
     expect(updateParam).toHaveBeenCalledWith('reactionType', 1)
     expect(resetAnimation).toHaveBeenCalledTimes(1)
   })

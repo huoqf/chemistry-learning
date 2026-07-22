@@ -1,5 +1,6 @@
 import { Plus, Minus } from 'lucide-react'
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
+import { useRadioGroup } from '@/hooks/useRadioGroup'
 import type { ControlMeta, ControlCondition } from '@/data/types'
 import { OptionButton } from './OptionButton'
 import { Button } from './Button'
@@ -257,31 +258,62 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
       case 'modeGrid': {
         const modeValue = Math.round(params[control.key] ?? control.modes[0]?.value ?? 0)
         const currentMode = control.modes.find((m) => m.value === modeValue)
+        const modeKeys = control.modes.map((m) => String(m.value))
+        const cols = control.cols ?? 2
+        const { getItemProps, registerRef } = useRadioGroup({
+          value: String(modeValue),
+          keys: modeKeys,
+          direction: 'grid',
+          columns: cols,
+          onChange: (key) => {
+            const val = Number(key)
+            if (val === modeValue) return
+            updateParam(control.key, val)
+            if (control.resetOnChange) resetAnimation()
+            applySideEffect(control, val)
+          },
+        })
+        const setRef = useCallback(
+          (key: string) => (el: HTMLButtonElement | null) => {
+            registerRef(key, el)
+          },
+          [registerRef],
+        )
         return (
           <div key={`${control.type}-${control.key}-${index}`} className="space-y-2">
             {control.label && (
               <span className="mb-1 block text-xs font-semibold text-neutral-600">{control.label}</span>
             )}
-            <div style={{ display: 'grid', gridTemplateColumns: `repeat(${control.cols ?? 2}, minmax(0, 1fr))`, gap: '0.375rem' }}>
-              {control.modes.map((mode) => (
-                <OptionButton
-                  key={mode.value}
-                  label={
-                    <span className="inline-flex items-center gap-1">
-                      <span>{mode.value + 1}.</span>
-                      {mode.label}
-                    </span>
-                  }
-                  selected={mode.value === modeValue}
-                  disabled={disabled}
-                  onClick={() => {
-                    if (mode.value === modeValue) return
-                    updateParam(control.key, mode.value)
-                    if (control.resetOnChange) resetAnimation()
-                    applySideEffect(control, mode.value)
-                  }}
-                />
-              ))}
+            <div
+              role="radiogroup"
+              style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gap: '0.375rem' }}
+            >
+              {control.modes.map((mode) => {
+                const radioProps = getItemProps(String(mode.value))
+                return (
+                  <OptionButton
+                    key={mode.value}
+                    variant="mode"
+                    label={
+                      <span className="inline-flex items-center gap-1">
+                        <span>{mode.value + 1}.</span>
+                        {mode.label}
+                      </span>
+                    }
+                    selected={mode.value === modeValue}
+                    disabled={disabled}
+                    radioTabIndex={radioProps.tabIndex}
+                    radioOnKeyDown={radioProps.onKeyDown}
+                    buttonRef={setRef(String(mode.value))}
+                    onClick={() => {
+                      if (mode.value === modeValue) return
+                      updateParam(control.key, mode.value)
+                      if (control.resetOnChange) resetAnimation()
+                      applySideEffect(control, mode.value)
+                    }}
+                  />
+                )
+              })}
             </div>
             {currentMode && (
               <div className="mt-1 text-ui-md text-neutral-500 pt-2 border-t border-neutral-100">

@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Play, Pause, RotateCcw, RefreshCw } from 'lucide-react'
 import { colors, duration } from '@/theme'
+import { useRadioGroup } from '@/hooks/useRadioGroup'
 
 interface AnimationControlsProps {
   isPlaying: boolean
@@ -15,6 +16,62 @@ interface AnimationControlsProps {
   equilibriumReached?: boolean
 }
 
+// 速度选择器：互斥单选，已接入 useRadioGroup（radiogroup + roving tabindex + 方向键导航）
+const SPEED_OPTIONS = [0.25, 0.5, 1, 2]
+
+const SpeedSelector: React.FC<{
+  speed: number
+  onSpeedChange: (s: number) => void
+  labelMinWidth?: string
+}> = ({ speed, onSpeedChange, labelMinWidth = '30px' }) => {
+  const keys = SPEED_OPTIONS.map(String)
+  const { getItemProps, registerRef } = useRadioGroup({
+    value: String(speed),
+    keys,
+    onChange: (key) => onSpeedChange(Number(key)),
+    direction: 'linear',
+  })
+  const setRef = useCallback(
+    (key: string) => (el: HTMLButtonElement | null) => registerRef(key, el),
+    [registerRef],
+  )
+
+  return (
+    <div className="flex items-center gap-2 text-sm">
+      <span className="text-neutral-600" style={{ minWidth: labelMinWidth }}>速度：</span>
+      <div className="flex gap-1" role="radiogroup" aria-label="播放速度">
+        {SPEED_OPTIONS.map((s) => {
+          const isActive = s === speed
+          const itemProps = getItemProps(String(s))
+          return (
+            <button
+              key={s}
+              ref={setRef(String(s))}
+              {...itemProps}
+              onClick={() => {
+                if (!isActive) onSpeedChange(s)
+              }}
+              className={[
+                'px-3 py-1 rounded text-sm font-medium active:scale-[0.97] transition-all',
+                isActive
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200',
+              ].join(' ')}
+              style={{
+                transitionProperty: 'all',
+                transitionDuration: `${duration.fast}ms`,
+                transitionTimingFunction: 'ease-out',
+              }}
+            >
+              {s}x
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 export const AnimationControls: React.FC<AnimationControlsProps> = ({
   isPlaying,
   speed,
@@ -27,7 +84,6 @@ export const AnimationControls: React.FC<AnimationControlsProps> = ({
   controlsMode = 'timed',
   equilibriumReached: _equilibriumReached = false,
 }) => {
-  const speedOptions = [0.25, 0.5, 1, 2]
   const percentage = maxTime > 0 ? (time / maxTime) * 100 : 0
 
   const getSpeedColor = () => {
@@ -86,30 +142,7 @@ export const AnimationControls: React.FC<AnimationControlsProps> = ({
             循环运行中
           </div>
 
-          <div className="flex items-center gap-2 text-sm">
-            <span className="text-neutral-600 min-w-[30px]">速度：</span>
-            <div className="flex gap-1">
-              {speedOptions.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => onSpeedChange(s)}
-                  className={[
-                    'px-3 py-1 rounded text-sm font-medium active:scale-[0.97] transition-all',
-                    speed === s
-                      ? 'bg-primary-600 text-white'
-                      : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200',
-                  ].join(' ')}
-                  style={{
-                    transitionProperty: 'all',
-                    transitionDuration: `${duration.fast}ms`,
-                    transitionTimingFunction: 'ease-out',
-                  }}
-                >
-                  {s}x
-                </button>
-              ))}
-            </div>
-          </div>
+          <SpeedSelector speed={speed} onSpeedChange={onSpeedChange} />
         </div>
       </div>
     )
@@ -151,30 +184,7 @@ export const AnimationControls: React.FC<AnimationControlsProps> = ({
         </div>
 
 
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-neutral-600 min-w-[60px]">速度：</span>
-          <div className="flex gap-1">
-            {speedOptions.map((s) => (
-              <button
-                key={s}
-                onClick={() => onSpeedChange(s)}
-                className={[
-                  'px-3 py-1 rounded text-sm font-medium active:scale-[0.97] transition-all',
-                  speed === s
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200',
-                ].join(' ')}
-                style={{
-                  transitionProperty: 'all',
-                  transitionDuration: `${duration.fast}ms`,
-                  transitionTimingFunction: 'ease-out',
-                }}
-              >
-                {s}x
-              </button>
-            ))}
-          </div>
-        </div>
+        <SpeedSelector speed={speed} onSpeedChange={onSpeedChange} labelMinWidth="60px" />
 
         <div className="flex-1 flex items-center gap-3">
           <span className="text-xs font-medium px-1.5 py-0.5 rounded" style={{

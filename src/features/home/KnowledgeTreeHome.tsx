@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Lock,
@@ -11,10 +11,13 @@ import {
   TestTube,
   CheckCircle2,
 } from 'lucide-react'
+import { GaokaoModelsHome } from './GaokaoModelsHome'
+import { BookOpen, Target } from 'lucide-react'
 import { knowledgeTree, resolveAnimationIds } from '@/data/knowledgeTree'
 import { getAnimationConfig, getAnimationCount, loadExtendedRegistry } from '@/data/animationRegistry'
 import { useProgressStore } from '@/stores'
 import { colors } from '@/theme'
+import { useRadioGroup } from '@/hooks/useRadioGroup'
 import type { KnowledgeNode, InteractionType } from '@/data/types'
 
 // ── 交互类型标签配置 ──────────────────────────────────────────────────────
@@ -144,6 +147,20 @@ export function KnowledgeTreeHome() {
   const navigate = useNavigate()
   const { masteredKnowledge, setTotalCounts } = useProgressStore()
   const [, setRegistryReady] = useState(false)
+  const [viewMode, setViewMode] = useState<'tree' | 'gaokao'>('tree')
+
+  // 视角切换：互斥单选，注入 radiogroup 语义（保留 Banner 视觉与不同选中色）
+  const viewKeys = ['tree', 'gaokao'] as const
+  const { getItemProps: getViewProps, registerRef: registerViewRef } = useRadioGroup({
+    value: viewMode,
+    keys: [...viewKeys],
+    onChange: (key) => setViewMode(key as 'tree' | 'gaokao'),
+    direction: 'linear',
+  })
+  const setViewRef = useCallback(
+    (key: string) => (el: HTMLButtonElement | null) => registerViewRef(key, el),
+    [registerViewRef],
+  )
 
   useEffect(() => {
     let active = true
@@ -199,11 +216,56 @@ export function KnowledgeTreeHome() {
     return result
   }, [])
 
+  if (viewMode === 'gaokao') {
+    return <GaokaoModelsHome onSwitchToTextbookTree={() => setViewMode('tree')} />
+  }
+
+  // 用 string 变量避免 TS 控制流收窄后比较报错（Banner 两个按钮均需按 viewMode 显示选中态）
+  const currentView: string = viewMode
+
   return (
     <div className="w-full min-h-screen bg-neutral-50 relative pb-16">
       {/* 科技感背景氛围光晕 (使用与 UI Token 对应的淡透色系) */}
       <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-200/20 rounded-full filter blur-3xl pointer-events-none" />
       <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-purple-200/15 rounded-full filter blur-3xl pointer-events-none" />
+
+      {/* 双视角平行模式切换 Banner（radiogroup 语义，保留不同选中色） */}
+      <div className="max-w-7xl mx-auto px-6 pt-6">
+        <div className="bg-white border border-neutral-200 rounded-xl p-1.5 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-2" role="radiogroup" aria-label="浏览视角">
+            <button
+              ref={setViewRef('tree')}
+              {...getViewProps('tree')}
+              onClick={() => setViewMode('tree')}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                currentView === 'tree'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-neutral-600 hover:bg-neutral-100'
+              }`}
+            >
+              <BookOpen className="w-4 h-4" />
+              📖 视角 A：按教材章节浏览 (传统树)
+            </button>
+            <button
+              ref={setViewRef('gaokao')}
+              {...getViewProps('gaokao')}
+              onClick={() => setViewMode('gaokao')}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                currentView === 'gaokao'
+                  ? 'bg-amber-600 text-white shadow-sm'
+                  : 'text-neutral-600 hover:bg-neutral-100'
+              }`}
+            >
+              <Target className="w-4 h-4" />
+              🎯 视角 B：高考高频解题母题与记忆矩阵
+            </button>
+          </div>
+
+          <span className="hidden sm:inline-block text-xs text-neutral-400 font-medium pr-3">
+            保留全部 3D 模型与教材知识点
+          </span>
+        </div>
+      </div>
 
       {/* 头部与系统概览看板 */}
       <div className="max-w-7xl mx-auto px-6 pt-8 pb-6">
@@ -410,6 +472,19 @@ export function KnowledgeTreeHome() {
                                       {masteredKnowledge.includes(node.id) && (
                                         <span className="text-[10px] px-1.5 py-0.5 rounded font-bold border border-emerald-200 bg-emerald-50 text-emerald-700">
                                           已掌握
+                                        </span>
+                                      )}
+                                      {node.relatedModelIds && node.relatedModelIds.length > 0 && (
+                                        <span
+                                          onClick={(e) => {
+                                            e.stopPropagation()
+                                            setViewMode('gaokao')
+                                          }}
+                                          className="text-[10px] px-1.5 py-0.5 rounded font-bold border border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100 transition-colors flex items-center gap-0.5 cursor-pointer"
+                                          title="点击前往高考提分母题专题"
+                                        >
+                                          <Target size={10} className="text-amber-600" />
+                                          🎯 高考母题 ({node.relatedModelIds.length})
                                         </span>
                                       )}
                                       {node.interactionTags?.map((tag) => {
