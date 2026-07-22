@@ -4,7 +4,7 @@ import { OrbitControls, Line } from '@react-three/drei'
 import { AtomMesh, BondMesh } from '@/components/Chemistry3D'
 import { OrbitalLobeMesh } from './OrbitalLobeMesh'
 import type { HybridModelData } from '../data/hybridData'
-import { SCENE_COLORS, CHEMISTRY_COLORS } from '@/theme'
+import { SCENE_COLORS, CHEMISTRY_COLORS, CANVAS_COLORS } from '@/theme'
 
 interface HybridOrbitalSceneProps {
   model: HybridModelData
@@ -93,6 +93,7 @@ function SceneContent({
                   radius={0.25}
                   isSelected={isSelected}
                   onSelect={() => setSelectedId(isSelected ? null : ligId)}
+                  emissiveColor={lig.element === 'H' ? CANVAS_COLORS.labelText : undefined}
                 />
               </group>
             )

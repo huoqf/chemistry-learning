@@ -4,6 +4,7 @@
 
 import type { VseprMolecule } from '../types'
 import { GEOMETRY_VERTICES, POLY_EDGES, normalize } from '../geometry'
+import { ATOM_COLORS } from '@/theme'
 
 export const TETRAHEDRAL_MOLECULES: Record<string, VseprMolecule> = {
   ch4: {
@@ -24,7 +25,7 @@ export const TETRAHEDRAL_MOLECULES: Record<string, VseprMolecule> = {
     bondAngleText: '109.5°',
     description: 'CH₄ 4个 C-H 键对称指向正四面体顶点，无孤电子对 (n=0)，键角 109.5°',
     centralColor: '#475569',
-    ligandColor: '#94a3b8',
+    ligandColor: ATOM_COLORS.H,
     ligands: [
       { pos: GEOMETRY_VERTICES.tetrahedral[0], label: 'H' },
       { pos: GEOMETRY_VERTICES.tetrahedral[1], label: 'H' },
@@ -57,7 +58,7 @@ export const TETRAHEDRAL_MOLECULES: Record<string, VseprMolecule> = {
     bondAngleText: '109.5°',
     description: 'NH₄⁺ 阳离子带 +1 电荷，n=(5-1-4×1)/2=0，对称正四面体构型，键角 109.5°',
     centralColor: '#3b82f6',
-    ligandColor: '#94a3b8',
+    ligandColor: ATOM_COLORS.H,
     ligands: [
       { pos: GEOMETRY_VERTICES.tetrahedral[0], label: 'H' },
       { pos: GEOMETRY_VERTICES.tetrahedral[1], label: 'H' },
@@ -123,7 +124,7 @@ export const TETRAHEDRAL_MOLECULES: Record<string, VseprMolecule> = {
     bondAngleText: '107°',
     description: 'NH₃ 含 1 对孤电子对，孤对-成键电子对排斥大于成键-成键，键角被压缩至 107°',
     centralColor: '#3b82f6',
-    ligandColor: '#94a3b8',
+    ligandColor: ATOM_COLORS.H,
     ligands: [
       { pos: GEOMETRY_VERTICES.tetrahedral[1], label: 'H' },
       { pos: GEOMETRY_VERTICES.tetrahedral[2], label: 'H' },
@@ -156,7 +157,7 @@ export const TETRAHEDRAL_MOLECULES: Record<string, VseprMolecule> = {
     bondAngleText: '107°',
     description: 'H₃O⁺ 阳离子带 +1 电荷，n=(6-1-3×1)/2=1，与 NH₃ 互为等电子体，呈三角锥形',
     centralColor: '#ef4444',
-    ligandColor: '#94a3b8',
+    ligandColor: ATOM_COLORS.H,
     ligands: [
       { pos: GEOMETRY_VERTICES.tetrahedral[1], label: 'H' },
       { pos: GEOMETRY_VERTICES.tetrahedral[2], label: 'H' },
@@ -222,7 +223,7 @@ export const TETRAHEDRAL_MOLECULES: Record<string, VseprMolecule> = {
     bondAngleText: '104.5°',
     description: 'H₂O 含 2 对孤电子对，强烈排斥作用使 H-O-H 键角进一步被压缩至 104.5°',
     centralColor: '#ef4444',
-    ligandColor: '#94a3b8',
+    ligandColor: ATOM_COLORS.H,
     ligands: [
       { pos: GEOMETRY_VERTICES.tetrahedral[2], label: 'H' },
       { pos: GEOMETRY_VERTICES.tetrahedral[3], label: 'H' },

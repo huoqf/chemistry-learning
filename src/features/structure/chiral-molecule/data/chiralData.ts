@@ -5,6 +5,8 @@
  * 以及顺反异构分子（顺/反-2-丁烯、顺/反-1,2-二氯乙烯）的 3D 坐标与化学元数据。
  */
 
+import { ATOM_COLORS } from '@/theme'
+
 export interface Atom3D {
   id: string
   element: string
@@ -74,7 +76,7 @@ export const CHIRAL_PRESETS: ChiralMolecule[] = [
     isChiral: true,
     chiralCenterIndex: 0, // 0 号原子为中心手性碳
     substituents: [
-      { label: '-H', color: '#94A3B8', atomIndices: [1] },
+      { label: '-H', color: ATOM_COLORS.H, atomIndices: [1] },
       { label: '-OH', color: '#EF4444', atomIndices: [2, 3] },
       { label: '-CH₃', color: '#10B981', atomIndices: [4, 5, 6, 7] },
       { label: '-COOH', color: '#3B82F6', atomIndices: [8, 9, 10, 11] },
@@ -126,7 +128,7 @@ export const CHIRAL_PRESETS: ChiralMolecule[] = [
     isChiral: true,
     chiralCenterIndex: 0,
     substituents: [
-      { label: '-H', color: '#94A3B8', atomIndices: [1] },
+      { label: '-H', color: ATOM_COLORS.H, atomIndices: [1] },
       { label: '-Cl', color: '#22C55E', atomIndices: [2] },
       { label: '-CH₃', color: '#F59E0B', atomIndices: [3, 4, 5, 6] },
       { label: '-CH₂CH₃', color: '#8B5CF6', atomIndices: [7, 8, 9, 10, 11, 12, 13] },
@@ -181,7 +183,7 @@ export const CHIRAL_PRESETS: ChiralMolecule[] = [
     isChiral: true,
     chiralCenterIndex: 0,
     substituents: [
-      { label: '-H', color: '#94A3B8', atomIndices: [1] },
+      { label: '-H', color: ATOM_COLORS.H, atomIndices: [1] },
       { label: '-NH₂', color: '#3B82F6', atomIndices: [2, 3, 4] },
       { label: '-CH₃', color: '#10B981', atomIndices: [5, 6, 7, 8] },
       { label: '-COOH', color: '#EC4899', atomIndices: [9, 10, 11, 12] },
@@ -233,7 +235,7 @@ export const CHIRAL_PRESETS: ChiralMolecule[] = [
     isChiral: true,
     chiralCenterIndex: 0,
     substituents: [
-      { label: '-H', color: '#94A3B8', atomIndices: [1] },
+      { label: '-H', color: ATOM_COLORS.H, atomIndices: [1] },
       { label: '-OH', color: '#EF4444', atomIndices: [2, 3] },
       { label: '-CHO', color: '#F59E0B', atomIndices: [4, 5, 6] },
       { label: '-CH₂OH', color: '#10B981', atomIndices: [7, 8, 9, 10, 11] },

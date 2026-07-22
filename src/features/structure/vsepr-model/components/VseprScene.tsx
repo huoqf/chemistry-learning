@@ -62,6 +62,7 @@ function SceneContent({
               radius={0.24}
               isSelected={isSelected}
               onSelect={() => setSelectedNode(isSelected ? null : nodeId)}
+              emissiveColor={molecule.ligandElement === 'H' ? CANVAS_COLORS.labelText : undefined}
             />
           </group>
         )

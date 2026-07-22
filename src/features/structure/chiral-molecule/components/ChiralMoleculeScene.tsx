@@ -5,7 +5,7 @@ import { AtomMesh, BondMesh } from '@/components/Chemistry3D'
 import type { ChiralMolecule, Atom3D, Bond3D } from '../data/chiralData'
 import type { MirroredMoleculeData } from '../hooks/useChiralChemistry'
 import { useSimulationFrame } from '@/utils/animation'
-import { SCENE_COLORS } from '@/theme'
+import { SCENE_COLORS, CANVAS_COLORS } from '@/theme'
 
 interface ChiralMoleculeSceneProps {
   molecule: ChiralMolecule
@@ -128,6 +128,7 @@ function MoleculeRenderGroup({
               radius={atom.isChiralCenter ? 0.38 : 0.28}
               isSelected={isSelected}
               onSelect={() => onSelectAtom(isSelected ? null : atom.id)}
+              emissiveColor={atom.element === 'H' ? CANVAS_COLORS.labelText : undefined}
             />
 
             {/* 手性碳星号标记 */}

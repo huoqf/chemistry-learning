@@ -1,3 +1,5 @@
+import { ATOM_COLORS } from '@/theme'
+
 export interface HybridVector {
   dir: [number, number, number]
   type: 'hybrid' | 'unhybridizedP' | 'lonePair'
@@ -125,8 +127,8 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
       },
     ],
     ligands: [
-      { pos: [-2.1, 0, 0], element: 'H', color: '#E2E8F0', bondType: 'sigma' },
-      { pos: [2.1, 0, 0], element: 'H', color: '#E2E8F0', bondType: 'sigma' },
+      { pos: [-2.1, 0, 0], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
+      { pos: [2.1, 0, 0], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
     ],
     piBonds: [
       { startPos: [-0.8, 0, 0], endPos: [0.8, 0, 0], dir: [0, 1.0, 0] },
@@ -222,10 +224,10 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
       },
     ],
     ligands: [
-      { pos: [-1.7, 1.55, 0], element: 'H', color: '#E2E8F0', bondType: 'sigma' },
-      { pos: [-1.7, -1.55, 0], element: 'H', color: '#E2E8F0', bondType: 'sigma' },
-      { pos: [1.7, 1.55, 0], element: 'H', color: '#E2E8F0', bondType: 'sigma' },
-      { pos: [1.7, -1.55, 0], element: 'H', color: '#E2E8F0', bondType: 'sigma' },
+      { pos: [-1.7, 1.55, 0], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
+      { pos: [-1.7, -1.55, 0], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
+      { pos: [1.7, 1.55, 0], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
+      { pos: [1.7, -1.55, 0], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
     ],
     piBonds: [
       { startPos: [-0.8, 0, 0], endPos: [0.8, 0, 0], dir: [0, 0, 1.0] },
@@ -280,10 +282,10 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
       },
     ],
     ligands: [
-      { pos: [1.75 * SQ3_3, 1.75 * SQ3_3, 1.75 * SQ3_3], element: 'H', color: '#E2E8F0', bondType: 'sigma' },
-      { pos: [-1.75 * SQ3_3, -1.75 * SQ3_3, 1.75 * SQ3_3], element: 'H', color: '#E2E8F0', bondType: 'sigma' },
-      { pos: [-1.75 * SQ3_3, 1.75 * SQ3_3, -1.75 * SQ3_3], element: 'H', color: '#E2E8F0', bondType: 'sigma' },
-      { pos: [1.75 * SQ3_3, -1.75 * SQ3_3, -1.75 * SQ3_3], element: 'H', color: '#E2E8F0', bondType: 'sigma' },
+      { pos: [1.75 * SQ3_3, 1.75 * SQ3_3, 1.75 * SQ3_3], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
+      { pos: [-1.75 * SQ3_3, -1.75 * SQ3_3, 1.75 * SQ3_3], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
+      { pos: [-1.75 * SQ3_3, 1.75 * SQ3_3, -1.75 * SQ3_3], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
+      { pos: [1.75 * SQ3_3, -1.75 * SQ3_3, -1.75 * SQ3_3], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
     ],
     description: 'C 原子采取 sp³ 杂化，4 个全同的 sp³ 杂化轨道均匀对称地指向正四面体的 4 个顶点。',
   },
@@ -308,9 +310,9 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
       },
     ],
     ligands: [
-      { pos: [1.65, -0.65, 0.6], element: 'H', color: '#E2E8F0', bondType: 'sigma' },
-      { pos: [-1.65, -0.65, 0.6], element: 'H', color: '#E2E8F0', bondType: 'sigma' },
-      { pos: [0, -0.65, -1.7], element: 'H', color: '#E2E8F0', bondType: 'sigma' },
+      { pos: [1.65, -0.65, 0.6], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
+      { pos: [-1.65, -0.65, 0.6], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
+      { pos: [0, -0.65, -1.7], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
     ],
     description: 'N 原子采取 sp³ 杂化，顶部 1 个 sp³ 轨道被孤电子对占据，产生排斥效应使键角压缩为 107°。',
   },
@@ -335,8 +337,8 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
       },
     ],
     ligands: [
-      { pos: [1.45, -1.05, 0], element: 'H', color: '#E2E8F0', bondType: 'sigma' },
-      { pos: [-1.45, -1.05, 0], element: 'H', color: '#E2E8F0', bondType: 'sigma' },
+      { pos: [1.45, -1.05, 0], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
+      { pos: [-1.45, -1.05, 0], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
     ],
     description: 'O 原子采取 sp³ 杂化，2 对孤电子对占据 2 个 sp³ 杂化轨道，使键角进一步压缩为 104.5°。',
   },
@@ -361,10 +363,10 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
       },
     ],
     ligands: [
-      { pos: [1.75 * SQ3_3, 1.75 * SQ3_3, 1.75 * SQ3_3], element: 'H', color: '#E2E8F0', bondType: 'sigma' },
-      { pos: [-1.75 * SQ3_3, -1.75 * SQ3_3, 1.75 * SQ3_3], element: 'H', color: '#E2E8F0', bondType: 'sigma' },
-      { pos: [-1.75 * SQ3_3, 1.75 * SQ3_3, -1.75 * SQ3_3], element: 'H', color: '#E2E8F0', bondType: 'sigma' },
-      { pos: [1.75 * SQ3_3, -1.75 * SQ3_3, -1.75 * SQ3_3], element: 'H', color: '#E2E8F0', bondType: 'sigma' },
+      { pos: [1.75 * SQ3_3, 1.75 * SQ3_3, 1.75 * SQ3_3], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
+      { pos: [-1.75 * SQ3_3, -1.75 * SQ3_3, 1.75 * SQ3_3], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
+      { pos: [-1.75 * SQ3_3, 1.75 * SQ3_3, -1.75 * SQ3_3], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
+      { pos: [1.75 * SQ3_3, -1.75 * SQ3_3, -1.75 * SQ3_3], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
     ],
     description: 'N 原子采取 sp³ 杂化，4 个 sp³ 轨道分别与 4 个 H 形成 σ 键 (其中 1 个为配位键)，呈现对称的正四面体。',
   },
