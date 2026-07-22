@@ -31,12 +31,14 @@ export {
   CANVAS_COLORS,
   PHENOMENON_COLORS,
   ATOM_COLORS,
+  FLAME_COLORS,
   withAlpha,
 } from './chemistry/colors'
 export type {
   ChemistryColorKey,
   CanvasColorKey,
   PhenomenonColorKey,
+  FlameColorKey,
 } from './chemistry/colors'
 
 // ─── 场景结构性颜色 ───────────────────────────────────────────────────────────

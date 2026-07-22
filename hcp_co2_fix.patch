@@ -1,0 +1,176 @@
+diff --git a/src/features/structure/unit-cell-calculation/data/crystals/co2.ts b/src/features/structure/unit-cell-calculation/data/crystals/co2.ts
+index 26ce642..2e0f5f5 100644
+--- a/src/features/structure/unit-cell-calculation/data/crystals/co2.ts
++++ b/src/features/structure/unit-cell-calculation/data/crystals/co2.ts
+@@ -1,5 +1,6 @@
+ /**
+  * CO₂ (干冰分子晶体) 晶胞数据构建
++ * 分子晶体：CO₂ 分子占据 FCC 位置
+  */
+ 
+ import { ATOM_COLORS } from '@/theme'
+@@ -15,8 +16,8 @@ export function createCO2Data(): CrystalTypeData {
+       id: `co2-corner-${i}`,
+       element: 'CO₂',
+       fracPos: pos,
+-      radius: 0.23,
+-      color: ATOM_COLORS.O,
++      radius: 0.26,
++      color: '#4B5563', // 使用深灰色表示分子晶体（区别于原子）
+       label: '顶点 CO₂ 分子 (贡献 1/8)',
+       sharingRatio: 0.125,
+       locationType: 'corner',
+@@ -29,23 +30,23 @@ export function createCO2Data(): CrystalTypeData {
+       id: `co2-face-${i}`,
+       element: 'CO₂',
+       fracPos: pos,
+-      radius: 0.23,
+-      color: ATOM_COLORS.O,
++      radius: 0.26,
++      color: '#4B5563',
+       label: '面心 CO₂ 分子 (贡献 1/2)',
+       sharingRatio: 0.5,
+       locationType: 'face',
+     })
+   })
+ 
+-  // 面心到 4 个同面顶点的连线 (模拟分子间作用力网格)
++  // 面心到 4 个同面顶点的连线（分子间作用力）
+   const bonds: BondSpec[] = []
+   const faceCornerMap = [
+-    [8, 0, 1, 2, 3],
+-    [9, 4, 5, 6, 7],
+-    [10, 0, 1, 5, 4],
+-    [11, 3, 2, 6, 7],
+-    [12, 0, 3, 7, 4],
+-    [13, 1, 2, 6, 5],
++    [8, 0, 1, 2, 3],   // 底面 z=0
++    [9, 4, 5, 6, 7],   // 顶面 z=1
++    [10, 0, 1, 5, 4],  // 前面 y=0
++    [11, 3, 2, 6, 7],  // 后面 y=1
++    [12, 0, 3, 7, 4],  // 左面 x=0
++    [13, 1, 2, 6, 5],  // 右面 x=1
+   ]
+   faceCornerMap.forEach(([face, c0, c1, c2, c3]) => {
+     bonds.push({ fromIndex: face, toIndex: c0 })
+diff --git a/src/features/structure/unit-cell-calculation/data/crystals/hcpMg.ts b/src/features/structure/unit-cell-calculation/data/crystals/hcpMg.ts
+index 07b265b..d0d9899 100644
+--- a/src/features/structure/unit-cell-calculation/data/crystals/hcpMg.ts
++++ b/src/features/structure/unit-cell-calculation/data/crystals/hcpMg.ts
+@@ -1,55 +1,80 @@
+ /**
+  * Mg (六方最密堆积 HCP) 晶胞数据构建
++ * 使用正交晶胞表示（教学常用方式）：底面 2 个原子 + 上层 2 个原子
+  */
+ 
+ import { ATOM_COLORS } from '@/theme'
+-import type { CrystalTypeData, AtomSpec } from '../types'
+-import { getCornerFracs } from '../helpers'
++import type { CrystalTypeData, AtomSpec, BondSpec } from '../types'
+ 
+ export function createHcpMgData(): CrystalTypeData {
+   const atoms: AtomSpec[] = []
+ 
+-  // Mg 占 8 顶点 (8 x 1/8 = 1)
+-  getCornerFracs().forEach((pos, i) => {
+-    atoms.push({
+-      id: `mg-corner-${i}`,
+-      element: 'Mg',
+-      fracPos: pos,
+-      radius: 0.22,
+-      color: ATOM_COLORS.Mg,
+-      label: '顶点 Mg (贡献 1/8)',
+-      sharingRatio: 0.125,
+-      locationType: 'corner',
+-    })
++  // ===== 正交晶胞表示 HCP（最常用教学模型） =====
++  // 晶胞包含 4 个 Mg 原子（Z = 2 的正交等效表示）
++  // 底面 (z=0)：2 个原子
++  // 上层 (z≈0.5)：2 个原子（形成 ABAB 堆积）
++
++  // 底面 Mg (A 层) - 2 个原子
++  atoms.push({
++    id: 'mg-bottom-0',
++    element: 'Mg',
++    fracPos: [0, 0, 0] as const,
++    radius: 0.22,
++    color: ATOM_COLORS.Mg,
++    label: '底面 Mg (A层，贡献 1/2)',
++    sharingRatio: 0.5,
++    locationType: 'corner',
++  })
++  atoms.push({
++    id: 'mg-bottom-1',
++    element: 'Mg',
++    fracPos: [0.5, 0.5, 0] as const,
++    radius: 0.22,
++    color: ATOM_COLORS.Mg,
++    label: '底面 Mg (A层，贡献 1/2)',
++    sharingRatio: 0.5,
++    locationType: 'body',
+   })
+ 
+-  // Mg 占 1 内部 (1 x 1 = 1)
++  // 上层 Mg (B 层) - 2 个原子（位于四面体空隙位置）
++  atoms.push({
++    id: 'mg-upper-0',
++    element: 'Mg',
++    fracPos: [1/3, 2/3, 0.5] as const,
++    radius: 0.22,
++    color: ATOM_COLORS.Mg,
++    label: '上层 Mg (B层，贡献 1/2)',
++    sharingRatio: 0.5,
++    locationType: 'body',
++  })
+   atoms.push({
+-    id: 'mg-body-0',
++    id: 'mg-upper-1',
+     element: 'Mg',
+-    fracPos: [0.333, 0.667, 0.5] as const,
++    fracPos: [5/6, 1/6, 0.5] as const,
+     radius: 0.22,
+     color: ATOM_COLORS.Mg,
+-    label: '内部 Mg (贡献 1)',
+-    sharingRatio: 1,
++    label: '上层 Mg (B层，贡献 1/2)',
++    sharingRatio: 0.5,
+     locationType: 'body',
+   })
+ 
+-  // 内部 Mg [index 8] 到周边 6 个顶点的连线
+-  const bonds = [
+-    { fromIndex: 8, toIndex: 0 },
+-    { fromIndex: 8, toIndex: 1 },
+-    { fromIndex: 8, toIndex: 3 },
+-    { fromIndex: 8, toIndex: 4 },
+-    { fromIndex: 8, toIndex: 5 },
+-    { fromIndex: 8, toIndex: 7 },
++  // 键连接（展示 HCP 的配位关系）
++  const bonds: BondSpec[] = [
++    // 底面原子之间的连接
++    { fromIndex: 0, toIndex: 1 },
++    // 上层原子之间的连接
++    { fromIndex: 2, toIndex: 3 },
++    // 层间连接（模拟 ABAB 堆积）
++    { fromIndex: 0, toIndex: 2 },
++    { fromIndex: 1, toIndex: 3 },
+   ]
+ 
+   return {
+     id: 'hcp-mg',
+     name: 'Mg (六方最密堆积 HCP)',
+     formula: 'Mg',
+-    cellParams: { a: 1, b: 1, c: 1.633, alpha: 90, beta: 90, gamma: 120 },
++    // 正交晶胞参数（c/a ≈ 1.633 为理想 HCP 比值）
++    cellParams: { a: 1, b: 1.732, c: 1.633, alpha: 90, beta: 90, gamma: 90 },
+     defaultA: 321,
+     molarMass: 24.31,
+     zValue: 2,
+@@ -57,6 +82,6 @@ export function createHcpMgData(): CrystalTypeData {
+     packingEfficiency: 74.0,
+     atoms,
+     bonds,
+-    description: '六方最密堆积：平行六面体晶胞 8 顶点(1) + 1 内部(1)，均占原子数 N=2，配位数 12',
++    description: '六方最密堆积（正交表示）：底面2原子(A层) + 上层2原子(B层)，Z=2，配位数12，堆积效率74%',
+   }
+ }

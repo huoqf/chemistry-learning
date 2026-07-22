@@ -24,6 +24,7 @@ export {
   ATOM_COLORS,
   PHENOMENON_COLORS,
   INDICATOR_COLORS,
+  FLAME_COLORS,
   withAlpha,
 } from './colors'
 
@@ -32,6 +33,7 @@ export type {
   CanvasColorKey,
   AtomColorKey,
   PhenomenonColorKey,
+  FlameColorKey,
 } from './colors'
 
 // ─── 场景结构性颜色 ───────────────────────────────────────────────────────────

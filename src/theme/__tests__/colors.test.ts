@@ -5,6 +5,7 @@ import {
   ATOM_COLORS,
   PHENOMENON_COLORS,
   INDICATOR_COLORS,
+  FLAME_COLORS,
   withAlpha,
 } from '../chemistry/colors'
 
@@ -45,17 +46,27 @@ describe('CHEMISTRY_COLORS', () => {
   })
 })
 
-describe('ATOM_COLORS & PHENOMENON_COLORS & INDICATOR_COLORS', () => {
-  it('包含常用 CPK 原子颜色', () => {
+describe('ATOM_COLORS & PHENOMENON_COLORS & INDICATOR_COLORS & FLAME_COLORS', () => {
+  it('包含常用 CPK 原子颜色与扩充元素', () => {
     expect(ATOM_COLORS.H).toBe('#FFFFFF')
     expect(ATOM_COLORS.C).toBe('#374151')
+    expect(ATOM_COLORS.Be).toBe('#94A3B8')
+    expect(ATOM_COLORS.B).toBe('#F97316')
     expect(ATOM_COLORS.Fe).toBe('#B45309')
   })
 
   it('包含特征化学显色与沉淀色', () => {
     expect(PHENOMENON_COLORS.fe3Plus).toBeDefined()
+    expect(PHENOMENON_COLORS.feOh2Precipitate).toBeDefined()
+    expect(PHENOMENON_COLORS.feOh2Transition).toBeDefined()
     expect(PHENOMENON_COLORS.feOh3Precipitate).toBeDefined()
+    expect(PHENOMENON_COLORS.prussianBlue).toBeDefined()
     expect(PHENOMENON_COLORS.no2Gas).toBeDefined()
+  })
+
+  it('包含焰色试验特征颜色', () => {
+    expect(FLAME_COLORS.Na).toBe('#FACC15')
+    expect(FLAME_COLORS.K).toBe('#C084FC')
   })
 
   it('包含滴定指示剂变色阶', () => {

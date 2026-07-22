@@ -82,8 +82,15 @@ export function UnitCellScene({
       </Canvas>
 
       {/* 2D 固定尺寸参数面板 (右上角) */}
-      <div className="absolute top-3 right-3 pointer-events-none px-3 py-1.5 rounded-lg bg-white/95 backdrop-blur border border-slate-200 shadow-sm flex items-center gap-1.5 font-mono text-xs font-semibold text-slate-700">
-        <span style={{ color: CHEMISTRY_COLORS.concentration }}>a</span> = {edgeLengthPm} pm
+      <div className="absolute top-3 right-3 pointer-events-none px-3 py-1.5 rounded-lg bg-white/95 backdrop-blur border border-slate-200 shadow-sm flex items-center gap-2 font-mono text-xs font-semibold text-slate-700">
+        <div>
+          <span style={{ color: CHEMISTRY_COLORS.concentration }}>a</span> = {edgeLengthPm} pm
+        </div>
+        {crystalData.id === 'hcp-mg' && (
+          <div>
+            <span style={{ color: CHEMISTRY_COLORS.temperature }}>c</span> = {Math.round(Math.sqrt(8 / 3) * edgeLengthPm)} pm
+          </div>
+        )}
       </div>
 
       {/* 2D 固定原子选中均摊明细面板 (左下角，选中的时候显示) */}

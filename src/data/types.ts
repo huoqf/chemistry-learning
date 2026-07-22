@@ -192,10 +192,14 @@ export interface AnimationConfig<P extends Record<string, number> = Record<strin
   controlsMode?: 'timed' | 'loop' | 'param' | 'pause-only' | ((params: Record<string, number>) => 'timed' | 'loop' | 'param' | 'pause-only')
   /** 化学平衡条件终止：当返回 true 时自动暂停并标记已达到平衡 */
   stopCondition?: (params: P, t: number) => boolean
-  /** 右侧屏：公式列表 */
-  formulas?: Array<{ name: string; latex: string; condition?: string; note?: string; level?: 'core' | 'important' | 'derived' | 'supplementary' }>
-  /** 右侧屏：高考要点 */
-  gaokaoPoints?: Array<{ text: string; importance: 'gaokao' | 'hard' | 'core' | 'basic' | 'extend' }>
+  /** 右侧屏：公式列表 (支持静态数组或随 params 变化的动态生成函数) */
+  formulas?:
+    | Array<{ name: string; latex: string; condition?: string; note?: string; level?: 'core' | 'important' | 'derived' | 'supplementary' }>
+    | ((params: Record<string, number>) => Array<{ name: string; latex: string; condition?: string; note?: string; level?: 'core' | 'important' | 'derived' | 'supplementary' }>)
+  /** 右侧屏：高考要点 (支持静态数组或随 params 变化的动态生成函数) */
+  gaokaoPoints?:
+    | Array<{ text: string; importance: 'gaokao' | 'hard' | 'core' | 'basic' | 'extend' }>
+    | ((params: Record<string, number>) => Array<{ text: string; importance: 'gaokao' | 'hard' | 'core' | 'basic' | 'extend' }>)
   /** 右侧屏：警示信息 */
   warnings?: Array<{ text: string; level: 'info' | 'warning' | 'danger' }>
   /** "微观-宏观-符号"三重表征支持 */

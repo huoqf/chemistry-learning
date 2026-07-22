@@ -137,6 +137,9 @@ export type CanvasColorKey = keyof typeof CANVAS_COLORS
 /** CPK 标准元素原子颜色映射（用于分子构型、晶胞、杂化轨道与有机结构） */
 export const ATOM_COLORS = {
   H:  '#FFFFFF', // 氢 (纯白/浅灰)
+  Li: '#A855F7', // 锂 (亮紫)
+  Be: '#94A3B8', // 铍 (浅银灰)
+  B:  '#F97316', // 硼 (浅橙)
   C:  '#374151', // 碳 (石墨灰)
   N:  '#3B82F6', // 氮 (蓝)
   O:  '#EF4444', // 氧 (红)
@@ -150,6 +153,7 @@ export const ATOM_COLORS = {
   Cl: '#10B981', // 氯 (绿)
   K:  '#7C3AED', // 钾 (深紫)
   Ca: '#64748B', // 钙 (灰)
+  Cr: '#059669', // 铬 (铬绿)
   Mn: '#EC4899', // 锰 (粉紫)
   Fe: '#B45309', // 铁 (棕)
   Cu: '#C2410C', // 铜 (红铜)
@@ -158,6 +162,7 @@ export const ATOM_COLORS = {
   I:  '#581C87', // 碘 (紫黑)
   Ag: '#CBD5E1', // 银 (亮银)
   Ba: '#475569', // 钡 (深灰)
+  Pb: '#475569', // 铅 (铅灰)
 } as const
 
 export type AtomColorKey = keyof typeof ATOM_COLORS
@@ -173,8 +178,15 @@ export const PHENOMENON_COLORS = {
   cr2o72Minus:      '#EA580C', // Cr2O72- 橙红色
   cro42Minus:       '#EAB308', // CrO42- 黄色
   co2Plus:          '#F43F5E', // Co2+ 粉红色
+  br2Water:         '#F97316', // 橙黄色溴水
+  br2Ccl4:          '#C2410C', // 橙红色 Br2/CCl4 有机相
+  i2Water:          '#B45309', // 棕黄色碘水
+  i2Ccl4:           '#7E22CE', // 紫红色 I2/CCl4 有机相
+  fuchsinRed:       '#F43F5E', // SO2 检验品红溶液红色
 
   // 常见沉淀颜色
+  feOh2Precipitate: '#F8FAFC', // Fe(OH)2 白色沉淀
+  feOh2Transition:  '#6EE7B7', // Fe(OH)2 灰绿色中间态
   feOh3Precipitate: '#78350F', // Fe(OH)3 红褐色沉淀
   cuOh2Precipitate: '#38BDF8', // Cu(OH)2 蓝色沉淀
   cu2oPrecipitate:  '#991B1B', // Cu2O 砖红色沉淀
@@ -183,6 +195,10 @@ export const PHENOMENON_COLORS = {
   agclPrecipitate:  '#F8FAFC', // AgCl 白色沉淀
   baso4Precipitate: '#F8FAFC', // BaSO4 白色沉淀
   caco3Precipitate: '#F8FAFC', // CaCO3 白色沉淀
+  alOh3Precipitate: '#F8FAFC', // Al(OH)3 白色沉淀
+  mgOh2Precipitate: '#F8FAFC', // Mg(OH)2 白色沉淀
+  pbso4Precipitate: '#F8FAFC', // PbSO4 白色沉淀
+  prussianBlue:     '#1E40AF', // 普鲁士蓝 / Turnbull 蓝沉淀 (Fe2+ 检出)
   sPrecipitate:     '#FDE047', // 硫单质淡黄色沉淀
 
   // 特征气体颜色
@@ -194,6 +210,17 @@ export const PHENOMENON_COLORS = {
 } as const
 
 export type PhenomenonColorKey = keyof typeof PHENOMENON_COLORS
+
+/** 焰色试验特征颜色（高考元素鉴别考点） */
+export const FLAME_COLORS = {
+  Na: '#FACC15', // 钠 (黄)
+  K:  '#C084FC', // 钾 (透过蓝色钴玻璃浅紫)
+  Ca: '#F97316', // 钙 (砖红)
+  Cu: '#10B981', // 铜 (绿/青绿)
+  Ba: '#A3E635', // 钡 (黄绿)
+} as const
+
+export type FlameColorKey = keyof typeof FLAME_COLORS
 
 /** 滴定指示剂变色阶 */
 export const INDICATOR_COLORS = {

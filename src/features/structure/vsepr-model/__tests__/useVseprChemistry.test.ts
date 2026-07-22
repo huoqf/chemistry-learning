@@ -66,3 +66,24 @@ describe('useVseprChemistry 预设与化学推导测试', () => {
     expect(resSo2.current.molecule.lonePairCount).toBe(1)
   })
 })
+
+import { getVseprFormulas, getVseprExamPoints } from '@/data/quantities/structure/vsepr'
+
+describe('getVseprFormulas 与 getVseprExamPoints 动态生成测试', () => {
+  it('根据 presetIdx 动态生成不同分子的 VSEPR 公式与考点', () => {
+    // NH3
+    const nh3Idx = VSEPR_PRESET_KEYS.indexOf('nh3')
+    const nh3Formulas = getVseprFormulas({ presetIdx: nh3Idx })
+    expect(nh3Formulas[0].name).toContain('氨气分子')
+    expect(nh3Formulas[0].latex).toContain('n = \\frac{1}{2}')
+
+    // CO2
+    const co2Formulas = getVseprFormulas({ presetIdx: 0 })
+    expect(co2Formulas[0].name).toContain('二氧化碳')
+
+    // H2O考点
+    const h2oIdx = VSEPR_PRESET_KEYS.indexOf('h2o')
+    const h2oPoints = getVseprExamPoints({ presetIdx: h2oIdx })
+    expect(h2oPoints[1].text).toContain('H₂O')
+  })
+})

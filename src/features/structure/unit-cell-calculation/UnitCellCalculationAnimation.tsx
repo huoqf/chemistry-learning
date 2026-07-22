@@ -1,7 +1,9 @@
+import { useEffect, useRef } from 'react'
 import { useAnimationStore } from '@/stores'
 import { useShallow } from 'zustand/react/shallow'
 import { useUnitCellChemistry } from './hooks/useUnitCellChemistry'
 import { UnitCellScene } from './components/UnitCellScene'
+import { CRYSTAL_DATABASE } from './data/unitCellData'
 
 const CRYSTAL_TYPE_KEYS = [
   'nacl',
@@ -25,8 +27,24 @@ export default function UnitCellCalculationAnimation() {
     CRYSTAL_TYPE_KEYS.length - 1,
   )
   const crystalType = CRYSTAL_TYPE_KEYS[crystalTypeIdx] || 'nacl'
-  const edgeLength = (params.edgeLength as number) || 564
-  const molarMass = (params.molarMass as number) || 58.44
+
+  // 当切换晶体类型时，自动将边长 a 与摩尔质量 M 调整为该晶体的默认化学预设值
+  const prevCrystalTypeRef = useRef<string>(crystalType)
+  useEffect(() => {
+    if (prevCrystalTypeRef.current !== crystalType) {
+      prevCrystalTypeRef.current = crystalType
+      const targetData = CRYSTAL_DATABASE[crystalType]
+      if (targetData) {
+        const store = useAnimationStore.getState()
+        store.updateParam('edgeLength', targetData.defaultA)
+        store.updateParam('molarMass', targetData.molarMass)
+      }
+    }
+  }, [crystalType])
+
+  const targetDefault = CRYSTAL_DATABASE[crystalType]
+  const edgeLength = (params.edgeLength as number) ?? targetDefault?.defaultA ?? 564
+  const molarMass = (params.molarMass as number) ?? targetDefault?.molarMass ?? 58.44
   const explodeMode = Boolean(params.explodeMode ?? 0)
   const showBonds = Boolean(params.showBonds ?? 1)
 

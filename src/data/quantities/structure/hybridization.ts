@@ -182,32 +182,52 @@ export function buildHybridQuantities(params: Record<string, number>): Chemistry
   ]
 }
 
-export const hybridizationFormulas = [
-  {
-    name: '杂化轨道成分计算公式',
-    latex: '\\begin{aligned} \\text{s\\%} &= \\frac{1}{1+n}\\times100\\% \\\\ \\text{p\\%} &= \\frac{n}{1+n}\\times100\\% \\end{aligned}',
-    level: 'core' as const,
-    condition: '对 spⁿ 杂化轨道，n 为参与杂化的 p 轨道个数 (sp: 50%/50%, sp²: 33.3%/66.7%, sp³: 25%/75%)',
-  },
-  {
-    name: '杂化轨道数与 VSEPR 电子对数关系',
-    latex: '\\begin{aligned} N_{\\text{hybrid}} &= \\sigma\\text{键数} \\\\ &+ \\text{孤电子对数} \\end{aligned}',
-    level: 'core' as const,
-    condition: 'N=2 为 sp 杂化(180°), N=3 为 sp² 杂化(120°), N=4 为 sp³ 杂化(109.5°)',
-  },
-]
+export function getHybridFormulas(params: Record<string, number>) {
+  const rawIdx = params.presetIdx ?? 7
+  const safeIdx = Math.min(Math.max(0, Math.floor(rawIdx)), PRESET_KEYS.length - 1)
+  const key = PRESET_KEYS[safeIdx] || 'ch4'
+  const preset = HYBRID_PRESETS[key] || HYBRID_PRESETS.ch4
 
-export const hybridizationExamPoints = [
-  {
-    text: '【杂化轨道类型快速判断】中心原子价电子对数 = σ 键数 + 孤电子对数。等于 2 采取 sp 杂化(直线形)；3 采取 sp² 杂化(平面三角形)；4 采取 sp³ 杂化(正四面体)。',
-    importance: 'gaokao' as const,
-  },
-  {
-    text: '【σ 键与 π 键重叠特征】σ 键由杂化轨道/s轨道“头碰头”重叠，关于键轴对称，可自由旋转；π 键由未杂化的 p 轨道“肩并肩”平行重叠，镜像对称，不能自由旋转。',
-    importance: 'gaokao' as const,
-  },
-  {
-    text: '【s 成分对键长与电负性的影响】s 成分比例越高(sp > sp² > sp³)，杂化轨道在原子核附近分布越集中、越短胖，原子的电负性表现越强，所形成的 σ 键越短越牢固。',
-    importance: 'hard' as const,
-  },
-]
+  const nP = preset.hybridType === 'sp' ? 1 : preset.hybridType === 'sp2' ? 2 : 3
+
+  return [
+    {
+      name: `${preset.name} (${preset.hybridType} 杂化) 成分占比`,
+      latex: `\\text{s\\%} = \\frac{1}{1+${nP}} = ${preset.sRatio}\\% \\quad \\text{p\\%} = \\frac{${nP}}{1+${nP}} = ${preset.pRatio}\\%`,
+      level: 'core' as const,
+      condition: `杂化轨道总数 N = ${preset.totalOrbitals}`,
+    },
+    {
+      name: '理想/实际键角与空间构型',
+      latex: `\\text{键角} = ${preset.bondAngle}^\\circ \\quad (${preset.hybridType} \\text{ 杂化})`,
+      level: 'important' as const,
+      condition: preset.description,
+    },
+  ]
+}
+
+export function getHybridExamPoints(params: Record<string, number>) {
+  const rawIdx = params.presetIdx ?? 7
+  const safeIdx = Math.min(Math.max(0, Math.floor(rawIdx)), PRESET_KEYS.length - 1)
+  const key = PRESET_KEYS[safeIdx] || 'ch4'
+  const preset = HYBRID_PRESETS[key] || HYBRID_PRESETS.ch4
+
+  return [
+    {
+      text: `【${preset.name} 杂化特征】${preset.description}`,
+      importance: 'gaokao' as const,
+    },
+    {
+      text: `【s/p 成分比例】${preset.formula} 中心原子采取 ${preset.hybridType} 杂化，s 轨道占比 ${preset.sRatio}%，p 轨道占比 ${preset.pRatio}%。s 成分越高，杂化轨道在近核处越集中。`,
+      importance: 'gaokao' as const,
+    },
+    {
+      text: `【σ 与 π 键区分】杂化轨道仅用于形成 σ 键或存放孤电子对，未杂化的 p 轨道才用于形成 π 键（如乙烯、乙炔、CO₂ 等）。`,
+      importance: 'hard' as const,
+    },
+  ]
+}
+
+export const hybridizationFormulas = getHybridFormulas
+export const hybridizationExamPoints = getHybridExamPoints
+

@@ -246,7 +246,11 @@ function FormulaSection({ formulas }: { formulas: Formula[] }) {
                 <KatexFormula formula={f.latex} mode="block" className="!my-1 !bg-transparent !px-0 !py-0" />
                 {f.condition && (
                   <div className="text-xs mt-1" style={{ color: colors.neutral[500] }}>
-                    条件：{f.condition}
+                    条件：{f.condition.includes('\\') ? (
+                      <KatexFormula formula={f.condition} mode="inline" className="!bg-transparent !px-0 !py-0" />
+                    ) : (
+                      f.condition
+                    )}
                   </div>
                 )}
                 {f.note && (

@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { buildHybridQuantities } from '@/data/quantities/structure/hybridization'
+import {
+  buildHybridQuantities,
+  getHybridFormulas,
+  getHybridExamPoints,
+} from '@/data/quantities/structure/hybridization'
 import { HYBRID_MODELS } from '../data/hybridData'
 
 describe('useHybridChemistry & quantities', () => {
@@ -36,5 +40,21 @@ describe('useHybridChemistry & quantities', () => {
     const so2 = HYBRID_MODELS.so2
     expect(so2.hybridType).toBe('sp2')
     expect(so2.centers[0].hybridOrbitals.some(o => o.type === 'lonePair')).toBe(true)
+  })
+
+  it('should dynamically generate formulas and exam points based on presetIdx', () => {
+    // CH4
+    const ch4Formulas = getHybridFormulas({ presetIdx: 7 })
+    expect(ch4Formulas[0].name).toContain('甲烷 CH₄')
+    expect(ch4Formulas[0].latex).toContain('75\\%')
+
+    // BeCl2
+    const becl2Formulas = getHybridFormulas({ presetIdx: 0 })
+    expect(becl2Formulas[0].name).toContain('氯化铍 BeCl₂')
+    expect(becl2Formulas[0].latex).toContain('50\\%')
+
+    // SO2 exam points
+    const so2Points = getHybridExamPoints({ presetIdx: 4 })
+    expect(so2Points[1].text).toContain('SO₂')
   })
 })

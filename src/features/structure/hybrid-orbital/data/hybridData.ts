@@ -49,7 +49,7 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
     centers: [
       {
         element: 'Be',
-        color: '#94A3B8',
+        color: ATOM_COLORS.Be,
         pos: [0, 0, 0],
         hybridOrbitals: [
           { dir: [1.2, 0, 0], type: 'hybrid' },
@@ -60,8 +60,8 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
       },
     ],
     ligands: [
-      { pos: [1.8, 0, 0], element: 'Cl', color: '#22C55E', bondType: 'sigma' },
-      { pos: [-1.8, 0, 0], element: 'Cl', color: '#22C55E', bondType: 'sigma' },
+      { pos: [1.8, 0, 0], element: 'Cl', color: ATOM_COLORS.Cl, bondType: 'sigma' },
+      { pos: [-1.8, 0, 0], element: 'Cl', color: ATOM_COLORS.Cl, bondType: 'sigma' },
     ],
     description: 'Be 原子采取 sp 杂化，形成 2 个 180° 对角 sp 杂化轨道。',
   },
@@ -75,7 +75,7 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
     centers: [
       {
         element: 'C',
-        color: '#334155',
+        color: ATOM_COLORS.C,
         pos: [0, 0, 0],
         hybridOrbitals: [
           { dir: [1.2, 0, 0], type: 'hybrid' },
@@ -86,8 +86,8 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
       },
     ],
     ligands: [
-      { pos: [1.7, 0, 0], element: 'O', color: '#EF4444', bondType: 'sigma' },
-      { pos: [-1.7, 0, 0], element: 'O', color: '#EF4444', bondType: 'sigma' },
+      { pos: [1.7, 0, 0], element: 'O', color: ATOM_COLORS.O, bondType: 'sigma' },
+      { pos: [-1.7, 0, 0], element: 'O', color: ATOM_COLORS.O, bondType: 'sigma' },
     ],
     piBonds: [
       { startPos: [0, 0, 0], endPos: [1.7, 0, 0], dir: [0, 0.9, 0] },
@@ -105,7 +105,7 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
     centers: [
       {
         element: 'C',
-        color: '#334155',
+        color: ATOM_COLORS.C,
         pos: [-0.8, 0, 0],
         hybridOrbitals: [
           { dir: [1.1, 0, 0], type: 'hybrid' },
@@ -116,7 +116,7 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
       },
       {
         element: 'C',
-        color: '#334155',
+        color: ATOM_COLORS.C,
         pos: [0.8, 0, 0],
         hybridOrbitals: [
           { dir: [-1.1, 0, 0], type: 'hybrid' },
@@ -146,7 +146,7 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
     centers: [
       {
         element: 'B',
-        color: '#F97316',
+        color: ATOM_COLORS.B,
         pos: [0, 0, 0],
         hybridOrbitals: [
           { dir: [0, 1.25, 0], type: 'hybrid' },
@@ -157,9 +157,9 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
       },
     ],
     ligands: [
-      { pos: [0, 1.85, 0], element: 'F', color: '#A855F7', bondType: 'sigma' },
-      { pos: [1.602, -0.925, 0], element: 'F', color: '#A855F7', bondType: 'sigma' },
-      { pos: [-1.602, -0.925, 0], element: 'F', color: '#A855F7', bondType: 'sigma' },
+      { pos: [0, 1.85, 0], element: 'F', color: ATOM_COLORS.F, bondType: 'sigma' },
+      { pos: [1.602, -0.925, 0], element: 'F', color: ATOM_COLORS.F, bondType: 'sigma' },
+      { pos: [-1.602, -0.925, 0], element: 'F', color: ATOM_COLORS.F, bondType: 'sigma' },
     ],
     description: 'B 原子采取 sp² 杂化，3 个 sp² 杂化轨道平面等角度 120° 分布。',
   },
@@ -173,7 +173,7 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
     centers: [
       {
         element: 'S',
-        color: '#EAB308',
+        color: ATOM_COLORS.S,
         pos: [0, 0.1, 0],
         hybridOrbitals: [
           { dir: [0, 1.2, 0], type: 'lonePair' },
@@ -184,8 +184,8 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
       },
     ],
     ligands: [
-      { pos: [1.6, -0.85, 0], element: 'O', color: '#EF4444', bondType: 'sigma' },
-      { pos: [-1.6, -0.85, 0], element: 'O', color: '#EF4444', bondType: 'sigma' },
+      { pos: [1.6, -0.85, 0], element: 'O', color: ATOM_COLORS.O, bondType: 'sigma' },
+      { pos: [-1.6, -0.85, 0], element: 'O', color: ATOM_COLORS.O, bondType: 'sigma' },
     ],
     piBonds: [
       { startPos: [0, 0.1, 0], endPos: [1.6, -0.85, 0], dir: [0, 0, 0.9] },
@@ -202,7 +202,7 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
     centers: [
       {
         element: 'C',
-        color: '#334155',
+        color: ATOM_COLORS.C,
         pos: [-0.8, 0, 0],
         hybridOrbitals: [
           { dir: [1.1, 0, 0], type: 'hybrid' },
@@ -213,7 +213,7 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
       },
       {
         element: 'C',
-        color: '#334155',
+        color: ATOM_COLORS.C,
         pos: [0.8, 0, 0],
         hybridOrbitals: [
           { dir: [-1.1, 0, 0], type: 'hybrid' },
@@ -244,7 +244,7 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
     centers: [
       {
         element: 'C',
-        color: '#334155',
+        color: ATOM_COLORS.C,
         pos: [0, 0, 0],
         hybridOrbitals: [
           { dir: [0, 1.25, 0], type: 'hybrid' },
@@ -255,9 +255,9 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
       },
     ],
     ligands: [
-      { pos: [0, 1.8, 0], element: 'O', color: '#EF4444', bondType: 'sigma' },
-      { pos: [1.56, -0.9, 0], element: 'O', color: '#EF4444', bondType: 'sigma' },
-      { pos: [-1.56, -0.9, 0], element: 'O', color: '#EF4444', bondType: 'sigma' },
+      { pos: [0, 1.8, 0], element: 'O', color: ATOM_COLORS.O, bondType: 'sigma' },
+      { pos: [1.56, -0.9, 0], element: 'O', color: ATOM_COLORS.O, bondType: 'sigma' },
+      { pos: [-1.56, -0.9, 0], element: 'O', color: ATOM_COLORS.O, bondType: 'sigma' },
     ],
     description: '中心 C 原子采取 sp² 杂化，形成 3 个 C-O σ 键，垂直于平面的 p 轨道与 3 个 O 原子形成大 π 键。',
   },
@@ -271,7 +271,7 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
     centers: [
       {
         element: 'C',
-        color: '#334155',
+        color: ATOM_COLORS.C,
         pos: [0, 0, 0],
         hybridOrbitals: [
           { dir: [1.2 * SQ3_3, 1.2 * SQ3_3, 1.2 * SQ3_3], type: 'hybrid' },
@@ -299,7 +299,7 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
     centers: [
       {
         element: 'N',
-        color: '#3B82F6',
+        color: ATOM_COLORS.N,
         pos: [0, 0.15, 0],
         hybridOrbitals: [
           { dir: [0, 1.2, 0], type: 'lonePair' },
@@ -326,7 +326,7 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
     centers: [
       {
         element: 'O',
-        color: '#EF4444',
+        color: ATOM_COLORS.O,
         pos: [0, 0, 0],
         hybridOrbitals: [
           { dir: [0.75, 0.9, 0], type: 'lonePair' },
@@ -352,7 +352,7 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
     centers: [
       {
         element: 'N',
-        color: '#3B82F6',
+        color: ATOM_COLORS.N,
         pos: [0, 0, 0],
         hybridOrbitals: [
           { dir: [1.2 * SQ3_3, 1.2 * SQ3_3, 1.2 * SQ3_3], type: 'hybrid' },

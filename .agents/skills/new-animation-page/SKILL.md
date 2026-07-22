@@ -210,6 +210,7 @@ import { RightPanel } from './RightPanel'
 
 - 左屏控件由 registry 的 paramMeta / controlMeta 驱动，**禁止手写散乱控件**
 - 右屏由框架渲染 QuantitySection + FormulaSection + ExamPointSection
+- **多模型/多模式页面右屏动态联动**：若页面包含 `controlMeta` 模型切换（如晶胞结构、VSEPR 构型、杂化轨道），`formulas` 与 `gaokaoPoints` 应当定义为 `(params: Record<string, number>) => Array<...>` 动态函数，使右侧屏公式与高考要点随模型实时联动
 - 播放控制（AnimationControls）由框架自动渲染在中屏底部
 
 ### hooks/use<Topic>Chemistry.ts

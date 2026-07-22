@@ -80,11 +80,61 @@ describe('useUnitCellChemistry 晶胞计算单元测试', () => {
     )
     expect(mg.current.zValue).toBe(2)
     expect(mg.current.coordNumber).toBe(12)
+    expect(mg.current.cornerContribution).toBeCloseTo(1, 5) // 4*(1/6) + 4*(1/12) = 1
+    expect(mg.current.bodyContribution).toBe(1) // 1 * 1
+
+    // 验证 120° 顶角 (1/6) 与 60° 顶角 (1/12) 精确均摊
+    const corner120 = mg.current.crystalData.atoms.find((a) => a.id === 'mg-corner-120-0')
+    expect(corner120?.sharingRatio).toBeCloseTo(1 / 6, 5)
+    const corner60 = mg.current.crystalData.atoms.find((a) => a.id === 'mg-corner-60-0')
+    expect(corner60?.sharingRatio).toBeCloseTo(1 / 12, 5)
+
+    // Mg 理论密度约 1.73 g/cm³
+    expect(mg.current.densityGcm3).toBeGreaterThan(1.68)
+    expect(mg.current.densityGcm3).toBeLessThan(1.78)
 
     const { result: co2 } = renderHook(() =>
       useUnitCellChemistry({ crystalTypeId: 'co2', edgeLength: 558 }),
     )
     expect(co2.current.zValue).toBe(4)
     expect(co2.current.coordNumber).toBe(12)
+  })
+})
+
+import {
+  getUnitCellFormulas,
+  getUnitCellExamPoints,
+  buildUnitCellQuantities,
+} from '@/data/quantities/structure/unitCellCalculation'
+
+describe('getUnitCellFormulas 与 getUnitCellExamPoints 动态生成测试', () => {
+  it('根据 crystalType 动态生成对应的公式与高考考点', () => {
+    // 0: NaCl
+    const naclFormulas = getUnitCellFormulas({ crystalType: 0 })
+    expect(naclFormulas[0].name).toContain('NaCl')
+
+    // 2: Cu
+    const cuFormulas = getUnitCellFormulas({ crystalType: 2 })
+    expect(cuFormulas[1].latex).toContain('\\sqrt{2}a = 4r')
+
+    // 3: Fe
+    const feFormulas = getUnitCellFormulas({ crystalType: 3 })
+    expect(feFormulas[1].latex).toContain('\\sqrt{3}a = 4r')
+
+    // 5: CaF2
+    const caf2Quantities = buildUnitCellQuantities({ crystalType: 5 })
+    const zValue = caf2Quantities.find((q) => q.key === 'zValue')
+    expect(zValue?.value).toBe(4)
+
+    // 6: Mg HCP
+    const mgFormulas = getUnitCellFormulas({ crystalType: 6 })
+    expect(mgFormulas[0].latex).toContain('\\frac{\\sqrt{3}}{2} a^2 c')
+    const mgExamPoints = getUnitCellExamPoints({ crystalType: 6 })
+    expect(mgExamPoints[0].text).toContain('六方平行六面体均摊考法')
+    expect(mgExamPoints[1].text).toContain('六方晶胞体积陷阱')
+
+    // 7: CO2
+    const co2ExamPoints = getUnitCellExamPoints({ crystalType: 7 })
+    expect(co2ExamPoints[1].text).toContain('干冰 CO₂ 分子晶体')
   })
 })

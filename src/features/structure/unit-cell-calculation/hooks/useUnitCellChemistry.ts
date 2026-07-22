@@ -43,8 +43,14 @@ export function useUnitCellChemistry({
     // 晶胞质量 m = N * M / NA (g)
     const mCellGrams = (zValue * M) / NA
 
-    // 晶胞体积 V = (a * 10^-10)^3 = a^3 * 10^-30 cm³
-    const vCellCm3 = Math.pow(a * 1e-10, 3)
+    // 晶胞体积 V (cm³)
+    // 六方晶系 (hcp-mg): V = (√3/2) * a² * c * 10^-30 cm³, 其中 c = √(8/3) * a
+    // 立方晶系: V = (a * 10^-10)^3 = a^3 * 10^-30 cm³
+    const isHexagonal = crystalTypeId === 'hcp-mg'
+    const cHp = isHexagonal ? Math.sqrt(8 / 3) * a : a
+    const vCellCm3 = isHexagonal
+      ? (Math.sqrt(3) / 2) * Math.pow(a * 1e-10, 2) * (cHp * 1e-10)
+      : Math.pow(a * 1e-10, 3)
 
     // 理论密度 ρ = m / V (g/cm³)
     const densityGcm3 = vCellCm3 > 0 ? mCellGrams / vCellCm3 : 0
