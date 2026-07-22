@@ -186,18 +186,19 @@ export function getUnitCellFormulas(params: Record<string, number>) {
           name: '金刚石 (C) 晶胞密度代入公式 (Z=8)',
           latex: '\\rho = \\frac{8 \\times 12.01}{N_A \\times a^3 \\times 10^{-30}}',
           level: 'core' as const,
-          condition: 'C: 8顶点×1/8 + 6面心×1/2 + 4四面体空隙×1 = 8',
+          condition: '8顶点(占1/8) + 6面心(占1/2) + 4体内部(占1) = 8',
         },
         {
           name: 'C-C 键长与晶胞边长几何关系',
-          latex: 'l(\\text{C-C}) = \\frac{\\sqrt{3}}{4}a = 2r',
+          latex: 'l(\\text{C-C}) = \\frac{\\sqrt{3}}{4}a = 2r \\implies r = \\frac{\\sqrt{3}}{8}a',
           level: 'important' as const,
-          condition: '内部四面体 C 与顶点/面心 C 相连',
+          condition: '内部四面体 C 与最近的顶点/面心 C 相连，键长为体对角线的 1/4',
         },
         {
           name: '空间利用率与配位数',
-          latex: '\\eta = \\frac{8 \\times \\frac{4}{3}\\pi r^3}{a^3} = \\frac{\\pi\\sqrt{3}}{16} \\approx 34\\%, \\quad CN = 4',
+          latex: '\\eta = \\frac{8 \\times \\frac{4}{3}\\pi r^3}{a^3} = \\frac{8 \\times \\frac{4}{3}\\pi (\\frac{\\sqrt{3}}{8}a)^3}{a^3} = \\frac{\\pi\\sqrt{3}}{16} \\approx 34\\%, \\quad CN = 4',
           level: 'important' as const,
+          condition: '将 r = (√3/8)a 代入球体积公式化简',
         },
       ]
     case 'caf2':
@@ -336,11 +337,11 @@ export function getUnitCellExamPoints(params: Record<string, number>) {
       return [
         basePoint,
         {
-          text: '【金刚石 C 均摊】8顶点(1) + 6面心(3) + 4内部四面体空隙(4)，单个晶胞含 8 个 C 原子。配位数 4 (正四面体构型)。',
+          text: '【金刚石 C 均摊】8个顶点(占1/8) + 6个面心(占1/2) + 4个体内部(占1) = 8×1/8 + 6×1/2 + 4×1 = 8，单个晶胞含 8 个 C 原子。配位数 4 (正四面体构型)。',
           importance: 'gaokao' as const,
         },
         {
-          text: '【C-C 键长与半径】C-C 键长等于体对角线的 1/4，即 l = (√3/4)a，原子半径 r = (√3/8)a。空间利用率仅 34%。',
+          text: '【C-C 键长与半径】C-C 键长等于体对角线的 1/4，即 l = (√3/4)a，原子半径 r = (√3/8)a。空间利用率仅 34%，是所有晶体中最低的。',
           importance: 'hard' as const,
         },
       ]

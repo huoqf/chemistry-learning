@@ -94,6 +94,6 @@ export function createDiamondData(): CrystalTypeData {
     packingEfficiency: 34.0,
     atoms,
     bonds,
-    description: '金刚石结构：8顶点(1) + 6面心(3) + 4内部四面体空隙(4)，均占原子数 N=8，配位数 4',
+    description: '金刚石结构：8顶点(占1/8) + 6面心(占1/2) + 4体内部(占1)，均占原子数 N=8，配位数 4',
   }
 }
