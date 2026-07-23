@@ -12,8 +12,8 @@ import {
   ValenceMatrixCanvas,
   ContrastCanvas,
   ElectrochemCellApparatus,
-  OrganicMechanismCanvas,
 } from '@/components/Chemistry'
+import { OrganicMechanismCanvas } from '@/features/organic/mechanism'
 import { ReagentStepCanvas } from '@/components/Chemistry/ReagentStepCanvas'
 import { FlashCardCanvas } from '@/components/Chemistry/FlashCardCanvas'
 import { getModelQuizData } from '@/data/gaokaoQuizData'

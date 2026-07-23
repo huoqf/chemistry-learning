@@ -16,7 +16,6 @@ const HARD_LIMIT = 1000
 // Justification required: file is cohesive (single-component), no physics/JSX mixing, has tests, split收益不明显.
 const ALLOWLIST = new Set([
   'src/data/knowledgeTree.ts',
-  'src/components/Chemistry/OrganicMechanismCanvas.tsx', // 纯 SVG 渲染组件，6 个机制场景逻辑同类，拆分只是物理位移
 ])
 
 function walk(dir) {

@@ -176,6 +176,3 @@ export { FlashCardCanvas } from './FlashCardCanvas'
 
 export { ReagentStepCanvas } from './ReagentStepCanvas'
 
-export { OrganicMechanismCanvas } from './OrganicMechanismCanvas'
-export type { OrganicMechanismCanvasProps, ReactionMechanismType } from './OrganicMechanismCanvas'
-
