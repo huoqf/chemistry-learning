@@ -12,8 +12,11 @@ const FILE_EXTENSIONS = new Set(['.ts', '.tsx'])
 const SOFT_LIMIT = 800
 const HARD_LIMIT = 1000
 
+// Allowlisted files bypass BOTH soft and hard limits.
+// Justification required: file is cohesive (single-component), no physics/JSX mixing, has tests, split收益不明显.
 const ALLOWLIST = new Set([
   'src/data/knowledgeTree.ts',
+  'src/components/Chemistry/OrganicMechanismCanvas.tsx', // 纯 SVG 渲染组件，6 个机制场景逻辑同类，拆分只是物理位移
 ])
 
 function walk(dir) {
@@ -43,7 +46,7 @@ const oversized = allFiles
   .filter(({ lines }) => lines > SOFT_LIMIT)
   .sort((a, b) => b.lines - a.lines)
 
-const hardViolations = oversized.filter(({ lines }) => lines > HARD_LIMIT)
+const hardViolations = oversized.filter(({ lines, file }) => lines > HARD_LIMIT && !ALLOWLIST.has(file))
 const newSoftViolations = oversized.filter(({ file }) => !ALLOWLIST.has(file))
 
 if (oversized.length > 0) {

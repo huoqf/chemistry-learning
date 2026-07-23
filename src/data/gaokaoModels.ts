@@ -29,7 +29,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Grid',
     badgeText: '记忆矩阵',
     badgeColor: 'bg-rose-100 text-rose-800 border-rose-200',
-    relatedKnowledgeIds: ['node-iron', 'node-copper', 'node-sulfur'],
+    relatedKnowledgeIds: ['iron', 'copper', 'sulfur'],
     examPointSummary: [
       '常见金属与非金属元素化合价与物质类别交叉记忆',
       '高频显色反应与离子检验 (如 Fe³⁺ + KSCN → 血红色)',
@@ -46,7 +46,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'TestTube',
     badgeText: '试剂滴加',
     badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
-    relatedKnowledgeIds: ['node-iron', 'node-aluminium'],
+    relatedKnowledgeIds: ['iron', 'aluminum'],
     examPointSummary: [
       'Fe(OH)₂ 被空气中氧气氧化为 Fe(OH)₃ 的现象与方程式',
       'Al³⁺ 滴加强碱先沉淀后溶解的定量关系与图像',
@@ -63,7 +63,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'GitCompare',
     badgeText: '易错盲盒',
     badgeColor: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-    relatedKnowledgeIds: ['node-sulfur', 'node-nitric-acid'],
+    relatedKnowledgeIds: ['sulfur', 'nitrogen'],
     examPointSummary: [
       'SO₂ (化合结合)、Cl₂ (强氧化性)、活性炭 (物理吸附) 漂白机制对比',
       '常温下浓硫酸/浓硝酸对 Fe/Al 钝化的物理本质',
@@ -82,7 +82,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Zap',
     badgeText: '选择压轴',
     badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
-    relatedKnowledgeIds: ['node-ion-equilibrium', 'node-titration'],
+    relatedKnowledgeIds: ['titration', 'chemical-conservation', 'ph-calculation'],
     examPointSummary: [
       '滴定突跃点与指示剂变色范围 (酚酞/甲基橙) 的选择逻辑',
       '水溶液中电荷守恒、物料守恒与质子守恒推导',
@@ -99,7 +99,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Split',
     badgeText: '解题母题',
     badgeColor: 'bg-blue-100 text-blue-800 border-blue-200',
-    relatedKnowledgeIds: ['node-primary-cell', 'node-electrolytic-cell'],
+    relatedKnowledgeIds: ['primary-cell', 'electrolysis'],
     examPointSummary: [
       '正负极 / 阴阳极电极反应式书写与电子得失',
       '交换膜 (阳离子膜/阴离子膜) 下微粒定向迁移方向',
@@ -116,7 +116,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Atom',
     badgeText: '3D 切割',
     badgeColor: 'bg-purple-100 text-purple-800 border-purple-200',
-    relatedKnowledgeIds: ['node-unit-cell-calculation', 'node-crystal'],
+    relatedKnowledgeIds: ['unit-cell-calculation', 'crystal-structure'],
     examPointSummary: [
       '均摊法计算单个晶胞内各类原子/离子净个数 N',
       '晶胞边长 a 与原子半径 r 的几何关系 (面心立方 / 体心立方)',
@@ -133,7 +133,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'FlaskConical',
     badgeText: '原理大题',
     badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-    relatedKnowledgeIds: ['node-le-chatelier', 'node-collision-theory'],
+    relatedKnowledgeIds: ['le-chatelier', 'rate-theory'],
     examPointSummary: [
       '活化能 E_a 与催化剂对正逆反应速率的同等影响',
       '勒夏特列原理在 V/P/T 改变时的平衡移动方向判定',
@@ -150,7 +150,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Atom',
     badgeText: '3D 几何',
     badgeColor: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-    relatedKnowledgeIds: ['node-vsepr', 'node-hybrid-orbital'],
+    relatedKnowledgeIds: ['vsepr', 'hybridization'],
     examPointSummary: [
       '价层电子对互斥模型 (VSEPR) 推导分子空间构型',
       '中心原子杂化类型 (sp, sp², sp³) 的快速计算判别',
@@ -167,7 +167,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Layers',
     badgeText: '实验装置链',
     badgeColor: 'bg-orange-100 text-orange-800 border-orange-200',
-    relatedKnowledgeIds: ['node-gas-preparation'],
+    relatedKnowledgeIds: ['gas-preparation', 'separation-purification'],
     examPointSummary: [
       '气体制备顺序: 发生 → 净化除杂 → 干燥 → 收集 → 尾气处理',
       '洗气瓶长进短出与干燥管大进小出原则',
@@ -184,7 +184,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Grid',
     badgeText: '工艺流程',
     badgeColor: 'bg-teal-100 text-teal-800 border-teal-200',
-    relatedKnowledgeIds: ['node-iron', 'node-aluminium'],
+    relatedKnowledgeIds: ['iron', 'aluminum', 'precipitation-equilibrium'],
     examPointSummary: [
       '调 pH 沉淀分离金属离子的 $K_{sp}$ 计算与控制范围',
       '浸出率影响因素 (温度/浓度/粉碎粒度)',
@@ -201,7 +201,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Dna',
     badgeText: '有机断键',
     badgeColor: 'bg-pink-100 text-pink-800 border-pink-200',
-    relatedKnowledgeIds: ['node-esterification', 'node-addition-reaction', 'isomerism'],
+    relatedKnowledgeIds: ['carboxylic-acid-ester', 'ethylene', 'isomerism'],
     examPointSummary: [
       '酯化反应 18O 同位素标记法实验结论与断键位置',
       '烯烃/炔烃亲电加成反应马氏规则与断键',
@@ -235,7 +235,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Atom',
     badgeText: '位构性推断',
     badgeColor: 'bg-violet-100 text-violet-800 border-violet-200',
-    relatedKnowledgeIds: ['periodic-table', 'periodic-law', 'ionization-energy'],
+    relatedKnowledgeIds: ['electron-configuration', 'periodic-law', 'periodic-table'],
     examPointSummary: [
       '基态原子电子排布式、价层电子排布与轨道表示式',
       '同周期第一电离能洪特规则半充满 (如 N > O) 反常辨析',
@@ -252,7 +252,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Grid',
     badgeText: 'N_A 陷阱',
     badgeColor: 'bg-rose-100 text-rose-800 border-rose-200',
-    relatedKnowledgeIds: ['avogadro-constant', 'molar-volume', 'ion-equilibrium'],
+    relatedKnowledgeIds: ['avogadro-constant', 'gas-molar-volume', 'ionization-equilibrium'],
     examPointSummary: [
       '标准状况 (0℃, 101 kPa) 下非气体物质陷阱',
       '弱酸弱碱电离与盐类水解微粒数守恒计算',
@@ -269,7 +269,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'FlaskConical',
     badgeText: '定量误差',
     badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
-    relatedKnowledgeIds: ['titration', 'neutralization-titration', 'error-analysis'],
+    relatedKnowledgeIds: ['titration', 'quantitative-analysis', 'solution-preparation'],
     examPointSummary: [
       '滴定管装液前润洗与读数视角仰视俯视误差推导',
       '样品纯度 w% 与质量分数计算步骤模版',
@@ -286,7 +286,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Dna',
     badgeText: '有机逆合成',
     badgeColor: 'bg-pink-100 text-pink-800 border-pink-200',
-    relatedKnowledgeIds: ['organic-synthesis', 'functional-group', 'retrosynthesis'],
+    relatedKnowledgeIds: ['organic-synthesis', 'carboxylic-acid-ester', 'halogenated-hydrocarbon'],
     examPointSummary: [
       '目标分子的逆合成切断 (Bond Disconnection) 思路',
       '活泼官能团 (-OH, -NH₂, C=C) 的保护与脱保护反应',

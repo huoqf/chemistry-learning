@@ -63,6 +63,81 @@ function defaultGroup(control: ControlMeta) {
   }
 }
 
+const ModeGridControl: React.FC<{
+  control: Extract<ControlMeta, { type: 'modeGrid' }>
+  params: Record<string, number>
+  updateParam: (key: string, value: number) => void
+  resetAnimation: () => void
+  applySideEffect: (control: ControlCondition, value?: number) => void
+  disabled?: boolean
+}> = ({ control, params, updateParam, resetAnimation, applySideEffect, disabled }) => {
+  const modeValue = Math.round(params[control.key] ?? control.modes[0]?.value ?? 0)
+  const modeKeys = control.modes.map((m) => String(m.value))
+  const cols = control.cols ?? 2
+  const { getItemProps, registerRef } = useRadioGroup({
+    value: String(modeValue),
+    keys: modeKeys,
+    direction: 'grid',
+    columns: cols,
+    onChange: (key) => {
+      const val = Number(key)
+      if (val === modeValue) return
+      updateParam(control.key, val)
+      if (control.resetOnChange) resetAnimation()
+      applySideEffect(control, val)
+    },
+  })
+  const setRef = useCallback(
+    (key: string) => (el: HTMLButtonElement | null) => {
+      registerRef(key, el)
+    },
+    [registerRef],
+  )
+  const currentMode = control.modes.find((m) => m.value === modeValue)
+
+  return (
+    <div className="space-y-2">
+      {control.label && (
+        <span className="mb-1 block text-xs font-semibold text-neutral-600">{control.label}</span>
+      )}
+      <div
+        role="radiogroup"
+        style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gap: '0.375rem' }}
+      >
+        {control.modes.map((mode) => {
+          const radioProps = getItemProps(String(mode.value))
+          return (
+            <OptionButton
+              key={mode.value}
+              variant="mode"
+              label={
+                <span className="inline-flex items-center gap-1">
+                  <span>{mode.value + 1}.</span>
+                  {mode.label}
+                </span>
+              }
+              selected={mode.value === modeValue}
+              disabled={disabled}
+              radioTabIndex={radioProps.tabIndex}
+              radioOnKeyDown={radioProps.onKeyDown}
+              buttonRef={setRef(String(mode.value))}
+              onClick={() => {
+                if (mode.value === modeValue) return
+                updateParam(control.key, mode.value)
+                if (control.resetOnChange) resetAnimation()
+                applySideEffect(control, mode.value)
+              }}
+            />
+          )
+        })}
+      </div>
+      {currentMode?.description && (
+        <p className="text-[11px] leading-snug text-neutral-500">{currentMode.description}</p>
+      )}
+    </div>
+  )
+}
+
 export const ControlPanel: React.FC<ControlPanelProps> = ({
   controls,
   params,
@@ -264,74 +339,18 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
           </div>
         )
       }
-      case 'modeGrid': {
-        const modeValue = Math.round(params[control.key] ?? control.modes[0]?.value ?? 0)
-        const currentMode = control.modes.find((m) => m.value === modeValue)
-        const modeKeys = control.modes.map((m) => String(m.value))
-        const cols = control.cols ?? 2
-        const { getItemProps, registerRef } = useRadioGroup({
-          value: String(modeValue),
-          keys: modeKeys,
-          direction: 'grid',
-          columns: cols,
-          onChange: (key) => {
-            const val = Number(key)
-            if (val === modeValue) return
-            updateParam(control.key, val)
-            if (control.resetOnChange) resetAnimation()
-            applySideEffect(control, val)
-          },
-        })
-        const setRef = useCallback(
-          (key: string) => (el: HTMLButtonElement | null) => {
-            registerRef(key, el)
-          },
-          [registerRef],
-        )
+      case 'modeGrid':
         return (
-          <div key={`${control.type}-${control.key}-${index}`} className="space-y-2">
-            {control.label && (
-              <span className="mb-1 block text-xs font-semibold text-neutral-600">{control.label}</span>
-            )}
-            <div
-              role="radiogroup"
-              style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gap: '0.375rem' }}
-            >
-              {control.modes.map((mode) => {
-                const radioProps = getItemProps(String(mode.value))
-                return (
-                  <OptionButton
-                    key={mode.value}
-                    variant="mode"
-                    label={
-                      <span className="inline-flex items-center gap-1">
-                        <span>{mode.value + 1}.</span>
-                        {mode.label}
-                      </span>
-                    }
-                    selected={mode.value === modeValue}
-                    disabled={disabled}
-                    radioTabIndex={radioProps.tabIndex}
-                    radioOnKeyDown={radioProps.onKeyDown}
-                    buttonRef={setRef(String(mode.value))}
-                    onClick={() => {
-                      if (mode.value === modeValue) return
-                      updateParam(control.key, mode.value)
-                      if (control.resetOnChange) resetAnimation()
-                      applySideEffect(control, mode.value)
-                    }}
-                  />
-                )
-              })}
-            </div>
-            {currentMode && (
-              <div className="mt-1 text-ui-md text-neutral-500 pt-2 border-t border-neutral-100">
-                {currentMode.description}
-              </div>
-            )}
-          </div>
+          <ModeGridControl
+            key={`${control.type}-${control.key}-${index}`}
+            control={control}
+            params={params}
+            updateParam={updateParam}
+            resetAnimation={resetAnimation}
+            applySideEffect={applySideEffect}
+            disabled={disabled}
+          />
         )
-      }
       case 'step': {
         const currentValue = params[control.paramKey] ?? 0
         const nextValue = currentValue + control.step

@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { loadExtendedRegistry } from '@/data/animationRegistry'
+import { resolveAnimationIds, knowledgeTree } from '@/data/knowledgeTree'
 
 /**
  * 应用启动初始化器 — 统一执行所有 store 的异步水合，
@@ -13,8 +15,6 @@ export function AppInitializer({ children }: { children: React.ReactNode }) {
     let cancelled = false
     // 预加载动画注册表，确保直接访问 /animation/:id 时同步 getAnimationConfig 可用
     ;(async () => {
-      const { loadExtendedRegistry } = await import('@/data/animationRegistry')
-      const { resolveAnimationIds, knowledgeTree } = await import('@/data/knowledgeTree')
       await loadExtendedRegistry()
       resolveAnimationIds(knowledgeTree)
       if (!cancelled) setReady(true)

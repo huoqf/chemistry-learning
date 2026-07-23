@@ -20,12 +20,7 @@ export default defineConfig({
           if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router-dom')) {
             return 'vendor-react'
           }
-          if (id.includes('node_modules/katex')) {
-            return 'vendor-katex'
-          }
-          if (id.includes('node_modules/three') || id.includes('node_modules/@react-three')) {
-            return 'vendor-three'
-          }
+          // Three.js 不单独拆 chunk，随 lazy-loaded feature 组件按需加载
         },
       },
     },

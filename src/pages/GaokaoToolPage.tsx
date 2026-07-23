@@ -12,6 +12,7 @@ import {
   ValenceMatrixCanvas,
   ContrastCanvas,
   ElectrochemCellApparatus,
+  OrganicMechanismCanvas,
 } from '@/components/Chemistry'
 import { ReagentStepCanvas } from '@/components/Chemistry/ReagentStepCanvas'
 import { FlashCardCanvas } from '@/components/Chemistry/FlashCardCanvas'
@@ -37,6 +38,11 @@ export default function GaokaoToolPage() {
         </button>
       </div>
     )
+  }
+
+  // 如果是“母题八：有机反应官能团断键机制工具”，渲染全屏断键交互与中屏平行视图
+  if (model.id === 'model-organic-mechanism') {
+    return <OrganicMechanismCanvas />
   }
 
   // 1. 如果是“专题一：无机元素价类二维矩阵探究工具”，直接渲染标准全屏 ThreePanel 架构
@@ -216,16 +222,29 @@ export default function GaokaoToolPage() {
             <div className="flex flex-col gap-1.5">
               {model.relatedKnowledgeIds.map(kid => {
                 const knode = getKnowledgeNode(kid)
+                const animId = knode?.animationIds?.[0]
                 return (
-                  <div
+                  <button
                     key={kid}
-                    className="p-2 rounded bg-indigo-50/50 border border-indigo-100 text-xs flex items-center justify-between text-indigo-900"
+                    onClick={() => {
+                      if (animId) {
+                        navigate(`/animation/${animId}`)
+                      } else {
+                        navigate('/')
+                      }
+                    }}
+                    className="p-2.5 rounded-lg bg-indigo-50/60 hover:bg-indigo-100/80 border border-indigo-100 text-xs flex items-center justify-between text-indigo-950 transition-colors text-left group"
                   >
-                    <span className="font-medium">{knode ? knode.title : kid}</span>
-                    <span className="text-[10px] text-indigo-600 font-mono">
-                      {knode ? knode.module : '教材考点'}
+                    <div className="flex flex-col">
+                      <span className="font-semibold group-hover:text-indigo-700">{knode ? knode.title : kid}</span>
+                      <span className="text-[10px] text-indigo-500 font-mono">
+                        {knode ? `${knode.chapter} · ${knode.module}` : '教材考点'}
+                      </span>
+                    </div>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-200/50 text-indigo-700 font-semibold group-hover:bg-indigo-600 group-hover:text-white transition-colors shrink-0">
+                      {animId ? '去学习' : '考点'}
                     </span>
-                  </div>
+                  </button>
                 )
               })}
             </div>
