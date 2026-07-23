@@ -12,7 +12,9 @@ export async function loadExtendedRegistry(): Promise<void> {
     extendedPromise = (async () => {
       const { reactionPrincipleAnimations } = await import('./registries/reaction-principle')
       const { structureAnimations } = await import('./registries/structure')
-      Object.assign(fullRegistry, reactionPrincipleAnimations, structureAnimations)
+      const { inorganicAnimations } = await import('./registries/inorganic')
+      Object.assign(fullRegistry, reactionPrincipleAnimations, structureAnimations, inorganicAnimations)
+
       extendedLoaded = true
 
       // 注册表装载完成后自动关联知识树（传入完整 registry，动态发现所有动画）

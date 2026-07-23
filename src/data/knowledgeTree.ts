@@ -42,6 +42,8 @@ export function resolveAnimationIds(
         'anim-hybrid-orbital',
         'anim-chirality',
         'anim-isomerism',
+        'anim-redox-electron-transfer',
+
       ]
 
   for (const animId of animIds) {

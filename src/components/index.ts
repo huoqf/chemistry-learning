@@ -1,4 +1,5 @@
-﻿export * from './Chart'
+export * from './Chart'
 export * from './Layout'
 export * from './Chemistry'
+export * from './Chemistry3D'
 export * from './UI'

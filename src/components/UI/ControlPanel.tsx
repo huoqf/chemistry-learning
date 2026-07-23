@@ -7,6 +7,7 @@ import { Button } from './Button'
 import { SegmentedControl } from './SegmentedControl'
 import { Slider } from './Slider'
 import { TipCard } from './TipCard'
+import { KatexFormula } from './KatexFormula'
 import { ToggleSwitch } from './ToggleSwitch'
 import { LeftPanelSection } from './LeftPanel'
 
@@ -194,10 +195,18 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
         )
       case 'tip': {
         const resolvedContent = typeof control.content === 'function' ? control.content(params) : control.content
+        // 按 $...$ 拆分，文本段纯渲染，公式段走 KaTeX
+        const parts = resolvedContent.split(/(\$[^$]+\$)/g)
         return (
           <TipCard key={`${control.type}-${index}`} variant={control.variant ?? 'info'}>
             {control.title && <span className="font-semibold block mb-1">{control.title}</span>}
-            <span>{resolvedContent}</span>
+            <span>
+              {parts.map((part, i) =>
+                part.startsWith('$') && part.endsWith('$')
+                  ? <KatexFormula key={i} formula={part.slice(1, -1)} />
+                  : <span key={i}>{part}</span>
+              )}
+            </span>
           </TipCard>
         )
       }
