@@ -39,87 +39,51 @@ export default function GaokaoToolPage() {
     )
   }
 
+  // 1. 如果是“专题一：无机元素价类二维矩阵探究工具”，直接渲染标准全屏 ThreePanel 架构
+  if (model.id === 'model-valence-matrix') {
+    return (
+      <div className="w-full h-screen flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden">
+        {/* 顶部 Navigation */}
+        <div className="bg-slate-900 border-b border-slate-800 px-6 py-3 flex items-center justify-between shadow-sm shrink-0">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/')}
+              className="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors flex items-center gap-1.5 text-xs font-semibold"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              返回高考母题索引
+            </button>
+            <div className="h-4 w-px bg-slate-700 mx-1" />
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-sm text-white">{model.title}</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${model.badgeColor}`}>
+                  {model.badgeText}
+                </span>
+              </div>
+              <span className="text-[11px] text-slate-400">{model.subtitle}</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-amber-400 font-semibold flex items-center gap-1">
+              <Sparkles className="w-3.5 h-3.5" />
+              标准三屏架构 (ThreePanel) · 亮色规范
+            </span>
+          </div>
+        </div>
+
+        {/* 完整 ThreePanel 三栏区域 */}
+        <div className="flex-1 overflow-hidden">
+          <ValenceMatrixCanvas defaultElementSymbol="Fe" />
+        </div>
+      </div>
+    )
+  }
+
+  // 通用备用工具渲染
   const renderToolComponent = () => {
     switch (model.id) {
-      case 'model-valence-matrix':
-        return (
-          <ValenceMatrixCanvas
-            elementName="铁 (Fe) 元素"
-            valences={[0, 2, 3, 6]}
-            categories={['单质', '氧化物', '氢化物/碱', '盐']}
-            items={[
-              {
-                valence: 0,
-                category: '单质',
-                substance: 'Fe',
-                colorText: '银白色固体',
-                colorStyle: 'bg-slate-100 text-slate-700 border-slate-300',
-                testReaction: '置于 Cl₂ 中燃烧生成棕黄色烟 FeCl₃',
-                equation: '2Fe + 3Cl₂ =点燃= 2FeCl₃',
-              },
-              {
-                valence: 2,
-                category: '氧化物',
-                substance: 'FeO',
-                colorText: '黑色粉末',
-                colorStyle: 'bg-slate-800 text-white border-slate-900',
-                testReaction: '与稀硝酸反应被氧化为 Fe³⁺',
-              },
-              {
-                valence: 2,
-                category: '氢化物/碱',
-                substance: 'Fe(OH)₂',
-                colorText: '白色沉淀',
-                colorStyle: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                testReaction: '在空气中迅速变为灰绿色，最终变为红褐色 Fe(OH)₃',
-                equation: '4Fe(OH)₂ + O₂ + 2H₂O = 4Fe(OH)₃',
-              },
-              {
-                valence: 2,
-                category: '盐',
-                substance: 'FeSO₄',
-                colorText: '浅绿色溶液',
-                colorStyle: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-                testReaction: '滴加 KSCN 不显色，再滴加 H₂O₂ 显血红色',
-                equation: '2Fe²⁺ + H₂O₂ + 2H⁺ = 2Fe³⁺ + 2H₂O',
-              },
-              {
-                valence: 3,
-                category: '氧化物',
-                substance: 'Fe₂O₃',
-                colorText: '红棕色粉末',
-                colorStyle: 'bg-amber-100 text-amber-900 border-amber-300',
-                testReaction: '俗称铁红，常用作红色颜料',
-              },
-              {
-                valence: 3,
-                category: '氢化物/碱',
-                substance: 'Fe(OH)₃',
-                colorText: '红褐色沉淀',
-                colorStyle: 'bg-amber-800 text-white border-amber-900',
-                testReaction: '溶于强酸生成黄色溶液',
-              },
-              {
-                valence: 3,
-                category: '盐',
-                substance: 'FeCl₃',
-                colorText: '黄色溶液',
-                colorStyle: 'bg-amber-200 text-amber-900 border-amber-400',
-                testReaction: '滴加 KSCN 溶液变血红色；滴加 Cu 发生反应',
-                equation: 'Fe³⁺ + 3SCN⁻ = Fe(SCN)₃ (血红)',
-              },
-              {
-                valence: 6,
-                category: '盐',
-                substance: 'K₂FeO₄',
-                colorText: '紫色强氧化盐',
-                colorStyle: 'bg-purple-100 text-purple-900 border-purple-300',
-                testReaction: '高铁酸钾，兼具强氧化消毒与胶体絮凝净水双重功能',
-              },
-            ]}
-          />
-        )
-
       case 'model-reagent-step':
         return <ReagentStepCanvas />
 
@@ -218,22 +182,18 @@ export default function GaokaoToolPage() {
 
       {/* 主体交互工具内容与右侧考点侧栏 */}
       <div className="flex-1 p-4 grid grid-cols-1 lg:grid-cols-4 gap-4 overflow-y-auto">
-        {/* 左侧主要交互工具画板与手算/真题闭环 */}
         <div className="lg:col-span-3 flex flex-col gap-4">
           <div className="w-full min-h-[550px]">{renderToolComponent()}</div>
 
-          {/* 踩分点手算与规范答题卡片 */}
           {quizData && quizData.scoringSteps.length > 0 && (
             <ScoringCardSection steps={quizData.scoringSteps} />
           )}
 
-          {/* 近 3 年高考真题变式盲盒 */}
           {quizData && quizData.variantQuizzes.length > 0 && (
             <GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />
           )}
         </div>
 
-        {/* 右侧高考要点与关联教材面板 */}
         <div className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col justify-between h-fit sticky top-4">
           <div>
             <h4 className="font-bold text-slate-800 text-sm mb-3 flex items-center gap-1.5">

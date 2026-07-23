@@ -13,7 +13,14 @@ export async function loadExtendedRegistry(): Promise<void> {
       const { reactionPrincipleAnimations } = await import('./registries/reaction-principle')
       const { structureAnimations } = await import('./registries/structure')
       const { inorganicAnimations } = await import('./registries/inorganic')
-      Object.assign(fullRegistry, reactionPrincipleAnimations, structureAnimations, inorganicAnimations)
+      const { experimentAnimations } = await import('./registries/experiment')
+      Object.assign(
+        fullRegistry,
+        reactionPrincipleAnimations,
+        structureAnimations,
+        inorganicAnimations,
+        experimentAnimations
+      )
 
       extendedLoaded = true
 

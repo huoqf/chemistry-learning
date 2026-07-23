@@ -46,6 +46,7 @@ import { buildHybridQuantities } from './quantities/structure/hybridization'
 import { buildChiralityQuantities } from './quantities/structure/chirality'
 import { buildIsomerismQuantities } from './quantities/structure/isomerism'
 import { buildRedoxElectronTransferQuantities } from './quantities/inorganic/redoxElectronTransfer'
+import { buildExtractionDistillationQuantities } from './quantities/experiment/extraction-distillation'
 
 registerQuantityBuilder('anim-le-chatelier', buildLeChatelierQuantities)
 registerQuantityBuilder('anim-collision-theory', buildCollisionTheoryQuantities)
@@ -58,6 +59,8 @@ registerQuantityBuilder('anim-hybrid-orbital', buildHybridQuantities)
 registerQuantityBuilder('anim-chirality', buildChiralityQuantities)
 registerQuantityBuilder('anim-isomerism', buildIsomerismQuantities)
 registerQuantityBuilder('anim-redox-electron-transfer', buildRedoxElectronTransferQuantities)
+registerQuantityBuilder('anim-extraction-distillation', buildExtractionDistillationQuantities)
+
 
 
 
