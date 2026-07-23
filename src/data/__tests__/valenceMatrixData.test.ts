@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { VALENCE_MATRIX_DATA } from '../valenceMatrixData'
+import { VALENCE_MATRIX_DATA } from '../valence-matrix'
 
 describe('Valence Matrix Data Integrity', () => {
   it('should contain all 11 inorganic elements (9 core + 2 industrial)', () => {

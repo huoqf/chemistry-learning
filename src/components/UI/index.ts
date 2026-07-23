@@ -24,6 +24,7 @@ export { ChemistryPanel } from './ChemistryPanel'
 export { ErrorBoundary } from './ErrorBoundary'
 export { ScoringCardSection } from './ScoringCardSection'
 export { GaokaoVariantQuiz } from './GaokaoVariantQuiz'
+export { ChemicalFormula } from './ChemicalFormula'
 
 export interface DiscoveryStepData {
   title: string

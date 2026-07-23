@@ -14,12 +14,12 @@ import {
 } from 'lucide-react'
 import {
   VALENCE_MATRIX_DATA,
-  ValenceCategory,
-  ValenceSubstanceNode,
-} from '@/data/valenceMatrixData'
+  type ValenceCategory,
+  type ValenceSubstanceNode,
+} from '@/data/valence-matrix'
 import { ThreePanel } from '@/components/Layout'
 import { LeftPanel, LeftPanelSection } from '@/components/UI/LeftPanel'
-import { ScoringCardSection, GaokaoVariantQuiz } from '@/components/UI'
+import { ScoringCardSection, GaokaoVariantQuiz, ChemicalFormula } from '@/components/UI'
 import { getGaokaoModel } from '@/data/gaokaoModels'
 import { getKnowledgeNode } from '@/data/knowledgeTree'
 import { getModelQuizData } from '@/data/gaokaoQuizData'
@@ -336,7 +336,7 @@ export function ValenceMatrixCanvas({
         >
           <div className="flex flex-col gap-2 pt-1">
             <p className="text-[11px] text-slate-500 leading-relaxed">
-              演练 <span className="font-bold text-indigo-700 font-mono">{selectedSubstance.substance}</span> 的特征试剂显色与离子检验：
+              演练 <ChemicalFormula formula={selectedSubstance.substance} className="font-bold text-indigo-700" /> 的特征试剂显色与离子检验：
             </p>
             <button
               onClick={handleRunTest}
@@ -423,9 +423,7 @@ export function ValenceMatrixCanvas({
                         >
                           {node ? (
                             <div className="flex flex-col items-center gap-1 py-1">
-                              <span className="font-bold text-sm text-slate-900 font-mono">
-                                {node.substance}
-                              </span>
+                              <ChemicalFormula formula={node.substance} className="font-bold text-sm text-slate-900" />
                               <span className={`text-[10px] px-1.5 py-0.5 rounded border ${node.colorStyle}`}>
                                 {node.colorText}
                               </span>
@@ -474,17 +472,17 @@ export function ValenceMatrixCanvas({
                       className="p-2 rounded bg-white border border-amber-200 text-xs flex flex-col gap-1 shadow-2xs"
                     >
                       <div className="flex items-center justify-between font-bold text-slate-800">
-                        <span className="flex items-center gap-1 font-mono text-indigo-700">
-                          {trans.fromSubstance}
+                        <span className="flex items-center gap-1 text-indigo-700">
+                          <ChemicalFormula formula={trans.fromSubstance} />
                           <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
-                          {trans.toSubstance}
+                          <ChemicalFormula formula={trans.toSubstance} />
                         </span>
                         <span className="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-900 rounded">
                           试剂: {trans.reagent}
                         </span>
                       </div>
-                      <div className="text-[11px] font-mono text-slate-600 bg-slate-50 p-1 rounded">
-                        {trans.equation}
+                      <div className="text-[11px] text-slate-600 bg-slate-50 p-1 rounded">
+                        <ChemicalFormula formula={trans.equation} />
                       </div>
                       <div className="text-[10px] text-rose-600 font-semibold flex items-center gap-1">
                         <span>✨ {trans.electronTransfer}</span>
@@ -504,7 +502,7 @@ export function ValenceMatrixCanvas({
                   <TestTube className="w-5 h-5 text-rose-600" />
                   <span className="font-bold text-sm text-slate-800">
                     特征显色与试剂反应实物演练：
-                    <span className="font-mono text-indigo-700">{selectedSubstance.substance}</span>
+                    <ChemicalFormula formula={selectedSubstance.substance} className="text-indigo-700" />
                   </span>
                 </div>
                 {isTesting && (
@@ -628,7 +626,7 @@ export function ValenceMatrixCanvas({
           <div className="flex items-center justify-between border-b border-slate-200/60 pb-2">
             <span className="font-bold text-sm text-slate-900 flex items-center gap-1.5">
               <Sparkles className="w-4 h-4 text-amber-500" />
-              焦点物质：<span className="font-mono text-indigo-700">{selectedSubstance.substance}</span>
+              焦点物质：<ChemicalFormula formula={selectedSubstance.substance} className="text-indigo-700" />
             </span>
             <span className="text-xs font-mono font-bold px-2 py-0.5 bg-indigo-50 text-indigo-800 rounded border border-indigo-200">
               {selectedSubstance.valence > 0 ? `+${selectedSubstance.valence}` : selectedSubstance.valence} 价 | {selectedSubstance.category}
@@ -653,9 +651,9 @@ export function ValenceMatrixCanvas({
           )}
 
           {selectedSubstance.equation && (
-            <div className="text-xs text-slate-800 bg-indigo-50/80 p-2 rounded font-mono border border-indigo-100 flex flex-col gap-1">
+            <div className="text-xs text-slate-800 bg-indigo-50/80 p-2 rounded border border-indigo-100 flex flex-col gap-1">
               <span className="font-sans font-bold text-indigo-900">核心化学/离子方程式：</span>
-              <span className="text-slate-900 font-semibold">{selectedSubstance.equation}</span>
+              <ChemicalFormula formula={selectedSubstance.equation} className="text-slate-900 font-semibold" />
             </div>
           )}
 
@@ -666,9 +664,9 @@ export function ValenceMatrixCanvas({
                 {relatedTransformations.slice(0, 3).map(t => (
                   <div
                     key={t.id}
-                    className="p-1.5 bg-white border border-slate-200 rounded text-[11px] font-mono text-slate-800"
+                    className="p-1.5 bg-white border border-slate-200 rounded text-[11px] text-slate-800"
                   >
-                    {t.fromSubstance} ➔ {t.toSubstance} ({t.reagent}): <span className="font-bold text-indigo-700">{t.equation}</span>
+                    <ChemicalFormula formula={t.fromSubstance} /> ➔ <ChemicalFormula formula={t.toSubstance} /> ({t.reagent}): <ChemicalFormula formula={t.equation} className="font-bold text-indigo-700" />
                   </div>
                 ))}
               </div>

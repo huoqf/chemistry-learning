@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { FlaskConical, ArrowRight, RotateCcw } from 'lucide-react'
+import { ChemicalFormula } from '@/components/UI'
 
 export function ReagentStepCanvas() {
   const [step, setStep] = useState(0)
@@ -82,8 +83,8 @@ export function ReagentStepCanvas() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <div className="text-[11px] font-mono bg-slate-50 p-2 rounded border border-slate-200 text-slate-800">
-              {current.equation}
+            <div className="text-[11px] bg-slate-50 p-2 rounded border border-slate-200 text-slate-800">
+              <ChemicalFormula formula={current.equation} />
             </div>
             <button
               onClick={() => setStep((step + 1) % stepsInfo.length)}

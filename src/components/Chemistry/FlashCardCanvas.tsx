@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Sparkles, HelpCircle, CheckCircle2 } from 'lucide-react'
+import { ChemicalFormula } from '@/components/UI'
 
 interface FlashCardItem {
   id: string
@@ -109,8 +110,8 @@ export function FlashCardCanvas() {
             </div>
             <p className="text-xs text-slate-600 leading-relaxed">{current.explanation}</p>
             {current.chemicalEquation && (
-              <div className="text-xs font-mono text-indigo-700 bg-indigo-50 p-2 rounded border border-indigo-100">
-                {current.chemicalEquation}
+              <div className="text-xs text-indigo-700 bg-indigo-50 p-2 rounded border border-indigo-100">
+                <ChemicalFormula formula={current.chemicalEquation} />
               </div>
             )}
             <button
