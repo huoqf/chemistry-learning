@@ -51,6 +51,8 @@ SidebarExtra（仅复杂）    禁止大段教学文字                    ExamP
 
 > ⚠️ **图表必须在 DOM 层**（与 `AnimationSvgCanvas` 平级的 flex `div`），**严禁使用 `foreignObject` 内嵌 React 图表**。`foreignObject` 会造成坐标系混乱、ResizeObserver 失效、跨浏览器渲染异常。正确写法见 Step 2 splitH 骨架。
 
+> **适用范围说明**：本铁律适用于 `AnimationPage`（路由 `/animation/:id`）布局体系。`GaokaoToolPage`（路由 `/gaokao-tool/:id`）是独立布局体系，其中屏支持 viewMode 子视图切换（动画/踩分/真题），不受"禁止教学文字"约束。详见 `new-gaokao-model` Skill。
+
 
 ### 0C：controlsMode 选择
 
