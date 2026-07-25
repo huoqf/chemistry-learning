@@ -16,6 +16,7 @@ import {
 import { LAYOUT, duration, easing } from '@/theme'
 import { ThreePanel } from '@/components/Layout'
 import { AnimationLayoutContext } from '@/context/AnimationLayoutContext'
+import { isConditionVisible } from '@/utils/controlVisibility'
 
 export default function AnimationPage() {
   const navigate = useNavigate()
@@ -41,7 +42,15 @@ export default function AnimationPage() {
   const setIsPlaying = useAnimationStore((s) => s.setIsPlaying)
   const setTime = useAnimationStore((s) => s.setTime)
   const setSpeed = useAnimationStore((s) => s.setSpeed)
-  const { setParams, updateParam } = useAnimationStore.getState()
+  const setParams = useAnimationStore((s) => s.setParams)
+  const updateParam = useAnimationStore((s) => s.updateParam)
+  const showVectors = useAnimationStore((s) => s.showVectors)
+  const showTimeSlices = useAnimationStore((s) => s.showTimeSlices)
+  const showDualObjects = useAnimationStore((s) => s.showDualObjects)
+  const setDirection = useAnimationStore((s) => s.setDirection)
+  const toggleVectors = useAnimationStore((s) => s.toggleVectors)
+  const toggleTimeSlices = useAnimationStore((s) => s.toggleTimeSlices)
+  const toggleDualObjects = useAnimationStore((s) => s.toggleDualObjects)
 
   const controlMeta = config?.controlMeta || []
   const paramMeta = useMemo(
@@ -61,12 +70,12 @@ export default function AnimationPage() {
   if (!config || !AnimationComponent) {
     return (
       <div className="p-8 flex flex-col items-center justify-center min-h-[60vh]">
-        <h2 className="text-2xl font-bold text-neutral-700 mb-4">{"Animation Not Found"}</h2>
+        <h2 className="text-2xl font-bold text-neutral-700 mb-4">动画未找到</h2>
         <button
           onClick={() => navigate('/')}
           className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 active:scale-[0.97]"
         >
-          Back to Knowledge
+          返回知识树
         </button>
       </div>
     )
@@ -75,19 +84,7 @@ export default function AnimationPage() {
   const maxTime = config.maxTime ?? 30
 
   const paramControlParams = paramMeta
-    .filter((p) => {
-      if (p.showIf) {
-        if (p.showIfValue != null) {
-          if (params[p.showIf] !== p.showIfValue) return false
-        } else if (!params[p.showIf]) {
-          return false
-        }
-      }
-      if (p.hideIf && p.hideIfValue != null) {
-        if (params[p.hideIf] === p.hideIfValue) return false
-      }
-      return true
-    })
+    .filter((p) => isConditionVisible(p, params))
     .map((p) => ({
       ...p,
       value: params[p.key] ?? 0,
@@ -156,17 +153,17 @@ export default function AnimationPage() {
                 setParams={setParams}
                 resetAnimation={handleReset}
                 restartAnimation={() => {
-                  useAnimationStore.getState().setTime(0)
-                  useAnimationStore.getState().setIsPlaying(true)
+                  setTime(0)
+                  setIsPlaying(true)
                 }}
-                setDirection={(d) => useAnimationStore.getState().setDirection(d)}
-                toggleVectors={() => useAnimationStore.getState().toggleVectors()}
-                toggleTimeSlices={() => useAnimationStore.getState().toggleTimeSlices()}
-                toggleDualObjects={() => useAnimationStore.getState().toggleDualObjects()}
+                setDirection={(d) => setDirection(d)}
+                toggleVectors={() => toggleVectors()}
+                toggleTimeSlices={() => toggleTimeSlices()}
+                toggleDualObjects={() => toggleDualObjects()}
                 storeStates={{
-                  showVectors: useAnimationStore.getState().showVectors,
-                  showTimeSlices: useAnimationStore.getState().showTimeSlices,
-                  showDualObjects: useAnimationStore.getState().showDualObjects,
+                  showVectors,
+                  showTimeSlices,
+                  showDualObjects,
                 }}
               />
             )}
@@ -183,7 +180,7 @@ export default function AnimationPage() {
             >
               <ErrorBoundary resetKey={config.id}>
                 <Suspense
-                  fallback={<div className="w-full h-full flex items-center justify-center text-neutral-400">{'Loading...'}</div>}
+                  fallback={<div className="w-full h-full flex items-center justify-center text-neutral-400">加载中...</div>}
                 >
                   <AnimationLayoutContext.Provider value={config.sceneLayout}>
                     <AnimationComponent />

@@ -1,6 +1,6 @@
 export { getAnimationConfig, getAnimationConfigAsync, preloadExtendedRegistry, getAnimationCount, defineAnimations } from './animationRegistry'
 export type { AnimationConfig, KnowledgeNode, ParamMeta, ControlMeta, AnimationActions } from './types'
-export { preloadQuantityBuilder, getChemistryQuantities, registerQuantityBuilder } from './chemistryQuantities'
+export { getChemistryQuantities, registerQuantityBuilder } from './chemistryQuantities'
 export type { ChemistryQuantity, QuantityBuilder } from './chemistryQuantities'
 export { knowledgeTree, knowledgeIndex, getKnowledgeNode } from './knowledgeTree'
 

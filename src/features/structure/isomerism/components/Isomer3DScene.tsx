@@ -2,6 +2,7 @@ import { useState, useMemo, useRef, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import { AtomMesh, BondMesh } from '@/components/Chemistry3D'
+import { isWebGLAvailable } from '@/components/Chemistry3D/utils/webgl'
 import { SCENE_COLORS, CANVAS_COLORS, colors } from '@/theme'
 import type { IsomerNode } from '@/components/Chemistry'
 import { get3DModelForIsomer } from '../utils/isomer3dTransform'
@@ -9,24 +10,6 @@ import { get3DModelForIsomer } from '../utils/isomer3dTransform'
 // 3D 球棍模型在白色主屏上需要更柔和的光照，避免高光过曝
 const AMBIENT_INTENSITY = 0.95
 const DIRECTIONAL_INTENSITY = 0.9
-
-// 惰性缓存 WebGL 检测
-let _cachedWebGL: boolean | null = null
-function isWebGLAvailable(): boolean {
-  if (_cachedWebGL !== null) return _cachedWebGL
-  try {
-    const canvas = document.createElement('canvas')
-    const gl =
-      canvas.getContext('webgl') || (canvas.getContext('experimental-webgl') as WebGLRenderingContext | null)
-    _cachedWebGL = !!gl
-    if (gl) {
-      gl.getExtension('WEBGL_lose_context')?.loseContext()
-    }
-  } catch {
-    _cachedWebGL = false
-  }
-  return _cachedWebGL
-}
 
 function WebGLFallback() {
   return (

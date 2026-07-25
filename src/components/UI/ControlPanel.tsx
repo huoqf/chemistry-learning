@@ -10,6 +10,7 @@ import { TipCard } from './TipCard'
 import { KatexFormula } from './KatexFormula'
 import { ToggleSwitch } from './ToggleSwitch'
 import { LeftPanelSection } from './LeftPanel'
+import { isConditionVisible } from '@/utils/controlVisibility'
 
 interface ControlPanelProps {
   controls: ControlMeta[]
@@ -25,20 +26,6 @@ interface ControlPanelProps {
   toggleDualObjects?: () => void
   storeStates?: Record<string, boolean>
   disabled?: boolean
-}
-
-function isControlVisible(control: ControlMeta, params: Record<string, number>) {
-  if (control.showIf) {
-    if (control.showIfValue != null) {
-      if (params[control.showIf] !== control.showIfValue) return false
-    } else if (!params[control.showIf]) {
-      return false
-    }
-  }
-  if (control.hideIf && control.hideIfValue != null) {
-    if (params[control.hideIf] === control.hideIfValue) return false
-  }
-  return true
 }
 
 function defaultGroup(control: ControlMeta) {
@@ -154,7 +141,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   disabled = false,
 }) => {
   const groups = useMemo(() => {
-    const visibleControls = controls.filter((control) => isControlVisible(control, params))
+    const visibleControls = controls.filter((control) => isConditionVisible(control, params))
     const grouped: Array<{ label: string; controls: ControlMeta[] }> = []
     const indexByGroup = new Map<string, number>()
 

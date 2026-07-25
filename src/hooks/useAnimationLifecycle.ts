@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, type RefObject } from 'react'
 import { useParams, useLocation } from 'react-router-dom'
 import { useShallow } from 'zustand/react/shallow'
 import { getAnimationConfig, getAnimationConfigAsync } from '@/data/animationRegistry'
-import { preloadQuantityBuilder } from '@/data/chemistryQuantities'
 import { useAnimationStore, useProgressStore } from '@/stores'
 import { useAppStore } from '@/stores/useAppStore'
 import type { DiscoveryStepData } from '@/components/UI'
@@ -102,7 +101,6 @@ function useAnimationConfig() {
       setIsPlaying(initMode === 'loop')
       setMode('animation')
       markAnimationViewed(config.id)
-      preloadQuantityBuilder(config.id)
     }
   }, [config, location.search, setAnimationType, setParams, setTime, setIsPlaying, setMode, markAnimationViewed])
 

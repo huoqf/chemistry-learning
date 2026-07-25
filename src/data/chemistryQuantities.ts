@@ -66,11 +66,6 @@ registerQuantityBuilder('anim-extraction-distillation', buildExtractionDistillat
 
 
 
-/** 预加载（惰性注册入口） */
-export function preloadQuantityBuilder(animationId: string): void {
-  void animationId
-}
-
 /** 获取化学量列表（右屏 ChemistryPanel 消费） */
 export function getChemistryQuantities(
   animationId: string,
