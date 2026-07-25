@@ -184,25 +184,6 @@ import { MiniChart } from '@/components/UI'
 
 ---
 
-## Step 4：化学量颜色修复速查
-
-```ts
-// 语义层级隔离（必须正确区分）
-CHEMISTRY_COLORS.*   <- 化学矢量和标注（浓度、速率、能量等）
-SCENE_COLORS.*       <- 场景器材外观（烧杯、试管、仪器材质等）
-CANVAS_COLORS.*      <- Canvas 基础设施（网格线、坐标轴、参考线）
-CHART_COLORS.*       <- 图表曲线与填充
-
-// withAlpha：从 @/theme 统一入口，禁止子路径
-import { withAlpha } from '@/theme'
-fill={withAlpha(CHEMISTRY_COLORS.concentration, 0.3)}
-
-// UI 色（colors.primary/danger 等）严禁用于化学量
-// 只用于：阶段徽章、平衡状态指示、警告横幅等非化学教学元素
-```
-
----
-
 ## Step 5：重构 Checklist
 
 ### 三屏完整接线（正确写法参考）

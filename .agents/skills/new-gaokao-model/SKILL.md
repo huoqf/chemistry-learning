@@ -21,24 +21,26 @@ description: >
 
 未完成以上读取，禁止开始编码。
 
-## 职责边界与文件规模约束
+## 职责边界与文件拆分原则
 
-| 文件/目录 | 允许包含 | 禁止包含 / 规模约束 |
-|------|---------|---------|
+| 文件/目录 | 允许包含 | 禁止包含 |
+|------|---------|---------|\
 | `gaokaoModels.ts` | 纯声明式元数据（id/title/route/relatedIds/examPoints） | 组件逻辑、状态管理 |
 | `GaokaoToolPage.tsx` | switch-case 路由分发 + 通用 nav bar | 业务逻辑、具体场景渲染 |
-| `src/features/<topic>/` | 复杂母题专属模块目录 (拆分为轻量小文件) | **单文件严禁超过 250 行** |
-| `XxxCanvas.tsx` | ThreePanel 组装入口 | **必须小于 80 行**，严禁手写巨型组件 |
+| `src/features/<topic>/` | 复杂母题专属模块目录 | 按单一职责拆分（见下方原则） |
+| `XxxCanvas.tsx` | ThreePanel 组装入口 | 业务逻辑、化学计算 |
 | `gaokaoQuizData.ts` | quiz 数据（scoringSteps/variantQuizzes） | UI 渲染逻辑 |
 
-### 严禁超大文件拆分规范
-复杂母题必须在 `src/features/<topic>/` 下模块化拆分，绝对禁止产生 600~1000 行超大文件：
-1. `types.ts`：数据类型定义 (<50 行)
-2. `hooks/useXxxChemistry.ts`：纯逻辑与化学计算 Hook (<200 行)
-3. `components/XxxLeftPanel.tsx`：左屏控制台组件 (<200 行)
-4. `components/XxxCenterView.tsx`：中屏舞台组件 (<250 行)
-5. `components/XxxRightPanel.tsx`：右屏组件化面板 (<200 行)
-6. `XxxCanvas.tsx`：顶层 ThreePanel 组装 (<80 行)
+### 文件拆分原则（按职责，非行数）
+复杂母题按**单一职责**拆分，每个文件只做一件事：
+1. `types.ts`：数据类型定义
+2. `hooks/useXxxChemistry.ts`：纯化学计算逻辑（零 JSX、零副作用）
+3. `components/XxxLeftPanel.tsx`：左屏控制台 UI
+4. `components/XxxCenterView.tsx`：中屏渲染（动画/踩分/真题条件切换）
+5. `components/XxxRightPanel.tsx`：右屏展示面板
+6. `XxxCanvas.tsx`：ThreePanel 组装入口（只做组件组合，无业务逻辑）
+
+**拆分信号**：当一个文件同时包含多种关注点（如"UI 渲染 + 化学计算"）时才拆分，而非凭行数判断。
 
 ## Step 1：注册元数据
 

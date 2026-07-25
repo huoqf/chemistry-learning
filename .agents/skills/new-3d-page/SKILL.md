@@ -341,30 +341,20 @@ const UnitCellPage = lazy(() => import('./features/unit-cell/UnitCellPage'))
 
 ## Step 4：颜色 Token 使用
 
-### 4A：3D 材质颜色
+> 颜色语义层级见 AGENTS.md 铁律 4B；统一 `@/theme` 入口，见铁律 4C。
+
+**3D 特有约束**：材质色只用 `SCENE_COLORS`（原子/键/晶胞框架），`CHEMISTRY_COLORS` 仅用于 3D overlay 的化学量文字，禁止作为材质填充色。
 
 ```tsx
-// ✅ 正确：从 @/theme 统一导入
-import { SCENE_COLORS, CHEMISTRY_COLORS, CANVAS_COLORS } from '@/theme'
-
-// 3D 材质
-<meshStandardMaterial color={SCENE_COLORS.container.beaker} />
+// ✅ 正确
+import { SCENE_COLORS, CANVAS_COLORS } from '@/theme'
 <meshStandardMaterial color={SCENE_COLORS.materials.glass} />
 
 // ❌ 禁止
-<meshStandardMaterial color="#E0F2FE" />           // 硬编码 hex
-<meshStandardMaterial color={colors.primary} />     // UI 色用于 3D 材质
+<meshStandardMaterial color="#E0F2FE" />        // 硬编码 hex
+<meshStandardMaterial color={colors.primary} />  // UI 色用于 3D 材质
+<meshStandardMaterial color={CHEMISTRY_COLORS.concentration} />  // 化学量色用于材质
 ```
-
-### 4B：颜色 Token 职责（与 2D 一致）
-
-| 语义层级 | Token 来源 | 3D 用途 |
-|---------|-----------|---------|
-| 场景器材外观 | `SCENE_COLORS.*` | 原子/键/晶胞框架材质色 |
-| 化学量标注 | `CHEMISTRY_COLORS.*` | 3D overlay 中的化学量文字颜色 |
-| Canvas 基础设施 | `CANVAS_COLORS.*` | 网格线/参考线（3D 中用 Line 组件） |
-
-> 3D 组件不使用 `CHEMISTRY_COLORS` 作为材质填充色，只用 `SCENE_COLORS`。
 
 ---
 
@@ -537,8 +527,10 @@ useGLTF.preload('/models/molecule.glb')
 
 ## Step 8：import 路径规范
 
+> barrel import + `@/theme` 统一入口规则见 AGENTS.md 铁律 4C。
+
 ```ts
-// ✅ barrel import
+// ✅ 3D 专有 barrel
 import { UnitCellMesh, AtomMesh } from '@/components/Chemistry3D'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Html, Line } from '@react-three/drei'
@@ -547,10 +539,6 @@ import { SCENE_COLORS } from '@/theme'
 // ✅ 页面内相对导入
 import { fracToWorld } from '../utils/coordTransform'
 import { DATA } from '../data/simpleCubic'
-
-// ❌ 禁止子路径导入
-import { UnitCellMesh } from '@/components/Chemistry3D/UnitCellMesh'
-import { SCENE_COLORS } from '@/theme/chemistry/sceneColors'
 ```
 
 ---
@@ -572,15 +560,12 @@ import { SCENE_COLORS } from '@/theme/chemistry/sceneColors'
 ## 执行前 Checklist
 
 - [ ] **场景类型**：正交/透视已确认（晶胞用正交，分子用透视）
-- [ ] **布局**：独立全屏布局（不走 AnimationPage 三屏）
-- [ ] **路由**：已在 App.tsx 注册独立路由
-- [ ] **WebGL 检测**：isWebGLAvailable() 惰性缓存（非每次渲染创建 context）+ fallback
+- [ ] **布局**：独立全屏布局（不走 AnimationPage 三屏）；路由已在 App.tsx 注册
+- [ ] **WebGL 检测**：isWebGLAvailable() 惰性缓存 + fallback 已实现
 - [ ] **Canvas 配置**：frameloop="demand" + dpr={[1,2]} + touch-action: none
 - [ ] **OrbitControls**：enableDamping={false}
-- [ ] **颜色 Token**：SCENE_COLORS 从 @/theme 导入，无 hex 硬编码
 - [ ] **坐标转换**：分数→世界坐标使用独立转换函数，不复用 physicsToDesign
 - [ ] **状态管理**：局部 React state，不访问 useAnimationStore
 - [ ] **资源管理**：标准 mesh 自动 dispose，自定义 geometry 手动 dispose
-- [ ] **动画**：useFrame 驱动，禁止裸 requestAnimationFrame
-- [ ] **真机验证**：触摸手势 + DPR + 帧率 + WebGL fallback 已测试
-- [ ] **代码**：barrel import；tsc --noEmit 通过
+- [ ] **真机验证**：触摸手势 + DPR + frameloop="demand" 空闲 CPU ≈ 0 已测试
+- [ ] **代码**：barrel import；`tsc --noEmit` 通过
