@@ -14,6 +14,7 @@ import {
   ElectrochemCellApparatus,
 } from '@/components/Chemistry'
 import { OrganicMechanismCanvas } from '@/features/organic/mechanism'
+import { TitrationBalanceCanvas } from '@/features/titration-balance'
 import { ReagentStepCanvas } from '@/components/Chemistry/ReagentStepCanvas'
 import { FlashCardCanvas } from '@/components/Chemistry/FlashCardCanvas'
 import { getModelQuizData } from '@/data/gaokaoQuizData'
@@ -38,6 +39,11 @@ export default function GaokaoToolPage() {
         </button>
       </div>
     )
+  }
+
+  // 0. 如果是“母题一：滴定突跃与离子浓度排序解题工具”，渲染全屏 ThreePanel 架构
+  if (model.id === 'model-titration-balance') {
+    return <TitrationBalanceCanvas />
   }
 
   // 1. 如果是“母题八：有机反应官能团断键机制工具”，渲染全屏断键交互与中屏平行视图

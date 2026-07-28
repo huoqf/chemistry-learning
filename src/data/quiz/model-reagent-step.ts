@@ -1,0 +1,70 @@
+﻿import type { ModelQuizData } from './types'
+
+export const modelReagentStep: ModelQuizData = {
+  modelId: 'model-reagent-step',
+  scoringSteps: [
+    {
+      id: 'step-reagent-1',
+      title: '步骤 1：Fe²⁺ 遇碱沉淀及空气氧化现象与方程式踩分',
+      type: 'keywords',
+      questionText: '向 FeSO₄ 溶液中滴加 NaOH 溶液，观察到的实验现象及在空气中变色的化学方程式是什么？',
+      formulaLatex: '4Fe(OH)_2 + O_2 + 2H_2O = 4Fe(OH)_3',
+      correctAnswer: ['白色沉淀', '灰绿色', '红褐色'],
+      explanation: '踩分点：生成"白色沉淀"，在空气中迅速变为"灰绿色"，最终变为"红褐色沉淀"。氧化方程式为 4Fe(OH)₂ + O₂ + 2H₂O = 4Fe(OH)₃。',
+    },
+    {
+      id: 'step-2-al-amphoteric',
+      title: '步骤 2：Al³⁺ 两性沉淀与滴加顺序/强弱碱踩分',
+      type: 'fill-in',
+      questionText: '向 AlCl₃ 溶液中正滴加 NaOH 溶液至过量，生成沉淀达到最大值与沉淀完全溶解消耗的 NaOH 物质的量之比为：',
+      formulaLatex: 'Al^{3+} + 3OH^- = Al(OH)_3\\downarrow, \\quad Al(OH)_3 + OH^- = [Al(OH)_4]^-',
+      placeholder: '输入比例，如 3:1',
+      correctAnswer: ['3:1', '3 : 1'],
+      explanation: '踩分点：生成沉淀耗 3 mol OH⁻，溶解沉淀耗 1 mol OH⁻，比例为 3:1。若向 AlCl₃ 滴加弱碱一水合氨，过量氨水沉淀也不溶解！',
+    },
+    {
+      id: 'step-3-cu-ammonia',
+      title: '步骤 3：Cu²⁺ 遇氨水浅蓝沉淀至深蓝紫络合溶液转化',
+      type: 'fill-in',
+      questionText: '向 CuSO₄ 溶液中逐滴滴加氨水至过量，沉淀溶解后生成的深蓝色络离子化学式为：',
+      formulaLatex: 'Cu(OH)_2 + 4NH_3 = [Cu(NH_3)_4]^{2+} + 2OH^-',
+      placeholder: '输入络离子化学式',
+      correctAnswer: ['[Cu(NH3)4]2+', '[Cu(NH3)4]^2+'],
+      explanation: '踩分点：先生成浅蓝色 Cu(OH)₂ 沉淀，继续滴加过量氨水，沉淀溶解得到深蓝色 [Cu(NH₃)₄]²⁺ 络合溶液。',
+    },
+  ],
+  variantQuizzes: [
+    {
+      id: 'var-reagent-1',
+      yearProvince: '2024 全国新课标卷',
+      modelId: 'model-reagent-step',
+      title: '新情境：两性金属离子滴定图像与 $n(\\text{沉淀})-V(\\text{滴加})$ 定量分析',
+      contextDescription: '向 100 mL 含有 Al³⁺ 与 Mg²⁺ 的混合溶液中逐滴加入 1 mol/L NaOH 溶液，沉淀质量与滴加体积关系。',
+      questionText: '下列关于图像中特征节点与离子反应的说法正确的是？',
+      options: [
+        { label: 'A', text: '滴加 NaOH 过程中，Al³⁺ 比 Mg²⁺ 先沉淀', isCorrect: false },
+        { label: 'B', text: '沉淀达到最大值后，继续滴加 NaOH，溶解的沉淀为 Al(OH)₃', isCorrect: true },
+        { label: 'C', text: '向混合液中滴加过量氨水，沉淀部分溶解', isCorrect: false },
+        { label: 'D', text: '反滴法 (向 NaOH 中滴加混合液) 初始阶段立即产生大量白色沉淀', isCorrect: false },
+      ],
+      modelAlignmentAnalysis: '【母题模型对齐】：考查 Al³⁺ 两性沉淀在强碱 NaOH 与弱碱 NH₃·H₂O 下的溶解特性。Al(OH)₃ 溶于强碱不溶于弱碱。',
+      detailedExplanation: 'Al(OH)₃ 属于两性氢氧化物，溶于过量强碱 NaOH 生成 [Al(OH)₄]⁻，但不溶于弱碱氨水。反滴时强碱过量开始无沉淀。',
+    },
+    {
+      id: 'var-reagent-2',
+      yearProvince: '2025 广东高考模考',
+      modelId: 'model-reagent-step',
+      title: 'Fe(OH)₂ 白色沉淀制备与防氧化隔绝措施分析',
+      contextDescription: '某实验小组设计利用新制 FeSO₄ 溶液与 NaOH 溶液制备 Fe(OH)₂ 白色沉淀。',
+      questionText: '为了使生成的白色 Fe(OH)₂ 沉淀能保持较长时间，下列措施不可行的是？',
+      options: [
+        { label: 'A', text: '使用煮沸并迅速冷却的蒸馏水配制溶液', isCorrect: false },
+        { label: 'B', text: '将长滴管伸入 FeSO₄ 液面以下滴加 NaOH 溶液', isCorrect: false },
+        { label: 'C', text: '在 FeSO₄ 溶液液面上加一层植物油或苯隔绝空气', isCorrect: false },
+        { label: 'D', text: '在滴定管中通入过量 O₂ 提高反应速率', isCorrect: true },
+      ],
+      modelAlignmentAnalysis: '【母题模型对齐】：考查 Fe(OH)₂ 极易被 O₂ 氧化的性质（4Fe(OH)₂ + O₂ + 2H₂O = 4Fe(OH)₃）。',
+      detailedExplanation: 'Fe(OH)₂ 白色沉淀极易被空气中的 O₂ 氧化为红褐色的 Fe(OH)₃。通入 O₂ 会加速其氧化变色，与保持白色沉淀的目的背道而驰。',
+    },
+  ],
+}

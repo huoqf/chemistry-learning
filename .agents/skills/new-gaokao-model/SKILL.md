@@ -32,7 +32,7 @@ description: >
 | `XxxCanvas.tsx` | ThreePanel 组装入口 | 业务逻辑、化学计算 |
 | `gaokaoQuizData.ts` | quiz 数据（scoringSteps/variantQuizzes） | UI 渲染逻辑 |
 
-### 文件拆分原则（按职责，非行数）
+### 文件拆分原则（职责驱动）
 复杂母题按**单一职责**拆分，每个文件只做一件事：
 1. `types.ts`：数据类型定义
 2. `hooks/useXxxChemistry.ts`：纯化学计算逻辑（零 JSX、零副作用）
@@ -41,12 +41,29 @@ description: >
 5. `components/XxxRightPanel.tsx`：右屏展示面板
 6. `XxxCanvas.tsx`：ThreePanel 组装入口（只做组件组合，无业务逻辑）
 
-**拆分信号**：当一个文件同时包含多种关注点（如"UI 渲染 + 化学计算"）时才拆分，而非凭行数判断。
+**拆分信号（下列任意一条触发即须拆分）**：
+- 文件同时包含多种关注点（如"UI 渲染 + 化学计算"、"组件组装 + 状态管理"）
+- 某个函数/组件的修改需要同时理解另一层逻辑（关注点耦合）
+- 同一文件被多个不同层的模块引用（职责外溢）
+
+**不应拆分的情形**：文件行数多但职责单一（如题库数据文件、类型声明文件），强行截断会破坏内聚性。
 
 ## Step 1：注册元数据与题库数据
 
 1. 在 `src/data/gaokaoModels.ts` 添加元数据记录（`id`, `toolRoute`, `relatedKnowledgeIds`, `examPointSummary`）。
-2. **同时必须**在 `src/data/gaokaoQuizData.ts` 的 `modelQuizMap` 中注册 `scoringSteps`（规范踩分）与 `variantQuizzes`（真题变式），避免因数据丢失导致界面判定隐藏。
+2. **同时必须**在 `src/data/quiz/` 目录下新建独立文件 `<model-id>.ts`，导出一个 `ModelQuizData` 对象（含 `scoringSteps` 与 `variantQuizzes`），并在 `src/data/quiz/index.ts` 的 `modelQuizMap` 中注册，避免因数据丢失导致界面判定隐藏。
+
+```
+# 题库数据目录结构（每个 model 独立文件，index.ts 仅做聚合）
+src/data/quiz/
+  types.ts                          ← 接口定义（ScoringStep / GaokaoVariantItem / ModelQuizData）
+  index.ts                          ← 聚合导出 + modelQuizMap + getModelQuizData（禁止在此写题库数据）
+  model-valence-matrix.ts           ← 单个母题题库数据
+  model-reagent-step.ts
+  model-<new-id>.ts                 ← 新增母题在此新建文件
+```
+
+> `src/data/gaokaoQuizData.ts` 已成为向后兼容的重导出文件，**禁止在旧文件中添加新数据**。
 
 ## Step 2：GaokaoToolPage 路由注册
 
@@ -95,9 +112,9 @@ import { CHEMISTRY_COLORS, SCENE_COLORS, CHART_COLORS, colors } from '@/theme'
 ## 自检 Checklist
 
 - [ ] `gaokaoModels.ts` 元数据已注册
-- [ ] `gaokaoQuizData.ts` 题库映射数据已注册
+- [ ] `src/data/quiz/<model-id>.ts` 已新建（含 scoringSteps + variantQuizzes），已在 `quiz/index.ts` 中注册
 - [ ] `GaokaoToolPage.tsx` 路由分支已添加
-- [ ] 模块文件存放在 `src/features/<topic>/`，单文件行数 <250 行
+- [ ] 模块文件存放在 `src/features/<topic>/`，每个文件职责单一（编辑一处无需理解另一层逻辑）
 - [ ] 左屏使用 `LeftPanel` / `LeftPanelSection` / `ParamControl` / `SegmentedControl` 组件
 - [ ] 中屏物理场景使用 `<AnimationControls>`，化学滴定/试剂演练场景使用 `<TitrationControls>`
 - [ ] 中屏一屏自适应（参照原电池 `overflow-hidden`），零外层滚动条
