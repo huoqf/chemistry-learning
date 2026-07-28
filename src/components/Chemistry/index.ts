@@ -11,6 +11,10 @@
 export { VectorArrow } from './VectorArrow'
 export { ChemistryVectorArrow } from './ChemistryVectorArrow'
 
+// 高考化学真题插图矢量库
+export { GaokaoDiagram } from './GaokaoDiagram'
+export type { GaokaoDiagramProps } from './GaokaoDiagram'
+
 // 量分配柱状图
 export { QuantityBars } from './QuantityBars'
 export type { QuantityBarItem, QuantityBarsProps } from './QuantityBars'

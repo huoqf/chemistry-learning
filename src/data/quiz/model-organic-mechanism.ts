@@ -1,4 +1,4 @@
-﻿import type { ModelQuizData } from './types'
+import type { ModelQuizData } from './types'
 
 export const modelOrganicMechanism: ModelQuizData = {
   modelId: 'model-organic-mechanism',
@@ -73,6 +73,11 @@ export const modelOrganicMechanism: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查酯水解断键位置。水解时 C-O 单键断裂，水中的 H-¹⁸OH 中 -¹⁸OH 加在酰基碳上形成 CH₃CO¹⁸OH。',
       detailedExplanation: '酯的水解是酯化反应的逆过程。水解断裂 C-O 单键，H₂¹⁸O 中的 -¹⁸OH 结合生成乙酸 (CH₃CO¹⁸OH)，-H 结合生成乙醇 (CH₃CH₂OH)。',
+      diagramType: 'organic-mechanism-diagram',
+      diagramConfig: {
+        title: '乙酸乙酯酸性水解 C-O 单键切断与 ¹⁸O 归宿图',
+        mechanismType: 'ester-cleavage',
+      },
     },
     {
       id: 'var-org-2',
@@ -89,6 +94,11 @@ export const modelOrganicMechanism: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查不对称烯烃加成马氏规则。π 键断裂后，中间体仲碳正离子 (CH₃-CH⁺-CH₃) 比伯碳正离子更稳定，故 H 加在 1 号碳上，Br 加在 2 号碳上。',
       detailedExplanation: '亲电加成时断裂较弱的 π 键。H⁺ 加在 1 号碳 (-CH₂) 上生成更稳定的仲碳正离子，随后 Br⁻ 攻击生成主产物 2-溴丙烷。',
+      diagramType: 'organic-mechanism-diagram',
+      diagramConfig: {
+        title: '丙烯与 HBr 亲电加成 π 键断裂与马氏定向图',
+        mechanismType: 'addition-markov',
+      },
     },
     {
       id: 'var-org-3',
@@ -105,6 +115,11 @@ export const modelOrganicMechanism: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查醇催化氧化 α-H 条件。伯醇 (-CH₂OH) 被氧化为醛；仲醇 (-CHOH-) 被氧化为酮；叔醇 (-COH) 无 α-H 不能被催化氧化。',
       detailedExplanation: 'C₄H₁₀O 的 4 种醇中：1-丁醇与 2-甲基-1-丙醇为伯醇，氧化为醛 (2种)；2-丁醇为仲醇，氧化为丁酮；2-甲基-2-丙醇为叔醇，无 α-H 不被催化氧化。',
+      diagramType: 'organic-mechanism-diagram',
+      diagramConfig: {
+        title: '伯仲叔醇 α-H/O-H 断键脱氢催化氧化对比图',
+        mechanismType: 'alcohol-oxidation',
+      },
     },
     {
       id: 'var-org-4',
@@ -121,6 +136,11 @@ export const modelOrganicMechanism: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查卤代烃在不同溶剂下的取代 vs 消去断键竞争。NaOH/醇溶液消去遵循扎伊采夫规则生成较多取代的烯烃 (2-丁烯)。',
       detailedExplanation: 'NaOH 醇溶液下发生消去反应，脱去 HBr 生成 2-丁烯 (主产物，扎伊采夫规则)；NaOH 水溶液下发生取代反应生成 2-丁醇。',
+      diagramType: 'organic-mechanism-diagram',
+      diagramConfig: {
+        title: '2-溴丁烷 C-Br 与 β-C-H 键消去扎伊采夫规则图',
+        mechanismType: 'haloalkane-elimination',
+      },
     },
     {
       id: 'var-org-5',
@@ -137,6 +157,11 @@ export const modelOrganicMechanism: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查肽键水解断键位置。三肽含有 2 个肽键，水解切断 2 个 C-N 单键，消耗 2 mol H₂O。酸性条件下氨基结合 H⁺ 形成阳离子 (-NH₃⁺)。',
       detailedExplanation: '三肽由 3 个氨基酸脱去 2 分子水生成，含 2 个肽键 -CO-NH-。完全水解时切断 2 个 C-N 单键，在稀盐酸中，生成的氨基酸转化为盐酸盐阳离子 (如 H₃N⁺-CH₂-COOH)。',
+      diagramType: 'organic-mechanism-diagram',
+      diagramConfig: {
+        title: '三肽分子 -CO-NH- 肽键 C-N 单键酸性切断示意图',
+        mechanismType: 'peptide-hydrolysis',
+      },
     },
     {
       id: 'var-org-6',
@@ -153,6 +178,11 @@ export const modelOrganicMechanism: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查酚醛缩聚断键机制。酚羟基活化邻对位 C-H 键，先与 HCHO 加成形成羟甲基 (-CH₂OH)，再脱水缩合形成 -CH₂- 羟甲基桥。酸催化苯酚过量得线型树脂；碱催化甲醛过量得体型树脂。',
       detailedExplanation: '苯酚酚羟基对苯环有推电子活化作用，使邻、对位 C-H 键易与甲醛的 C=O 发生加成反应生成邻羟甲基苯酚或对羟甲基苯酚，再脱水缩合生成酚醛树脂。',
+      diagramType: 'organic-mechanism-diagram',
+      diagramConfig: {
+        title: '苯酚酚羟基邻对位 C-H 键活化与 HCHO 缩聚断键图',
+        mechanismType: 'phenol-condensation',
+      },
     },
   ],
 }

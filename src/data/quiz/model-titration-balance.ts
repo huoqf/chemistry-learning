@@ -56,6 +56,14 @@ export const modelTitrationBalance: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查强碱滴定弱酸的四个典型节点。pH=7 中性点电荷守恒 c(Na⁺)+c(H⁺)=c(A⁻)+c(OH⁻)，因 c(H⁺)=c(OH⁻)，故必有 c(Na⁺)=c(A⁻)。',
       detailedExplanation: '当 pH = 7 时，c(H⁺) = c(OH⁻)。根据电荷守恒 c(Na⁺) + c(H⁺) = c(A⁻) + c(OH⁻)，可直接推出 c(Na⁺) = c(A⁻)。故 C 项正确。',
+      diagramType: 'titration-curve',
+      diagramConfig: {
+        titrationType: 'weakAcid-strongBase',
+        vEq: 20,
+        phJumpRange: [7.7, 9.7],
+        pKa: 4.75,
+        title: '0.1000 mol/L NaOH 滴定 20.00 mL 0.1000 mol/L HA 滴定曲线',
+      },
     },
     {
       id: 'var-2',
@@ -72,6 +80,12 @@ export const modelTitrationBalance: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查水溶液电离平衡突跃与微粒守恒。突破点在于识别交叉点 pH = pKa2。',
       detailedExplanation: '根据 Ka2 = c(H⁺)c(A²⁻)/c(HA⁻)，当 c(H⁺) = Ka2 即 pH = pKa2 时，c(HA⁻) = c(A²⁻)。',
+      diagramType: 'distribution-fraction',
+      diagramConfig: {
+        pKa1: 1.85,
+        pKa2: 7.19,
+        title: 'H₂A 微粒分布分数 δ 随 pH 的变化曲线',
+      },
     },
     {
       id: 'var-3',

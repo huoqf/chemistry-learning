@@ -1,4 +1,4 @@
-﻿import type { ModelQuizData } from './types'
+import type { ModelQuizData } from './types'
 
 export const modelReagentStep: ModelQuizData = {
   modelId: 'model-reagent-step',
@@ -49,6 +49,10 @@ export const modelReagentStep: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查 Al³⁺ 两性沉淀在强碱 NaOH 与弱碱 NH₃·H₂O 下的溶解特性。Al(OH)₃ 溶于强碱不溶于弱碱。',
       detailedExplanation: 'Al(OH)₃ 属于两性氢氧化物，溶于过量强碱 NaOH 生成 [Al(OH)₄]⁻，但不溶于弱碱氨水。反滴时强碱过量开始无沉淀。',
+      diagramType: 'precipitation-curve',
+      diagramConfig: {
+        title: 'Al³⁺ 与 Mg²⁺ 混合液滴加 NaOH 沉淀质量 m - V(NaOH) 关系图',
+      },
     },
     {
       id: 'var-reagent-2',

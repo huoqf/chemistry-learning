@@ -17,6 +17,7 @@
 | AdapterApparatus | 牛角管/接液管（蒸馏冷凝流出接收） | x, y | <AdapterApparatus x={260} y={180} showDrop={true} /> |
 | OxidationBridgeArrow | 氧化还原双线桥/单线桥箭头（化合价升降与电子转移） | startPos, endPos, label | <OxidationBridgeArrow startPos={[100,80]} endPos={[200,80]} label="失 2e⁻" /> |
 | CarbonChain2D | 2D 平面碳骨架与同分异构体树（减碳法、等效氢高亮） | isomer | <CarbonChain2D isomer={currentIsomer} showEquivalentH={true} /> |
+| GaokaoDiagram | 高考真题 5 大类矢量插图库（滴定突跃/分布分数/沉淀折线/价类阵列/有机断键） | diagramType | <GaokaoDiagram diagramType="titration-curve" config={cfg} /> |
 
 ---
 
@@ -41,6 +42,7 @@
 | Slider | 数值范围选择 | value, min, max, onChange | <Slider value={v} min={0} max={10} step={0.1} onChange={setV} /> |
 | Slider (marks) | 带标注的滑块（冲突自动避让） | marks, showInput | <Slider value={v} min={-5} max={5} marks={[{value:0,label:'0',variant:'zero'}]} showInput onChange={setV} /> |
 | KatexFormula | KaTeX 公式渲染 | formula, mode | 可直接作为 ParamControl / ControlPanel 的 label 传入 |
+| KatexText | 混合文本与 $...$ 包裹的 LaTeX 行内公式解析 | text | <KatexText text="滴定至 $pH = 7$ 时，$c(Na^+)=c(A^-)$" /> |
 
 ---
 

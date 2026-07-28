@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { Sparkles, Compass, CheckCircle, XCircle, ChevronDown, ChevronUp, Lightbulb } from 'lucide-react'
 import type { GaokaoVariantItem } from '@/data/gaokaoQuizData'
+import { GaokaoDiagram } from '@/components/Chemistry'
+import { KatexText } from './KatexText'
 
 interface GaokaoVariantQuizProps {
   quizzes: GaokaoVariantItem[]
@@ -10,6 +12,7 @@ interface GaokaoVariantQuizProps {
  * GaokaoVariantQuiz — 近 3 年高考真实情境变式盲盒组件
  *
  * 遵循项目统一 Light Theme 视觉规范，保持与主界面 UI 视觉一致性。
+ * 已完全解耦：混合公式渲染使用 KatexText，矢量插图渲染使用 GaokaoDiagram。
  */
 export const GaokaoVariantQuiz: React.FC<GaokaoVariantQuizProps> = ({ quizzes }) => {
   const [selectedOption, setSelectedOption] = useState<Record<string, string>>({})
@@ -54,16 +57,27 @@ export const GaokaoVariantQuiz: React.FC<GaokaoVariantQuizProps> = ({ quizzes })
             >
               {/* 年份标签与标题 */}
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200">
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0 mr-2">
                   {quiz.yearProvince}
                 </span>
-                <span className="text-xs font-bold text-slate-800">{quiz.title}</span>
+                <span className="text-xs font-bold text-slate-800 flex-1 text-right leading-snug">
+                  <KatexText text={quiz.title} />
+                </span>
               </div>
 
               {/* 试题背景与题目 */}
               <div className="p-2.5 bg-white rounded-lg border border-slate-200 mb-3 text-xs text-slate-700 leading-relaxed">
-                <p className="text-slate-500 mb-1 text-[11px]">【新情境描述】{quiz.contextDescription}</p>
-                <p className="font-semibold text-slate-900">{quiz.questionText}</p>
+                <p className="text-slate-500 mb-1 text-[11px]">
+                  【新情境描述】<KatexText text={quiz.contextDescription} />
+                </p>
+                <p className="font-semibold text-slate-900 mb-2">
+                  <KatexText text={quiz.questionText} />
+                </p>
+
+                {/* 真题插图/矢量图表区域 (使用独立的通用插图组件) */}
+                {quiz.diagramType && (
+                  <GaokaoDiagram diagramType={quiz.diagramType} config={quiz.diagramConfig} />
+                )}
               </div>
 
               {/* 选项按钮 */}
@@ -91,7 +105,9 @@ export const GaokaoVariantQuiz: React.FC<GaokaoVariantQuizProps> = ({ quizzes })
                       className={`flex items-start gap-2 p-2 rounded-lg text-xs text-left border transition-all ${optStyle}`}
                     >
                       <span className="font-mono font-bold text-slate-800">{opt.label}.</span>
-                      <span className="flex-1">{opt.text}</span>
+                      <span className="flex-1">
+                        <KatexText text={opt.text} />
+                      </span>
                       {userChoice && opt.isCorrect && (
                         <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                       )}
@@ -124,7 +140,7 @@ export const GaokaoVariantQuiz: React.FC<GaokaoVariantQuizProps> = ({ quizzes })
 
                 {isAnalysisOpen && (
                   <div className="p-2.5 mt-1 bg-amber-50/80 border border-amber-200 rounded-lg text-amber-950 text-[11px] leading-relaxed font-sans">
-                    {quiz.modelAlignmentAnalysis}
+                    <KatexText text={quiz.modelAlignmentAnalysis} />
                   </div>
                 )}
               </div>
@@ -133,7 +149,7 @@ export const GaokaoVariantQuiz: React.FC<GaokaoVariantQuizProps> = ({ quizzes })
               {userChoice && isDetailOpen && (
                 <div className="mt-2 p-2.5 bg-indigo-50/80 border border-indigo-200 rounded-lg text-[11px] text-indigo-950 leading-relaxed">
                   <span className="font-bold text-indigo-900">【详解分析】</span>
-                  {quiz.detailedExplanation}
+                  <KatexText text={quiz.detailedExplanation} />
                 </div>
               )}
             </div>

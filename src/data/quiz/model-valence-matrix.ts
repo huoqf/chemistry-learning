@@ -1,4 +1,4 @@
-﻿import type { ModelQuizData } from './types'
+import type { ModelQuizData } from './types'
 
 export const modelValenceMatrix: ModelQuizData = {
   modelId: 'model-valence-matrix',
@@ -48,6 +48,10 @@ export const modelValenceMatrix: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：本题考查无机价类二维图"价态与酸碱性对离子的稳定影响"。与 Fe²⁺/Fe³⁺ 氧化还原显色模型完全对应。',
       detailedExplanation: '碱性条件下 Cr(OH)₃ 沉淀可被 H₂O₂ 氧化为可溶的 CrO₄²⁻ (+6 价，黄色)，此为工业提铬关键步骤。',
+      diagramType: 'valence-matrix-chart',
+      diagramConfig: {
+        title: '铬/铁元素价类二维坐标映射矩阵图',
+      },
     },
     {
       id: 'var-2',
@@ -64,6 +68,10 @@ export const modelValenceMatrix: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查 -2 价与 +4 价硫元素的归中反应（2H₂S + SO₂ = 3S↓ + 2H₂O）。1 mol SO₂ (+4价) 变为 0 价 S 得 4 mol 电子。',
       detailedExplanation: 'H₂S 中 S 为 -2 价作还原剂，SO₂ 中 S 为 +4 价作氧化剂，归中生成 0 价淡黄色 S 沉淀。',
+      diagramType: 'valence-matrix-chart',
+      diagramConfig: {
+        title: '硫元素 (-2 ~ +6) 价类二维归中转化图',
+      },
     },
   ],
 }

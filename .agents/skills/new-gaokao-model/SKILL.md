@@ -48,10 +48,41 @@ description: >
 
 **不应拆分的情形**：文件行数多但职责单一（如题库数据文件、类型声明文件），强行截断会破坏内聚性。
 
-## Step 1：注册元数据与题库数据
+## Step 1：注册元数据与题库数据（含真题严谨性与插图规范）
 
 1. 在 `src/data/gaokaoModels.ts` 添加元数据记录（`id`, `toolRoute`, `relatedKnowledgeIds`, `examPointSummary`）。
 2. **同时必须**在 `src/data/quiz/` 目录下新建独立文件 `<model-id>.ts`，导出一个 `ModelQuizData` 对象（含 `scoringSteps` 与 `variantQuizzes`），并在 `src/data/quiz/index.ts` 的 `modelQuizMap` 中注册，避免因数据丢失导致界面判定隐藏。
+
+### ⚠️ 高考真题与变式题质量铁律（严禁篡改原文/严禁写有图无展示）
+
+1. **真题原文一致性**：`contextDescription` 与 `questionText` 中的题目内容描述必须与高考官方原题完全一致，不得随意删除、简化或篡改条件，避免产生化学逻辑上的歧义。
+2. **插图零缺失原则**：凡题干描述中含有“如图所示”、“滴定曲线”、“分布分数”等涉及图像的内容，**必须在 `GaokaoVariantItem` 中配置 `diagramType` 与 `diagramConfig`**，绝对禁止“有图描述，无图展示”。
+
+### 高考真题图片 4 级复现机制规范
+
+| 级别 | 复现方案 | `diagramType` | 适用场景 |
+| :--- | :--- | :--- | :--- |
+| **Level 1 (首选)** | 动态/矢量图表 | `'titration-curve'` \| `'distribution-fraction'` | 滴定突跃曲线、$\delta-\mathrm{pH}$ 微粒分布分数图、$\lg c - \mathrm{pH}$ 图像、反应能量图 |
+| **Level 2** | 器材装置矢量重构 | 基于 `src/components/Chemistry` 组件组合 | 滴定管/烧杯实验装置图、操作示意图 |
+| **Level 3** | 静态图片资源 | `'image'`（配合 `imageUrl: '/images/gaokao/xxx.png'`） | 极其复杂的工业流程框图、原题扫描重构矢量图 |
+| **Level 4** | KaTeX / 文本框 | 内嵌 LaTeX 语法 | 反应历程链、微粒转化框图 |
+
+```ts
+// GaokaoVariantItem 图表配置示例
+{
+  id: 'var-1',
+  yearProvince: '2024 全国高考真题卷',
+  contextDescription: '常温下，用 0.1000 mol/L NaOH 溶液滴定 20.00 mL 0.1000 mol/L 弱酸 HA 溶液，滴定曲线与突跃区间如图所示。',
+  diagramType: 'titration-curve',
+  diagramConfig: {
+    titrationType: 'weakAcid-strongBase',
+    vEq: 20,
+    phJumpRange: [7.7, 9.7],
+    pKa: 4.75,
+    title: '0.1000 mol/L NaOH 滴定 HA 滴定曲线',
+  },
+}
+```
 
 ```
 # 题库数据目录结构（每个 model 独立文件，index.ts 仅做聚合）
@@ -108,11 +139,15 @@ import { CHEMISTRY_COLORS, SCENE_COLORS, CHART_COLORS, colors } from '@/theme'
 2. **gaokaoQuizData.ts 映射遗漏**：忘记注册 `modelQuizMap` 导致踩分卡与真题无法渲染。
 3. **多模型页面 formulas 写成静态数组**：如果左屏有模型切换，`formulas` 必须写成 `(params) => ...` 动态函数。
 4. **中屏真题错误使用 `<foreignObject>`**：高考真题应在 DOM 层条件切换渲染 `<GaokaoVariantQuiz>`，绝对禁止内嵌在 SVG 的 `<foreignObject>` 中。
+5. **真题题干写有图实际无展示**：未按照 4 级复现机制在变式题数据中配置 `diagramType` 与 `diagramConfig`。
+6. **任意修改真题原文**：随意剪裁或篡改题干导致题目含义发生改变。
 
 ## 自检 Checklist
 
 - [ ] `gaokaoModels.ts` 元数据已注册
 - [ ] `src/data/quiz/<model-id>.ts` 已新建（含 scoringSteps + variantQuizzes），已在 `quiz/index.ts` 中注册
+- [ ] 真题题干描述与官方原文一字不差，无随意改写与歧义
+- [ ] 含“如图所示”的真题变式已配置 `diagramType` 与 `diagramConfig`，零缺失
 - [ ] `GaokaoToolPage.tsx` 路由分支已添加
 - [ ] 模块文件存放在 `src/features/<topic>/`，每个文件职责单一（编辑一处无需理解另一层逻辑）
 - [ ] 左屏使用 `LeftPanel` / `LeftPanelSection` / `ParamControl` / `SegmentedControl` 组件
