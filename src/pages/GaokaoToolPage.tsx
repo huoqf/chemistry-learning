@@ -40,12 +40,12 @@ export default function GaokaoToolPage() {
     )
   }
 
-  // 如果是“母题八：有机反应官能团断键机制工具”，渲染全屏断键交互与中屏平行视图
+  // 1. 如果是“母题八：有机反应官能团断键机制工具”，渲染全屏断键交互与中屏平行视图
   if (model.id === 'model-organic-mechanism') {
     return <OrganicMechanismCanvas />
   }
 
-  // 1. 如果是“专题一：无机元素价类二维矩阵探究工具”，直接渲染标准全屏 ThreePanel 架构
+  // 2. 如果是“专题一：无机元素价类二维矩阵探究工具”，渲染全屏 ThreePanel 架构
   if (model.id === 'model-valence-matrix') {
     return (
       <div className="w-full h-screen flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden">
@@ -87,12 +87,14 @@ export default function GaokaoToolPage() {
     )
   }
 
+  // 3. 如果是“专题二：试剂滴加与沉淀变色演练工具”，渲染全屏 ThreePanel 母题三栏系统
+  if (model.id === 'model-reagent-step') {
+    return <ReagentStepCanvas />
+  }
+
   // 通用备用工具渲染
   const renderToolComponent = () => {
     switch (model.id) {
-      case 'model-reagent-step':
-        return <ReagentStepCanvas />
-
       case 'model-flash-cards':
         return <FlashCardCanvas />
 
@@ -220,7 +222,7 @@ export default function GaokaoToolPage() {
               关联教材知识节点 ({model.relatedKnowledgeIds.length})
             </h4>
             <div className="flex flex-col gap-1.5">
-              {model.relatedKnowledgeIds.map(kid => {
+              {model.relatedKnowledgeIds.map((kid) => {
                 const knode = getKnowledgeNode(kid)
                 const animId = knode?.animationIds?.[0]
                 return (

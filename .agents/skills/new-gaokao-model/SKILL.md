@@ -16,17 +16,18 @@ description: >
 
 1. Read `.agents/AGENTS.md` — 铁律唯一权威源（颜色 Token、三屏隔离、组件复用等）
 2. Read `src/features/organic/mechanism/OrganicMechanismCanvas.tsx` — viewMode 切换 + ThreePanel 组装的参考实现
-3. Read `src/pages/GaokaoToolPage.tsx` — 路由分发入口（switch-case）
+3. Read `src/pages/GaokaoToolPage.tsx` — 路由分发入口（switch-case 与 顶级分支）
 4. Read `src/data/gaokaoModels.ts` — 元数据注册表结构
+5. Read `src/data/gaokaoQuizData.ts` — 踩分步骤与真题数据集
 
 未完成以上读取，禁止开始编码。
 
 ## 职责边界与文件拆分原则
 
 | 文件/目录 | 允许包含 | 禁止包含 |
-|------|---------|---------|\
+|------|---------|---------|
 | `gaokaoModels.ts` | 纯声明式元数据（id/title/route/relatedIds/examPoints） | 组件逻辑、状态管理 |
-| `GaokaoToolPage.tsx` | switch-case 路由分发 + 通用 nav bar | 业务逻辑、具体场景渲染 |
+| `GaokaoToolPage.tsx` | switch-case 路由分发 / 顶级分支 + 全屏 nav bar | 业务逻辑、具体场景渲染 |
 | `src/features/<topic>/` | 复杂母题专属模块目录 | 按单一职责拆分（见下方原则） |
 | `XxxCanvas.tsx` | ThreePanel 组装入口 | 业务逻辑、化学计算 |
 | `gaokaoQuizData.ts` | quiz 数据（scoringSteps/variantQuizzes） | UI 渲染逻辑 |
@@ -42,23 +43,16 @@ description: >
 
 **拆分信号**：当一个文件同时包含多种关注点（如"UI 渲染 + 化学计算"）时才拆分，而非凭行数判断。
 
-## Step 1：注册元数据
+## Step 1：注册元数据与题库数据
 
-在 `src/data/gaokaoModels.ts` 添加一条记录。字段参考已有的 16 条记录，关键字段：
-- `id`: `'model-xxx'`（唯一）
-- `toolRoute`: `'/gaokao-tool/model-xxx'`
-- `relatedKnowledgeIds`: 关联知识树节点 id
-- `examPointSummary`: 3 条，每条 ≤30 字
+1. 在 `src/data/gaokaoModels.ts` 添加元数据记录（`id`, `toolRoute`, `relatedKnowledgeIds`, `examPointSummary`）。
+2. **同时必须**在 `src/data/gaokaoQuizData.ts` 的 `modelQuizMap` 中注册 `scoringSteps`（规范踩分）与 `variantQuizzes`（真题变式），避免因数据丢失导致界面判定隐藏。
 
 ## Step 2：GaokaoToolPage 路由注册
 
-在 `src/pages/GaokaoToolPage.tsx` 的 `renderToolComponent` switch-case 中添加 case。
-
-```tsx
-// GaokaoToolPage.tsx — renderToolComponent 内
-case 'model-xxx':
-  return <XxxCanvas />
-```
+- 默认工具在 `src/pages/GaokaoToolPage.tsx` 的 `renderToolComponent` switch-case 中添加 case。
+- **若为全屏独立 `ThreePanel` 架构**（如母题八、专题一、专题二），直接在 `GaokaoToolPage.tsx` 顶级分支返回：
+  `if (model.id === 'model-xxx') return <XxxCanvas />`
 
 ## Step 3：三屏组件规范与中屏平行视角渲染（严禁手写 DOM / 严禁 `<foreignObject>`）
 
@@ -69,11 +63,12 @@ case 'model-xxx':
 - **模式与切换**：必须使用 `<ControlPanel>`、`<SegmentedControl>` 或 `<ToggleSwitch>`
 - **操作按钮**：必须使用 `<Button>` 组件
 
-### 2. 中屏平行视角规范（CenterView DOM 条件渲染）
-中屏主舞台通过左屏 `viewMode` 分段按钮进行 **DOM 层平级条件切换**。高考真题与踩分卡直接作为标准 HTML 组件渲染在中屏 HTML 容器中，**绝对禁止在 SVG 内使用 `<foreignObject>`**：
-- **视角 0 (动画/图表)**：渲染 `<AnimationSvgCanvas>` + 图表组件
-- **视角 1 (规范踩分)**：直接渲染 `<ScoringCardSection steps={quizData.scoringSteps} />`（标准 HTML DOM）
-- **视角 2 (真题变式)**：直接渲染 `<GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />`（标准 HTML DOM，内嵌 `KatexFormula` 自动折行渲染大段真题公式与选项）
+### 2. 中屏平行视角与控制规范（CenterView DOM 条件渲染）
+- **视角切换**：主舞台通过左屏 `viewMode` 分段按钮进行 **DOM 层平级条件切换**（绝对禁止在 SVG 内使用 `<foreignObject>`）：
+  - **视角 0 (动画/图表)**：渲染 `<AnimationSvgCanvas>` + 图表组件；动画控制物理通用场景使用 `<AnimationControls>`，**化学滴定/试剂演练场景使用专属 `<TitrationControls>`**。
+  - **视角 1 (规范踩分)**：直接渲染 `<ScoringCardSection steps={quizData.scoringSteps} />`
+  - **视角 2 (真题变式)**：直接渲染 `<GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />`
+- **零滚动自适应**：参照原电池 `PrimaryCellAnimation.tsx` 架构，中屏根容器为 `w-full h-full flex flex-col overflow-hidden`，保证装置视口（280px）、图表视口（560px）与控制条（50px）一屏自适应展示，禁止手写死高度 `min-h-[Npx]` 导致外层出现粗暴滚动条。
 
 ### 3. 右屏组件规范（RightPanel）
 右屏必须 100% 使用项目已有的标准 UI 组件组合实现，绝对禁止手写原生的散乱 `<div>`/`<p>` 元素：
@@ -92,16 +87,20 @@ import { CHEMISTRY_COLORS, SCENE_COLORS, CHART_COLORS, colors } from '@/theme'
 
 ## 常见陷阱
 
-1. **GaokaoToolPage switch-case 遗漏**：新增 model 后忘记在 `GaokaoToolPage.tsx` 添加 case。
-2. **多模型页面 formulas 写成静态数组**：如果左屏有模型切换，`formulas` 必须写成 `(params) => ...` 动态函数。
-3. **中屏真题错误使用 `<foreignObject>`**：高考真题应在 DOM 层条件切换渲染 `<GaokaoVariantQuiz>`，绝对禁止内嵌在 SVG 的 `<foreignObject>` 中。
+1. **GaokaoToolPage switch-case / 顶级分支遗漏**：新增 model 后忘记在 `GaokaoToolPage.tsx` 注册。
+2. **gaokaoQuizData.ts 映射遗漏**：忘记注册 `modelQuizMap` 导致踩分卡与真题无法渲染。
+3. **多模型页面 formulas 写成静态数组**：如果左屏有模型切换，`formulas` 必须写成 `(params) => ...` 动态函数。
+4. **中屏真题错误使用 `<foreignObject>`**：高考真题应在 DOM 层条件切换渲染 `<GaokaoVariantQuiz>`，绝对禁止内嵌在 SVG 的 `<foreignObject>` 中。
 
 ## 自检 Checklist
 
-- [ ] `gaokaoModels.ts` 已注册，字段齐全
-- [ ] `GaokaoToolPage.tsx` switch-case 已添加（对比 id 数量 = case 数量）
+- [ ] `gaokaoModels.ts` 元数据已注册
+- [ ] `gaokaoQuizData.ts` 题库映射数据已注册
+- [ ] `GaokaoToolPage.tsx` 路由分支已添加
 - [ ] 模块文件存放在 `src/features/<topic>/`，单文件行数 <250 行
 - [ ] 左屏使用 `LeftPanel` / `LeftPanelSection` / `ParamControl` / `SegmentedControl` 组件
+- [ ] 中屏物理场景使用 `<AnimationControls>`，化学滴定/试剂演练场景使用 `<TitrationControls>`
+- [ ] 中屏一屏自适应（参照原电池 `overflow-hidden`），零外层滚动条
 - [ ] 中屏真题/踩分卡在 DOM 层条件渲染，无 `<foreignObject>`
 - [ ] 右屏使用 `ChemistryPanel` / `FormulaSection` 等标准组件渲染（公式自动折行）
 - [ ] Token 导入 100% 使用 `@/theme` 统一入口
