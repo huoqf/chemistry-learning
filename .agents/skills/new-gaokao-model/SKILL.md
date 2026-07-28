@@ -53,10 +53,11 @@ description: >
 1. 在 `src/data/gaokaoModels.ts` 添加元数据记录（`id`, `toolRoute`, `relatedKnowledgeIds`, `examPointSummary`）。
 2. **同时必须**在 `src/data/quiz/` 目录下新建独立文件 `<model-id>.ts`，导出一个 `ModelQuizData` 对象（含 `scoringSteps` 与 `variantQuizzes`），并在 `src/data/quiz/index.ts` 的 `modelQuizMap` 中注册，避免因数据丢失导致界面判定隐藏。
 
-### ⚠️ 高考真题与变式题质量铁律（严禁篡改原文/严禁写有图无展示）
+### ⚠️ 高考真题与变式题质量铁律（严禁篡改原文/严禁写有图无展示/严禁直接出解题图）
 
 1. **真题原文一致性**：`contextDescription` 与 `questionText` 中的题目内容描述必须与高考官方原题完全一致，不得随意删除、简化或篡改条件，避免产生化学逻辑上的歧义。
 2. **插图零缺失原则**：凡题干描述中含有“如图所示”、“滴定曲线”、“分布分数”等涉及图像的内容，**必须在 `GaokaoVariantItem` 中配置 `diagramType` 与 `diagramConfig`**，绝对禁止“有图描述，无图展示”。
+3. **真题原图纯净度原则**：变式题插图必须是考生在考场上看到的**官方客观原图高保真复现**。**绝对严禁在插图中直接标注解题切口（如剪刀切断线 ✂）、答案提示文本、加成取向箭头或归中反应结论**。所有的机理剖析、断键取向与答案推导，必须且只能放置在“查看母题模型对齐剖析（盲盒解密）”折叠卡或【详解分析】中展示，以保障考场真实刷题探究体验。
 
 ### 高考真题图片 4 级复现机制规范
 
@@ -148,6 +149,7 @@ import { CHEMISTRY_COLORS, SCENE_COLORS, CHART_COLORS, colors } from '@/theme'
 - [ ] `src/data/quiz/<model-id>.ts` 已新建（含 scoringSteps + variantQuizzes），已在 `quiz/index.ts` 中注册
 - [ ] 真题题干描述与官方原文一字不差，无随意改写与歧义
 - [ ] 含“如图所示”的真题变式已配置 `diagramType` 与 `diagramConfig`，零缺失
+- [ ] 试题插图 100% 还原高考官方客观原图，无任何解题切口与答案提示标注
 - [ ] `GaokaoToolPage.tsx` 路由分支已添加
 - [ ] 模块文件存放在 `src/features/<topic>/`，每个文件职责单一（编辑一处无需理解另一层逻辑）
 - [ ] 左屏使用 `LeftPanel` / `LeftPanelSection` / `ParamControl` / `SegmentedControl` 组件
