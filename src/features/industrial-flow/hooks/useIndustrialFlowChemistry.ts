@@ -45,7 +45,7 @@ export function useIndustrialFlowChemistry(
     }> = []
 
     if (systemId === 'fe-al-mn') {
-      systemName = '软锰矿提纯高纯 MnSO₄ 工艺 (Fe-Al-Mn 系统)'
+      systemName = '软锰矿还原酸浸提纯高纯 MnSO₄ 工艺 (Fe-Al-Mn 系统)'
       targetIon = 'Mn²⁺'
       impurityIons = isOxidized ? ['Fe³⁺', 'Al³⁺'] : ['Fe²⁺', 'Al³⁺']
 
@@ -57,7 +57,7 @@ export function useIndustrialFlowChemistry(
               charge: 3,
               ksp: 4.0e-38,
               baseC0: 0.05,
-              color: CHART_COLORS.compareA, // 橘红色/对比色 A
+              color: CHART_COLORS.compareA, // 橘红色
               precipitateFormula: 'Fe(OH)₃',
             }
           : {
@@ -90,29 +90,47 @@ export function useIndustrialFlowChemistry(
         },
       ]
     } else if (systemId === 'fe-cu-zn') {
-      systemName = '铜锌废渣回收 CuSO₄/ZnSO₄ 工艺 (Fe-Cu-Zn 系统)'
-      targetIon = 'Cu²⁺/Zn²⁺'
-      impurityIons = isOxidized ? ['Fe³⁺', 'Al³⁺'] : ['Fe²⁺', 'Al³⁺']
+      systemName = '铜锌废渣回收高纯 ZnSO₄ 工艺 (Fe-Cu-Zn 系统)'
+      targetIon = 'Zn²⁺'
+      impurityIons = isOxidized ? ['Fe³⁺', 'Al³⁺', 'Cu²⁺'] : ['Fe²⁺', 'Al³⁺', 'Cu²⁺']
 
       rawIons = [
+        isOxidized
+          ? {
+              symbol: 'Fe³⁺',
+              name: '铁离子',
+              charge: 3,
+              ksp: 4.0e-38,
+              baseC0: 0.06,
+              color: CHART_COLORS.compareA,
+              precipitateFormula: 'Fe(OH)₃',
+            }
+          : {
+              symbol: 'Fe²⁺',
+              name: '亚铁离子',
+              charge: 2,
+              ksp: 8.0e-16,
+              baseC0: 0.06,
+              color: CHART_COLORS.compareA,
+              precipitateFormula: 'Fe(OH)₂',
+            },
         {
-          symbol: 'Fe³⁺',
-          name: '铁离子',
+          symbol: 'Al³⁺',
+          name: '铝离子',
           charge: 3,
-          ksp: 4.0e-38,
-          baseC0: 0.06,
-          color: CHART_COLORS.compareA,
-          precipitateFormula: 'Fe(OH)₃',
+          ksp: 1.0e-33,
+          baseC0: 0.04,
+          color: CHART_COLORS.compareB,
+          precipitateFormula: 'Al(OH)₃',
         },
         {
           symbol: 'Cu²⁺',
-          name: '铜离子',
+          name: '铜离子 (后续锌置换)',
           charge: 2,
           ksp: 2.2e-20,
-          baseC0: 0.08,
-          color: CHART_COLORS.primary,
+          baseC0: 0.05,
+          color: CHART_COLORS.compareC,
           precipitateFormula: 'Cu(OH)₂',
-          isTarget: true,
         },
         {
           symbol: 'Zn²⁺',
@@ -120,14 +138,13 @@ export function useIndustrialFlowChemistry(
           charge: 2,
           ksp: 1.2e-17,
           baseC0: 0.08,
-          color: CHART_COLORS.compareB,
+          color: CHART_COLORS.primary,
           precipitateFormula: 'Zn(OH)₂',
           isTarget: true,
         },
       ]
-    } else {
-      // ti-fe 系统
-      systemName = '钛铁矿酸解高钛渣制备 TiO₂ 工艺 (Ti-Fe 系统)'
+    } else if (systemId === 'ti-fe') {
+      systemName = '钛铁矿加铁屑还原制备 TiO₂/绿矾 (Ti-Fe 系统)'
       targetIon = 'TiO²⁺'
       impurityIons = ['Fe²⁺', 'Mg²⁺']
 
@@ -136,7 +153,7 @@ export function useIndustrialFlowChemistry(
           symbol: 'TiO²⁺',
           name: '钛酰离子',
           charge: 2,
-          ksp: 1.0e-29, // 近似强烈水解常数
+          ksp: 1.0e-29,
           baseC0: 0.1,
           color: CHART_COLORS.primary,
           precipitateFormula: 'H₂TiO₃',
@@ -159,6 +176,87 @@ export function useIndustrialFlowChemistry(
           baseC0: 0.03,
           color: CHART_COLORS.compareC,
           precipitateFormula: 'Mg(OH)₂',
+        },
+      ]
+    } else if (systemId === 'ni-co-li') {
+      systemName = '废旧三元锂电池回收高纯 Co/Ni 盐 (Ni-Co-Li 系统)'
+      targetIon = 'Ni²⁺/Co²⁺/Li⁺'
+      impurityIons = ['Fe³⁺', 'Al³⁺']
+
+      rawIons = [
+        {
+          symbol: 'Fe³⁺',
+          name: '铁离子',
+          charge: 3,
+          ksp: 4.0e-38,
+          baseC0: 0.05,
+          color: CHART_COLORS.compareA,
+          precipitateFormula: 'Fe(OH)₃',
+        },
+        {
+          symbol: 'Al³⁺',
+          name: '铝离子',
+          charge: 3,
+          ksp: 1.0e-33,
+          baseC0: 0.04,
+          color: CHART_COLORS.compareB,
+          precipitateFormula: 'Al(OH)₃',
+        },
+        {
+          symbol: 'Co²⁺',
+          name: '钴离子',
+          charge: 2,
+          ksp: 1.0e-15,
+          baseC0: 0.06,
+          color: CHART_COLORS.primary,
+          precipitateFormula: 'Co(OH)₂',
+          isTarget: true,
+        },
+        {
+          symbol: 'Ni²⁺',
+          name: '镍离子',
+          charge: 2,
+          ksp: 2.0e-15,
+          baseC0: 0.06,
+          color: CHART_COLORS.compareC,
+          precipitateFormula: 'Ni(OH)₂',
+          isTarget: true,
+        },
+      ]
+    } else {
+      // mg-ca 盐湖卤水/白云石系统
+      systemName = '盐湖卤水/白云石提纯高纯 MgO 工艺 (Mg-Ca 系统)'
+      targetIon = 'Mg²⁺'
+      impurityIons = ['Fe³⁺', 'Al³⁺']
+
+      rawIons = [
+        {
+          symbol: 'Fe³⁺',
+          name: '铁离子',
+          charge: 3,
+          ksp: 4.0e-38,
+          baseC0: 0.05,
+          color: CHART_COLORS.compareA,
+          precipitateFormula: 'Fe(OH)₃',
+        },
+        {
+          symbol: 'Al³⁺',
+          name: '铝离子',
+          charge: 3,
+          ksp: 1.0e-33,
+          baseC0: 0.04,
+          color: CHART_COLORS.compareB,
+          precipitateFormula: 'Al(OH)₃',
+        },
+        {
+          symbol: 'Mg²⁺',
+          name: '镁离子',
+          charge: 2,
+          ksp: 1.8e-11,
+          baseC0: 0.1,
+          color: CHART_COLORS.primary,
+          precipitateFormula: 'Mg(OH)₂',
+          isTarget: true,
         },
       ]
     }

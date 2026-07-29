@@ -74,9 +74,13 @@ export const GaokaoVariantQuiz: React.FC<GaokaoVariantQuizProps> = ({ quizzes })
                   <KatexText text={quiz.questionText} />
                 </p>
 
-                {/* 真题插图/矢量图表区域 (使用独立的通用插图组件) */}
+                {/* 真题插图/矢量图表区域 (默认纯净客观，展开拆解后进入解题模式) */}
                 {quiz.diagramType && (
-                  <GaokaoDiagram diagramType={quiz.diagramType} config={quiz.diagramConfig} />
+                  <GaokaoDiagram
+                    diagramType={quiz.diagramType}
+                    config={quiz.diagramConfig}
+                    isAnalysisMode={isAnalysisOpen || isDetailOpen}
+                  />
                 )}
               </div>
 

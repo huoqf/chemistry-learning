@@ -7,7 +7,7 @@ import React from 'react'
 import { BaseChart } from '@/components/Chart'
 import { ScoringCardSection, GaokaoVariantQuiz } from '@/components/UI'
 import { CHART_COLORS, CHEMISTRY_COLORS, withAlpha } from '@/theme'
-import { Activity, ArrowRight, ShieldCheck, AlertTriangle } from 'lucide-react'
+import { Activity, ShieldCheck, AlertTriangle } from 'lucide-react'
 import type { IndustrialFlowParams, IndustrialFlowChemistry } from '../types'
 import type { ModelQuizData } from '@/data/quiz'
 
@@ -23,7 +23,7 @@ export const IndustrialFlowCenterView: React.FC<IndustrialFlowCenterViewProps> =
   chemistry,
   quizData,
 }) => {
-  const { viewMode, pH } = params
+  const { viewMode, pH, systemId } = params
   const {
     systemName,
     ions,
@@ -35,6 +35,8 @@ export const IndustrialFlowCenterView: React.FC<IndustrialFlowCenterViewProps> =
     filtrateSummary,
     curveData,
   } = chemistry
+
+  const [activeNode, setActiveNode] = React.useState<number>(3) // 默认选点 3 (调 pH 沉淀)
 
   // 1. 视角 1: 规范踩分卡
   if (viewMode === 1) {
@@ -78,12 +80,12 @@ export const IndustrialFlowCenterView: React.FC<IndustrialFlowCenterViewProps> =
   return (
     <div className="w-full h-full flex flex-col bg-slate-50 p-3 gap-3 overflow-hidden select-none">
       {/* 上半部分：工序流程节点全景 SVG */}
-      <div className="w-full h-[210px] bg-white rounded-xl border border-slate-200 p-3 flex flex-col justify-between shrink-0 shadow-sm relative overflow-hidden">
+      <div className="w-full h-[225px] bg-white rounded-xl border border-slate-200 p-3 flex flex-col justify-between shrink-0 shadow-sm relative overflow-hidden">
         <div className="flex items-center justify-between border-b border-slate-100 pb-2">
           <div className="flex items-center gap-2">
             <span className="font-bold text-xs text-slate-800">{systemName}</span>
             <span className="text-[10px] px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 font-semibold border border-indigo-100">
-              全景工序链
+              点击流程节点可联动反应式
             </span>
           </div>
           <div className="flex items-center gap-3 text-[11px]">
@@ -97,78 +99,136 @@ export const IndustrialFlowCenterView: React.FC<IndustrialFlowCenterViewProps> =
         </div>
 
         {/* 5 大工序节点图卡 */}
-        <div className="grid grid-cols-5 gap-2 my-auto items-center relative z-10">
-          {/* Node 1: 粉碎与酸浸 */}
-          <div className="flex flex-col items-center bg-slate-50 p-2 rounded-lg border border-slate-200 text-center gap-1">
-            <div className="w-7 h-7 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xs">
+        <div className="grid grid-cols-4 gap-2 my-auto items-center relative z-10">
+          {/* Node 1: 原料酸浸 / 还原酸浸 */}
+          <button
+            onClick={() => setActiveNode(1)}
+            className={`flex flex-col items-center p-2 rounded-lg border text-center gap-1 transition-all cursor-pointer ${
+              activeNode === 1
+                ? 'bg-amber-100 border-amber-400 ring-2 ring-amber-200'
+                : 'bg-slate-50 border-slate-200 hover:bg-amber-50'
+            }`}
+          >
+            <div className="w-6 h-6 rounded-full bg-amber-200 text-amber-900 flex items-center justify-center font-bold text-xs">
               1
             </div>
-            <span className="font-bold text-[11px] text-slate-800">矿石酸浸</span>
+            <span className="font-bold text-[11px] text-slate-800">
+              {systemId === 'fe-al-mn' || systemId === 'ni-co-li' ? '还原酸浸' : '矿石酸浸'}
+            </span>
             <span className="text-[9px] text-slate-500">浸出率 {leachRate}%</span>
-          </div>
+          </button>
 
-          <ArrowRight className="w-4 h-4 text-slate-300 mx-auto" />
-
-          {/* Node 2: 氧化反应器 */}
-          <div className="flex flex-col items-center bg-slate-50 p-2 rounded-lg border border-slate-200 text-center gap-1">
-            <div className="w-7 h-7 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center font-bold text-xs">
+          {/* Node 2: 氧化剂 / 还原剂预处理 */}
+          <button
+            onClick={() => setActiveNode(2)}
+            className={`flex flex-col items-center p-2 rounded-lg border text-center gap-1 transition-all cursor-pointer ${
+              activeNode === 2
+                ? 'bg-blue-100 border-blue-400 ring-2 ring-blue-200'
+                : 'bg-slate-50 border-slate-200 hover:bg-blue-50'
+            }`}
+          >
+            <div className="w-6 h-6 rounded-full bg-blue-200 text-blue-900 flex items-center justify-center font-bold text-xs">
               2
             </div>
-            <span className="font-bold text-[11px] text-slate-800">H₂O₂ 氧化</span>
+            <span className="font-bold text-[11px] text-slate-800">
+              {systemId === 'ti-fe' ? '加铁屑还原' : 'H₂O₂ 氧化/还原'}
+            </span>
             <span
               className={`text-[9px] font-semibold px-1 rounded ${
-                isOxidized ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                systemId === 'ti-fe'
+                  ? 'bg-indigo-100 text-indigo-800'
+                  : isOxidized
+                  ? 'bg-emerald-100 text-emerald-800'
+                  : 'bg-rose-100 text-rose-800'
               }`}
             >
-              {isOxidized ? 'Fe²⁺ ➔ Fe³⁺' : '未完全氧化'}
+              {systemId === 'ti-fe' ? 'Fe³⁺➔Fe²⁺' : isOxidized ? 'Fe²⁺➔Fe³⁺' : '氧化不足'}
             </span>
-          </div>
-
-          <ArrowRight className="w-4 h-4 text-slate-300 mx-auto" />
+          </button>
 
           {/* Node 3: 调 pH 沉淀槽 (高亮) */}
-          <div
-            className={`flex flex-col items-center p-2 rounded-lg border text-center gap-1 transition-all ${
-              isPhInSafeRange
-                ? 'bg-emerald-50 border-emerald-300 ring-2 ring-emerald-200'
+          <button
+            onClick={() => setActiveNode(3)}
+            className={`flex flex-col items-center p-2 rounded-lg border text-center gap-1 transition-all cursor-pointer ${
+              activeNode === 3
+                ? 'bg-emerald-100 border-emerald-400 ring-2 ring-emerald-300'
+                : isPhInSafeRange
+                ? 'bg-emerald-50 border-emerald-300'
                 : 'bg-amber-50 border-amber-300'
             }`}
           >
             <div
-              className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs ${
+              className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs ${
                 isPhInSafeRange ? 'bg-emerald-600 text-white' : 'bg-amber-500 text-white'
               }`}
             >
               3
             </div>
             <span className="font-bold text-[11px] text-slate-800">调 pH 沉淀</span>
-            <span className="text-[9px] font-mono font-bold text-slate-700">pH = {pH.toFixed(1)}</span>
-          </div>
-
-          <ArrowRight className="w-4 h-4 text-slate-300 mx-auto" />
+            <span className="text-[9px] font-mono font-bold text-slate-700">pH={pH.toFixed(1)}</span>
+          </button>
 
           {/* Node 4: 趁热过滤/分离 */}
-          <div className="flex flex-col items-center bg-slate-50 p-2 rounded-lg border border-slate-200 text-center gap-1">
-            <div className="w-7 h-7 rounded-full bg-purple-100 text-purple-800 flex items-center justify-center font-bold text-xs">
+          <button
+            onClick={() => setActiveNode(4)}
+            className={`flex flex-col items-center p-2 rounded-lg border text-center gap-1 transition-all cursor-pointer ${
+              activeNode === 4
+                ? 'bg-purple-100 border-purple-400 ring-2 ring-purple-200'
+                : 'bg-slate-50 border-slate-200 hover:bg-purple-50'
+            }`}
+          >
+            <div className="w-6 h-6 rounded-full bg-purple-200 text-purple-900 flex items-center justify-center font-bold text-xs">
               4
             </div>
             <span className="font-bold text-[11px] text-slate-800">趁热过滤</span>
             <span className="text-[9px] text-slate-500 truncate max-w-[70px]">
               渣: {precipitateSummary}
             </span>
-          </div>
+          </button>
         </div>
 
-        {/* 底部实时过滤产物信息条 */}
-        <div className="bg-slate-50 rounded-lg p-2 border border-slate-200 flex items-center justify-between text-[11px]">
-          <div className="flex items-center gap-1.5 text-slate-700">
-            <span className="font-bold text-slate-900">滤渣 (沉淀):</span>
-            <span className="text-amber-700 font-medium">{precipitateSummary}</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-slate-700">
-            <span className="font-bold text-slate-900">滤液 (主要离子):</span>
-            <span className="text-indigo-700 font-medium">{filtrateSummary}</span>
-          </div>
+        {/* 节点点击联动动态浮框与 pH 拖动三色指导卡 */}
+        <div className="bg-slate-50 rounded-lg p-2 border border-slate-200 text-[11px] flex flex-col gap-1">
+          {activeNode === 1 && (
+            <div className="text-amber-900 font-semibold flex items-center justify-between">
+              <span>【节点 1 反应机理】：{systemId === 'fe-al-mn' ? 'MnO₂ + 2Fe²⁺ + 4H⁺ = Mn²⁺ + 2Fe³⁺ + 2H₂O (还原酸浸)' : '稀硫酸溶解氧化物浸出金属阳离子'}</span>
+              <span className="text-[10px] text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">浸出率 {leachRate}%</span>
+            </div>
+          )}
+          {activeNode === 2 && (
+            <div className="text-blue-900 font-semibold flex items-center justify-between">
+              <span>【节点 2 反应机理】：{systemId === 'ti-fe' ? '2Fe³⁺ + Fe = 3Fe²⁺ (加铁屑还原防水解)' : '2Fe²⁺ + H₂O₂ + 2H⁺ = 2Fe³⁺ + 2H₂O (氧化为低 pH 沉淀离子)'}</span>
+              <span className="text-[10px] text-blue-700 bg-blue-100 px-1.5 py-0.5 rounded">{isOxidized ? '已充分反应' : '反应未充分'}</span>
+            </div>
+          )}
+          {activeNode === 3 && (
+            <div
+              className={`p-1.5 rounded font-semibold text-[11px] flex items-center justify-between transition-colors ${
+                isPhInSafeRange
+                  ? 'bg-emerald-100 text-emerald-900 border border-emerald-300'
+                  : pH < safePhRange[0]
+                  ? 'bg-rose-100 text-rose-900 border border-rose-300'
+                  : 'bg-amber-100 text-amber-900 border border-amber-300'
+              }`}
+            >
+              <span>
+                {isPhInSafeRange
+                  ? `✨ 完美分离！Fe³⁺, Al³⁺ 已 100% 沉淀，目标离子完全保留在滤液中。`
+                  : pH < safePhRange[0]
+                  ? `🚨 沉淀不完全！当前 pH=${pH.toFixed(1)} < ${safePhRange[0]}，Al³⁺/Fe³⁺ 残余浓度 > 10⁻⁵ mol/L。`
+                  : `⚠️ 沉淀损失！当前 pH=${pH.toFixed(1)} > ${safePhRange[1]}，目标离子已开始沉淀析出。`}
+              </span>
+              <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-white/80">
+                最佳区间 [{safePhRange[0]} ~ {safePhRange[1]}]
+              </span>
+            </div>
+          )}
+          {activeNode === 4 && (
+            <div className="text-purple-900 font-semibold flex items-center justify-between">
+              <span>【节点 4 趁热过滤】：防止目标产物随温度降低结晶析出损失；滤渣为 {precipitateSummary}，滤液为 {filtrateSummary}。</span>
+              <span className="text-[10px] text-purple-700 bg-purple-100 px-1.5 py-0.5 rounded">四步法洗涤检验</span>
+            </div>
+          )}
         </div>
       </div>
 

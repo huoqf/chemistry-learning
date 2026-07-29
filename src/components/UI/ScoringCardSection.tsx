@@ -141,12 +141,30 @@ export const ScoringCardSection: React.FC<ScoringCardSectionProps> = ({
                       onClick={() =>
                         setShowExplanation(prev => ({ ...prev, [step.id]: !prev[step.id] }))
                       }
-                      className="text-[11px] text-indigo-600 hover:underline flex items-center gap-0.5"
+                      className="text-[11px] text-indigo-600 hover:underline flex items-center gap-0.5 font-semibold"
                     >
                       <HelpCircle className="w-3 h-3" />
                       {showExp ? '收起踩分解析' : '查看踩分解析'}
                     </button>
                   </div>
+
+                  {/* 踩分关键词得分气泡标签 */}
+                  {Array.isArray(step.correctAnswer) && step.correctAnswer.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 my-1.5">
+                      <span className="text-[10px] text-slate-400 font-bold self-center">
+                        得分关键词:
+                      </span>
+                      {step.correctAnswer.map((kw, idx) => (
+                        <span
+                          key={idx}
+                          className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100/90 text-emerald-800 border border-emerald-300 shadow-2xs"
+                        >
+                          [{kw}]
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
                   {showExp && (
                     <div className="p-2 bg-indigo-50/70 text-indigo-900 rounded border border-indigo-100 text-[11px] leading-relaxed mt-1">
                       {step.explanation}

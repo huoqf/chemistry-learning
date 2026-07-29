@@ -3,7 +3,12 @@
  * 母题七：无机工艺流程与沉淀调 pH 工具 - 类型定义
  */
 
-export type IndustrialFlowSystemId = 'fe-al-mn' | 'fe-cu-zn' | 'ti-fe'
+export type IndustrialFlowSystemId =
+  | 'fe-al-mn'
+  | 'fe-cu-zn'
+  | 'ti-fe'
+  | 'ni-co-li'
+  | 'mg-ca'
 
 export interface IndustrialFlowParams {
   viewMode: 0 | 1 | 2 // 0: 动画流程与沉淀曲线, 1: 规范踩分, 2: 高考真题
@@ -12,7 +17,7 @@ export interface IndustrialFlowParams {
   leachTemp: number // 浸出温度 (20 ~ 90 ℃)
   crushSize: 'coarse' | 'medium' | 'fine' // 矿石粒度
   oxidantAmount: 'sufficient' | 'insufficient' // 氧化剂 H2O2 加入量
-  reagent: 'MnO' | 'CuO' | 'CaCO3' | 'NaOH' // 调 pH 试剂选择
+  reagent: 'MnO' | 'CuO' | 'ZnO' | 'MgO' | 'Na2CO3' | 'CaCO3' | 'NaOH' // 调 pH 试剂选择
 }
 
 export interface IonConcentrationPoint {
