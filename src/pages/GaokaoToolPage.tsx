@@ -18,6 +18,7 @@ import { TitrationBalanceCanvas } from '@/features/titration-balance'
 import { ReagentStepCanvas } from '@/components/Chemistry/ReagentStepCanvas'
 import { FlashCardCanvas } from '@/components/Chemistry/FlashCardCanvas'
 import { IndustrialFlowCanvas } from '@/features/industrial-flow/IndustrialFlowCanvas'
+import { ReactionPrincipleNexusCanvas } from '@/features/reaction-principle/nexus'
 import { getModelQuizData } from '@/data/gaokaoQuizData'
 import { ScoringCardSection, GaokaoVariantQuiz } from '@/components/UI'
 
@@ -40,6 +41,11 @@ export default function GaokaoToolPage() {
         </button>
       </div>
     )
+  }
+
+  // 母题四：勒夏特列移动与活化能图谱工具
+  if (model.id === 'model-reaction-principle-nexus') {
+    return <ReactionPrincipleNexusCanvas />
   }
 
   // 0. 如果是“母题一：滴定突跃与离子浓度排序解题工具”，渲染全屏 ThreePanel 架构

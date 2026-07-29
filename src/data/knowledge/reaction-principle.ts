@@ -102,6 +102,7 @@ export const reactionPrincipleKnowledge: KnowledgeNode[] = [
     module: '反应原理',
     importance: 'gaokao',
     animationIds: ['anim-le-chatelier'],
+    relatedModelIds: ['model-reaction-principle-nexus'],
     prerequisites: ['chemical-equilibrium'],
     interactionTags: ['particle-sandbox', 'chart-analysis'],
   },

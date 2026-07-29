@@ -17,6 +17,7 @@ import { modelOrganicRetrosynthesis } from './model-organic-retrosynthesis'
 import { modelReagentStep } from './model-reagent-step'
 import { modelFlashCards } from './model-flash-cards'
 import { modelIndustrialFlow } from './model-industrial-flow'
+import { modelReactionPrincipleNexus } from './model-reaction-principle-nexus'
 
 import type { ModelQuizData } from './types'
 
@@ -33,6 +34,7 @@ export const modelQuizMap: Record<string, ModelQuizData> = {
   [modelReagentStep.modelId]: modelReagentStep,
   [modelFlashCards.modelId]: modelFlashCards,
   [modelIndustrialFlow.modelId]: modelIndustrialFlow,
+  [modelReactionPrincipleNexus.modelId]: modelReactionPrincipleNexus,
 }
 
 export function getModelQuizData(modelId: string): ModelQuizData | undefined {
