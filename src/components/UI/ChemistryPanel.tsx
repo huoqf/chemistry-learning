@@ -204,7 +204,7 @@ function EquilibriumBanner({ isEquilibrium, equilibriumInfo }: { isEquilibrium?:
   )
 }
 
-function FormulaSection({ formulas }: { formulas: Formula[] }) {
+export function FormulaSection({ formulas }: { formulas: Formula[] }) {
   const [expanded, setExpanded] = useState(true)
 
   if (formulas.length === 0) return null
@@ -267,7 +267,7 @@ function FormulaSection({ formulas }: { formulas: Formula[] }) {
   )
 }
 
-function GaokaoSection({ points }: { points: GaokaoPoint[] }) {
+export function GaokaoSection({ points }: { points: GaokaoPoint[] }) {
   const [expanded, setExpanded] = useState(true)
 
   if (points.length === 0) return null
@@ -312,7 +312,7 @@ function GaokaoSection({ points }: { points: GaokaoPoint[] }) {
   )
 }
 
-function WarningSection({ warnings }: { warnings: WarningItem[] }) {
+export function WarningSection({ warnings }: { warnings: WarningItem[] }) {
   const [expanded, setExpanded] = useState(true)
 
   if (warnings.length === 0) return null

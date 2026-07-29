@@ -98,6 +98,11 @@ export default function GaokaoToolPage() {
     return <ReagentStepCanvas />
   }
 
+  // 4. 如果是“专题三：高考易错事实盲盒对比卡片”，渲染全屏 ThreePanel 母题三栏系统
+  if (model.id === 'model-flash-cards') {
+    return <FlashCardCanvas />
+  }
+
   // 通用备用工具渲染
   const renderToolComponent = () => {
     switch (model.id) {

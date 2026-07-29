@@ -1,4 +1,4 @@
-﻿/**
+/**
  * src/data/quiz/index.ts
  * 题库数据聚合入口 —— 只做 re-export 和 map 组装，无业务逻辑
  * 新增母题：在对应独立文件中添加数据，并在此处注册即可
@@ -15,6 +15,7 @@ import { modelTitrationErrorPurity } from './model-titration-error-purity'
 import { modelOrganicMechanism } from './model-organic-mechanism'
 import { modelOrganicRetrosynthesis } from './model-organic-retrosynthesis'
 import { modelReagentStep } from './model-reagent-step'
+import { modelFlashCards } from './model-flash-cards'
 
 import type { ModelQuizData } from './types'
 
@@ -29,6 +30,7 @@ export const modelQuizMap: Record<string, ModelQuizData> = {
   [modelOrganicMechanism.modelId]: modelOrganicMechanism,
   [modelOrganicRetrosynthesis.modelId]: modelOrganicRetrosynthesis,
   [modelReagentStep.modelId]: modelReagentStep,
+  [modelFlashCards.modelId]: modelFlashCards,
 }
 
 export function getModelQuizData(modelId: string): ModelQuizData | undefined {
