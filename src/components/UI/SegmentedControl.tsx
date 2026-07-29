@@ -13,6 +13,7 @@ interface SegmentedControlProps {
   disabled?: boolean
   label?: string | ReactNode
   className?: string
+  cols?: number
 }
 
 export const SegmentedControl: FC<SegmentedControlProps> = ({
@@ -22,6 +23,7 @@ export const SegmentedControl: FC<SegmentedControlProps> = ({
   disabled = false,
   label,
   className = '',
+  cols,
 }) => {
   const keys = options.map((o) => String(o.value))
   const stringValue = String(value)
@@ -45,12 +47,14 @@ export const SegmentedControl: FC<SegmentedControlProps> = ({
 
   // Tailwind 无法识别模板字符串中的动态类名，必须使用完整类名映射
   const colsMap: Record<number, string> = {
+    1: 'grid-cols-1',
     2: 'grid-cols-2',
     3: 'grid-cols-3',
     4: 'grid-cols-4',
     5: 'grid-cols-5',
   }
-  const colsClass = colsMap[options.length] ?? 'grid-cols-2'
+  const targetCols = cols ?? options.length
+  const colsClass = colsMap[targetCols] ?? 'grid-cols-2'
 
   return (
     <div className={className}>

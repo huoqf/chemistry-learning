@@ -17,6 +17,7 @@ import { OrganicMechanismCanvas } from '@/features/organic/mechanism'
 import { TitrationBalanceCanvas } from '@/features/titration-balance'
 import { ReagentStepCanvas } from '@/components/Chemistry/ReagentStepCanvas'
 import { FlashCardCanvas } from '@/components/Chemistry/FlashCardCanvas'
+import { IndustrialFlowCanvas } from '@/features/industrial-flow/IndustrialFlowCanvas'
 import { getModelQuizData } from '@/data/gaokaoQuizData'
 import { ScoringCardSection, GaokaoVariantQuiz } from '@/components/UI'
 
@@ -49,6 +50,11 @@ export default function GaokaoToolPage() {
   // 1. 如果是“母题八：有机反应官能团断键机制工具”，渲染全屏断键交互与中屏平行视图
   if (model.id === 'model-organic-mechanism') {
     return <OrganicMechanismCanvas />
+  }
+
+  // 2. 如果是“母题七：无机工艺流程与沉淀调 pH 工具”，渲染全屏 ThreePanel 架构
+  if (model.id === 'model-industrial-flow') {
+    return <IndustrialFlowCanvas />
   }
 
   // 2. 如果是“专题一：无机元素价类二维矩阵探究工具”，渲染全屏 ThreePanel 架构
