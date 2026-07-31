@@ -136,15 +136,15 @@ export function TitrationCenterView({
             <rect x="-140" y="0" width="280" height="650" fill="url(#titration-grid)" opacity={0.5} />
 
             {/* 铁架台与固定连杆 */}
-            <rect x={110} y={230} width={120} height={10} fill="#64748B" rx={2} />
-            <rect x={165} y={15} width={10} height={220} fill="#94A3B8" rx={1} />
-            <rect x={165} y={50} width={45} height={6} fill="#475569" rx={1} />
-            <rect x={165} y={120} width={45} height={6} fill="#475569" rx={1} />
+            <rect x={110} y={430} width={120} height={10} fill="#64748B" rx={2} />
+            <rect x={165} y={215} width={10} height={220} fill="#94A3B8" rx={1} />
+            <rect x={165} y={250} width={45} height={6} fill="#475569" rx={1} />
+            <rect x={165} y={320} width={45} height={6} fill="#475569" rx={1} />
 
             {/* 滴定管 (酸式 / 碱式) */}
             <BuretteApparatus
               x={190}
-              y={10}
+              y={210}
               width={30}
               height={150}
               variant={isAcidTitrant ? 'acid' : 'base'}
@@ -156,7 +156,7 @@ export function TitrationCenterView({
             />
 
             {/* 锥形瓶与实时 indicator 变色溶液 */}
-            <g transform="translate(175, 155)">
+            <g transform="translate(175, 355)">
               <polygon
                 points="20,0 40,0 52,65 8,65"
                 fill={withAlpha(SCENE_COLORS.materials.glass, 0.4)}
@@ -170,16 +170,16 @@ export function TitrationCenterView({
             {/* pH 计探头 */}
             <PhMeterApparatus
               x={230}
-              y={40}
+              y={240}
               phValue={chemistry.pH}
               font={canvasSize.font}
             />
 
             {/* 标注提示 */}
-            <text x={20} y={45} fontSize={canvasSize.font(FONT.annotation)} fill="#475569" fontWeight="bold">
+            <text x={20} y={245} fontSize={canvasSize.font(FONT.annotation)} fill="#475569" fontWeight="bold">
               {isAcidTitrant ? '滴定管 (HCl)' : '滴定管 (NaOH)'}
             </text>
-            <text x={20} y={185} fontSize={canvasSize.font(FONT.annotation)} fill="#475569" fontWeight="bold">
+            <text x={20} y={385} fontSize={canvasSize.font(FONT.annotation)} fill="#475569" fontWeight="bold">
               {chemistry.indicatorName}
             </text>
           </AnimationSvgCanvas>
