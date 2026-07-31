@@ -26,6 +26,9 @@ export function ReagentStepAnimation() {
     currentStep,
     interpolatedPptLevel,
 
+    currentPptMass,
+    currentPh,
+
     chartData,
     handleSceneChange,
     handleStepClick,
@@ -71,6 +74,8 @@ export function ReagentStepAnimation() {
           isAirIsolated={isAirIsolated}
           isReverseTitration={isReverseTitration}
           isWeakBase={isWeakBase}
+          currentPptMass={currentPptMass}
+          currentPh={currentPh}
           chartData={chartData}
         />
       }

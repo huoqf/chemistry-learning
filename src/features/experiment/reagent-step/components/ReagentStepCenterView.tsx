@@ -21,9 +21,11 @@ export interface ReagentStepCenterViewProps {
   currentStep: ReagentStepPoint
   interpolatedPptLevel: number
   isAirIsolated: boolean
-  isReverseTitration: boolean
-  isWeakBase: boolean
-  chartData: { x: number; y: number; label: string }[]
+  isReverseTitration?: boolean
+  isWeakBase?: boolean
+  currentPptMass?: number
+  currentPh?: number
+  chartData: { x: number; y: number; ph: number; label: string }[]
 }
 
 export function ReagentStepCenterView({
@@ -41,6 +43,8 @@ export function ReagentStepCenterView({
   isAirIsolated,
   isReverseTitration,
   isWeakBase,
+  currentPptMass: propCurrentPptMass,
+  currentPh: propCurrentPh,
   chartData,
 }: ReagentStepCenterViewProps) {
   // 1. Viewport 绑定：完全参照 PrimaryCellAnimation.tsx 选用 CANVAS_PRESETS.splitHw
@@ -52,34 +56,27 @@ export function ReagentStepCenterView({
 
   // 定量图像数据准备
   const currentVolume = progress * 10
-  const currentPptMass = Math.round(interpolatedPptLevel * 200)
+  const currentPptMass = propCurrentPptMass ?? Math.round(interpolatedPptLevel * 200)
+  const currentPh = propCurrentPh ?? currentStep.ph
 
   const pptChartPoints = useMemo(() => {
-    return chartData.map((d) => ({
-      x: d.x,
-      y: d.y,
-    }))
-  }, [chartData])
+    // 随滴加进度 currentVolume 动态过滤，实现曲线随着滴加过程实时延伸绘制生成
+    return chartData
+      .filter((d) => d.x <= currentVolume + 0.05)
+      .map((d) => ({
+        x: d.x,
+        y: d.y,
+      }))
+  }, [chartData, currentVolume])
 
   const phChartPoints = useMemo(() => {
-    return chartData.map((d) => {
-      const pRatio = d.x / 10
-      let phVal = 7.0
-      if (currentScene.id === 'fe-air-ox') {
-        phVal = 6.0 + pRatio * 3.8
-      } else if (currentScene.id === 'al-amphoteric') {
-        phVal = isReverseTitration ? Math.max(7, 13 - pRatio * 5) : 4.5 + pRatio * 8.5
-      } else if (currentScene.id === 'cu-ammonia') {
-        phVal = 5.5 + pRatio * 5.7
-      } else {
-        phVal = 4.0 + pRatio * 4.5
-      }
-      return {
+    return chartData
+      .filter((d) => d.x <= currentVolume + 0.05)
+      .map((d) => ({
         x: d.x,
-        y: parseFloat(phVal.toFixed(2)),
-      }
-    })
-  }, [chartData, currentScene.id, isReverseTitration])
+        y: d.ph,
+      }))
+  }, [chartData, currentVolume])
 
   // 试管尺寸与定位 (280x650 design)
   const tubeWidth = 60
@@ -202,7 +199,7 @@ export function ReagentStepCenterView({
           {/* 试剂与体积标注卡 */}
           <div className="absolute top-2 left-2 right-2 bg-white/90 border border-slate-200 px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs font-mono backdrop-blur shadow-xs">
             <span className="font-bold text-slate-800">
-              {currentScene.badgeText} {isWeakBase ? '(弱碱)' : ''}
+              {currentScene.badgeText} {isWeakBase ? '(弱碱)' : isReverseTitration ? '(反滴)' : ''}
             </span>
             <span className="text-amber-700 font-bold">V = {currentVolume.toFixed(1)} mL</span>
           </div>
@@ -237,7 +234,7 @@ export function ReagentStepCenterView({
               <ChartLine points={phChartPoints} color={CHART_COLORS.primary} strokeWidth={2} />
               <ChartCursor
                 x={currentVolume}
-                dataPoints={[{ y: currentStep.ph, label: `pH: ${currentStep.ph.toFixed(1)}` }]}
+                dataPoints={[{ y: currentPh, label: `pH: ${currentPh.toFixed(1)}` }]}
               />
             </BaseChart>
           </div>
