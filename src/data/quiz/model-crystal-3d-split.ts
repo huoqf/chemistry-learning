@@ -1,4 +1,4 @@
-﻿import type { ModelQuizData } from './types'
+import type { ModelQuizData } from './types'
 
 export const modelCrystal3dSplit: ModelQuizData = {
   modelId: 'model-crystal-3d-split',
@@ -7,8 +7,8 @@ export const modelCrystal3dSplit: ModelQuizData = {
       id: 'step-1',
       title: '步骤 1：面心立方晶胞密度公式字母代入求解',
       type: 'calculation',
-      questionText: '面心立方 (Cu) 晶胞边长为 a pm，摩尔质量为 M g/mol，阿伏加德罗常数为 N_A，晶胞密度 ρ 的计算表达式中，晶胞体积转换为 cm³ 的换算系数是 10 的多少次方？',
-      formulaLatex: '\\rho = \\frac{4M}{a^3 \\cdot 10^{-30} \\cdot N_A} \\text{ g/cm}^3',
+      questionText: '面心立方 (Cu) 晶胞边长为 a pm，摩尔质量为 M g/mol，阿伏加德罗常数为 $N_{\\text{A}}$，晶胞密度 ρ 的计算表达式中，晶胞体积转换为 cm³ 的换算系数是 10 的多少次方？',
+      formulaLatex: '\\rho = \\frac{4M}{a^3 \\cdot 10^{-30} \\cdot N_{\\text{A}}} \\text{ g/cm}^3',
       placeholder: '-30',
       correctAnswer: ['-30', '10^-30'],
       explanation: '1 pm = 10⁻¹⁰ cm，故 a pm = a × 10⁻¹⁰ cm，(a pm)³ = a³ × 10⁻³⁰ cm³。',

@@ -19,6 +19,7 @@ import { ReagentStepCanvas } from '@/components/Chemistry/ReagentStepCanvas'
 import { FlashCardCanvas } from '@/components/Chemistry/FlashCardCanvas'
 import { IndustrialFlowCanvas } from '@/features/industrial-flow/IndustrialFlowCanvas'
 import { ReactionPrincipleNexusCanvas } from '@/features/reaction-principle/nexus'
+import { AvogadroConstantCanvas } from '@/features/avogadro-constant/AvogadroConstantCanvas'
 import { getModelQuizData } from '@/data/gaokaoQuizData'
 import { ScoringCardSection, GaokaoVariantQuiz } from '@/components/UI'
 
@@ -46,6 +47,11 @@ export default function GaokaoToolPage() {
   // 母题四：勒夏特列移动与活化能图谱工具
   if (model.id === 'model-reaction-principle-nexus') {
     return <ReactionPrincipleNexusCanvas />
+  }
+
+  // 母题十一：阿伏加德罗常数 (N_A) 陷阱与粒子统计工具
+  if (model.id === 'model-avogadro-constant') {
+    return <AvogadroConstantCanvas />
   }
 
   // 0. 如果是“母题一：滴定突跃与离子浓度排序解题工具”，渲染全屏 ThreePanel 架构

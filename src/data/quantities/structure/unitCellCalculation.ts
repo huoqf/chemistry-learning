@@ -102,7 +102,7 @@ export function getUnitCellFormulas(params: Record<string, number>) {
       return [
         {
           name: 'NaCl 晶胞密度代入公式 (Z=4)',
-          latex: '\\rho = \\frac{4 \\times 58.44}{N_A \\times a^3 \\times 10^{-30}}',
+          latex: '\\rho = \\frac{4 \\times 58.44}{N_{\\text{A}} \\times a^3 \\times 10^{-30}}',
           level: 'core' as const,
           condition: 'Na⁺: 12×1/4+1=4; Cl⁻: 8×1/8+6×1/2=4',
         },
@@ -123,7 +123,7 @@ export function getUnitCellFormulas(params: Record<string, number>) {
       return [
         {
           name: 'CsCl 晶胞密度代入公式 (Z=1)',
-          latex: '\\rho = \\frac{1 \\times 168.36}{N_A \\times a^3 \\times 10^{-30}}',
+          latex: '\\rho = \\frac{1 \\times 168.36}{N_{\\text{A}} \\times a^3 \\times 10^{-30}}',
           level: 'core' as const,
           condition: 'Cs⁺: 体心 1×1=1; Cl⁻: 顶点 8×1/8=1',
         },
@@ -144,7 +144,7 @@ export function getUnitCellFormulas(params: Record<string, number>) {
       return [
         {
           name: 'Cu 面心立方 (FCC) 密度公式 (Z=4)',
-          latex: '\\rho = \\frac{4 \\times M(\\text{Cu})}{N_A \\times a^3 \\times 10^{-30}}',
+          latex: '\\rho = \\frac{4 \\times M(\\text{Cu})}{N_{\\text{A}} \\times a^3 \\times 10^{-30}}',
           level: 'core' as const,
           condition: 'Cu: 顶点 8×1/8 + 面心 6×1/2 = 4',
         },
@@ -164,7 +164,7 @@ export function getUnitCellFormulas(params: Record<string, number>) {
       return [
         {
           name: 'α-Fe 体心立方 (BCC) 密度公式 (Z=2)',
-          latex: '\\rho = \\frac{2 \\times M(\\text{Fe})}{N_A \\times a^3 \\times 10^{-30}}',
+          latex: '\\rho = \\frac{2 \\times M(\\text{Fe})}{N_{\\text{A}} \\times a^3 \\times 10^{-30}}',
           level: 'core' as const,
           condition: 'Fe: 顶点 8×1/8 + 体心 1 = 2',
         },
@@ -184,7 +184,7 @@ export function getUnitCellFormulas(params: Record<string, number>) {
       return [
         {
           name: '金刚石 (C) 晶胞密度代入公式 (Z=8)',
-          latex: '\\rho = \\frac{8 \\times 12.01}{N_A \\times a^3 \\times 10^{-30}}',
+          latex: '\\rho = \\frac{8 \\times 12.01}{N_{\\text{A}} \\times a^3 \\times 10^{-30}}',
           level: 'core' as const,
           condition: '8顶点(占1/8) + 6面心(占1/2) + 4体内部(占1) = 8',
         },

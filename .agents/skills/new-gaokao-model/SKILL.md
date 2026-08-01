@@ -113,18 +113,25 @@ src/data/quiz/
 - **操作按钮**：必须使用 `<Button>` 组件
 
 ### 2. 中屏平行视角与控制规范（CenterView DOM 条件渲染）
+- **Preset 弹性选用**：严禁无脑固定 `splitHw`！应根据母题化学内容特征选择最佳预设：
+  - **`CANVAS_PRESETS.splitHw` (280x650 + 560px)**：适用于高窄滴定管/长集气瓶装置 + 宽幅时序图表（滴定突跃/反应速率）。
+  - **`CANVAS_PRESETS.splitH` (420x650 + 420x650)**：适用于对称场景与微粒/结构+图表对比（如 $N_A$ 粒子统计/离子反应/溶液配制）。
+  - **`CANVAS_PRESETS.full` (840x650)**：适用于纯 3D/2D 晶体切割、分子构型、电化学池全景等。
+- **中屏纯净化铁律**：
+  - 中屏只允许放置 SVG 画布（矢量场景）与 SVG 图表（`<BaseChart>` / `<MiniChart>`）。
+  - **严禁在中屏堆砌 DOM 教学卡片、文字解析、公式推导或总结**。
 - **视角切换**：主舞台通过左屏 `viewMode` 分段按钮进行 **DOM 层平级条件切换**（绝对禁止在 SVG 内使用 `<foreignObject>`）：
   - **视角 0 (动画/图表)**：渲染 `<AnimationSvgCanvas>` + 图表组件；动画控制物理通用场景使用 `<AnimationControls>`，**化学滴定/试剂演练场景使用专属 `<TitrationControls>`**。
   - **视角 1 (规范踩分)**：直接渲染 `<ScoringCardSection steps={quizData.scoringSteps} />`
   - **视角 2 (真题变式)**：直接渲染 `<GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />`
-- **零滚动自适应**：参照原电池 `PrimaryCellAnimation.tsx` 架构，中屏根容器为 `w-full h-full flex flex-col overflow-hidden`，保证装置视口（280px）、图表视口（560px）与控制条（50px）一屏自适应展示，禁止手写死高度 `min-h-[Npx]` 导致外层出现粗暴滚动条。
+- **零滚动自适应**：中屏根容器为 `w-full h-full flex flex-col overflow-hidden`，保证视口与控制条一屏自适应展示，禁止手写死高度 `min-h-[Npx]` 导致外层出现粗暴滚动条。
 
 ### 3. 右屏组件规范（RightPanel）
-右屏必须 100% 使用项目已有的标准 UI 组件组合实现，绝对禁止手写原生的散乱 `<div>`/`<p>` 元素：
-- **公式与条件**：必须使用 `ChemistryPanel` 的 `formulas` 或 `<FormulaSection formulas={...} />`（内部自动调用 `KatexFormula`，已支持 280px 窄屏自动折行）
-- **高考要点**：必须使用 `gaokaoPoints` 或 `<GaokaoSection points={...} />`
-- **易错警示**：必须使用 `warnings` 或 `<WarningSection warnings={...} />`
-- **化学量与数据卡**：必须使用 `<QuantityItem />` 或 `quantities` 声明式定义
+右屏是化学量统计、公式推导、考点剖析与避坑指南的**唯一权威承载屏**，必须 100% 使用项目已有的标准 UI 组件组合实现：
+- **公式与条件**：必须使用 `ChemistryPanel` 的 `formulas`
+- **高考要点**：必须使用 `gaokaoPoints`
+- **易错警示**：必须使用 `warnings`
+- **化学量与数据统计卡**：必须使用 `quantities`（包含粒子统计实测真值 vs 理论值与错因剖析）
 
 ## Step 4：Theme Token 导入规范
 

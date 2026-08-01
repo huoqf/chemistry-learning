@@ -120,7 +120,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     examPointSummary: [
       '均摊法计算单个晶胞内各类原子/离子净个数 N',
       '晶胞边长 a 与原子半径 r 的几何关系 (面心立方 / 体心立方)',
-      '晶胞密度公式导出及 N_A 计算求解',
+      '晶胞密度公式导出及 $N_{\\text{A}}$ 计算求解',
     ],
   },
   {
@@ -245,12 +245,12 @@ export const gaokaoModels: GaokaoModelNode[] = [
   {
     id: 'model-avogadro-constant',
     category: 'memory-matrix',
-    title: '母题十一：阿伏加德罗常数 (N_A) 陷阱与粒子统计工具',
+    title: '母题十一：阿伏加德罗常数 ($N_{\\text{A}}$) 陷阱与粒子统计工具',
     subtitle: '选择题高频必考拆解',
     description: '梳理标况气体状态 (如 SO₃/CCl₄ 固体/液体)、弱电解质电离水解程度、氧化还原电子转移数等考点陷阱。',
     toolRoute: '/gaokao-tool/model-avogadro-constant',
     iconName: 'Grid',
-    badgeText: 'N_A 陷阱',
+    badgeText: '$N_{\\text{A}}$ 陷阱',
     badgeColor: 'bg-rose-100 text-rose-800 border-rose-200',
     relatedKnowledgeIds: ['avogadro-constant', 'gas-molar-volume', 'ionization-equilibrium'],
     examPointSummary: [
