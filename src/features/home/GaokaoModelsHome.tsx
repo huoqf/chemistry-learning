@@ -11,7 +11,7 @@ import {
   CheckCircle2,
   HelpCircle,
 } from 'lucide-react'
-import { renderNaText } from '@/utils/chemText'
+import { renderNaText } from '@/utils'
 import { gaokaoModels, GaokaoModelNode, GaokaoModelCategory } from '@/data/gaokaoModels'
 
 interface GaokaoModelsHomeProps {

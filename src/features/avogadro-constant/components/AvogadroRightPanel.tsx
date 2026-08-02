@@ -1,6 +1,6 @@
 import React from 'react'
 import { ChemistryPanel } from '@/components/UI'
-import { renderNaText } from '@/utils/chemText'
+import { renderNaText } from '@/utils'
 import type { AvogadroParams, AvogadroResult } from '../types'
 
 interface AvogadroRightPanelProps {
