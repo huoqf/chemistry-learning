@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { ScoringCardSection, GaokaoVariantQuiz } from '@/components/UI'
-import { EquilibriumChart } from '@/components/Chart'
+import { EquilibriumChart, RelationChart } from '@/components/Chart'
 import { EnergyProfileChart } from './EnergyProfileChart'
 import { BoltzmannDistributionChart } from './BoltzmannDistributionChart'
 import { LnkInvTChart } from './LnkInvTChart'
+import { CHART_COLORS } from '@/theme'
 import type { ModelQuizData } from '@/data/quiz/types'
 import type { NexusParams } from '../types'
 
@@ -20,12 +21,10 @@ export const ReactionPrincipleCenterView: React.FC<ReactionPrincipleCenterViewPr
   chemistry,
   quizData,
 }) => {
-  const [subTab, setSubTab] = useState<'chart1' | 'chart2'>('chart1')
-
   // 1. 视角 1：规范踩分
   if (viewMode === 1) {
     return (
-      <div className="w-full h-full flex flex-col p-4 bg-white overflow-y-auto">
+      <div className="w-full h-full flex flex-col p-4 overflow-y-auto">
         <h2 className="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-500" />
           反应原理大题核心规范踩分卡 (评分标准对齐)
@@ -42,7 +41,7 @@ export const ReactionPrincipleCenterView: React.FC<ReactionPrincipleCenterViewPr
   // 2. 视角 2：真题研析
   if (viewMode === 2) {
     return (
-      <div className="w-full h-full flex flex-col p-4 bg-white overflow-y-auto">
+      <div className="w-full h-full flex flex-col p-4 overflow-y-auto">
         <h2 className="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-indigo-500" />
           高考反应原理大题高保真真题研析
@@ -65,95 +64,120 @@ export const ReactionPrincipleCenterView: React.FC<ReactionPrincipleCenterViewPr
   const productConcPoints = history.map((p: any) => ({ x: p.time, y: p.cProduct }))
 
   return (
-    <div className="w-full h-full flex flex-col overflow-hidden bg-slate-50 border border-slate-200/80 rounded-lg p-3">
-      {/* 顶部探究图谱卡片 Header */}
+    <div className="w-full h-full flex flex-col overflow-hidden p-3">
+      {/* 顶部探究图谱 Header */}
       <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-200 shrink-0">
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold text-slate-800">
             {params.chartTab === 'energy-profile'
-              ? '活化能与催化历程势能山峰'
+              ? '活化能势能山峰 & 玻尔兹曼能量分布 50%:50% 双图分屏'
               : params.chartTab === 'le-chatelier'
-              ? '勒夏特列移动 v-t & c-t 速率与浓度双图联动'
+              ? '勒夏特列移动 v-t (速率) & c-t (浓度) 双图同步联动'
               : '范特霍夫 lnK - 1/T 热力学关系图谱'}
           </span>
           <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">
             {chemistry.system.name}
           </span>
         </div>
-
-        {params.chartTab === 'le-chatelier' && (
-          <div className="flex items-center gap-1 bg-slate-200/80 p-0.5 rounded text-[11px] font-semibold">
-            <button
-              onClick={() => setSubTab('chart1')}
-              className={`px-2.5 py-1 rounded transition-colors ${
-                subTab === 'chart1' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600'
-              }`}
-            >
-              v - t 反应速率图
-            </button>
-            <button
-              onClick={() => setSubTab('chart2')}
-              className={`px-2.5 py-1 rounded transition-colors ${
-                subTab === 'chart2' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600'
-              }`}
-            >
-              c - t 浓度变化图
-            </button>
-          </div>
-        )}
       </div>
 
-      {/* 主视图 Canvas/Chart 区域 */}
-      <div className="flex-1 w-full min-h-0 relative bg-white rounded border border-slate-200 p-2 overflow-hidden flex items-center justify-center">
+      {/* 主视图 50%:50% 分屏 Chart 区域 */}
+      <div className="flex-1 w-full min-h-0 relative overflow-hidden flex items-center justify-center">
         {params.chartTab === 'energy-profile' && (
-          <div className="w-full h-full flex flex-col md:flex-row gap-2">
-            <div className="flex-1 h-full min-w-0">
-              <EnergyProfileChart
-                tsPoints={chemistry.tsPoints}
-                eaForward={chemistry.eaForward}
-                eaReverse={chemistry.eaReverse}
-                deltaH={chemistry.system.deltaH}
-                catalyst={params.catalyst}
-              />
+          <div className="w-full h-full flex flex-col md:flex-row gap-3 min-h-0 overflow-hidden">
+            {/* 左屏 50%：活化能与催化历程势能曲线图 */}
+            <div className="flex-1 min-w-0 h-full flex flex-col overflow-hidden">
+              <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center gap-1.5 shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                反应势能山峰与过渡态 (Ea)
+              </div>
+              <div className="flex-1 min-h-0 w-full relative">
+                <EnergyProfileChart
+                  tsPoints={chemistry.tsPoints}
+                  eaForward={chemistry.eaForward}
+                  eaReverse={chemistry.eaReverse}
+                  deltaH={chemistry.system.deltaH}
+                  catalyst={params.catalyst}
+                />
+              </div>
             </div>
-            <div className="w-full md:w-[280px] h-full shrink-0 border-t md:border-t-0 md:border-l border-slate-100 pl-2">
-              <BoltzmannDistributionChart
-                boltzmannData={chemistry.boltzmannData}
-                eaForward={chemistry.eaForward}
-                temperature={params.temperature}
-              />
+
+            {/* 中间分割线 */}
+            <div className="hidden md:block w-px h-full bg-slate-200 shrink-0" />
+
+            {/* 右屏 50%：麦克斯韦-玻尔兹曼能量分布图 */}
+            <div className="flex-1 min-w-0 h-full flex flex-col overflow-hidden">
+              <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center gap-1.5 shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                麦克斯韦-玻尔兹曼能量分布与活化分子比例
+              </div>
+              <div className="flex-1 min-h-0 w-full relative">
+                <BoltzmannDistributionChart
+                  boltzmannData={chemistry.boltzmannData}
+                  eaForward={chemistry.eaForward}
+                  temperature={params.temperature}
+                />
+              </div>
             </div>
           </div>
         )}
 
         {params.chartTab === 'le-chatelier' && (
-          <div className="w-full h-full">
-            {subTab === 'chart1' ? (
-              <EquilibriumChart
-                forwardPoints={forwardPoints}
-                reversePoints={reversePoints}
-                xDomain={[0, 10]}
-                currentTime={10}
-                title={`${chemistry.system.name} 反应速率 - 时间 (v - t) 突变图谱`}
-                xLabel="时间 t / s"
-                yLabel="反应速率 v / (mol·L⁻¹·s⁻¹)"
-              />
-            ) : (
-              <EquilibriumChart
-                forwardPoints={reactantConcPoints}
-                reversePoints={productConcPoints}
-                xDomain={[0, 10]}
-                currentTime={10}
-                title={`${chemistry.system.name} 物质浓度 - 时间 (c - t) 演化图谱`}
-                xLabel="时间 t / s"
-                yLabel="物质浓度 c / (mol·L⁻¹)"
-              />
-            )}
+          <div className="w-full h-full flex flex-col md:flex-row gap-3 min-h-0 overflow-hidden">
+            {/* 左屏 50%：v - t 反应速率突变图谱 */}
+            <div className="flex-1 min-w-0 h-full flex flex-col overflow-hidden">
+              <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center gap-1.5 shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                反应速率 - 时间 (v - t) 突变图谱
+              </div>
+              <div className="flex-1 min-h-0 w-full relative">
+                <EquilibriumChart
+                  forwardPoints={forwardPoints}
+                  reversePoints={reversePoints}
+                  xDomain={[0, 10]}
+                  currentTime={10}
+                  title={`${chemistry.system.name} v - t 突变图`}
+                  xLabel="时间 t / s"
+                  yLabel="反应速率 v / (mol·L⁻¹·s⁻¹)"
+                />
+              </div>
+            </div>
+
+            {/* 中间分割线 */}
+            <div className="hidden md:block w-px h-full bg-slate-200 shrink-0" />
+
+            {/* 右屏 50%：c - t 物质浓度演化图谱 */}
+            <div className="flex-1 min-w-0 h-full flex flex-col overflow-hidden">
+              <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center gap-1.5 shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />
+                物质浓度 - 时间 (c - t) 演化图谱
+              </div>
+              <div className="flex-1 min-h-0 w-full relative">
+                <RelationChart
+                  points={reactantConcPoints}
+                  additionalSeries={[
+                    {
+                      points: productConcPoints,
+                      label: 'c(产物)',
+                      color: CHART_COLORS.compareA,
+                      strokeWidth: 2,
+                    },
+                  ]}
+                  xDomain={[0, 10]}
+                  cursorX={10}
+                  mainLabel="c(反应物)"
+                  color={CHART_COLORS.primary}
+                  title={`${chemistry.system.name} c - t 演化图`}
+                  xLabel="时间 t / s"
+                  yLabel="物质浓度 c / (mol·L⁻¹)"
+                />
+              </div>
+            </div>
           </div>
         )}
 
         {params.chartTab === 'lnk-invt' && (
-          <div className="w-full h-full">
+          <div className="w-full h-full min-h-0 relative">
             <LnkInvTChart
               vantHoffData={chemistry.vantHoffData}
               temperature={params.temperature}
@@ -165,3 +189,5 @@ export const ReactionPrincipleCenterView: React.FC<ReactionPrincipleCenterViewPr
     </div>
   )
 }
+
+

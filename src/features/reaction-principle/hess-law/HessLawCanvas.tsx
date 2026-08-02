@@ -2,59 +2,50 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Sparkles } from 'lucide-react'
 import { ThreePanel } from '@/components/Layout'
-import { renderNaText } from '@/utils/chemText'
 import { getGaokaoModel } from '@/data/gaokaoModels'
 import { getModelQuizData } from '@/data/quiz/index'
-import { useAvogadroChemistry } from './hooks/useAvogadroChemistry'
-import { AvogadroLeftPanel } from './components/AvogadroLeftPanel'
-import { AvogadroCenterView } from './components/AvogadroCenterView'
-import { AvogadroRightPanel } from './components/AvogadroRightPanel'
-import type { AvogadroParams } from './types'
+import { useHessLawChemistry, HESS_PRESETS } from './hooks/useHessLawChemistry'
+import { HessLawLeftPanel } from './components/HessLawLeftPanel'
+import { HessLawCenterView } from './components/HessLawCenterView'
+import { HessLawRightPanel } from './components/HessLawRightPanel'
+import type { HessLawParams } from './types'
 
-export const AvogadroConstantCanvas: React.FC = () => {
+export const HessLawCanvas: React.FC = () => {
   const navigate = useNavigate()
-  const modelId = 'model-avogadro-constant'
+  const modelId = 'model-hess-law'
   const model = getGaokaoModel(modelId)
   const quizData = getModelQuizData(modelId)
 
   // 视角 0: 图谱探究 | 视角 1: 规范踩分 | 视角 2: 真题研析
   const [viewMode, setViewMode] = useState<number>(0)
 
-  // 控制台参数状态
-  const [params, setParams] = useState<AvogadroParams>({
-    trapCategory: 'state-volume',
-    stateItem: 'SO3',
-    structureItem: 'P4',
-    electrolyteItem: 'CH3COOH',
-    redoxItem: 'Cl2-NaOH',
-    amountValue: 22.4,
-    amountUnit: 'L',
-    temperatureCondition: 'standard',
-    solutionVolume: 1.0,
-    solutionConcentration: 0.1,
-    matrixStepIndex: 0,
+  // 参数状态
+  const [params, setParams] = useState<HessLawParams>({
+    mode: 'hess-overlay',
+    hessGroupIndex: 0,
+    k1: HESS_PRESETS[0].equations[0]?.defaultK ?? 1,
+    k2: HESS_PRESETS[0].equations[1]?.defaultK ?? -0.5,
+    bondMoleculeIndex: 0,
+    hasCatalyst: 0,
+    temperature: 298,
   })
 
-  // 纯化学计算 Hook
-  const chemistry = useAvogadroChemistry(params)
+  // 纯化学计算
+  const chemistry = useHessLawChemistry(params)
 
-  const handleUpdateParams = (updated: Partial<AvogadroParams>) => {
+  const handleUpdateParams = (updated: Partial<HessLawParams>) => {
     setParams((prev) => ({ ...prev, ...updated }))
   }
 
   const handleReset = () => {
     setParams({
-      trapCategory: 'state-volume',
-      stateItem: 'SO3',
-      structureItem: 'P4',
-      electrolyteItem: 'CH3COOH',
-      redoxItem: 'Cl2-NaOH',
-      amountValue: 22.4,
-      amountUnit: 'L',
-      temperatureCondition: 'standard',
-      solutionVolume: 1.0,
-      solutionConcentration: 0.1,
-      matrixStepIndex: 0,
+      mode: 'hess-overlay',
+      hessGroupIndex: 0,
+      k1: HESS_PRESETS[0].equations[0]?.defaultK ?? 1,
+      k2: HESS_PRESETS[0].equations[1]?.defaultK ?? -0.5,
+      bondMoleculeIndex: 0,
+      hasCatalyst: 0,
+      temperature: 298,
     })
   }
 
@@ -74,20 +65,14 @@ export const AvogadroConstantCanvas: React.FC = () => {
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
               <span className="font-bold text-sm text-white flex items-center gap-1">
-                {model?.title ? (
-                  renderNaText(model.title)
-                ) : (
-                  <>
-                    母题十一：阿伏加德罗常数 (<i>N</i><sub className="font-normal">A</sub>) 陷阱与粒子统计工具
-                  </>
-                )}
+                {model?.title || '母题九：盖斯定律与热化学键能计算工具'}
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded font-bold bg-rose-100 text-rose-800 flex items-center">
-                {model?.badgeText ? renderNaText(model.badgeText) : <><i>N</i><sub className="font-normal">A</sub> 陷阱</>}
+              <span className="text-[10px] px-2 py-0.5 rounded font-bold bg-indigo-100 text-indigo-800 flex items-center border border-indigo-200">
+                {model?.badgeText || '盖斯定律'}
               </span>
             </div>
             <span className="text-[11px] text-slate-400">
-              {model?.subtitle || '选择题高频必考拆解'}
+              {model?.subtitle || '反应热 ΔH 叠加与键能推导'}
             </span>
           </div>
         </div>
@@ -95,7 +80,7 @@ export const AvogadroConstantCanvas: React.FC = () => {
         <div className="flex items-center gap-2">
           <span className="text-xs text-amber-400 font-semibold flex items-center gap-1">
             <Sparkles className="w-3.5 h-3.5" />
-            全屏 ThreePanel 架构 · 平级三视角
+            全屏 ThreePanel 架构 · 高考解题母题
           </span>
         </div>
       </div>
@@ -104,7 +89,7 @@ export const AvogadroConstantCanvas: React.FC = () => {
       <div className="flex-1 overflow-hidden">
         <ThreePanel
           left={
-            <AvogadroLeftPanel
+            <HessLawLeftPanel
               params={params}
               viewMode={viewMode}
               setViewMode={setViewMode}
@@ -113,7 +98,7 @@ export const AvogadroConstantCanvas: React.FC = () => {
             />
           }
           center={
-            <AvogadroCenterView
+            <HessLawCenterView
               params={params}
               chemistry={chemistry}
               quizData={quizData}
@@ -121,7 +106,7 @@ export const AvogadroConstantCanvas: React.FC = () => {
             />
           }
           right={
-            <AvogadroRightPanel
+            <HessLawRightPanel
               params={params}
               chemistry={chemistry}
             />
@@ -131,3 +116,5 @@ export const AvogadroConstantCanvas: React.FC = () => {
     </div>
   )
 }
+
+export default HessLawCanvas

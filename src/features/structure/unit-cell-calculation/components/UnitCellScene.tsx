@@ -41,15 +41,16 @@ export function UnitCellScene({
   const [selectedAtomId, setSelectedAtomId] = useState<string | null>(null)
   const [isHovered, setIsHovered] = useState(false)
 
-  if (!isWebGLAvailable()) {
-    return <WebGLFallback />
-  }
-
   // 查出被选中原子的详细信息
+  // ⚠️ 必须在条件 return 之前调用（Rules of Hooks）
   const selectedAtom = useMemo(() => {
     if (!selectedAtomId) return null
     return crystalData.atoms.find((a) => a.id === selectedAtomId) || null
   }, [selectedAtomId, crystalData])
+
+  if (!isWebGLAvailable()) {
+    return <WebGLFallback />
+  }
 
   return (
     <div

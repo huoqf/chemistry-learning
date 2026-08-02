@@ -20,6 +20,7 @@ import { FlashCardCanvas } from '@/components/Chemistry/FlashCardCanvas'
 import { IndustrialFlowCanvas } from '@/features/industrial-flow/IndustrialFlowCanvas'
 import { ReactionPrincipleNexusCanvas } from '@/features/reaction-principle/nexus'
 import { AvogadroConstantCanvas } from '@/features/avogadro-constant/AvogadroConstantCanvas'
+import { HessLawCanvas } from '@/features/reaction-principle/hess-law/HessLawCanvas'
 import { getModelQuizData } from '@/data/gaokaoQuizData'
 import { ScoringCardSection, GaokaoVariantQuiz } from '@/components/UI'
 
@@ -42,6 +43,11 @@ export default function GaokaoToolPage() {
         </button>
       </div>
     )
+  }
+
+  // 母题九：盖斯定律与热化学键能计算工具
+  if (model.id === 'model-hess-law') {
+    return <HessLawCanvas />
   }
 
   // 母题四：勒夏特列移动与活化能图谱工具

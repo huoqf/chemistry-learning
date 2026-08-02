@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   HelpCircle,
 } from 'lucide-react'
+import { renderNaText } from '@/utils/chemText'
 import { gaokaoModels, GaokaoModelNode, GaokaoModelCategory } from '@/data/gaokaoModels'
 
 interface GaokaoModelsHomeProps {
@@ -127,13 +128,13 @@ export function GaokaoModelsHome({ onSwitchToTextbookTree }: GaokaoModelsHomePro
                   <span
                     className={`text-xs px-2.5 py-0.5 rounded-full font-medium border ${model.badgeColor}`}
                   >
-                    {model.badgeText}
+                    {renderNaText(model.badgeText)}
                   </span>
                 </div>
 
                 {/* 标题与描述 */}
                 <h3 className="font-bold text-slate-800 text-base group-hover:text-amber-600 transition-colors">
-                  {model.title}
+                  {renderNaText(model.title)}
                 </h3>
                 <p className="text-xs text-amber-700 font-semibold mt-0.5">{model.subtitle}</p>
                 <p className="text-xs text-slate-600 mt-2 line-clamp-2 leading-relaxed">

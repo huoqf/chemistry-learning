@@ -10,6 +10,7 @@ export * from './layoutLabels';
 export * from './snap';
 export * from './color';
 export * from './scrollingTable';
+export * from './chemText';
 
 export * from './vectorLength';
 export * from './lazyWithPreload';
