@@ -8,6 +8,7 @@ export interface GaokaoDiagramProps {
     | 'precipitation-curve'
     | 'valence-matrix-chart'
     | 'organic-mechanism-diagram'
+    | 'titration-error-diagram'
     | 'image'
   config?: GaokaoVariantItem['diagramConfig']
   className?: string
@@ -499,6 +500,239 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
         </svg>
       </div>
     )
+  }
+
+  if (diagramType === 'titration-error-diagram') {
+    const errorType = config?.errorDiagramType || 'cod-back-titration'
+    const title = config?.title || '高考真题：定量滴定与计算原图解析'
+
+    if (errorType === 'cod-back-titration') {
+      return (
+        <div className={`my-2.5 p-3 bg-slate-50 border border-slate-200 rounded-lg ${className}`}>
+          <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between">
+            <span>{title}</span>
+            <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">
+              高考真题原图高保真复现
+            </span>
+          </div>
+          <svg viewBox="0 0 350 180" className="w-full h-auto bg-white rounded border border-slate-200 shadow-2xs select-none">
+            {/* 网格背景 */}
+            <rect x="0" y="0" width="350" height="180" fill="#FAFAFA" />
+
+            {/* 步骤 1：重铬酸钾消解 */}
+            <g transform="translate(15, 20)">
+              <rect x="0" y="0" width="95" height="135" rx="6" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="1" />
+              <text x="47" y="18" fontSize="8.5" fill="#1E293B" fontWeight="bold" textAnchor="middle">① 酸性 K₂Cr₂O₇ 消解</text>
+              {/* 锥形瓶与橙红溶液 */}
+              <path d="M 37 40 L 25 90 Q 22 98 32 98 L 63 98 Q 73 98 70 90 L 58 40 Z" fill="#F97316" opacity="0.25" stroke="#94A3B8" strokeWidth="1.2" />
+              <text x="47" y="75" fontSize="7.5" fill="#C2410C" fontWeight="bold" textAnchor="middle">加入过量 K₂Cr₂O₇</text>
+              <text x="47" y="85" fontSize="7" fill="#EA580C" textAnchor="middle">(加热回流消解)</text>
+              <text x="47" y="118" fontSize="7.5" fill="#475569" textAnchor="middle">20.00 mL 废水</text>
+              <text x="47" y="128" fontSize="7.5" fill="#475569" textAnchor="middle">+10.00 mL 0.0500M</text>
+            </g>
+
+            {/* 流程连接箭头 1 */}
+            <path d="M 115 85 L 130 85" stroke="#64748B" strokeWidth="1.5" strokeDasharray="2 2" />
+            <polygon points="130,85 124,82 124,88" fill="#64748B" />
+
+            {/* 步骤 2：FeSO₄ 返滴定 */}
+            <g transform="translate(135, 20)">
+              <rect x="0" y="0" width="105" height="135" rx="6" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="1" />
+              <text x="52" y="18" fontSize="8.5" fill="#1E293B" fontWeight="bold" textAnchor="middle">② FeSO₄ 标准液返滴定</text>
+              {/* 滴定管 */}
+              <rect x="47" y="28" width="10" height="45" fill="#E2E8F0" stroke="#64748B" strokeWidth="1" />
+              <text x="62" y="45" fontSize="7" fill="#0284C7" fontWeight="bold">0.1000M Fe²⁺</text>
+              {/* 锥形瓶与溶液 */}
+              <path d="M 42 78 L 30 112 Q 27 118 37 118 L 68 118 Q 78 118 75 112 L 63 78 Z" fill="#10B981" opacity="0.25" stroke="#94A3B8" strokeWidth="1.2" />
+              <text x="52" y="102" fontSize="7.5" fill="#047857" fontWeight="bold" textAnchor="middle">滴定过量 Cr₂O₇²⁻</text>
+            </g>
+
+            {/* 流程连接箭头 2 */}
+            <path d="M 245 85 L 260 85" stroke="#64748B" strokeWidth="1.5" strokeDasharray="2 2" />
+            <polygon points="260,85 254,82 254,88" fill="#64748B" />
+
+            {/* 步骤 3：终点指示 (纯看图模式) */}
+            <g transform="translate(265, 20)">
+              <rect x="0" y="0" width="75" height="135" rx="6" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="1" />
+              <text x="37" y="18" fontSize="8.5" fill="#1E293B" fontWeight="bold" textAnchor="middle">③ 滴定终点</text>
+              <circle cx="37" cy="42" r="14" fill="#B91C1C" opacity="0.8" stroke="#7F1D1D" strokeWidth="1" />
+              <text x="37" y="45" fontSize="7.5" fill="#FFFFFF" fontWeight="bold" textAnchor="middle">红褐色</text>
+              <text x="37" y="68" fontSize="7" fill="#475569" textAnchor="middle">试亚铁灵指示</text>
+              <line x1="8" y1="78" x2="67" y2="78" stroke="#E2E8F0" />
+              <text x="37" y="92" fontSize="7.5" fill="#334155" fontWeight="bold" textAnchor="middle">耗 FeSO₄ 溶液</text>
+              <text x="37" y="105" fontSize="8" fill="#0284C7" fontWeight="bold" textAnchor="middle">12.00 mL</text>
+            </g>
+
+            {/* 剖析解密模式：叠加解答高亮卡与考点切口 */}
+            {isAnalysisMode && (
+              <g>
+                <g transform="translate(265, 98)">
+                  <rect x="0" y="0" width="75" height="55" rx="4" fill="#EFF6FF" stroke="#93C5FD" strokeWidth="1" />
+                  <text x="37" y="14" fontSize="7" fill="#1E3A8A" fontWeight="bold" textAnchor="middle">解答推导:</text>
+                  <text x="37" y="27" fontSize="6.5" fill="#1D4ED8" textAnchor="middle">n(COD) = n(Cr₂O₇²⁻)</text>
+                  <text x="37" y="38" fontSize="6.5" fill="#1D4ED8" textAnchor="middle">- 1/6 n(Fe²⁺)</text>
+                </g>
+                <g transform="translate(15, 160)">
+                  <rect x="0" y="0" width="325" height="16" rx="3" fill="#FEF3C7" stroke="#F59E0B" strokeWidth="1" />
+                  <text x="162" y="11" fontSize="7.5" fill="#92400E" fontWeight="bold" textAnchor="middle">
+                    💡 [剖析解密] 滴定管未润洗/终点仰视 → V(FeSO₄) 偏大 → 计算残余 Cr₂O₇²⁻ 偏大 → 算得 COD 偏低
+                  </text>
+                </g>
+              </g>
+            )}
+          </svg>
+        </div>
+      )
+    }
+
+    if (errorType === 'permanganate-view-angle') {
+      return (
+        <div className={`my-2.5 p-3 bg-slate-50 border border-slate-200 rounded-lg ${className}`}>
+          <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between">
+            <span>{title}</span>
+            <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">
+              高考真题原图高保真复现
+            </span>
+          </div>
+          <svg viewBox="0 0 350 180" className="w-full h-auto bg-white rounded border border-slate-200 shadow-2xs select-none">
+            {/* 网格背景 */}
+            <rect x="0" y="0" width="350" height="180" fill="#FAFAFA" />
+
+            {/* 1. 棕色酸式滴定管与刻度 (高考题目看图层) */}
+            <g transform="translate(30, 15)">
+              <rect x="25" y="10" width="16" height="135" fill="#78350F" opacity="0.12" stroke="#92400E" strokeWidth="1.2" rx="2" />
+              {[0, 5, 10, 15, 20].map((val, idx) => (
+                <g key={val} transform={`translate(25, ${20 + idx * 26})`}>
+                  <line x1="0" y1="0" x2="6" y2="0" stroke="#78350F" strokeWidth="1" />
+                  <text x="-4" y="3" fontSize="7.5" fill="#78350F" textAnchor="end" fontFamily="monospace">{val}</text>
+                </g>
+              ))}
+              <text x="33" y="155" fontSize="7.5" fill="#78350F" textAnchor="middle" fontWeight="bold">棕色酸式滴定管 (KMnO₄)</text>
+
+              {/* 始读数凹液面 */}
+              <ellipse cx="33" cy="30.4" rx="7" ry="2" fill="#881337" opacity="0.7" />
+              <text x="45" y="32" fontSize="7" fill="#475569">V(始) 刻度</text>
+
+              {/* 终读数凹液面 */}
+              <ellipse cx="33" cy="124" rx="7" ry="2" fill="#881337" opacity="0.7" />
+              <text x="45" y="126" fontSize="7" fill="#475569">V(终) 刻度</text>
+            </g>
+
+            {/* 2. 视角折射光路 (纯题目图示) */}
+            <g transform="translate(135, 15)">
+              <rect x="0" y="0" width="115" height="145" rx="5" fill="#F8FAFC" stroke="#CBD5E1" strokeWidth="1" />
+              <text x="57" y="16" fontSize="8" fill="#1E293B" fontWeight="bold" textAnchor="middle">考场视角读数示意</text>
+
+              {/* 始仰视光路 */}
+              <line x1="15" y1="45" x2="95" y2="30" stroke="#E11D48" strokeWidth="1.5" strokeDasharray="3 2" />
+              <circle cx="15" cy="45" r="3" fill="#E11D48" />
+              <text x="100" y="33" fontSize="7.5" fill="#334155" fontWeight="bold">始视角: 仰视</text>
+
+              {/* 终俯视光路 */}
+              <line x1="15" y1="105" x2="95" y2="124" stroke="#D97706" strokeWidth="1.5" strokeDasharray="3 2" />
+              <circle cx="15" cy="105" r="3" fill="#D97706" />
+              <text x="100" y="123" fontSize="7.5" fill="#334155" fontWeight="bold">终视角: 俯视</text>
+
+              <line x1="10" y1="75" x2="105" y2="75" stroke="#CBD5E1" strokeDasharray="2 2" />
+              <text x="57" y="70" fontSize="7.5" fill="#475569" textAnchor="middle">读取消耗体积 ΔV = V(终) - V(始)</text>
+              <text x="57" y="90" fontSize="7" fill="#64748B" textAnchor="middle">(试分析 ΔV 与纯度 w% 的变化)</text>
+            </g>
+
+            {/* 3. 剖析解密模式：叠加解答卡与推导分析 */}
+            {isAnalysisMode ? (
+              <g transform="translate(260, 15)">
+                <rect x="0" y="0" width="80" height="145" rx="5" fill="#FEF2F2" stroke="#FCA5A5" strokeWidth="1" />
+                <text x="40" y="18" fontSize="8" fill="#991B1B" fontWeight="bold" textAnchor="middle">💡 剖析解密</text>
+                <text x="40" y="36" fontSize="7" fill="#7F1D1D" textAnchor="middle">始仰: 读数偏大</text>
+                <text x="40" y="48" fontSize="7" fill="#7F1D1D" textAnchor="middle">终俯: 读数偏小</text>
+
+                <line x1="8" y1="58" x2="72" y2="58" stroke="#FECACA" />
+                <text x="40" y="72" fontSize="7.5" fill="#991B1B" fontWeight="bold" textAnchor="middle">ΔV 严重偏小</text>
+                <polygon points="40,84 34,77 46,77" fill="#DC2626" />
+
+                <text x="40" y="100" fontSize="7" fill="#7F1D1D" textAnchor="middle">代入公式:</text>
+                <text x="40" y="112" fontSize="6.5" fill="#B91C1C" textAnchor="middle">w% = c·ΔV·M / 5m</text>
+                <text x="40" y="130" fontSize="8" fill="#DC2626" fontWeight="bold" textAnchor="middle">纯度 w% 偏低！</text>
+              </g>
+            ) : (
+              <g transform="translate(260, 15)">
+                <rect x="0" y="0" width="80" height="145" rx="5" fill="#F1F5F9" stroke="#CBD5E1" strokeWidth="1" strokeDasharray="3 2" />
+                <text x="40" y="65" fontSize="8" fill="#64748B" fontWeight="bold" textAnchor="middle">❓ 答题卡</text>
+                <text x="40" y="85" fontSize="7" fill="#94A3B8" textAnchor="middle">作答后解密</text>
+                <text x="40" y="98" fontSize="7" fill="#94A3B8" textAnchor="middle">误差推理板</text>
+              </g>
+            )}
+          </svg>
+        </div>
+      )
+    }
+
+    if (errorType === 'iodometry-purity') {
+      return (
+        <div className={`my-2.5 p-3 bg-slate-50 border border-slate-200 rounded-lg ${className}`}>
+          <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between">
+            <span>{title}</span>
+            <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">
+              高考真题原图高保真复现
+            </span>
+          </div>
+          <svg viewBox="0 0 350 180" className="w-full h-auto bg-white rounded border border-slate-200 shadow-2xs select-none">
+            {/* 背景 */}
+            <rect x="0" y="0" width="350" height="180" fill="#FAFAFA" />
+
+            {/* 1. 多步反应流程 (看图做题层) */}
+            <g transform="translate(15, 15)">
+              <rect x="0" y="0" width="320" height="55" rx="5" fill="#F8FAFC" stroke="#CBD5E1" strokeWidth="1" />
+              <text x="160" y="16" fontSize="8.5" fill="#1E293B" fontWeight="bold" textAnchor="middle">
+                🔗 间接碘量法 (Indirect Iodometry) 实验流程
+              </text>
+              <text x="160" y="32" fontSize="7.5" fill="#334155" fontFamily="monospace" textAnchor="middle">
+                CuCO₃·Cu(OH)₂ (粗品 2.500 g) ＋ 过量 H₂SO₄ ──→ Cu²⁺ ＋ 足量 KI ──→ I₂ ＋ CuI↓
+              </text>
+              <text x="160" y="45" fontSize="7.5" fill="#334155" fontFamily="monospace" textAnchor="middle">
+                生成的 I₂ ＋ 2Na₂S₂O₃ ──→ 2NaI ＋ Na₂S₄O₆ (消耗 0.1000 M Na₂S₂O₃ 20.00 mL)
+              </text>
+            </g>
+
+            {/* 2. 滴定终点变色 (通用试卷层) */}
+            <g transform="translate(15, 80)">
+              <rect x="0" y="0" width="150" height="85" rx="5" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="1" />
+              <text x="75" y="18" fontSize="8" fill="#1E293B" fontWeight="bold" textAnchor="middle">🎨 滴定终点变色指示</text>
+              {/* 深蓝色 -> 无色 */}
+              <circle cx="45" cy="42" r="14" fill="#1E3A8A" stroke="#1E40AF" strokeWidth="1" />
+              <text x="45" y="45" fontSize="7" fill="#FFFFFF" fontWeight="bold" textAnchor="middle">蓝色</text>
+              <path d="M 67 42 L 87 42" stroke="#64748B" strokeWidth="1.5" strokeDasharray="2 2" />
+              <polygon points="87,42 81,39 81,45" fill="#64748B" />
+              <circle cx="110" cy="42" r="14" fill="#FFFFFF" stroke="#94A3B8" strokeWidth="1.2" />
+              <text x="110" y="45" fontSize="7" fill="#475569" fontWeight="bold" textAnchor="middle">无色</text>
+
+              <text x="75" y="68" fontSize="7" fill="#475569" textAnchor="middle">淀粉指示剂: 蓝色恰好褪去</text>
+              <text x="75" y="78" fontSize="6.5" fill="#64748B" textAnchor="middle">且半分钟内不恢复原色</text>
+            </g>
+
+            {/* 3. 剖析解密模式：叠加解答计算卡 */}
+            {isAnalysisMode ? (
+              <g transform="translate(175, 80)">
+                <rect x="0" y="0" width="160" height="85" rx="5" fill="#F0FDF4" stroke="#BBF7D0" strokeWidth="1" />
+                <text x="80" y="18" fontSize="8" fill="#166534" fontWeight="bold" textAnchor="middle">💡 剖析解密: 计量比精算</text>
+                <text x="80" y="34" fontSize="7.5" fill="#15803D" fontWeight="bold" textAnchor="middle">1 CuCO₃·Cu(OH)₂ ～ 2 S₂O₃²⁻</text>
+                <line x1="15" y1="42" x2="145" y2="42" stroke="#DCFCE7" />
+                <text x="80" y="55" fontSize="7" fill="#166534" textAnchor="middle">n(纯品) = 1/2 n(S₂O₃²⁻) = 0.0010 mol</text>
+                <text x="80" y="67" fontSize="7" fill="#166534" textAnchor="middle">m(纯品) = 0.0010 × 222 = 0.222 g</text>
+                <text x="80" y="78" fontSize="7.5" fill="#15803D" fontWeight="bold" textAnchor="middle">纯度 w% = 0.222 / 2.500 = 8.88%</text>
+              </g>
+            ) : (
+              <g transform="translate(175, 80)">
+                <rect x="0" y="0" width="160" height="85" rx="5" fill="#F1F5F9" stroke="#CBD5E1" strokeWidth="1" strokeDasharray="3 2" />
+                <text x="80" y="38" fontSize="8" fill="#64748B" fontWeight="bold" textAnchor="middle">❓ 计量比与纯度 w% 推导</text>
+                <text x="80" y="55" fontSize="7" fill="#94A3B8" textAnchor="middle">请根据反应式计算样品纯度</text>
+                <text x="80" y="68" fontSize="7" fill="#94A3B8" textAnchor="middle">点击选项后显示剖析精算板</text>
+              </g>
+            )}
+          </svg>
+        </div>
+      )
+    }
   }
 
   return null

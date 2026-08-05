@@ -1,6 +1,31 @@
 import { SCENE_COLORS, withAlpha, STROKE, FONT } from '@/theme'
 import type { FontScaler } from '@/theme'
 
+export interface BurettePorts {
+  /** 滴定管顶部加液口 */
+  topPort: { x: number; y: number }
+  /** 滴定管下端尖嘴 (滴落点) */
+  tipPort: { x: number; y: number }
+  /** 滴定管双夹/铁夹夹持点 */
+  clampPoint: { x: number; y: number }
+}
+
+/**
+ * 静态计算滴定管组件的关键连接锚点 (Design Space)
+ */
+export function getBurettePorts(
+  x: number,
+  y: number,
+  width = 30,
+  height = 240
+): BurettePorts {
+  return {
+    topPort: { x: x + width * 0.5, y: y },
+    tipPort: { x: x + width * 0.5, y: y + height },
+    clampPoint: { x: x + width * 0.5, y: y + height * 0.4 },
+  }
+}
+
 export interface BuretteApparatusProps {
   /** 器材左上角 x（设计坐标） */
   x: number

@@ -16,26 +16,33 @@ export const KatexFormula: React.FC<KatexFormulaProps> = ({
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (containerRef.current) {
-      try {
-        katex.render(formula, containerRef.current, {
-          throwOnError: false,
-          displayMode: mode === 'block',
+    const el = containerRef.current
+    if (!el || !formula) return
+
+    try {
+      katex.render(formula, el, {
+        throwOnError: false,
+        displayMode: mode === 'block',
+      })
+
+      if (mode === 'block' && el) {
+        const katexEls = el.querySelectorAll<HTMLElement>('.katex, .katex-html, .katex-display > .katex')
+        katexEls.forEach((kEl) => {
+          if (kEl && kEl.style) {
+            kEl.style.whiteSpace = 'normal'
+            kEl.style.wordWrap = 'break-word'
+            kEl.style.overflowWrap = 'break-word'
+          }
         })
-        // 允许公式在窄容器中自动换行，避免横向滚动条
-        if (mode === 'block') {
-          const katexEls = containerRef.current.querySelectorAll<HTMLElement>('.katex, .katex-html, .katex-display > .katex')
-          katexEls.forEach((el) => {
-            el.style.whiteSpace = 'normal'
-            el.style.wordWrap = 'break-word'
-            el.style.overflowWrap = 'break-word'
-          })
-          const baseEls = containerRef.current.querySelectorAll<HTMLElement>('.katex-display, .katex')
-          baseEls.forEach((el) => {
-            el.style.maxWidth = '100%'
-          })
-        }
-      } catch {
+        const baseEls = el.querySelectorAll<HTMLElement>('.katex-display, .katex')
+        baseEls.forEach((bEl) => {
+          if (bEl && bEl.style) {
+            bEl.style.maxWidth = '100%'
+          }
+        })
+      }
+    } catch {
+      if (containerRef.current) {
         containerRef.current.textContent = formula
       }
     }

@@ -2,7 +2,7 @@
 
 ## 当前周期
 
-- 当前日期：2026-W29（07-19）
+- 当前日期：2026-W32（08-05）
 - 当前里程碑：M1 项目初始化
 - 提交流程：[CHECKLIST.md](./CHECKLIST.md)
 
@@ -10,6 +10,7 @@
 
 | 日期 | 模块 | 类型 | 变更 |
 |------|------|------|------|
+| 08-05 | chemistry/titration | feature | 新增 6 个化学装置组件（AntiSiphonFunnel/Crucible/GasBurette/GasWashingBottle/RefluxCondenser/SeparatoryFunnelSetup）+ titration-error-purity 高考母题专题整套；更新现有装置 ports、ExtractionScene 改用装配体；新增测试与文档 |
 | 07-19 | project | init | 项目规范框架建立：project_rules / AGENTS / SKILL / docs 全套 |
 | 07-19 | project | init | 化学项目目录结构初始化 |
 

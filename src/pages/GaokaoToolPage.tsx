@@ -21,6 +21,7 @@ import { IndustrialFlowCanvas } from '@/features/industrial-flow/IndustrialFlowC
 import { ReactionPrincipleNexusCanvas } from '@/features/reaction-principle/nexus'
 import { AvogadroConstantCanvas } from '@/features/avogadro-constant/AvogadroConstantCanvas'
 import { HessLawCanvas } from '@/features/reaction-principle/hess-law/HessLawCanvas'
+import { TitrationErrorPurityCanvas } from '@/features/titration-error-purity/TitrationErrorPurityCanvas'
 import { getModelQuizData } from '@/data/gaokaoQuizData'
 import { ScoringCardSection, GaokaoVariantQuiz } from '@/components/UI'
 
@@ -43,6 +44,11 @@ export default function GaokaoToolPage() {
         </button>
       </div>
     )
+  }
+
+  // 母题十二：定量滴定误差与纯度产率计算工具
+  if (model.id === 'model-titration-error-purity') {
+    return <TitrationErrorPurityCanvas />
   }
 
   // 母题九：盖斯定律与热化学键能计算工具

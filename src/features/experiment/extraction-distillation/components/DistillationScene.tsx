@@ -6,6 +6,7 @@ import {
   ThermometerApparatus,
   AlcoholLampApparatus,
   IronSupportApparatus,
+  getDistillationFlaskPorts,
 } from '@/components/Chemistry'
 import { CHEMISTRY_COLORS, SCENE_COLORS, CANVAS_COLORS, withAlpha } from '@/theme'
 import type { FontScaler } from '@/theme'
@@ -18,6 +19,13 @@ interface DistillationSceneProps {
   sceneScale: SceneScale
 }
 
+/**
+ * DistillationScene — 高考蒸馏实验规范场景组件
+ *
+ * 重构说明：
+ * - 全程基于 Anchor Ports 坐标锚点系统自动连吸对齐
+ * - 精确满足高考考点：水银球对准支管口中央、冷凝水下进上出满水、碎瓷片防暴沸
+ */
 export function DistillationScene({ distillation, font }: DistillationSceneProps) {
   const {
     currentTemp,
@@ -32,50 +40,63 @@ export function DistillationScene({ distillation, font }: DistillationSceneProps
     progressText,
   } = distillation
 
-  // 设计坐标基准
-  const flaskX = 42
-  const flaskY = 220
+  // 1. 具支蒸馏烧瓶基准设计坐标
+  const flaskX = 40
+  const flaskY = 210
   const flaskW = 85
   const flaskH = 130
 
-  const lampX = 50
-  const lampY = 335
+  // 2. 基于 Anchor Ports 计算烧瓶关键锚点
+  const flaskPorts = getDistillationFlaskPorts(flaskX, flaskY, flaskW, flaskH)
 
-  const condenserX = 120
-  const condenserY = 220
+  // 3. 铁架台 1 (固定具支烧瓶) 参数对齐
+  const stand1X = 5
+  const stand1Y = 160
+  const stand1H = 290
 
-  const adapterX = 285
-  const adapterY = 295
+  // 4. 冷凝管精准对接烧瓶支管口
+  const condenserX = flaskPorts.sideArmPort.x
+  const condenserY = flaskPorts.sideArmPort.y - 10
+  const condenserW = 175
 
-  const receiverX = 300
-  const receiverY = 330
+  // 5. 牛角管 (接液管) 吸附在冷凝管下口
+  const adapterX = condenserX + 155
+  const adapterY = condenserY + 68
+
+  // 6. 接收瓶 (锥形瓶) 对齐牛角管下流出口
+  const receiverX = adapterX + 15
+  const receiverY = adapterY + 35
+
+  // 7. 酒精灯加热源位置 (正对烧瓶底部)
+  const lampX = flaskPorts.bottomPort.x - 34
+  const lampY = flaskPorts.bottomPort.y + 5
 
   // 暴沸时烧瓶摇晃震幅
   const bumpShake = isBumpWarning ? Math.sin(Date.now() * 0.04) * (2 + bumpIntensity * 4) : 0
 
   return (
     <g>
-      {/* 1. 铁架台 1 (铁夹固定具支蒸馏烧瓶) */}
+      {/* 1. 铁架台 1 (铁夹精准夹持具支蒸馏烧瓶瓶颈) */}
       <IronSupportApparatus
-        x={5}
-        y={170}
+        x={stand1X}
+        y={stand1Y}
         width={110}
-        height={280}
+        height={stand1H}
         hasClamp={true}
-        clampPos={0.24}
+        clampPos={0.28}
         hasRing={true}
-        ringPos={0.62}
+        ringPos={0.65}
         ringRadius={36}
       />
 
       {/* 2. 铁架台 2 (铁夹固定倾斜冷凝管) */}
       <IronSupportApparatus
-        x={160}
-        y={170}
+        x={condenserX + 35}
+        y={stand1Y}
         width={110}
-        height={280}
+        height={stand1H}
         hasClamp={true}
-        clampPos={0.30}
+        clampPos={0.34}
       />
 
       {/* 3. 酒精灯加热源 */}
@@ -131,15 +152,15 @@ export function DistillationScene({ distillation, font }: DistillationSceneProps
       {/* 5. 实验温度计 (水银球高考核心对齐点：正对支管口中央) */}
       <g transform={`translate(0, ${thermometerOffsetY})`}>
         <ThermometerApparatus
-          x={flaskX + flaskW * 0.5 - 6}
-          y={flaskY - 45}
+          x={flaskPorts.topNeckPort.x - 6}
+          y={flaskPorts.topNeckPort.y - 45}
           height={130}
           tempValue={currentTemp}
           font={font}
         />
         {/* 正确位置高亮指示光环 */}
         {thermometerOffsetY === 0 ? (
-          <g transform={`translate(${flaskX + flaskW * 0.5 - 12}, ${flaskY + 28})`}>
+          <g transform={`translate(${flaskPorts.sideArmPort.x - 40}, ${flaskPorts.sideArmPort.y - 10})`}>
             <rect x={0} y={0} width={24} height={16} fill="none" stroke={CHEMISTRY_COLORS.concentration} strokeWidth={1.8} strokeDasharray="3 2" rx={3} />
             <text x={28} y={12} fontSize={font(10)} fill={CHEMISTRY_COLORS.concentration} fontWeight="bold">
               水银球对准支管口(正)
@@ -154,12 +175,12 @@ export function DistillationScene({ distillation, font }: DistillationSceneProps
         )}
       </g>
 
-      {/* 6. 直形冷凝管组件 (倾斜角 20°) */}
+      {/* 6. 直形冷凝管组件 (倾斜角 20°，精准紧贴支管口) */}
       <g>
         <CondenserApparatus
           x={condenserX}
           y={condenserY}
-          width={175}
+          width={condenserW}
           height={70}
           tiltAngle={20}
           condenserType="straight"

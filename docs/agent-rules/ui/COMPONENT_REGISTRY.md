@@ -13,11 +13,18 @@
 | ChemistryVectorArrow | 化学矢量箭头（浓度/速率等，禁止 pixelLength，长度通过 refMagnitudes 归一化） | originDesign, vector, type, sceneScale | <ChemistryVectorArrow originDesign={pos} vector={v} type="concentration" sceneScale={ss} /> |
 | VectorDefs | 箭头 marker 定义 | — | <VectorDefs /> |
 
-| DistillationFlaskApparatus | 具支蒸馏烧瓶（液体蒸馏与石油分馏，带高考考点支管口） | x, y | <DistillationFlaskApparatus x={100} y={150} fillLevel={0.4} /> |
+| DistillationFlaskApparatus | 具支蒸馏烧瓶（液体蒸馏与石油分馏，带高考考点支管口与 getDistillationFlaskPorts） | x, y | <DistillationFlaskApparatus x={100} y={150} fillLevel={0.4} /> |
 | AdapterApparatus | 牛角管/接液管（蒸馏冷凝流出接收） | x, y | <AdapterApparatus x={260} y={180} showDrop={true} /> |
+| GasWashingBottleApparatus | 洗气瓶（高考长进短出气流净化，带双孔胶塞与 getGasWashingBottlePorts） | x, y | <GasWashingBottleApparatus x={100} y={150} reagentType="acid" /> |
+| AntiSiphonFunnelApparatus | 防倒吸倒置漏斗（NH3/HCl 尾气吸收防倒吸，带 getAntiSiphonFunnelPorts） | x, y | <AntiSiphonFunnelApparatus x={100} y={150} liquidLevel={0.3} /> |
+| CrucibleApparatus | 瓷坩埚与坩埚钳（高温固体煅烧与熔融，带 getCruciblePorts） | x, y | <CrucibleApparatus x={100} y={150} isGlowing={true} /> |
+| GasBuretteApparatus | 量气管与水准瓶（气体生成量定量测定，带水准面对齐校验与 getGasBurettePorts） | x, y | <GasBuretteApparatus x={100} y={150} gasVolume={25} /> |
+| RefluxCondenserApparatus | 球形回流冷凝管（有机反应蒸气垂直回流，带 getRefluxCondenserPorts） | x, y | <RefluxCondenserApparatus x={100} y={150} bulbCount={4} /> |
+| GlassTubingConnectionApparatus | 规范双壁透明玻璃导管（支持直管/L型/Z型与 getGlassTubingPorts） | x, y | <GlassTubingConnectionApparatus x={100} y={100} endX={180} tubeType="L-shape" /> |
 | OxidationBridgeArrow | 氧化还原双线桥/单线桥箭头（化合价升降与电子转移） | startPos, endPos, label | <OxidationBridgeArrow startPos={[100,80]} endPos={[200,80]} label="失 2e⁻" /> |
 | CarbonChain2D | 2D 平面碳骨架与同分异构体树（减碳法、等效氢高亮） | isomer | <CarbonChain2D isomer={currentIsomer} showEquivalentH={true} /> |
 | GaokaoDiagram | 高考真题 5 大类矢量插图库（滴定突跃/分布分数/沉淀折线/价类阵列/有机断键） | diagramType | <GaokaoDiagram diagramType="titration-curve" config={cfg} /> |
+| SeparatoryFunnelSetup | 高阶预制萃取分液实验装配体（铁架台+45°斜切尖嘴漏斗+双烧杯物理对齐装配体） | extraction | <SeparatoryFunnelSetup extraction={extraction} font={font} /> |
 
 ---
 

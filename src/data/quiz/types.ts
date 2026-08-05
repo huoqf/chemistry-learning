@@ -23,10 +23,24 @@ export interface GaokaoVariantItem {
   }[]
   modelAlignmentAnalysis: string
   detailedExplanation: string
-  diagramType?: 'titration-curve' | 'distribution-fraction' | 'precipitation-curve' | 'valence-matrix-chart' | 'organic-mechanism-diagram' | 'image'
+  diagramType?:
+    | 'titration-curve'
+    | 'distribution-fraction'
+    | 'precipitation-curve'
+    | 'valence-matrix-chart'
+    | 'organic-mechanism-diagram'
+    | 'titration-error-diagram'
+    | 'image'
   diagramConfig?: {
     titrationType?: 'weakAcid-strongBase' | 'weakBase-strongAcid'
-    mechanismType?: 'ester-cleavage' | 'addition-markov' | 'alcohol-oxidation' | 'haloalkane-elimination' | 'peptide-hydrolysis' | 'phenol-condensation'
+    mechanismType?:
+      | 'ester-cleavage'
+      | 'addition-markov'
+      | 'alcohol-oxidation'
+      | 'haloalkane-elimination'
+      | 'peptide-hydrolysis'
+      | 'phenol-condensation'
+    errorDiagramType?: 'cod-back-titration' | 'permanganate-view-angle' | 'iodometry-purity'
     vEq?: number
     phJumpRange?: [number, number]
     pKa?: number

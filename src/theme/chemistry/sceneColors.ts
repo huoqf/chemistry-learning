@@ -128,8 +128,33 @@ export const SCENE_COLORS = {
     liquidPipe: '#0284C7',         // 液体管道 (蓝色)
     slurryPipe: '#B45309',         // 矿浆/悬浮液管道 (棕色)
     steamPipe: '#EF4444',          // 蒸汽管道 (红色)
-    industrialValve: '#374151',    // 阀门
-    industrialPump: '#1E293B',     // 泵/压缩机
+  },
+
+  // ── 干燥剂与指示剂细分 ──
+  desiccantAndIndicator: {
+    silicaBlue: '#0284C7',          // 无水蓝色变色硅胶
+    silicaPink: '#EC4899',          // 吸水变粉硅胶
+    sodaLime: '#F5F5F4',            // 碱石灰 / 颗粒干燥剂
+    phenolphthaleinPink: '#F43F5E', // 酚酞变色红
+  },
+
+  // ── 密封胶塞与软管 ──
+  stopper: {
+    rubberStopper: '#374151',       // 单孔/双孔橡胶塞
+    rubberStopperBorder: '#1F2937', // 胶塞阴影描边
+    hoseTube: '#6B7280',            // 连接软胶管
+  },
+
+  // ── 量气管与高精液面 ──
+  measurement: {
+    gasBuretteWater: '#38BDF8',     // 量气管液面水柱
+    gasBuretteScale: '#0369A1',     // 极细刻度
+  },
+
+  // ── 瓷质与高温热感 ──
+  porcelain: {
+    porcelainWhite: '#FAFAFA',      // 耐火瓷坩埚/蒸发皿
+    incandescentGlow: '#F97316',    // 灼热红热感
   },
 } as const
 

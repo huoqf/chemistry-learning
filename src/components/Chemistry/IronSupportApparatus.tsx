@@ -1,6 +1,43 @@
 import { SCENE_COLORS, STROKE } from '@/theme'
 import type { FontScaler } from '@/theme'
 
+export interface IronSupportPorts {
+  /** 铁夹爪卡扣尖端位置 */
+  clampTipPos: { x: number; y: number }
+  /** 铁圈托环中心位置 */
+  ringCenterPos: { x: number; y: number }
+  /** 铁架台底座中心 */
+  baseCenterPos: { x: number; y: number }
+}
+
+/**
+ * 静态计算铁架台组件的关键连接锚点 (Design Space)
+ */
+export function getIronSupportPorts(
+  x: number,
+  y: number,
+  width = 100,
+  height = 240,
+  clampPos = 0.35,
+  ringPos = 0.65,
+  ringRadius = 35
+): IronSupportPorts {
+  const baseH = 14
+  const baseW = width * 0.9
+  const baseLeft = (width - baseW) / 2
+  const poleW = 6
+  const poleLeft = baseLeft + baseW * 0.2
+
+  const clampY = y + 10 + (height - baseH - 20) * clampPos
+  const ringY = y + 10 + (height - baseH - 20) * ringPos
+
+  return {
+    clampTipPos: { x: x + poleLeft + poleW / 2 + width * 0.45, y: clampY },
+    ringCenterPos: { x: x + poleLeft + poleW / 2 + width * 0.3 + ringRadius * 0.6, y: ringY },
+    baseCenterPos: { x: x + width * 0.5, y: y + height - baseH / 2 },
+  }
+}
+
 export interface IronSupportApparatusProps {
   /** 器材左上角 x（设计坐标） */
   x: number

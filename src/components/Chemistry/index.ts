@@ -176,7 +176,43 @@ export type { CarbonChain2DProps, IsomerNode, CarbonNode, CarbonBond } from './C
 
 export { ContrastCanvas } from './ContrastCanvas'
 
-export { FlashCardCanvas } from './FlashCardCanvas'
-
 export { ReagentStepCanvas } from './ReagentStepCanvas'
+
+// ── 补全高考及教学 5 大核心器材与 Ports 锚点导出 ──
+export { GasWashingBottleApparatus, getGasWashingBottlePorts } from './GasWashingBottleApparatus'
+export type { GasWashingBottleApparatusProps, GasWashingBottlePorts } from './GasWashingBottleApparatus'
+
+export { AntiSiphonFunnelApparatus, getAntiSiphonFunnelPorts } from './AntiSiphonFunnelApparatus'
+export type { AntiSiphonFunnelApparatusProps, AntiSiphonFunnelPorts } from './AntiSiphonFunnelApparatus'
+
+export { CrucibleApparatus, getCruciblePorts } from './CrucibleApparatus'
+export type { CrucibleApparatusProps, CruciblePorts } from './CrucibleApparatus'
+
+export { GasBuretteApparatus, getGasBurettePorts } from './GasBuretteApparatus'
+export type { GasBuretteApparatusProps, GasBurettePorts } from './GasBuretteApparatus'
+
+export { RefluxCondenserApparatus, getRefluxCondenserPorts } from './RefluxCondenserApparatus'
+export type { RefluxCondenserApparatusProps, RefluxCondenserPorts } from './RefluxCondenserApparatus'
+
+// 器材锚点 (Ports) 导出
+export { getGlassTubingPorts } from './GlassTubingConnectionApparatus'
+export type { GlassTubingPorts } from './GlassTubingConnectionApparatus'
+
+export { getDistillationFlaskPorts } from './DistillationFlaskApparatus'
+export type { DistillationFlaskPorts } from './DistillationFlaskApparatus'
+
+export { getIronSupportPorts } from './IronSupportApparatus'
+export type { IronSupportPorts } from './IronSupportApparatus'
+
+export { getBurettePorts } from './BuretteApparatus'
+export type { BurettePorts } from './BuretteApparatus'
+
+export { getSeparatoryFunnelPorts } from './SeparatoryFunnelApparatus'
+export type { SeparatoryFunnelPorts } from './SeparatoryFunnelApparatus'
+
+export { getBeakerPorts } from './BeakerApparatus'
+export type { BeakerPorts } from './BeakerApparatus'
+
+export { SeparatoryFunnelSetup } from './SeparatoryFunnelSetup'
+export type { SeparatoryFunnelSetupProps, SeparatoryFunnelSetupState } from './SeparatoryFunnelSetup'
 

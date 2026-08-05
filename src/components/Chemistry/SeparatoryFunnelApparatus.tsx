@@ -1,6 +1,34 @@
 import { SCENE_COLORS, withAlpha, STROKE } from '@/theme'
 import type { FontScaler } from '@/theme'
 
+export interface SeparatoryFunnelPorts {
+  /** 分液漏斗上加料口 */
+  topNeckPort: { x: number; y: number }
+  /** 分液漏斗下端斜切嘴最下端 (流出口) */
+  bottomTipPort: { x: number; y: number }
+  /** 45° 斜切尖嘴外侧长边触点 (用于 100% 物理紧贴烧杯内壁) */
+  tipContactPort: { x: number; y: number }
+  /** 铁架台铁圈卡位点 (漏斗颈部) */
+  ringSupportPoint: { x: number; y: number }
+}
+
+/**
+ * 静态计算分液漏斗组件的关键连接锚点 (Design Space)
+ */
+export function getSeparatoryFunnelPorts(
+  x: number,
+  y: number,
+  width = 80,
+  height = 180
+): SeparatoryFunnelPorts {
+  return {
+    topNeckPort: { x: x + width * 0.5, y: y },
+    bottomTipPort: { x: x + width * 0.5 + 4, y: y + height },
+    tipContactPort: { x: x + width * 0.5 + 4, y: y + height },
+    ringSupportPoint: { x: x + width * 0.5, y: y + height * 0.35 },
+  }
+}
+
 export interface SeparatoryFunnelApparatusProps {
   /** 器材左上角 x（设计坐标） */
   x: number
@@ -27,14 +55,12 @@ export interface SeparatoryFunnelApparatusProps {
 }
 
 /**
- * SeparatoryFunnelApparatus — 分液漏斗组件
+ * SeparatoryFunnelApparatus — 高考标准分液漏斗组件
  *
- * 适用高中化学场景与高考考点：
- * - 萃取与分液（高考必考：下层液体从下口放出，上层液体从上口倒出；下端管口靠烧杯内壁 45° 斜切角）
- * - 滴加发生装置（分液漏斗向烧瓶中滴加试剂）
- *
- * 颜色：`SCENE_COLORS.separationAndPurification.separatoryFunnel`
- * 质感：包含 45° 高端玻璃反光线条与精准斜口管嘴
+ * 特性：
+ * - 遵守高考与教材规范：下端带有显眼的 45° 斜切尖嘴 (Beveled Edge Tip，长边朝右紧贴内壁)
+ * - 导出 `tipContactPort` 锚点，确保斜切长边 100% 物理紧贴接收烧杯内壁
+ * - 包含玻璃反光高光与旋转活塞细节
  */
 export function SeparatoryFunnelApparatus({
   x,
@@ -58,17 +84,22 @@ export function SeparatoryFunnelApparatus({
   const neckRight = neckLeft + neckW
 
   const bulbH = h * 0.55
-  const stemH = h * 0.25
+  const stemH = h * 0.33
   const valveY = neckH + bulbH + stemH * 0.35
 
-  // 梨形漏斗主体 Path (下管末端带高考 45° 斜切口)
+  // 管嘴下端 45° 斜切尖嘴 (Beveled Tip) 几何 (长边朝右，紧贴右侧烧杯内壁)
+  const stemLeftX = w * 0.5 - 4
+  const stemRightX = w * 0.5 + 4
+  const tipCutY = h - 14
+
+  // 梨形漏斗主体 Path (长边延伸至 stemRightX, h)
   const funnelPath = `
     M ${neckLeft} ${neckH}
     L ${neckRight} ${neckH}
-    C ${w * 1.1} ${neckH + bulbH * 0.3}, ${w * 0.9} ${neckH + bulbH * 0.7}, ${w * 0.5 + 3} ${neckH + bulbH}
-    L ${w * 0.5 + 3} ${h - 8}
-    L ${w * 0.5 - 3} ${h}
-    L ${w * 0.5 - 3} ${neckH + bulbH}
+    C ${w * 1.1} ${neckH + bulbH * 0.3}, ${w * 0.9} ${neckH + bulbH * 0.7}, ${stemRightX} ${neckH + bulbH}
+    L ${stemRightX} ${h}
+    L ${stemLeftX} ${tipCutY}
+    L ${stemLeftX} ${neckH + bulbH}
     C ${w * 0.1} ${neckH + bulbH * 0.7}, -${w * 0.1} ${neckH + bulbH * 0.3}, ${neckLeft} ${neckH}
     Z
   `
@@ -92,7 +123,7 @@ export function SeparatoryFunnelApparatus({
         strokeWidth={STROKE.reference}
       />
 
-      {/* 分液漏斗玻璃主体 */}
+      {/* 分液漏斗玻璃主体 (含 45° 斜切尖嘴) */}
       <path
         d={funnelPath}
         fill={withAlpha(SCENE_COLORS.separationAndPurification.separatoryFunnel, 0.35)}
@@ -100,7 +131,17 @@ export function SeparatoryFunnelApparatus({
         strokeWidth={STROKE.objectLine}
       />
 
-      {/* 玻璃高光反光线条 (WOW 质感) */}
+      {/* 45° 斜切口切面高光线 (从左切面斜向右下尖端) */}
+      <line
+        x1={stemLeftX}
+        y1={tipCutY}
+        x2={stemRightX}
+        y2={h}
+        stroke={SCENE_COLORS.materials.glassBorder}
+        strokeWidth={1.5}
+      />
+
+      {/* 玻璃高光反光线条 */}
       {!isTiny && (
         <path
           d={highlightPath}
@@ -120,7 +161,7 @@ export function SeparatoryFunnelApparatus({
             x={0}
             y={neckH + bulbH * (1 - bottomFillLevel)}
             width={w}
-            height={bulbH * bottomFillLevel}
+            height={bulbH * bottomFillLevel + stemH}
             fill={bottomFillColor}
             opacity={0.85}
           />

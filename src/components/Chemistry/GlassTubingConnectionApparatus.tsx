@@ -1,19 +1,45 @@
-import { SCENE_COLORS, STROKE, FONT } from '@/theme'
+import { SCENE_COLORS, FONT, withAlpha } from '@/theme'
 import type { FontScaler } from '@/theme'
 
+export interface GlassTubingPorts {
+  /** 导管起点坐标 (Design Space 绝对坐标) */
+  startPort: { x: number; y: number }
+  /** 导管终点坐标 (Design Space 绝对坐标) */
+  endPort: { x: number; y: number }
+}
+
+/**
+ * 静态计算玻璃导管组件的关键连接锚点 (Design Space)
+ */
+export function getGlassTubingPorts(
+  x: number,
+  y: number,
+  endX = 100,
+  endY = 0
+): GlassTubingPorts {
+  return {
+    startPort: { x, y },
+    endPort: { x: x + endX, y: y + endY },
+  }
+}
+
 export interface GlassTubingConnectionApparatusProps {
-  /** 器材左上角 x（设计坐标） */
+  /** 器材起点 x（设计坐标） */
   x: number
-  /** 器材左上角 y（设计坐标） */
+  /** 器材起点 y（设计坐标） */
   y: number
-  /** 导管终点 x（相对坐标或绝对设计坐标，默认 100） */
+  /** 导管终点相对 x（默认 100） */
   endX?: number
-  /** 导管终点 y（相对坐标，默认 0） */
+  /** 导管终点相对 y（默认 0） */
   endY?: number
-  /** 中间拐点高度 offset (L型/Z型导管) */
+  /** 中间拐点高度 offset (L型/Z型导管，默认 30) */
   midY?: number
+  /** 导管管径宽度（默认 8） */
+  tubeWidth?: number
   /** 导管类型：'straight' 直管 | 'L-shape' L型管 | 'Z-shape' Z型管 */
   tubeType?: 'straight' | 'L-shape' | 'Z-shape'
+  /** 是否在起点/终点增加橡皮塞套接扣 */
+  hasStopperJoint?: boolean
   /** 气体名称/说明 */
   label?: string
   /** 字体缩放函数 */
@@ -21,17 +47,12 @@ export interface GlassTubingConnectionApparatusProps {
 }
 
 /**
- * GlassTubingConnectionApparatus — 玻璃导管与连接组件
+ * GlassTubingConnectionApparatus — 规范双壁透明玻璃导管与连接组件
  *
- * 适用高中化学场景：
- * - 连接发生装置、洗气瓶、集气瓶间的气体导管
- *
- * 颜色：`SCENE_COLORS.tube.glass`
- *
- * @example
- * ```tsx
- * <GlassTubingConnectionApparatus x={100} y={100} endX={180} endY={60} tubeType="L-shape" font={font} />
- * ```
+ * 特性：
+ * - 告别单线粗线条，升级为双壁玻璃管径厚度与透明质感
+ * - 支持直线、L型折角与 Z 型转折导管
+ * - 导出静态 `getGlassTubingPorts` 锚点
  */
 export function GlassTubingConnectionApparatus({
   x,
@@ -39,10 +60,14 @@ export function GlassTubingConnectionApparatus({
   endX = 100,
   endY = 0,
   midY = 30,
+  tubeWidth = 8,
   tubeType = 'L-shape',
+  hasStopperJoint = false,
   label,
   font = (n) => n,
 }: GlassTubingConnectionApparatusProps) {
+  const tw = tubeWidth
+
   const getPathD = () => {
     if (tubeType === 'straight') {
       return `M 0 0 L ${endX} ${endY}`
@@ -53,23 +78,61 @@ export function GlassTubingConnectionApparatus({
     }
   }
 
+  const pathD = getPathD()
+
   return (
     <g transform={`translate(${x}, ${y})`}>
-      {/* 玻璃导管 */}
+      {/* 1. 外壁玻璃轮廓线 */}
       <path
-        d={getPathD()}
+        d={pathD}
         fill="none"
-        stroke={SCENE_COLORS.tube.glass}
-        strokeWidth={STROKE.objectLine}
+        stroke={SCENE_COLORS.materials.glassBorder}
+        strokeWidth={tw}
         strokeLinecap="round"
         strokeLinejoin="round"
       />
 
-      {/* 气体标识 */}
+      {/* 2. 内部透明气体/空腔填充 */}
+      <path
+        d={pathD}
+        fill="none"
+        stroke={withAlpha(SCENE_COLORS.materials.glass, 0.85)}
+        strokeWidth={Math.max(2, tw - 3)}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+
+      {/* 3. 橡皮塞套接卡口 (可选) */}
+      {hasStopperJoint && (
+        <g>
+          <rect
+            x={-5}
+            y={-6}
+            width={10}
+            height={12}
+            rx={2}
+            fill={SCENE_COLORS.stopper.rubberStopper}
+            stroke={SCENE_COLORS.stopper.rubberStopperBorder}
+            strokeWidth={1}
+          />
+          <rect
+            x={endX - 5}
+            y={endY - 6}
+            width={10}
+            height={12}
+            rx={2}
+            fill={SCENE_COLORS.stopper.rubberStopper}
+            stroke={SCENE_COLORS.stopper.rubberStopperBorder}
+            strokeWidth={1}
+          />
+        </g>
+      )}
+
+      {/* 4. 气体标识说明 */}
       {label && (
         <text
           x={endX * 0.5}
-          y={midY - 6}
+          y={midY - 8}
           textAnchor="middle"
           fontSize={font(FONT.annotation)}
           fill={SCENE_COLORS.labels.chemicalFormula}

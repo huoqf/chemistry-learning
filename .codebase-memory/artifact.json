@@ -1,11 +1,11 @@
 {
     "schema_version": 2,
-    "commit": "a2c97c30b664c03e6f98463aa2f5f1ec650b618c",
-    "indexed_at": "2026-07-30T12:19:18Z",
+    "commit": "8343784b86f89b1e21ca29ce04a5e155a7e33cf3",
+    "indexed_at": "2026-08-05T01:07:35Z",
     "project": "D-code-chemistry-learning",
-    "nodes": 2548,
-    "edges": 5897,
-    "original_size": 5505024,
-    "compressed_size": 1255497,
-    "compression_level": 9
+    "nodes": 2762,
+    "edges": 6478,
+    "original_size": 8519680,
+    "compressed_size": 1682143,
+    "compression_level": 3
 }

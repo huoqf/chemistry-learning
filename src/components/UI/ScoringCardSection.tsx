@@ -4,40 +4,55 @@ import { KatexFormula } from './KatexFormula'
 import type { ScoringStep } from '@/data/gaokaoQuizData'
 
 interface ScoringCardSectionProps {
-  steps: ScoringStep[]
+  steps?: ScoringStep[]
   modelTitle?: string
 }
 
 export const ScoringCardSection: React.FC<ScoringCardSectionProps> = ({
-  steps,
+  steps = [],
   modelTitle = '踩分点手算与规范答题卡片',
 }) => {
   const [userInputs, setUserInputs] = useState<Record<string, string>>({})
   const [submitted, setSubmitted] = useState<Record<string, boolean>>({})
   const [showExplanation, setShowExplanation] = useState<Record<string, boolean>>({})
 
+  const safeSteps = (steps || []).filter((s) => s && s.id)
+
+  if (safeSteps.length === 0) {
+    return (
+      <div className="p-8 text-center text-slate-400 bg-white rounded-xl border border-slate-200 my-2">
+        暂无规范踩分步骤数据
+      </div>
+    )
+  }
+
   const handleInputChange = (id: string, value: string) => {
-    setUserInputs(prev => ({ ...prev, [id]: value }))
+    setUserInputs((prev) => ({ ...prev, [id]: value }))
   }
 
   const handleSubmit = (step: ScoringStep) => {
-    setSubmitted(prev => ({ ...prev, [step.id]: true }))
+    setSubmitted((prev) => ({ ...prev, [step.id]: true }))
   }
 
   const handleReset = (id: string) => {
-    setUserInputs(prev => ({ ...prev, [id]: '' }))
-    setSubmitted(prev => ({ ...prev, [id]: false }))
-    setShowExplanation(prev => ({ ...prev, [id]: false }))
+    setUserInputs((prev) => ({ ...prev, [id]: '' }))
+    setSubmitted((prev) => ({ ...prev, [id]: false }))
+    setShowExplanation((prev) => ({ ...prev, [id]: false }))
   }
 
   const checkIsCorrect = (step: ScoringStep) => {
+    if (!step || !step.correctAnswer) return false
     const input = (userInputs[step.id] || '').trim().toLowerCase()
     if (!input) return false
 
-    if (Array.isArray(step.correctAnswer)) {
-      return step.correctAnswer.some(ans => input.includes(ans.toLowerCase()))
+    try {
+      if (Array.isArray(step.correctAnswer)) {
+        return step.correctAnswer.some((ans) => ans && input.includes(ans.toLowerCase()))
+      }
+      return input === String(step.correctAnswer).toLowerCase()
+    } catch {
+      return false
     }
-    return input === step.correctAnswer.toLowerCase()
   }
 
   return (
@@ -60,7 +75,7 @@ export const ScoringCardSection: React.FC<ScoringCardSectionProps> = ({
 
       {/* 步骤卡片列表 */}
       <div className="space-y-4">
-        {steps.map(step => {
+        {safeSteps.map((step) => {
           const isDone = submitted[step.id]
           const isCorrect = isDone ? checkIsCorrect(step) : false
           const showExp = showExplanation[step.id]
@@ -92,7 +107,7 @@ export const ScoringCardSection: React.FC<ScoringCardSectionProps> = ({
               <p className="text-xs text-slate-600 mb-2 leading-relaxed">{step.questionText}</p>
 
               {step.formulaLatex && (
-                <div className="my-2 p-2 bg-slate-100/80 rounded border border-slate-200/60 text-slate-800 flex justify-center">
+                <div className="my-2 p-2 bg-slate-100/80 rounded border border-slate-200/60 text-slate-800 flex justify-center overflow-x-auto">
                   <KatexFormula formula={step.formulaLatex} />
                 </div>
               )}
@@ -102,7 +117,7 @@ export const ScoringCardSection: React.FC<ScoringCardSectionProps> = ({
                 <input
                   type="text"
                   value={userInputs[step.id] || ''}
-                  onChange={e => handleInputChange(step.id, e.target.value)}
+                  onChange={(e) => handleInputChange(step.id, e.target.value)}
                   placeholder={step.placeholder || '请输入代入数值或规范关键词...'}
                   disabled={isDone}
                   className="flex-1 px-3 py-1.5 text-xs border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white disabled:bg-slate-100 disabled:text-slate-500"
@@ -139,7 +154,7 @@ export const ScoringCardSection: React.FC<ScoringCardSectionProps> = ({
                     </span>
                     <button
                       onClick={() =>
-                        setShowExplanation(prev => ({ ...prev, [step.id]: !prev[step.id] }))
+                        setShowExplanation((prev) => ({ ...prev, [step.id]: !prev[step.id] }))
                       }
                       className="text-[11px] text-indigo-600 hover:underline flex items-center gap-0.5 font-semibold"
                     >
