@@ -21,9 +21,13 @@
 
 ## 2. 主屏页面布局规范（铁律）
 
-### 2.1 禁止硬编码像素布局
+### 2.1 禁止硬编码像素布局与深色背景杂乱包裹
 
-主屏动画页面的 SVG 布局**禁止**使用硬编码像素值。
+1. 主屏动画页面的 SVG 布局**禁止**使用硬编码像素值。
+2. **中屏纯净无深色背景铁律**：SVG 画布及中屏外层容器**绝对禁止添加深色背景 `div`**（如 `bg-slate-900`/`bg-gray-800`），亦严禁手写杂色包裹。背景全量由 Light Theme 统一提供。
+3. **分辨率锁定与自适应坐标变换闭环**：
+   - 布局由内容决定 Preset 选用 ➔ Preset 确定后锁定设计分辨率 (`vp.designWidth / vp.designHeight`)。
+   - 通过 `useAnimationViewport` + `useSceneScale` + `worldToDesign` + `<ChemistryVectorArrow>` / `<VectorArrow>` 的标准闭环，保证在任何 DPR 和不同屏幕设备上**自适应平滑缩放、矢量标注与文字 100% 零偏移、鼠标交互坐标精准**。
 
 ### 2.2 新页面唯一标准路径：useAnimationViewport + AnimationSvgCanvas
 

@@ -178,6 +178,8 @@ export { ContrastCanvas } from './ContrastCanvas'
 
 export { ReagentStepCanvas } from './ReagentStepCanvas'
 
+export { GaokaoToolPlaceholderCanvas } from './GaokaoToolPlaceholderCanvas'
+
 // ── 补全高考及教学 5 大核心器材与 Ports 锚点导出 ──
 export { GasWashingBottleApparatus, getGasWashingBottlePorts } from './GasWashingBottleApparatus'
 export type { GasWashingBottleApparatusProps, GasWashingBottlePorts } from './GasWashingBottleApparatus'

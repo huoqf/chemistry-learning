@@ -10,6 +10,14 @@
 
 三屏职责边界表、职责分离铁律统一定义于 `02_UI_RULES.md 5.1`，本文件不再重复。
 
+### 1.1 系统两类页面体系架构边界
+
+项目整体分为两类页面体系，均使用 `ThreePanel` 作为核心三栏响应式基座：
+- **体系 A：按教材章节树页面 (`/animation/:id`)**：
+  挂载 `AnimationPage.tsx`，顶栏使用系统通用导航/面包屑，由 `data/registries/*.ts` 声明式数据驱动。
+- **体系 B：高考高频解题母题与记忆强化矩阵页面 (`/gaokao-tool/:id`)**：
+  挂载 `GaokaoToolPage.tsx`，使用统一的 `GaokaoToolHeader` 顶栏（含三视角 `[✨图谱探究] [✓规范踩分] [📖真题研析]`），具体调度见专属 Skill `new-gaokao-model`。
+
 ---
 
 ## 2. 左侧屏组件规范

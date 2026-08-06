@@ -1,9 +1,7 @@
-import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Sparkles } from 'lucide-react'
 import { ThreePanel } from '@/components/Layout'
+import { GaokaoToolHeader } from '@/components/UI'
 import { useAnimationViewport } from '@/hooks/useAnimationViewport'
 import { CANVAS_PRESETS } from '@/theme'
-import { getGaokaoModel } from '@/data/gaokaoModels'
 import { getModelQuizData } from '@/data/quiz'
 import { useFlashCardChemistry } from './hooks/useFlashCardChemistry'
 import { FlashCardLeftPanel } from './components/FlashCardLeftPanel'
@@ -11,8 +9,6 @@ import { FlashCardCenterView } from './components/FlashCardCenterView'
 import { FlashCardRightPanel } from './components/FlashCardRightPanel'
 
 export function FlashCardCanvas() {
-  const navigate = useNavigate()
-  const model = getGaokaoModel('model-flash-cards')
   const quizData = getModelQuizData('model-flash-cards')
 
   const {
@@ -76,35 +72,12 @@ export function FlashCardCanvas() {
 
   return (
     <div className="w-full h-screen flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden">
-      {/* 顶部 Navigation */}
-      <div className="bg-slate-900 border-b border-slate-800 px-6 py-3 flex items-center justify-between shadow-sm shrink-0">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate('/')}
-            className="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors flex items-center gap-1.5 text-xs font-semibold"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            返回高考母题索引
-          </button>
-          <div className="h-4 w-px bg-slate-700 mx-1" />
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-sm text-white">{model?.title ?? '专题三：高考易错事实盲盒对比卡片'}</span>
-              <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${model?.badgeColor ?? 'bg-indigo-100 text-indigo-800'}`}>
-                {model?.badgeText ?? '易错盲盒'}
-              </span>
-            </div>
-            <span className="text-[11px] text-slate-400">{model?.subtitle ?? '漂白性/钝化/常识对比探究'}</span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-amber-400 font-semibold flex items-center gap-1">
-            <Sparkles className="w-3.5 h-3.5" />
-            高考提分专属交互工具 · 覆盖全高中化学
-          </span>
-        </div>
-      </div>
+      {/* 统一 Header */}
+      <GaokaoToolHeader
+        modelId="model-flash-cards"
+        viewMode={params.viewMode}
+        onViewModeChange={(m) => updateParam('viewMode', m)}
+      />
 
       {/* ThreePanel 三栏主体 */}
       <div className="flex-1 overflow-hidden">

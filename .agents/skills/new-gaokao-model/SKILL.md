@@ -2,167 +2,175 @@
 name: new-gaokao-model
 description: >
   新建高考解题母题 / 创建记忆矩阵探究页面 / 新增双对比解题模型 /
-  注册高考解题平行节点 / 新增高考提分模块 /
+  重构高考母题页面 / 注册高考解题平行节点 / 新增高考提分模块 /
   create gaokao master model / add memory matrix / new exam tool page
 ---
 
-# 新建高考解题母题专题
+# 高考解题母题与记忆强化矩阵 Skill
 
-> 实操路由指南。铁律/禁令/CHECKLIST 见 `.agents/AGENTS.md`。
->
-> **本 Skill 适用于 `GaokaoToolPage` 布局体系**（路由 `/gaokao-tool/:id`），不走 `AnimationPage` 三屏。中屏 viewMode 子视图切换（动画/踩分/真题）在本体系下合法。
+> 本 Skill 适用于高考专属提分工具（路由 `/gaokao-tool/:id`）的新建、重构与更新。
+> 核心原则：**按需读取规则资源 ➔ 按内容选择 Preset ➔ 锁定设计分辨率 ➔ 调基座组件与坐标变换 Hook 实现精准自适应**。
 
-## ⚠️ 前置条件（写代码前必须完成）
+---
 
-1. Read `.agents/AGENTS.md` — 铁律唯一权威源（颜色 Token、三屏隔离、组件复用等）
-2. Read `src/features/organic/mechanism/OrganicMechanismCanvas.tsx` — viewMode 切换 + ThreePanel 组装的参考实现
-3. Read `src/pages/GaokaoToolPage.tsx` — 路由分发入口（switch-case 与 顶级分支）
-4. Read `src/data/gaokaoModels.ts` — 元数据注册表结构
-5. Read `src/data/gaokaoQuizData.ts` — 踩分步骤与真题数据集
+## 1. 前置必读资源 (Context On-Demand)
 
-未完成以上读取，禁止开始编码。
+在开始创建或重构高考解题母题页面前，必须读取以下规则与组件索引文件：
 
-## 职责边界与文件拆分原则
+1. [08_THREE_PANEL_RULES.md](file:///d:/code/chemistry-learning/docs/agent-rules/ui/08_THREE_PANEL_RULES.md) — 三屏职责划分与顶栏 Header 规范
+2. [07_CANVAS_SVG_CHART_RULES.md](file:///d:/code/chemistry-learning/docs/agent-rules/ui/07_CANVAS_SVG_CHART_RULES.md) — 预设 Preset 分辨率尺寸账本与画布背景规范
+3. [COMPONENT_REGISTRY.md](file:///d:/code/chemistry-learning/docs/agent-rules/ui/COMPONENT_REGISTRY.md) — 全量 44+ 可复用 UI 与化学器材组件注册表
 
-| 文件/目录 | 允许包含 | 禁止包含 |
-|------|---------|---------|
-| `gaokaoModels.ts` | 纯声明式元数据（id/title/route/relatedIds/examPoints） | 组件逻辑、状态管理 |
-| `GaokaoToolPage.tsx` | switch-case 路由分发 / 顶级分支 + 全屏 nav bar | 业务逻辑、具体场景渲染 |
-| `src/features/<topic>/` | 复杂母题专属模块目录 | 按单一职责拆分（见下方原则） |
-| `XxxCanvas.tsx` | ThreePanel 组装入口 | 业务逻辑、化学计算 |
-| `gaokaoQuizData.ts` | quiz 数据（scoringSteps/variantQuizzes） | UI 渲染逻辑 |
+---
 
-### 文件拆分原则（职责驱动）
-复杂母题按**单一职责**拆分，每个文件只做一件事：
-1. `types.ts`：数据类型定义
-2. `hooks/useXxxChemistry.ts`：纯化学计算逻辑（零 JSX、零副作用）
-3. `components/XxxLeftPanel.tsx`：左屏控制台 UI
-4. `components/XxxCenterView.tsx`：中屏渲染（动画/踩分/真题条件切换）
-5. `components/XxxRightPanel.tsx`：右屏展示面板
-6. `XxxCanvas.tsx`：ThreePanel 组装入口（只做组件组合，无业务逻辑）
+## 2. 标准架构与代码闭环示范
 
-**拆分信号（下列任意一条触发即须拆分）**：
-- 文件同时包含多种关注点（如"UI 渲染 + 化学计算"、"组件组装 + 状态管理"）
-- 某个函数/组件的修改需要同时理解另一层逻辑（关注点耦合）
-- 同一文件被多个不同层的模块引用（职责外溢）
+每一个高考解题母题/记忆矩阵页面（`XxxCanvas.tsx`）必须遵循下述标准的组件调度与自适应坐标变换闭环：
 
-**不应拆分的情形**：文件行数多但职责单一（如题库数据文件、类型声明文件），强行截断会破坏内聚性。
+```tsx
+import React, { useState } from 'react'
+import { ThreePanel, AnimationSvgCanvas } from '@/components/Layout'
+import {
+  GaokaoToolHeader,
+  LeftPanel,
+  LeftPanelSection,
+  ParamControl,
+  ScoringCardSection,
+  GaokaoVariantQuiz,
+} from '@/components/UI'
+import { ChemistryVectorArrow } from '@/components/Chemistry'
+import { useAnimationViewport, useSceneScale } from '@/hooks'
+import { CANVAS_PRESETS, CHEMISTRY_COLORS } from '@/theme'
+import { worldToDesign } from '@/scene'
+import { getGaokaoModel } from '@/data/gaokaoModels'
+import { getModelQuizData } from '@/data/quiz'
 
-## Step 1：注册元数据与题库数据（含真题严谨性与插图规范）
+export const XxxCanvas: React.FC = () => {
+  const modelId = 'model-xxx'
+  const model = getGaokaoModel(modelId)
+  const quizData = getModelQuizData(modelId)
 
-1. 在 `src/data/gaokaoModels.ts` 添加元数据记录（`id`, `toolRoute`, `relatedKnowledgeIds`, `examPointSummary`）。
-2. **同时必须**在 `src/data/quiz/` 目录下新建独立文件 `<model-id>.ts`，导出一个 `ModelQuizData` 对象（含 `scoringSteps` 与 `variantQuizzes`），并在 `src/data/quiz/index.ts` 的 `modelQuizMap` 中注册，避免因数据丢失导致界面判定隐藏。
+  // 视角模式 (0: 图谱探究 | 1: 规范踩分 | 2: 真题研析)
+  const [viewMode, setViewMode] = useState<number>(0)
 
-### ⚠️ 高考真题与变式题质量铁律（严禁篡改原文/严禁写有图无展示/严禁直接出解题图）
+  // 1. 根据化学内容选择 Preset（非预先推荐，纯内容驱动）：
+  // - 纯 3D/晶体/结构/全景: CANVAS_PRESETS.full (840x650)
+  // - 对称容器+对照图: CANVAS_PRESETS.splitH (420x650 + 420x650)
+  // - 装置区+宽幅时序图表: CANVAS_PRESETS.splitHw (280x650 + 560x650)
+  // - 旋转/正方形对称: CANVAS_PRESETS.square (650x650)
+  const { containerRef, canvasSize, vp } = useAnimationViewport({
+    preset: CANVAS_PRESETS.splitHw,
+  })
 
-1. **真题原文一致性**：`contextDescription` 与 `questionText` 中的题目内容描述必须与高考官方原题完全一致，不得随意删除、简化或篡改条件，避免产生化学逻辑上的歧义。
-2. **插图零缺失原则**：凡题干描述中含有“如图所示”、“滴定曲线”、“分布分数”等涉及图像的内容，**必须在 `GaokaoVariantItem` 中配置 `diagramType` 与 `diagramConfig`**，绝对禁止“有图描述，无图展示”。
-3. **真题原图纯净度原则**：变式题插图必须是考生在考场上看到的**官方客观原图高保真复现**。**绝对严禁在插图中直接标注解题切口（如剪刀切断线 ✂）、答案提示文本、加成取向箭头或归中反应结论**。所有的机理剖析、断键取向与答案推导，必须且只能放置在“查看母题模型对齐剖析（盲盒解密）”折叠卡或【详解分析】中展示，以保障考场真实刷题探究体验。
+  // 2. 比例尺与设计分辨率计算
+  const sceneScale = useSceneScale({
+    vp,
+    preset: CANVAS_PRESETS.splitHw,
+    anchor: 'center',
+  })
 
-### 高考真题图片 4 级复现机制规范
+  // 3. 将物理逻辑坐标精确变换为设计像素坐标，保障多设备/DPR 下矢量与标注 100% 零偏移
+  const targetPos = worldToDesign({ x: 1.5, y: 2.0 }, sceneScale)
 
-| 级别 | 复现方案 | `diagramType` | 适用场景 |
-| :--- | :--- | :--- | :--- |
-| **Level 1 (首选)** | 动态/矢量图表 | `'titration-curve'` \| `'distribution-fraction'` | 滴定突跃曲线、$\delta-\mathrm{pH}$ 微粒分布分数图、$\lg c - \mathrm{pH}$ 图像、反应能量图 |
-| **Level 2** | 器材装置矢量重构 | 基于 `src/components/Chemistry` 组件组合 | 滴定管/烧杯实验装置图、操作示意图 |
-| **Level 3** | 静态图片资源 | `'image'`（配合 `imageUrl: '/images/gaokao/xxx.png'`） | 极其复杂的工业流程框图、原题扫描重构矢量图 |
-| **Level 4** | KaTeX / 文本框 | 内嵌 LaTeX 语法 | 反应历程链、微粒转化框图 |
+  return (
+    <div className="w-full h-screen flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden select-none">
+      {/* 4. 必须直接使用 GaokaoToolHeader 渲染统一 Header 导航与右侧视角 Tabs */}
+      <GaokaoToolHeader
+        modelId={modelId}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+      />
 
-```ts
-// GaokaoVariantItem 图表配置示例
-{
-  id: 'var-1',
-  yearProvince: '2024 全国高考真题卷',
-  contextDescription: '常温下，用 0.1000 mol/L NaOH 溶液滴定 20.00 mL 0.1000 mol/L 弱酸 HA 溶液，滴定曲线与突跃区间如图所示。',
-  diagramType: 'titration-curve',
-  diagramConfig: {
-    titrationType: 'weakAcid-strongBase',
-    vEq: 20,
-    phJumpRange: [7.7, 9.7],
-    pKa: 4.75,
-    title: '0.1000 mol/L NaOH 滴定 HA 滴定曲线',
-  },
+      {/* 5. 完整 ThreePanel 组装 */}
+      <div className="flex-1 overflow-hidden">
+        <ThreePanel
+          left={
+            <LeftPanel>
+              <LeftPanelSection title="参数调控">
+                {/* 必须使用 ParamControl 滑块组件 */}
+              </LeftPanelSection>
+            </LeftPanel>
+          }
+          center={
+            <div className="w-full h-full flex flex-col overflow-hidden bg-slate-50">
+              {viewMode === 0 && (
+                // 中屏自适应 SVG 画布（透出 Theme 背景，绝对不加深色/杂色 div）
+                <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
+                  <ChemistryVectorArrow
+                    x1={0}
+                    y1={0}
+                    x2={targetPos.x}
+                    y2={targetPos.y}
+                    label="c = 0.1 mol/L"
+                    fontSize={canvasSize.font(12)}
+                  />
+                </AnimationSvgCanvas>
+              )}
+
+              {viewMode === 1 && quizData && (
+                <div className="w-full max-w-4xl mx-auto py-4 overflow-y-auto">
+                  <ScoringCardSection steps={quizData.scoringSteps} />
+                </div>
+              )}
+
+              {viewMode === 2 && quizData && (
+                <div className="w-full max-w-4xl mx-auto py-4 overflow-y-auto">
+                  <GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />
+                </div>
+              )}
+            </div>
+          }
+          right={
+            <div className="w-full h-full p-4 bg-white overflow-y-auto">
+              {/* 右屏统一展示化学量、公式与高考要点 */}
+            </div>
+          }
+        />
+      </div>
+    </div>
+  )
 }
 ```
 
-```
-# 题库数据目录结构（每个 model 独立文件，index.ts 仅做聚合）
-src/data/quiz/
-  types.ts                          ← 接口定义（ScoringStep / GaokaoVariantItem / ModelQuizData）
-  index.ts                          ← 聚合导出 + modelQuizMap + getModelQuizData（禁止在此写题库数据）
-  model-valence-matrix.ts           ← 单个母题题库数据
-  model-reagent-step.ts
-  model-<new-id>.ts                 ← 新增母题在此新建文件
-```
+---
 
-> `src/data/gaokaoQuizData.ts` 已成为向后兼容的重导出文件，**禁止在旧文件中添加新数据**。
+## 3. 按需调用的组件与 Hook 调度映射表
 
-## Step 2：GaokaoToolPage 路由注册
+开发或重构高考母题页面时，按照下表直接从现有的组件库与工具函数中按需调用：
 
-- 默认工具在 `src/pages/GaokaoToolPage.tsx` 的 `renderToolComponent` switch-case 中添加 case。
-- **若为全屏独立 `ThreePanel` 架构**（如母题八、专题一、专题二），直接在 `GaokaoToolPage.tsx` 顶级分支返回：
-  `if (model.id === 'model-xxx') return <XxxCanvas />`
+| 页面层级/需求 | 必须调用的现成资源 | 导入路径 | 职责与效果 |
+|---|---|---|---|
+| **页面顶栏** | `<GaokaoToolHeader>` | `@/components/UI` | 渲染统一黑金 Header 与 `[✨图谱探究] [✓规范踩分] [📖真题研析]` 视角 Tabs。禁止手写 Header。 |
+| **页面三栏基座** | `<ThreePanel>` | `@/components/Layout` | 响应式三栏承载容器。 |
+| **画布自适应 Viewport** | `useAnimationViewport` | `@/hooks` | 传入内容决定的 Preset，自动计算 `containerRef`, `canvasSize.font`, `vp.transform`。 |
+| **坐标转换与缩放** | `useSceneScale` + `worldToDesign` | `@/hooks` / `@/scene` | 将逻辑坐标转换为设计像素，保证图形与标注**在任何屏幕设备/DPR 下零偏移、鼠标交互坐标精准**。 |
+| **中屏 SVG 画布** | `<AnimationSvgCanvas>` | `@/components/Layout` | 中屏只放 SVG 场景与矢量图表，**外层绝对严禁包裹深色/杂色 `div`**。 |
+| **矢量箭头与标注** | `<ChemistryVectorArrow>` / `<VectorArrow>` | `@/components/Chemistry` | 绘制精准矢量箭头，结合 `canvasSize.font(N)` 进行字号自适应。 |
+| **视角 1 踩分卡** | `<ScoringCardSection>` | `@/components/UI` | `viewMode 1` 时在 DOM 层渲染高考踩分步骤。 |
+| **视角 2 真题变式** | `<GaokaoVariantQuiz>` | `@/components/UI` | `viewMode 2` 时在 DOM 层渲染压轴真题与变式。 |
+| **左屏控制面板** | `<LeftPanel>` / `<LeftPanelSection>` / `<ParamControl>` | `@/components/UI` | 声明式组件控制，禁止手写原生的 `<input type="range">` 或散乱按钮。 |
 
-## Step 3：三屏组件规范与中屏平行视角渲染（严禁手写 DOM / 严禁 `<foreignObject>`）
+---
 
-### 1. 左屏组件规范（LeftPanel）
-左屏必须 100% 使用项目已有的标准 UI 组件组合实现，绝对禁止手写原生的 `<input type="range">`、散乱 `<button>` 或容器 CSS 样式：
-- **外层容器与分区**：必须使用 `<LeftPanel>` 与 `<LeftPanelSection title="...">` 组合
-- **数值参数**：必须使用 `<ParamControl>` 滑块组件
-- **模式与切换**：必须使用 `<ControlPanel>`、`<SegmentedControl>` 或 `<ToggleSwitch>`
-- **操作按钮**：必须使用 `<Button>` 组件
+## 4. 职责拆分与题库数据质量铁律
 
-### 2. 中屏平行视角与控制规范（CenterView DOM 条件渲染）
-- **Preset 弹性选用**：严禁无脑固定 `splitHw`！应根据母题化学内容特征选择最佳预设：
-  - **`CANVAS_PRESETS.splitHw` (280x650 + 560px)**：适用于高窄滴定管/长集气瓶装置 + 宽幅时序图表（滴定突跃/反应速率）。
-  - **`CANVAS_PRESETS.splitH` (420x650 + 420x650)**：适用于对称场景与微粒/结构+图表对比（如 $N_A$ 粒子统计/离子反应/溶液配制）。
-  - **`CANVAS_PRESETS.full` (840x650)**：适用于纯 3D/2D 晶体切割、分子构型、电化学池全景等。
-- **中屏纯净化铁律**：
-  - 中屏只允许放置 SVG 画布（矢量场景）与 SVG 图表（`<BaseChart>` / `<MiniChart>`）。
-  - **严禁在中屏堆砌 DOM 教学卡片、文字解析、公式推导或总结**。
-- **视角切换**：主舞台通过左屏 `viewMode` 分段按钮进行 **DOM 层平级条件切换**（绝对禁止在 SVG 内使用 `<foreignObject>`）：
-  - **视角 0 (动画/图表)**：渲染 `<AnimationSvgCanvas>` + 图表组件；动画控制物理通用场景使用 `<AnimationControls>`，**化学滴定/试剂演练场景使用专属 `<TitrationControls>`**。
-  - **视角 1 (规范踩分)**：直接渲染 `<ScoringCardSection steps={quizData.scoringSteps} />`
-  - **视角 2 (真题变式)**：直接渲染 `<GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />`
-- **零滚动自适应**：中屏根容器为 `w-full h-full flex flex-col overflow-hidden`，保证视口与控制条一屏自适应展示，禁止手写死高度 `min-h-[Npx]` 导致外层出现粗暴滚动条。
+### 4.1 高考真题与变式题质量铁律（原文 + 客观原图 + 默认隐藏解题线索）
 
-### 3. 右屏组件规范（RightPanel）
-右屏是化学量统计、公式推导、考点剖析与避坑指南的**唯一权威承载屏**，必须 100% 使用项目已有的标准 UI 组件组合实现：
-- **公式与条件**：必须使用 `ChemistryPanel` 的 `formulas`
-- **高考要点**：必须使用 `gaokaoPoints`
-- **易错警示**：必须使用 `warnings`
-- **化学量与数据统计卡**：必须使用 `quantities`（包含粒子统计实测真值 vs 理论值与错因剖析）
+1. **题干与答案原文一致性**：`contextDescription`、`questionText` 与选项/答案描述必须与高考官方原题完全一致，不得随意删除、简化或改写条件，保障试题逻辑严谨性。
+2. **客观配图还原**：变式题插图必须是考生在高考考场上看到的**官方客观原图高保真复现**。
+3. **解题线索默认隐蔽**：默认插图与题干视图中，**绝对严禁直接标注解题切口（如剪刀切断线 ✂）、答案提示文本、加成取向箭头或归中反应结论**。所有的机理剖析、断键取向与答案推导，**必须且只能放置在“盲盒解密 / 详解分析”折叠卡展开后呈现**，保障考场真实刷题探究体验。
 
-## Step 4：Theme Token 导入规范
+### 4.2 职责拆分与数据注册
 
-所有 Theme 引用必须 100% 遵守 `@/theme` 统一入口，禁止子路径导入：
-```tsx
-// ✅ 正确：100% 从统一入口 @/theme 导入
-import { CHEMISTRY_COLORS, SCENE_COLORS, CHART_COLORS, colors } from '@/theme'
-```
+复杂母题按**单一职责**拆分：
+1. `types.ts`：数据接口
+2. `hooks/useXxxChemistry.ts`：纯化学计算 Hook（零 JSX，零副作用）
+3. `components/XxxLeftPanel.tsx`：左屏 UI
+4. `components/XxxCenterView.tsx`：中屏 DOM 层平级条件切换
+5. `components/XxxRightPanel.tsx`：右屏数据/公式/考点展示
+6. `XxxCanvas.tsx`：ThreePanel 入口组装
 
-## 常见陷阱
-
-1. **GaokaoToolPage switch-case / 顶级分支遗漏**：新增 model 后忘记在 `GaokaoToolPage.tsx` 注册。
-2. **gaokaoQuizData.ts 映射遗漏**：忘记注册 `modelQuizMap` 导致踩分卡与真题无法渲染。
-3. **多模型页面 formulas 写成静态数组**：如果左屏有模型切换，`formulas` 必须写成 `(params) => ...` 动态函数。
-4. **中屏真题错误使用 `<foreignObject>`**：高考真题应在 DOM 层条件切换渲染 `<GaokaoVariantQuiz>`，绝对禁止内嵌在 SVG 的 `<foreignObject>` 中。
-5. **真题题干写有图实际无展示**：未按照 4 级复现机制在变式题数据中配置 `diagramType` 与 `diagramConfig`。
-6. **任意修改真题原文**：随意剪裁或篡改题干导致题目含义发生改变。
-
-## 自检 Checklist
-
-- [ ] `gaokaoModels.ts` 元数据已注册
-- [ ] `src/data/quiz/<model-id>.ts` 已新建（含 scoringSteps + variantQuizzes），已在 `quiz/index.ts` 中注册
-- [ ] 真题题干描述与官方原文一字不差，无随意改写与歧义
-- [ ] 含“如图所示”的真题变式已配置 `diagramType` 与 `diagramConfig`，零缺失
-- [ ] 试题插图 100% 还原高考官方客观原图，无任何解题切口与答案提示标注
-- [ ] `GaokaoToolPage.tsx` 路由分支已添加
-- [ ] 模块文件存放在 `src/features/<topic>/`，每个文件职责单一（编辑一处无需理解另一层逻辑）
-- [ ] 左屏使用 `LeftPanel` / `LeftPanelSection` / `ParamControl` / `SegmentedControl` 组件
-- [ ] 中屏物理场景使用 `<AnimationControls>`，化学滴定/试剂演练场景使用 `<TitrationControls>`
-- [ ] 中屏一屏自适应（参照原电池 `overflow-hidden`），零外层滚动条
-- [ ] 中屏真题/踩分卡在 DOM 层条件渲染，无 `<foreignObject>`
-- [ ] 右屏使用 `ChemistryPanel` / `FormulaSection` 等标准组件渲染（公式自动折行）
-- [ ] Token 导入 100% 使用 `@/theme` 统一入口
-- [ ] `/gaokao-tool/model-xxx` 可访问，返回按钮正常
+数据注册：
+- 在 `src/data/gaokaoModels.ts` 注册母题元数据。
+- 在 `src/data/quiz/<model-id>.ts` 新建题库数据并在 `src/data/quiz/index.ts` 中注册 `modelQuizMap`。
+- 在 `src/pages/GaokaoToolPage.tsx` 中注册路由分发。

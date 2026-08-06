@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Sparkles } from 'lucide-react'
 import { ThreePanel } from '@/components/Layout'
-import { getGaokaoModel } from '@/data/gaokaoModels'
+import { GaokaoToolHeader } from '@/components/UI'
 import { getModelQuizData } from '@/data/quiz'
 import { useTitrationErrorChemistry } from './hooks/useTitrationErrorChemistry'
 import { TitrationErrorLeftPanel } from './components/TitrationErrorLeftPanel'
@@ -11,9 +9,7 @@ import { TitrationErrorRightPanel } from './components/TitrationErrorRightPanel'
 import type { ViewMode, TitrationErrorParams } from './types'
 
 export const TitrationErrorPurityCanvas: React.FC = () => {
-  const navigate = useNavigate()
   const modelId = 'model-titration-error-purity'
-  const model = getGaokaoModel(modelId)
   const quizData = getModelQuizData(modelId) ?? null
 
   // 'explore' | 'scoring' | 'quiz'
@@ -110,39 +106,14 @@ export const TitrationErrorPurityCanvas: React.FC = () => {
 
   return (
     <div className="w-full h-screen flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden select-none">
-      {/* 顶级 Navigation Bar (浅色 Light Theme 统一样式) */}
-      <div className="bg-white border-b border-slate-200 px-6 py-2.5 flex items-center justify-between shadow-xs shrink-0">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate('/')}
-            className="p-1.5 rounded-lg bg-slate-100 text-slate-700 hover:text-slate-900 hover:bg-slate-200 transition-colors flex items-center gap-1.5 text-xs font-semibold"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            返回母题索引
-          </button>
-          <div className="h-4 w-px bg-slate-300 mx-1" />
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-sm text-slate-800">
-                {model?.title || '母题十二：定量滴定误差与纯度产率计算工具'}
-              </span>
-              <span className="text-[10px] px-2 py-0.5 rounded font-bold bg-amber-100 text-amber-800">
-                {model?.badgeText || '定量误差'}
-              </span>
-            </div>
-            <span className="text-[11px] text-slate-500">
-              {model?.subtitle || '高考定量实验大题突破'}
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-amber-600 font-semibold flex items-center gap-1">
-            <Sparkles className="w-3.5 h-3.5" />
-            全屏 ThreePanel 架构
-          </span>
-        </div>
-      </div>
+      {/* 统一 Header */}
+      <GaokaoToolHeader
+        modelId={modelId}
+        viewMode={viewMode === 'explore' ? 0 : viewMode === 'scoring' ? 1 : 2}
+        onViewModeChange={(m) => {
+          setViewMode(m === 0 ? 'explore' : m === 1 ? 'scoring' : 'quiz')
+        }}
+      />
 
       {/* 下方 ThreePanel 容器 */}
       <div className="flex-1 min-h-0 relative">

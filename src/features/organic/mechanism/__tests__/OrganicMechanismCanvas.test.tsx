@@ -81,14 +81,14 @@ describe('OrganicMechanismCanvas Component', () => {
     )
 
     // 切换到视图 B：规范踩分
-    const scoringTab = screen.getByText('规范踩分')
+    const scoringTab = screen.getAllByText('规范踩分')[0]
     fireEvent.click(scoringTab)
     expect(screen.getByText('高考规范答题踩分点与方程式手算推导')).toBeDefined()
     expect(screen.getByText(/机制 1 踩分/i)).toBeDefined()
     expect(screen.getByText(/机制 6 踩分/i)).toBeDefined()
 
     // 切换到视图 C：真题变式
-    const quizTab = screen.getByText('真题变式')
+    const quizTab = screen.getAllByText(/真题/i)[0]
     fireEvent.click(quizTab)
     expect(screen.getByText(/高考真题变式选择题/i)).toBeDefined()
     expect(screen.getByText(/包含 6 大机制对应的近几年高考真题/i)).toBeDefined()

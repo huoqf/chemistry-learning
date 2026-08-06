@@ -27,8 +27,8 @@ export { ScoringCardSection } from './ScoringCardSection'
 export { GaokaoVariantQuiz } from './GaokaoVariantQuiz'
 export { ChemicalFormula } from './ChemicalFormula'
 export { TitrationControls } from './TitrationControls'
-export type { TitrationControlsProps } from './TitrationControls'
-
+export { GaokaoToolHeader } from './GaokaoToolHeader'
+export type { GaokaoToolHeaderProps } from './GaokaoToolHeader'
 
 export interface DiscoveryStepData {
   title: string

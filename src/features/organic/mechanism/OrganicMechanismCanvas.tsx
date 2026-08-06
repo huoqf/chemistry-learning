@@ -1,8 +1,7 @@
 import { useState, useMemo } from 'react'
-import { Sparkles, BookOpen, ArrowLeft, Eye, FileCheck, HelpCircle } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { Sparkles, BookOpen, Eye, FileCheck, HelpCircle } from 'lucide-react'
 import { ThreePanel, AnimationSvgCanvas } from '@/components/Layout'
-import { LeftPanel, ControlPanel, ScoringCardSection, GaokaoVariantQuiz } from '@/components/UI'
+import { LeftPanel, ControlPanel, ScoringCardSection, GaokaoVariantQuiz, GaokaoToolHeader } from '@/components/UI'
 import { useAnimationViewport } from '@/hooks/useAnimationViewport'
 import { CANVAS_PRESETS } from '@/theme'
 import type { ControlMeta } from '@/data/types'
@@ -78,8 +77,6 @@ const ORGANIC_MECHANISM_CONTROLS: ControlMeta[] = [
 ]
 
 export function OrganicMechanismCanvas({}: OrganicMechanismCanvasProps) {
-  const navigate = useNavigate()
-
   const [params, setParamsState] = useState<Record<string, number>>({
     viewMode: 0,
     mechanism: 0,
@@ -236,34 +233,12 @@ export function OrganicMechanismCanvas({}: OrganicMechanismCanvasProps) {
 
   return (
     <div className="w-full h-screen flex flex-col font-sans text-neutral-900 bg-neutral-100 overflow-hidden">
-      <div className="bg-neutral-900 border-b border-neutral-800 px-6 py-3 flex items-center justify-between shadow-sm shrink-0">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate('/')}
-            className="p-1.5 rounded-lg bg-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-700 transition-colors flex items-center gap-1.5 text-xs font-semibold"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            返回高考母题索引
-          </button>
-          <div className="h-4 w-px bg-neutral-700 mx-1" />
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-sm text-white">{model?.title}</span>
-              <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${model?.badgeColor}`}>
-                {model?.badgeText}
-              </span>
-            </div>
-            <span className="text-[11px] text-neutral-400">{model?.subtitle}</span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-amber-400 font-semibold flex items-center gap-1">
-            <Sparkles className="w-3.5 h-3.5" />
-            标准 ThreePanel + ControlPanel + AnimationSvgCanvas
-          </span>
-        </div>
-      </div>
+      {/* 统一 Header */}
+      <GaokaoToolHeader
+        modelId="model-organic-mechanism"
+        viewMode={params.viewMode}
+        onViewModeChange={(m) => setParamsState((prev) => ({ ...prev, viewMode: m }))}
+      />
 
       <div className="flex-1 overflow-hidden">
         <ThreePanel left={leftContent} center={centerContent} right={rightContent} />

@@ -19,7 +19,7 @@ import {
 } from '@/data/valence-matrix'
 import { ThreePanel } from '@/components/Layout'
 import { LeftPanel, LeftPanelSection } from '@/components/UI/LeftPanel'
-import { ScoringCardSection, GaokaoVariantQuiz, ChemicalFormula } from '@/components/UI'
+import { ScoringCardSection, GaokaoVariantQuiz, ChemicalFormula, GaokaoToolHeader } from '@/components/UI'
 import { getGaokaoModel } from '@/data/gaokaoModels'
 import { getKnowledgeNode } from '@/data/knowledgeTree'
 import { getModelQuizData } from '@/data/gaokaoQuizData'
@@ -719,6 +719,19 @@ export function ValenceMatrixCanvas({
     </div>
   )
 
-  // 使用标准的 ThreePanel 组件组装
-  return <ThreePanel left={leftContent} center={centerContent} right={rightContent} />
+  // 使用标准的 ThreePanel 组件与统一 Header 组装
+  return (
+    <div className="w-full h-screen flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden select-none">
+      <GaokaoToolHeader
+        modelId="model-valence-matrix"
+        viewMode={mainView === 'matrix' ? 0 : mainView === 'scoring' ? 1 : 2}
+        onViewModeChange={(m) => {
+          setMainView(m === 0 ? 'matrix' : m === 1 ? 'scoring' : 'quiz')
+        }}
+      />
+      <div className="flex-1 overflow-hidden">
+        <ThreePanel left={leftContent} center={centerContent} right={rightContent} />
+      </div>
+    </div>
+  )
 }

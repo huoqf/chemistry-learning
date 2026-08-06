@@ -1,17 +1,8 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import {
-  ArrowLeft,
-  Sparkles,
-  CheckCircle2,
-  BookOpen,
-  FlaskConical,
-} from 'lucide-react'
 import { getGaokaoModel } from '@/data/gaokaoModels'
-import { getKnowledgeNode } from '@/data/knowledgeTree'
 import {
   ValenceMatrixCanvas,
-  ContrastCanvas,
-  ElectrochemCellApparatus,
+  GaokaoToolPlaceholderCanvas,
 } from '@/components/Chemistry'
 import { OrganicMechanismCanvas } from '@/features/organic/mechanism'
 import { TitrationBalanceCanvas } from '@/features/titration-balance'
@@ -22,15 +13,14 @@ import { ReactionPrincipleNexusCanvas } from '@/features/reaction-principle/nexu
 import { AvogadroConstantCanvas } from '@/features/avogadro-constant/AvogadroConstantCanvas'
 import { HessLawCanvas } from '@/features/reaction-principle/hess-law/HessLawCanvas'
 import { TitrationErrorPurityCanvas } from '@/features/titration-error-purity/TitrationErrorPurityCanvas'
-import { getModelQuizData } from '@/data/gaokaoQuizData'
-import { ScoringCardSection, GaokaoVariantQuiz } from '@/components/UI'
+import { OrganicRetrosynthesisCanvas } from '@/features/organic-retrosynthesis/OrganicRetrosynthesisCanvas'
+import { ElementPeriodicPropertyCanvas } from '@/features/element-periodic-property/ElementPeriodicPropertyCanvas'
 
 export default function GaokaoToolPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
 
   const model = id ? getGaokaoModel(id) : undefined
-  const quizData = id ? getModelQuizData(id) : null
 
   if (!model) {
     return (
@@ -46,258 +36,50 @@ export default function GaokaoToolPage() {
     )
   }
 
-  // 母题十二：定量滴定误差与纯度产率计算工具
-  if (model.id === 'model-titration-error-purity') {
-    return <TitrationErrorPurityCanvas />
+  // 12 个已完成专题分发
+  switch (model.id) {
+    case 'model-valence-matrix':
+      return <ValenceMatrixCanvas defaultElementSymbol="Fe" />
+
+    case 'model-reagent-step':
+      return <ReagentStepCanvas />
+
+    case 'model-flash-cards':
+      return <FlashCardCanvas />
+
+    case 'model-titration-balance':
+      return <TitrationBalanceCanvas />
+
+    case 'model-reaction-principle-nexus':
+      return <ReactionPrincipleNexusCanvas />
+
+    case 'model-industrial-flow':
+      return <IndustrialFlowCanvas />
+
+    case 'model-organic-mechanism':
+      return <OrganicMechanismCanvas />
+
+    case 'model-hess-law':
+      return <HessLawCanvas />
+
+    case 'model-element-periodic-property':
+      return <ElementPeriodicPropertyCanvas />
+
+    case 'model-avogadro-constant':
+      return <AvogadroConstantCanvas />
+
+    case 'model-titration-error-purity':
+      return <TitrationErrorPurityCanvas />
+
+    case 'model-organic-retrosynthesis':
+      return <OrganicRetrosynthesisCanvas />
+
+    // 4 个待升级/暂未开放的专题，使用统一的 GaokaoToolPlaceholderCanvas 占位与预告
+    case 'model-electrochemical-twin':
+    case 'model-crystal-3d-split':
+    case 'model-vsepr-hybrid-3d':
+    case 'model-gas-chain':
+    default:
+      return <GaokaoToolPlaceholderCanvas modelId={model.id} />
   }
-
-  // 母题九：盖斯定律与热化学键能计算工具
-  if (model.id === 'model-hess-law') {
-    return <HessLawCanvas />
-  }
-
-  // 母题四：勒夏特列移动与活化能图谱工具
-  if (model.id === 'model-reaction-principle-nexus') {
-    return <ReactionPrincipleNexusCanvas />
-  }
-
-  // 母题十一：阿伏加德罗常数 (N_A) 陷阱与粒子统计工具
-  if (model.id === 'model-avogadro-constant') {
-    return <AvogadroConstantCanvas />
-  }
-
-  // 0. 如果是“母题一：滴定突跃与离子浓度排序解题工具”，渲染全屏 ThreePanel 架构
-  if (model.id === 'model-titration-balance') {
-    return <TitrationBalanceCanvas />
-  }
-
-  // 1. 如果是“母题八：有机反应官能团断键机制工具”，渲染全屏断键交互与中屏平行视图
-  if (model.id === 'model-organic-mechanism') {
-    return <OrganicMechanismCanvas />
-  }
-
-  // 2. 如果是“母题七：无机工艺流程与沉淀调 pH 工具”，渲染全屏 ThreePanel 架构
-  if (model.id === 'model-industrial-flow') {
-    return <IndustrialFlowCanvas />
-  }
-
-  // 2. 如果是“专题一：无机元素价类二维矩阵探究工具”，渲染全屏 ThreePanel 架构
-  if (model.id === 'model-valence-matrix') {
-    return (
-      <div className="w-full h-screen flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden">
-        {/* 顶部 Navigation */}
-        <div className="bg-slate-900 border-b border-slate-800 px-6 py-3 flex items-center justify-between shadow-sm shrink-0">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate('/')}
-              className="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors flex items-center gap-1.5 text-xs font-semibold"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              返回高考母题索引
-            </button>
-            <div className="h-4 w-px bg-slate-700 mx-1" />
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-sm text-white">{model.title}</span>
-                <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${model.badgeColor}`}>
-                  {model.badgeText}
-                </span>
-              </div>
-              <span className="text-[11px] text-slate-400">{model.subtitle}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-amber-400 font-semibold flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5" />
-              标准三屏架构 (ThreePanel) · 亮色规范
-            </span>
-          </div>
-        </div>
-
-        {/* 完整 ThreePanel 三栏区域 */}
-        <div className="flex-1 overflow-hidden">
-          <ValenceMatrixCanvas defaultElementSymbol="Fe" />
-        </div>
-      </div>
-    )
-  }
-
-  // 3. 如果是“专题二：试剂滴加与沉淀变色演练工具”，渲染全屏 ThreePanel 母题三栏系统
-  if (model.id === 'model-reagent-step') {
-    return <ReagentStepCanvas />
-  }
-
-  // 4. 如果是“专题三：高考易错事实盲盒对比卡片”，渲染全屏 ThreePanel 母题三栏系统
-  if (model.id === 'model-flash-cards') {
-    return <FlashCardCanvas />
-  }
-
-  // 通用备用工具渲染
-  const renderToolComponent = () => {
-    switch (model.id) {
-      case 'model-flash-cards':
-        return <FlashCardCanvas />
-
-      case 'model-electrochemical-twin':
-        return (
-          <ContrastCanvas
-            titleLeft="原电池 (化学能 → 电能)"
-            titleRight="电解池 (电能 → 化学能)"
-            subtitleLeft="自发反应 ΔG < 0"
-            subtitleRight="受迫反应 (外接电源)"
-            badgeLeft="正极 (还原) / 负极 (氧化)"
-            badgeRight="阳极 (氧化) / 阴极 (还原)"
-            childrenLeft={
-              <div className="w-full h-full flex flex-col items-center justify-center p-2 relative">
-                <ElectrochemCellApparatus
-                  x={0}
-                  y={0}
-                  fillColor="rgba(59, 130, 246, 0.15)"
-                  cellType="galvanic"
-                  leftElectrode="Zn"
-                  rightElectrode="Cu"
-                />
-                <div className="text-[11px] font-bold text-slate-700 mt-2 bg-slate-50 px-2 py-1 rounded border">
-                  电子流向：负极 (Zn) ➔ 外电路 ➔ 正极 (Cu)
-                </div>
-              </div>
-            }
-            childrenRight={
-              <div className="w-full h-full flex flex-col items-center justify-center p-2 relative">
-                <ElectrochemCellApparatus
-                  x={0}
-                  y={0}
-                  fillColor="rgba(168, 85, 247, 0.15)"
-                  cellType="electrolytic"
-                  leftElectrode="Pt"
-                  rightElectrode="C"
-                />
-                <div className="text-[11px] font-bold text-slate-700 mt-2 bg-slate-50 px-2 py-1 rounded border">
-                  电子流向：电源负极 ➔ 阴极；阳极 ➔ 电源正极
-                </div>
-              </div>
-            }
-          />
-        )
-
-      default:
-        return (
-          <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 rounded-xl border border-slate-200 p-8 gap-4">
-            <FlaskConical className="w-12 h-12 text-indigo-500 animate-pulse" />
-            <h3 className="font-bold text-slate-800 text-lg">{model.title} — 高考专属交互解题工具</h3>
-            <p className="text-xs text-slate-600 max-w-md text-center leading-relaxed">
-              {model.description}
-            </p>
-            <div className="p-3 bg-white rounded-lg border border-slate-200 text-xs font-mono text-slate-700">
-              高考专属联动组件加载完毕，包含 {model.examPointSummary.length} 个核心破解要点
-            </div>
-          </div>
-        )
-    }
-  }
-
-  return (
-    <div className="w-full min-h-screen bg-slate-100 flex flex-col font-sans text-slate-900">
-      {/* 顶部极简 Navigation */}
-      <div className="bg-slate-900 border-b border-slate-800 px-6 py-3.5 flex items-center justify-between shadow-sm">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate('/')}
-            className="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors flex items-center gap-1.5 text-xs font-semibold"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            返回高考母题索引
-          </button>
-          <div className="h-4 w-px bg-slate-700 mx-1" />
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-sm text-white">{model.title}</span>
-              <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${model.badgeColor}`}>
-                {model.badgeText}
-              </span>
-            </div>
-            <span className="text-[11px] text-slate-400">{model.subtitle}</span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-amber-400 font-semibold flex items-center gap-1">
-            <Sparkles className="w-3.5 h-3.5" />
-            高考提分专属交互工具
-          </span>
-        </div>
-      </div>
-
-      {/* 主体交互工具内容与右侧考点侧栏 */}
-      <div className="flex-1 p-4 grid grid-cols-1 lg:grid-cols-4 gap-4 overflow-y-auto">
-        <div className="lg:col-span-3 flex flex-col gap-4">
-          <div className="w-full min-h-[550px]">{renderToolComponent()}</div>
-
-          {quizData && quizData.scoringSteps.length > 0 && (
-            <ScoringCardSection steps={quizData.scoringSteps} />
-          )}
-
-          {quizData && quizData.variantQuizzes.length > 0 && (
-            <GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />
-          )}
-        </div>
-
-        <div className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col justify-between h-fit sticky top-4">
-          <div>
-            <h4 className="font-bold text-slate-800 text-sm mb-3 flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-amber-500" />
-              高考必考要点提炼
-            </h4>
-            <div className="flex flex-col gap-2.5 mb-6">
-              {model.examPointSummary.map((pt, idx) => (
-                <div key={idx} className="flex items-start gap-2 text-xs text-slate-700 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-                  <CheckCircle2 className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                  <span className="leading-relaxed">{pt}</span>
-                </div>
-              ))}
-            </div>
-
-            <h4 className="font-bold text-slate-800 text-sm mb-2 flex items-center gap-1.5 pt-4 border-t border-slate-100">
-              <BookOpen className="w-4 h-4 text-indigo-600" />
-              关联教材知识节点 ({model.relatedKnowledgeIds.length})
-            </h4>
-            <div className="flex flex-col gap-1.5">
-              {model.relatedKnowledgeIds.map((kid) => {
-                const knode = getKnowledgeNode(kid)
-                const animId = knode?.animationIds?.[0]
-                return (
-                  <button
-                    key={kid}
-                    onClick={() => {
-                      if (animId) {
-                        navigate(`/animation/${animId}`)
-                      } else {
-                        navigate('/')
-                      }
-                    }}
-                    className="p-2.5 rounded-lg bg-indigo-50/60 hover:bg-indigo-100/80 border border-indigo-100 text-xs flex items-center justify-between text-indigo-950 transition-colors text-left group"
-                  >
-                    <div className="flex flex-col">
-                      <span className="font-semibold group-hover:text-indigo-700">{knode ? knode.title : kid}</span>
-                      <span className="text-[10px] text-indigo-500 font-mono">
-                        {knode ? `${knode.chapter} · ${knode.module}` : '教材考点'}
-                      </span>
-                    </div>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-200/50 text-indigo-700 font-semibold group-hover:bg-indigo-600 group-hover:text-white transition-colors shrink-0">
-                      {animId ? '去学习' : '考点'}
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-
-          <div className="mt-6 pt-3 border-t border-slate-100 text-[11px] text-slate-400 text-center">
-            高考化学交互提分系统 · 高频解题母题工具
-          </div>
-        </div>
-      </div>
-    </div>
-  )
 }
