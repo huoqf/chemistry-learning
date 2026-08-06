@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Play, Pause, RotateCcw, ChevronLeft, ChevronRight, Zap } from 'lucide-react'
 import { useAnimationViewport, useSceneScale } from '@/hooks'
+import { useSimulationFrame } from '@/utils/animation'
 import { AnimationSvgCanvas } from '@/components/Layout'
 import { ScoringCardSection, GaokaoVariantQuiz } from '@/components/UI'
 import { CANVAS_PRESETS } from '@/theme'
@@ -43,16 +44,10 @@ export function OrganicRetrosynthesisCenterView({
   const designWidth = CANVAS_PRESETS.full.width
   const designHeight = CANVAS_PRESETS.full.height
 
-  // 动态粒子/光效 Timer (切断/ Protection 动画)
-  useEffect(() => {
-    let animFrame: number
-    const animate = () => {
-      setAnimProgress((prev) => (prev + 0.02 * speed) % 1)
-      animFrame = requestAnimationFrame(animate)
-    }
-    animFrame = requestAnimationFrame(animate)
-    return () => cancelAnimationFrame(animFrame)
-  }, [speed])
+  // 动态粒子/光效 Timer (切断/ Protection 动画) — 遵循铁律1-4：使用 useSimulationFrame 替代 requestAnimationFrame
+  useSimulationFrame((_deltaTime) => {
+    setAnimProgress((prev) => (prev + 0.02 * speed) % 1)
+  })
 
   // 矢量苯环结构绘制
   const renderBenzeneRing = (cx: number, cy: number, r: number = 22) => (

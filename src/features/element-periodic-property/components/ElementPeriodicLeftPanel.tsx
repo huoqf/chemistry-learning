@@ -1,7 +1,7 @@
 import React from 'react'
 import { LeftPanel, LeftPanelSection, ParamControl, SegmentedControl, Button } from '@/components/UI'
 import type { ElementPeriodicParams, PeriodicExploreMode, StateType } from '../types'
-import { PERIODIC_ELEMENTS } from '../hooks/useElementPeriodicChemistry'
+import { PERIODIC_ELEMENTS } from '../data/periodicData'
 
 interface ElementPeriodicLeftPanelProps {
   params: ElementPeriodicParams
