@@ -22,7 +22,8 @@ import {
   CANVAS_PRESETS,
   SCENE_COLORS,
   CHEMISTRY_COLORS,
-  colors,
+  PHENOMENON_COLORS,
+  CANVAS_COLORS,
   withAlpha,
   STROKE,
   FONT,
@@ -119,12 +120,12 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
     washSolutionColor =
       targetGas === 'SO₂' && flowRate > 0
         ? withAlpha(SCENE_COLORS.reactionAndGas.dryingTube, 0.2)
-        : withAlpha(colors.danger[400], 0.6)
+        : withAlpha(PHENOMENON_COLORS.fuchsinRed, 0.6)
   } else if (washReagent === 'kmno4') {
     washSolutionColor =
       (targetGas === 'SO₂' || targetGas === 'C₂H₄') && flowRate > 0
         ? withAlpha(SCENE_COLORS.materials.glass, 0.2)
-        : withAlpha(CHEMISTRY_COLORS.pH, 0.7)
+        : withAlpha(PHENOMENON_COLORS.mno4Minus, 0.7)
   } else if (washReagent === 'sat-nacl') {
     washSolutionColor = withAlpha(SCENE_COLORS.materials.glass, 0.3)
   } else if (washReagent === 'naoh') {
@@ -132,8 +133,8 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
   }
 
   let gasColor = withAlpha(SCENE_COLORS.reagent.solution, 0.1)
-  if (targetGas === 'Cl₂') gasColor = withAlpha(CHEMISTRY_COLORS.concentration, 0.5)
-  if (targetGas === 'NO₂') gasColor = withAlpha(colors.accent[600], 0.6)
+  if (targetGas === 'Cl₂') gasColor = withAlpha(PHENOMENON_COLORS.cl2Gas, 0.6)
+  if (targetGas === 'NO₂') gasColor = withAlpha(PHENOMENON_COLORS.no2Gas, 0.7)
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden relative">
@@ -210,8 +211,8 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                         cx={0}
                         cy={0}
                         r={36}
-                        fill={withAlpha(colors.danger[500], 0.15)}
-                        stroke={colors.danger[500]}
+                        fill={withAlpha(CANVAS_COLORS.alertRed, 0.15)}
+                        stroke={CANVAS_COLORS.alertRed}
                         strokeWidth={1.5}
                         strokeDasharray="3 3"
                       />
@@ -219,16 +220,16 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                         cx={0}
                         cy={0}
                         r={24}
-                        fill={colors.danger[500]}
+                        fill={CANVAS_COLORS.alertRed}
                         fillOpacity={0.9}
-                        stroke={colors.danger[700]}
+                        stroke={CANVAS_COLORS.dangerDark}
                         strokeWidth={2}
                       />
                       <text
                         x={0}
                         y={4}
                         textAnchor="middle"
-                        fill={colors.neutral.white}
+                        fill={CANVAS_COLORS.white}
                         fontSize={canvasSize.font(FONT.annotation)}
                         fontWeight="extrabold"
                       >
@@ -252,7 +253,7 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       x={0}
                       y={15}
                       textAnchor="middle"
-                      fill={colors.neutral[500]}
+                      fill={CANVAS_COLORS.labelTextLight}
                       fontSize={canvasSize.font(FONT.annotation)}
                     >
                       ({targetGas})
@@ -306,15 +307,15 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                         width={110}
                         height={22}
                         rx={4}
-                        fill={withAlpha(colors.danger[500], 0.15)}
-                        stroke={colors.danger[500]}
+                        fill={withAlpha(CANVAS_COLORS.alertRed, 0.15)}
+                        stroke={CANVAS_COLORS.alertRed}
                         strokeWidth={1.5}
                       />
                       <text
                         x={0}
                         y={2}
                         textAnchor="middle"
-                        fill={colors.danger[700]}
+                        fill={CANVAS_COLORS.dangerText}
                         fontSize={canvasSize.font(FONT.annotation)}
                         fontWeight="bold"
                       >
@@ -338,7 +339,7 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       x={0}
                       y={15}
                       textAnchor="middle"
-                      fill={colors.neutral[500]}
+                      fill={CANVAS_COLORS.labelTextLight}
                       fontSize={canvasSize.font(FONT.annotation)}
                     >
                       ({washReagent})
@@ -369,8 +370,8 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       desiccantName={dryer === 'soda-lime' ? '碱石灰' : '无水 CaCl₂'}
                       desiccantColor={
                         dryer === 'soda-lime'
-                          ? SCENE_COLORS.reagent.precipitate
-                          : '#F1F5F9'
+                          ? SCENE_COLORS.desiccantAndIndicator.sodaLime
+                          : CANVAS_COLORS.gridSubtle
                       }
                       font={canvasSize.font}
                     />
@@ -382,15 +383,15 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                         cx={0}
                         cy={0}
                         r={22}
-                        fill={withAlpha(colors.warning[500], 0.2)}
-                        stroke={colors.warning[500]}
+                        fill={withAlpha(CHEMISTRY_COLORS.pressure, 0.2)}
+                        stroke={CHEMISTRY_COLORS.pressure}
                         strokeWidth={2}
                       />
                       <text
                         x={0}
                         y={4}
                         textAnchor="middle"
-                        fill={colors.warning[700]}
+                        fill={CANVAS_COLORS.labelText}
                         fontSize={canvasSize.font(FONT.annotation)}
                         fontWeight="extrabold"
                       >
@@ -414,7 +415,7 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       x={0}
                       y={15}
                       textAnchor="middle"
-                      fill={colors.neutral[500]}
+                      fill={CANVAS_COLORS.labelTextLight}
                       fontSize={canvasSize.font(FONT.annotation)}
                     >
                       (
@@ -541,7 +542,7 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       x={0}
                       y={15}
                       textAnchor="middle"
-                      fill={colors.neutral[500]}
+                      fill={CANVAS_COLORS.labelTextLight}
                       fontSize={canvasSize.font(FONT.annotation)}
                     >
                       (
@@ -569,13 +570,13 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       />
                       <path
                         d="M 40,-40 Q 30,-70 40,-85 Q 50,-70 40,-40"
-                        fill={colors.warning[400]}
+                        fill={SCENE_COLORS.heatingAndSupport.flame}
                         opacity={0.9}
                         className="animate-pulse"
                       />
                       <path
                         d="M 40,-42 Q 35,-60 40,-70 Q 45,-60 40,-42"
-                        fill={CHEMISTRY_COLORS.concentration}
+                        fill={SCENE_COLORS.heatingAndSupport.flameCore}
                       />
                     </g>
                   ) : tailGas === 'balloon' ? (
@@ -651,14 +652,14 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                     <g transform={`translate(${tailLayout.inletPort.x}, ${tailLayout.inletPort.y})`}>
                       <path
                         d="M 0,0 L 0,-80"
-                        stroke={colors.danger[500]}
+                        stroke={CANVAS_COLORS.alertRed}
                         strokeWidth={5}
                         strokeDasharray="6 4"
                         className="animate-pulse"
                       />
                       <polygon
                         points="0,-90 -8,-75 8,-75"
-                        fill={colors.danger[500]}
+                        fill={CANVAS_COLORS.alertRed}
                       />
                     </g>
                   )}
@@ -678,7 +679,7 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       x={0}
                       y={15}
                       textAnchor="middle"
-                      fill={colors.neutral[500]}
+                      fill={CANVAS_COLORS.labelTextLight}
                       fontSize={canvasSize.font(FONT.annotation)}
                     >
                       (

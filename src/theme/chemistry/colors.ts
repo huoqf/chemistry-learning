@@ -169,10 +169,18 @@ export type AtomColorKey = keyof typeof ATOM_COLORS
 
 /** 特征化学显色、沉淀与气体颜色 */
 export const PHENOMENON_COLORS = {
+  // 高频固体单质与氧化物
+  na2o2Solid:       '#FEF08A', // Na2O2 淡黄色固体
+  fe2o3Solid:       '#B45309', // Fe2O3 红棕色粉末
+  copperMetal:      '#C2410C', // Cu 单质紫红色
+  redPhosphorus:    '#991B1B', // 红磷暗红色固体
+
   // 溶液与离子特征色
   fe3Plus:          '#D97706', // Fe3+ 棕黄色
   fe2Plus:          '#86EFAC', // Fe2+ 浅绿色
   cu2Plus:          '#0284C7', // Cu2+ 蓝色
+  cr3Plus:          '#16A34A', // Cr3+ 绿色溶液
+  ni2Plus:          '#22C55E', // Ni2+ 绿色溶液
   feScn3:           '#991B1B', // Fe(SCN)3 血红色
   mno4Minus:        '#7E22CE', // MnO4- 紫红色
   cr2o72Minus:      '#EA580C', // Cr2O72- 橙红色
@@ -183,6 +191,7 @@ export const PHENOMENON_COLORS = {
   i2Water:          '#B45309', // 棕黄色碘水
   i2Ccl4:           '#7E22CE', // 紫红色 I2/CCl4 有机相
   fuchsinRed:       '#F43F5E', // SO2 检验品红溶液红色
+  phenolFe3Violet:  '#6D28D9', // 苯酚与 Fe3+ 显紫罗兰色
 
   // 常见沉淀颜色
   feOh2Precipitate: '#F8FAFC', // Fe(OH)2 白色沉淀
@@ -193,13 +202,20 @@ export const PHENOMENON_COLORS = {
   agiPrecipitate:   '#FACC15', // AgI 黄色沉淀
   agbrPrecipitate:  '#FEF08A', // AgBr 淡黄色沉淀
   agclPrecipitate:  '#F8FAFC', // AgCl 白色沉淀
+  ag3po4Precipitate:'#EAB308', // Ag3PO4 黄色沉淀
   baso4Precipitate: '#F8FAFC', // BaSO4 白色沉淀
   caco3Precipitate: '#F8FAFC', // CaCO3 白色沉淀
   alOh3Precipitate: '#F8FAFC', // Al(OH)3 白色沉淀
   mgOh2Precipitate: '#F8FAFC', // Mg(OH)2 白色沉淀
   pbso4Precipitate: '#F8FAFC', // PbSO4 白色沉淀
+  blackSulfides:    '#27272A', // CuS/PbS/HgS/FeS 黑色沉淀
+  znsPrecipitate:   '#F8FAFC', // ZnS 白色沉淀
   prussianBlue:     '#1E40AF', // 普鲁士蓝 / Turnbull 蓝沉淀 (Fe2+ 检出)
   sPrecipitate:     '#FDE047', // 硫单质淡黄色沉淀
+
+  // 检验与吸水显色
+  anhydrousCuso4:   '#FAFAFA', // 无水 CuSO4 白色粉末
+  hydratedCuso4:    '#0284C7', // CuSO4·5H2O 蓝色晶体
 
   // 特征气体颜色
   no2Gas:           '#B45309', // NO2 红棕色气体
@@ -207,6 +223,7 @@ export const PHENOMENON_COLORS = {
   br2Vapor:         '#7C2D12', // Br2 蒸气红棕色
   i2Vapor:          '#6B21A8', // I2 蒸气紫色
   o3Gas:            '#38BDF8', // O3 微蓝色气体
+  f2Gas:            '#FDE047', // F2 淡黄绿色气体
 } as const
 
 export type PhenomenonColorKey = keyof typeof PHENOMENON_COLORS
@@ -218,6 +235,7 @@ export const FLAME_COLORS = {
   Ca: '#F97316', // 钙 (砖红)
   Cu: '#10B981', // 铜 (绿/青绿)
   Ba: '#A3E635', // 钡 (黄绿)
+  Li: '#E11D48', // 锂 (紫红)
 } as const
 
 export type FlameColorKey = keyof typeof FLAME_COLORS

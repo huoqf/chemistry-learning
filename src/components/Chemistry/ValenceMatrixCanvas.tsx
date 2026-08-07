@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import {
   Sparkles,
   FlaskConical,
@@ -24,7 +24,8 @@ import { getGaokaoModel } from '@/data/gaokaoModels'
 import { getKnowledgeNode } from '@/data/knowledgeTree'
 import { getModelQuizData } from '@/data/gaokaoQuizData'
 import { TestTubeApparatus } from './TestTubeApparatus'
-import { CHEMISTRY_COLORS, colors } from '@/theme'
+import { CHEMISTRY_COLORS, colors, SCENE_COLORS, STROKE, FONT, withAlpha } from '@/theme'
+import { useAnimationFrame } from '@/utils/animation'
 
 export interface MatrixItem {
   valence: number
@@ -94,6 +95,25 @@ export function ValenceMatrixCanvas({
 
   // 试剂检验显色动画状态
   const [isTesting, setIsTesting] = useState(false)
+  const testElapsedRef = useRef(0)
+
+  // 使用 useAnimationFrame 驱动显色动画定时（替代裸 setTimeout）
+  useAnimationFrame(
+    (deltaTime) => {
+      testElapsedRef.current += deltaTime
+      if (testElapsedRef.current >= 2500) {
+        setIsTesting(false)
+      }
+    },
+    { playing: isTesting }
+  )
+
+  // 启动显色动画时重置计时器
+  useEffect(() => {
+    if (isTesting) {
+      testElapsedRef.current = 0
+    }
+  }, [isTesting])
 
   // 获取模型元数据与试题
   const modelNode = getGaokaoModel('model-valence-matrix')
@@ -132,7 +152,6 @@ export function ValenceMatrixCanvas({
   const handleRunTest = () => {
     setInquiryMode('color-test')
     setIsTesting(true)
-    setTimeout(() => setIsTesting(false), 2500)
   }
 
   // 选中的物质相关的转化路径
@@ -517,8 +536,8 @@ export function ValenceMatrixCanvas({
                 <svg width="320" height="150" viewBox="0 0 320 150" className="overflow-visible">
                   {/* 胶头滴管 */}
                   <g transform="translate(145, 5)">
-                    <rect x="10" y="0" width="10" height="12" rx="3" fill="#ef4444" opacity="0.85" />
-                    <rect x="12" y="12" width="6" height="25" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="1" />
+                    <rect x="10" y="0" width="10" height="12" rx="3" fill={SCENE_COLORS.heatingAndSupport.flame} opacity="0.85" />
+                    <rect x="12" y="12" width="6" height="25" fill={SCENE_COLORS.materials.glass} stroke={SCENE_COLORS.container.testTubeBorder} strokeWidth={STROKE.reference} />
                     {/* 滴落的试剂液滴 */}
                     <circle
                       cx="15"
@@ -544,11 +563,11 @@ export function ValenceMatrixCanvas({
 
                   {/* 现象标注 Callout */}
                   <g transform="translate(190, 60)">
-                    <rect x="0" y="0" width="120" height="50" rx="6" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1" />
-                    <text x="8" y="20" fontSize="11" fontWeight="bold" fill="#1e293b">
+                    <rect x="0" y="0" width="120" height="50" rx="6" fill={withAlpha(colors.neutral[50], 1)} stroke={colors.neutral[300]} strokeWidth={STROKE.reference} />
+                    <text x="8" y="20" fontSize={FONT.small} fontWeight="bold" fill={colors.neutral[800]}>
                       外观/溶液显色:
                     </text>
-                    <text x="8" y="38" fontSize="11" fontWeight="semibold" fill="#4338ca">
+                    <text x="8" y="38" fontSize={FONT.small} fontWeight="semibold" fill={colors.primary[700]}>
                       {selectedSubstance.colorText}
                     </text>
                   </g>
