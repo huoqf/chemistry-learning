@@ -15,6 +15,8 @@ import { HessLawCanvas } from '@/features/reaction-principle/hess-law/HessLawCan
 import { TitrationErrorPurityCanvas } from '@/features/titration-error-purity/TitrationErrorPurityCanvas'
 import { OrganicRetrosynthesisCanvas } from '@/features/organic-retrosynthesis/OrganicRetrosynthesisCanvas'
 import { ElementPeriodicPropertyCanvas } from '@/features/element-periodic-property/ElementPeriodicPropertyCanvas'
+import { ElectrochemicalTwinCanvas } from '@/features/electrochemical-twin/ElectrochemicalTwinCanvas'
+import { GasChainCanvas } from '@/features/gas-chain'
 
 export default function GaokaoToolPage() {
   const { id } = useParams<{ id: string }>()
@@ -28,15 +30,15 @@ export default function GaokaoToolPage() {
         <h2 className="text-xl font-bold text-slate-800">未找到该高考提分工具</h2>
         <button
           onClick={() => navigate('/')}
-          className="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-lg"
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
         >
-          返回高考母题索引
+          返回首页
         </button>
       </div>
     )
   }
 
-  // 12 个已完成专题分发
+  // 13 个已完成专题分发
   switch (model.id) {
     case 'model-valence-matrix':
       return <ValenceMatrixCanvas defaultElementSymbol="Fe" />
@@ -74,11 +76,15 @@ export default function GaokaoToolPage() {
     case 'model-organic-retrosynthesis':
       return <OrganicRetrosynthesisCanvas />
 
-    // 4 个待升级/暂未开放的专题，使用统一的 GaokaoToolPlaceholderCanvas 占位与预告
     case 'model-electrochemical-twin':
+      return <ElectrochemicalTwinCanvas />
+
+    case 'model-gas-chain':
+      return <GasChainCanvas />
+
+    // 2 个待升级/暂未开放的专题，使用统一的 GaokaoToolPlaceholderCanvas 占位与预告
     case 'model-crystal-3d-split':
     case 'model-vsepr-hybrid-3d':
-    case 'model-gas-chain':
     default:
       return <GaokaoToolPlaceholderCanvas modelId={model.id} />
   }

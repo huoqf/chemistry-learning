@@ -84,8 +84,8 @@ describe('高中化学实验主要器材组件 (Apparatus)', () => {
 
   it('GasJarApparatus 支持洗气瓶长短导管渲染', () => {
     const { container } = renderWithSvg(<GasJarApparatus x={0} y={0} hasTubes={true} />)
-    const paths = container.querySelectorAll('path')
-    expect(paths.length).toBeGreaterThan(0)
+    const lines = container.querySelectorAll('line')
+    expect(lines.length).toBeGreaterThan(0)
   })
 
   it('AlcoholLampApparatus 包含外焰与内焰渲染', () => {

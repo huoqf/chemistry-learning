@@ -51,44 +51,33 @@ export function AlcoholLampApparatus({
 
   return (
     <g transform={`translate(${x}, ${y})`}>
-      {/* 1. 三层火焰 (外焰、内焰、焰心) */}
-      {isBurning && (
-        <g transform={`translate(${w * 0.5}, 0)`}>
-          {/* 外焰 (最高温，橙黄渐变) */}
-          <path
-            d={`
-              M 0 -${flameH}
-              C ${flameH * 0.6} -${flameH * 0.5}, ${flameH * 0.5} 0, 0 0
-              C -${flameH * 0.5} 0, -${flameH * 0.6} -${flameH * 0.5}, 0 -${flameH}
-              Z
-            `}
-            fill={SCENE_COLORS.heatingAndSupport.flame}
-            opacity={0.9}
-          />
-          {/* 内焰 */}
-          <path
-            d={`
-              M 0 -${flameH * 0.65}
-              C ${flameH * 0.35} -${flameH * 0.35}, ${flameH * 0.3} 0, 0 0
-              C -${flameH * 0.3} 0, -${flameH * 0.35} -${flameH * 0.35}, 0 -${flameH * 0.65}
-              Z
-            `}
-            fill={SCENE_COLORS.heatingAndSupport.flameCore}
-            opacity={0.85}
-          />
-          {/* 焰心 (最内侧高亮) */}
-          <ellipse
-            cx={0}
-            cy={-(flameH * 0.2)}
-            rx={flameH * 0.12}
-            ry={flameH * 0.2}
-            fill={SCENE_COLORS.materials.glass}
-            opacity={0.95}
-          />
-        </g>
-      )}
+      {/* 1. 玻璃灯座背景 */}
+      <path
+        d={`
+          M ${neckLeft} ${baseTopY}
+          C ${w * 0.1} ${baseTopY}, 0 ${h - baseH * 0.5}, 0 ${h - 4}
+          Q 0 ${h} 4 ${h}
+          L ${w - 4} ${h}
+          Q ${w} ${h} ${w} ${h - 4}
+          C ${w} ${h - baseH * 0.5}, ${w * 0.9} ${baseTopY}, ${w - neckLeft} ${baseTopY}
+          Z
+        `}
+        fill={withAlpha(SCENE_COLORS.container.beaker, 0.5)}
+        stroke={SCENE_COLORS.container.beakerBorder}
+        strokeWidth={STROKE.objectLine}
+      />
 
-      {/* 2. 灯芯瓷套管与灯芯 */}
+      {/* 2. 内部酒精填充 */}
+      <ellipse
+        cx={w * 0.5}
+        cy={h - baseH * 0.4}
+        rx={baseR * 0.8}
+        ry={baseH * 0.3}
+        fill={SCENE_COLORS.heatingAndSupport.alcoholLamp}
+        opacity={0.35}
+      />
+
+      {/* 3. 灯芯瓷套管与灯芯 */}
       {!capped && (
         <g>
           {/* 瓷套管 */}
@@ -114,7 +103,7 @@ export function AlcoholLampApparatus({
         </g>
       )}
 
-      {/* 3. 灯帽 (如果盖上) */}
+      {/* 4. 灯帽 (如果盖上) */}
       {capped && (
         <path
           d={`
@@ -130,31 +119,43 @@ export function AlcoholLampApparatus({
         />
       )}
 
-      {/* 4. 玻璃灯座背景 */}
-      <path
-        d={`
-          M ${neckLeft} ${baseTopY}
-          C ${w * 0.1} ${baseTopY}, 0 ${h - baseH * 0.5}, 0 ${h - 4}
-          Q 0 ${h} 4 ${h}
-          L ${w - 4} ${h}
-          Q ${w} ${h} ${w} ${h - 4}
-          C ${w} ${h - baseH * 0.5}, ${w * 0.9} ${baseTopY}, ${w - neckLeft} ${baseTopY}
-          Z
-        `}
-        fill={withAlpha(SCENE_COLORS.container.beaker, 0.5)}
-        stroke={SCENE_COLORS.container.beakerBorder}
-        strokeWidth={STROKE.objectLine}
-      />
-
-      {/* 内部酒精填充 */}
-      <ellipse
-        cx={w * 0.5}
-        cy={h - baseH * 0.4}
-        rx={baseR * 0.8}
-        ry={baseH * 0.3}
-        fill={SCENE_COLORS.heatingAndSupport.alcoholLamp}
-        opacity={0.35}
-      />
+      {/* 5. 三层火焰 (外焰、内焰、焰心) — 根部精准对接在灯芯顶端 (baseTopY - neckH - 6) */}
+      {isBurning && (
+        <g transform={`translate(${w * 0.5}, ${baseTopY - neckH - 6})`}>
+          {/* 外焰 (最高温，橙黄渐变) */}
+          <path
+            d={`
+              M 0 -${flameH}
+              C ${flameH * 0.6} -${flameH * 0.5}, ${flameH * 0.5} 0, 0 0
+              C -${flameH * 0.5} 0, -${flameH * 0.6} -${flameH * 0.5}, 0 -${flameH}
+              Z
+            `}
+            fill={SCENE_COLORS.heatingAndSupport.flame}
+            opacity={0.95}
+          />
+          {/* 内焰 */}
+          <path
+            d={`
+              M 0 -${flameH * 0.65}
+              C ${flameH * 0.35} -${flameH * 0.35}, ${flameH * 0.3} 0, 0 0
+              C -${flameH * 0.3} 0, -${flameH * 0.35} -${flameH * 0.35}, 0 -${flameH * 0.65}
+              Z
+            `}
+            fill={SCENE_COLORS.heatingAndSupport.flameCore}
+            opacity={0.85}
+          />
+          {/* 焰心 (最内侧高亮) */}
+          <ellipse
+            cx={0}
+            cy={-(flameH * 0.2)}
+            rx={flameH * 0.12}
+            ry={flameH * 0.2}
+            fill={SCENE_COLORS.materials.glass}
+            opacity={0.95}
+          />
+        </g>
+      )}
     </g>
+
   )
 }

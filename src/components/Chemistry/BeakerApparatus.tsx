@@ -25,7 +25,7 @@ export function getBeakerPorts(
   return {
     innerWallLeft: { x: x + wallT, y: y + 10 },
     innerWallRight: { x: x + width - wallT, y: y + 10 },
-    mouthLeft: { x, y },
+    mouthLeft: { x: x + width * 0.3, y: y - 10 },
     bottomPort: { x: x + width * 0.5, y: y + height },
   }
 }

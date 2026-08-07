@@ -86,7 +86,8 @@ export function DryingTubeApparatus({
             stroke={SCENE_COLORS.container.beakerBorder}
             strokeWidth={STROKE.objectLine}
           />
-          {/* 脱脂棉 */}
+          {/* 脱脂棉 (左右两侧均必须塞脱脂棉，高考常识防固体粉末吹出) */}
+          <ellipse cx={w * 0.22} cy={0} rx={3} ry={3.5} fill={SCENE_COLORS.materials.asbestos} />
           <ellipse cx={w * 0.68} cy={0} rx={3} ry={6} fill={SCENE_COLORS.materials.asbestos} />
         </g>
       ) : (

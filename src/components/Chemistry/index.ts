@@ -45,14 +45,17 @@ export type { VolumetricFlaskApparatusProps } from './VolumetricFlaskApparatus'
 export { TestTubeApparatus } from './TestTubeApparatus'
 export type { TestTubeApparatusProps } from './TestTubeApparatus'
 
-export { GasJarApparatus } from './GasJarApparatus'
-export type { GasJarApparatusProps } from './GasJarApparatus'
+export { GasJarApparatus, getGasJarPorts } from './GasJarApparatus'
+export type { GasJarApparatusProps, GasJarPorts } from './GasJarApparatus'
 
 export { AlcoholLampApparatus } from './AlcoholLampApparatus'
 export type { AlcoholLampApparatusProps } from './AlcoholLampApparatus'
 
 export { SeparatoryFunnelApparatus } from './SeparatoryFunnelApparatus'
 export type { SeparatoryFunnelApparatusProps } from './SeparatoryFunnelApparatus'
+
+export { SolidHeatingGeneratorApparatus, getSolidHeatingGeneratorPorts } from './SolidHeatingGeneratorApparatus'
+export type { SolidHeatingGeneratorApparatusProps, SolidHeatingGeneratorPorts } from './SolidHeatingGeneratorApparatus'
 
 // ── 装置支撑与连接类组件 ──
 export { IronSupportApparatus } from './IronSupportApparatus'
@@ -70,8 +73,8 @@ export type { WaterBathApparatusProps } from './WaterBathApparatus'
 export { GlassTubingConnectionApparatus } from './GlassTubingConnectionApparatus'
 export type { GlassTubingConnectionApparatusProps } from './GlassTubingConnectionApparatus'
 
-export { KippApparatus } from './KippApparatus'
-export type { KippApparatusProps } from './KippApparatus'
+export { KippApparatus, getKippApparatusPorts } from './KippApparatus'
+export type { KippApparatusProps, KippApparatusPorts } from './KippApparatus'
 
 export { EvaporatingDishApparatus } from './EvaporatingDishApparatus'
 export type { EvaporatingDishApparatusProps } from './EvaporatingDishApparatus'

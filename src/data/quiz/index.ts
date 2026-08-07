@@ -18,6 +18,8 @@ import { modelReagentStep } from './model-reagent-step'
 import { modelFlashCards } from './model-flash-cards'
 import { modelIndustrialFlow } from './model-industrial-flow'
 import { modelReactionPrincipleNexus } from './model-reaction-principle-nexus'
+import { modelElectrochemicalTwin } from './model-electrochemical-twin'
+import { modelGasChainQuiz } from './model-gas-chain'
 
 import type { ModelQuizData } from './types'
 
@@ -35,6 +37,8 @@ export const modelQuizMap: Record<string, ModelQuizData> = {
   [modelFlashCards.modelId]: modelFlashCards,
   [modelIndustrialFlow.modelId]: modelIndustrialFlow,
   [modelReactionPrincipleNexus.modelId]: modelReactionPrincipleNexus,
+  [modelElectrochemicalTwin.modelId]: modelElectrochemicalTwin,
+  [modelGasChainQuiz.modelId]: modelGasChainQuiz,
 }
 
 export function getModelQuizData(modelId: string): ModelQuizData | undefined {
