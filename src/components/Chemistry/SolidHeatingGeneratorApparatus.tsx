@@ -95,11 +95,11 @@ export function SolidHeatingGeneratorApparatus({
         />
       </g>
 
-      {/* ── 2. 酒精灯 (平立于桌面 Y=0，中心 X=70.5，外焰顶端刚好相切试管底部下沿) ── */}
+      {/* ── 2. 酒精灯 (中心 X=70.5，外焰顶端 100% 紧贴相切试管底部下壁) ── */}
       <g id="alcohol-lamp">
         <AlcoholLampApparatus
           x={38}
-          y={-110}
+          y={-132}
           width={65}
           height={110}
           lit={lit}
@@ -142,20 +142,14 @@ export function SolidHeatingGeneratorApparatus({
           opacity={0.9}
         />
 
-        {/* 4.3 单孔橡胶塞 (紧塞管口右侧) */}
-        <polygon
-          points="140,-163 150,-163 150,-137 140,-137"
-          fill={SCENE_COLORS.materials.rubber}
-        />
-
-        {/* 4.4 塞心伸出的出气玻璃弯管 */}
-        <path
-          d="M 145,-150 L 155,-150 L 155,-162"
-          fill="none"
-          stroke="#94A3B8"
-          strokeWidth={4}
-          strokeLinecap="round"
-        />
+        {/* 4.3 单孔橡皮塞与出气玻璃导管 */}
+        <g id="stopper-and-tube">
+          <rect x={140} y={-161} width={12} height={22} rx={2} fill={SCENE_COLORS.stopper.rubberStopper} stroke={SCENE_COLORS.stopper.rubberStopperBorder} strokeWidth={1} />
+          {/* L 型出气玻璃管 */}
+          <path d="M 144,-150 L 155,-150 L 155,-162" fill="none" stroke={SCENE_COLORS.tube.glass} strokeWidth={4} strokeLinecap="round" />
+          {/* 出口端红褐色胶管套接扣 */}
+          <rect x={150} y={-166} width={10} height={7} rx={1.5} fill="#B45309" stroke="#78350F" strokeWidth={1} />
+        </g>
       </g>
 
       {/* ── 5. 铁夹前爪卡扣 (跟随试管倾斜 6° 紧贴卡住试管 1/3 处外壁) ── */}

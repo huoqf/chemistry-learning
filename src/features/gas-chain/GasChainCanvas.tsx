@@ -48,7 +48,7 @@ const SYSTEM_PRESETS: Record<GasChainSystemId, Partial<GasChainParams>> = {
     washReverse: false,
     dryer: 'conc-h2so4',
     collection: 'upward-air',
-    tailGas: 'inverted-funnel',
+    tailGas: 'naoh-absorber',  // SO₂ 有毒，尾气用 NaOH 溶液吸收（高考标准答案）
     temp: 25,
     heating: false,
   },

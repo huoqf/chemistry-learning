@@ -38,6 +38,8 @@ export interface AntiSiphonFunnelApparatusProps {
   liquidColor?: string
   /** 气体吸收与气泡动态标志 */
   isAbsorbing?: boolean
+  /** 倒置漏斗大口浸入/相切液面深度 (默认 2px) */
+  touchDepth?: number
   /** 说明文字 */
   label?: string
   /** 字体缩放 */
@@ -60,11 +62,13 @@ export function AntiSiphonFunnelApparatus({
   liquidLevel = 0.3,
   liquidColor = withAlpha(SCENE_COLORS.reagent.acid, 0.5),
   isAbsorbing = true,
-  label = '倒置漏斗防倒吸',
+  label,
   font = (n) => n,
 }: AntiSiphonFunnelApparatusProps) {
   const w = width
   const h = height
+  // 利用 liquidLevel 动态微调触及深度 (1~4px)
+  const touchDepth = Math.max(1, Math.min(4, liquidLevel * 10))
 
   // 漏斗结构细分
   const stemW = 10
@@ -74,12 +78,12 @@ export function AntiSiphonFunnelApparatus({
 
   return (
     <g transform={`translate(${x}, ${y})`}>
-      {/* 1. 烧杯/吸收容器液面 */}
+      {/* 1. 烧杯/吸收容器液面 (使液面恰好与倒置漏斗大口下沿 y=h 相切/微浸入 1~4px) */}
       <rect
-        x={-15}
-        y={h * (1 - liquidLevel)}
-        width={w + 30}
-        height={h * liquidLevel + 10}
+        x={-20}
+        y={h - touchDepth}
+        width={w + 40}
+        height={35}
         fill={liquidColor}
         opacity={0.7}
         rx={3}
@@ -94,6 +98,17 @@ export function AntiSiphonFunnelApparatus({
         fill={withAlpha(SCENE_COLORS.materials.glass, 0.5)}
         stroke={SCENE_COLORS.materials.glassBorder}
         strokeWidth={STROKE.objectLine}
+      />
+      {/* 细柄顶端红褐色软胶管套接扣 (y = -10 ~ 0)，使顶端连接点与 topConnectPort (y-10) 视觉 100% 吻合 */}
+      <rect
+        x={stemLeft - 1}
+        y={-10}
+        width={stemW + 2}
+        height={10}
+        rx={2}
+        fill="#B45309"
+        stroke="#78350F"
+        strokeWidth={1}
       />
 
       {/* 3. 倒置漏斗主体 (大口朝下) */}

@@ -36,8 +36,8 @@ export interface GlassTubingConnectionApparatusProps {
   midY?: number
   /** 导管管径宽度（默认 8） */
   tubeWidth?: number
-  /** 导管类型：'straight' 直管 | 'L-shape' L型管 | 'Z-shape' Z型管 */
-  tubeType?: 'straight' | 'L-shape' | 'Z-shape'
+  /** 导管类型：'straight' 直管 | 'L-shape' L型管 | 'Z-shape' Z型管 | 'bridge' 顶桥高程管 | 'low-bridge' 瓶间低空弯管 | 'horizontal-socket' 90°横向插口管 */
+  tubeType?: 'straight' | 'L-shape' | 'Z-shape' | 'bridge' | 'low-bridge' | 'horizontal-socket'
   /** 是否在起点/终点增加橡皮塞套接扣 */
   hasStopperJoint?: boolean
   /** 气体名称/说明 */
@@ -51,7 +51,7 @@ export interface GlassTubingConnectionApparatusProps {
  *
  * 特性：
  * - 告别单线粗线条，升级为双壁玻璃管径厚度与透明质感
- * - 支持直线、L型折角与 Z 型转折导管
+ * - 支持直线、L型折角、Z型转折与 Bridge 顶桥连线
  * - 导出静态 `getGlassTubingPorts` 锚点
  */
 export function GlassTubingConnectionApparatus({
@@ -68,13 +68,27 @@ export function GlassTubingConnectionApparatus({
 }: GlassTubingConnectionApparatusProps) {
   const tw = tubeWidth
 
+  // 解析 midY：若传入绝对 Y 坐标 (如 > 100)，转换为相对于 x,y 的 relative Y 偏置
+  const relMidY = midY > 100 ? midY - y : midY
+
   const getPathD = () => {
     if (tubeType === 'straight') {
       return `M 0 0 L ${endX} ${endY}`
     } else if (tubeType === 'L-shape') {
-      return `M 0 0 L 0 ${midY} L ${endX} ${midY} L ${endX} ${endY}`
+      return `M 0 0 L 0 ${relMidY} L ${endX} ${relMidY} L ${endX} ${endY}`
+    } else if (tubeType === 'bridge') {
+      // 顶桥路由：起点向上升至 relMidY ➔ 水平平移至 endX ➔ 垂直下降至 endY
+      return `M 0 0 L 0 ${relMidY} L ${endX} ${relMidY} L ${endX} ${endY}`
+    } else if (tubeType === 'low-bridge') {
+      // 瓶间低空拱桥弯管：仅高出瓶塞 25px 拱线连接，极具实验室真实感
+      const archY = Math.min(0, endY) - 25
+      return `M 0 0 L 0 ${archY} Q 0 ${archY} 10 ${archY} L ${endX - 10} ${archY} Q ${endX} ${archY} ${endX} ${archY + 10} L ${endX} ${endY}`
+    } else if (tubeType === 'horizontal-socket') {
+      // 90° 横向对头插口管：降落至目标端点同高度后，水平平平推进插入横向管口
+      return `M 0 0 L 0 ${relMidY} L ${endX - 8} ${relMidY} L ${endX} ${endY}`
     } else {
-      return `M 0 0 L ${endX * 0.5} 0 L ${endX * 0.5} ${endY} L ${endX} ${endY}`
+      // Z-shape：从起点走向 relMidY 折弯或中间节点
+      return `M 0 0 L ${endX * 0.5} 0 L ${endX * 0.5} ${relMidY} L ${endX} ${relMidY} L ${endX} ${endY}`
     }
   }
 

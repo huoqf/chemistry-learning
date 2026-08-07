@@ -73,6 +73,12 @@ export type { WaterBathApparatusProps } from './WaterBathApparatus'
 export { GlassTubingConnectionApparatus } from './GlassTubingConnectionApparatus'
 export type { GlassTubingConnectionApparatusProps } from './GlassTubingConnectionApparatus'
 
+export { LiquidHeatingGeneratorApparatus, getLiquidHeatingGeneratorPorts } from './LiquidHeatingGeneratorApparatus'
+export type { LiquidHeatingGeneratorApparatusProps, LiquidHeatingGeneratorPorts } from './LiquidHeatingGeneratorApparatus'
+
+export { NoHeatGeneratorApparatus, getNoHeatGeneratorPorts } from './NoHeatGeneratorApparatus'
+export type { NoHeatGeneratorApparatusProps, NoHeatGeneratorPorts } from './NoHeatGeneratorApparatus'
+
 export { KippApparatus, getKippApparatusPorts } from './KippApparatus'
 export type { KippApparatusProps, KippApparatusPorts } from './KippApparatus'
 

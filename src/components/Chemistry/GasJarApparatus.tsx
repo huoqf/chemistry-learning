@@ -166,8 +166,8 @@ export function GasJarApparatus({
               y1={-15}
               x2={lipLeft + lipW * 0.3}
               y2={leftTubeH}
-              stroke="#64748B"
-              strokeWidth={4}
+              stroke={SCENE_COLORS.materials.glassBorder}
+              strokeWidth={6}
               strokeLinecap="square"
             />
             {/* 玻璃内管高光 */}
@@ -176,8 +176,8 @@ export function GasJarApparatus({
               y1={-15}
               x2={lipLeft + lipW * 0.3}
               y2={leftTubeH}
-              stroke={SCENE_COLORS.tube.glass || '#E0F2FE'}
-              strokeWidth={2}
+              stroke={withAlpha(SCENE_COLORS.tube.glass ?? '#E0F2FE', 0.85)}
+              strokeWidth={3}
               strokeLinecap="square"
             />
           </g>
@@ -190,8 +190,8 @@ export function GasJarApparatus({
               y1={-15}
               x2={lipLeft + lipW * 0.7}
               y2={rightTubeH}
-              stroke="#64748B"
-              strokeWidth={4}
+              stroke={SCENE_COLORS.materials.glassBorder}
+              strokeWidth={6}
               strokeLinecap="square"
             />
             {/* 玻璃内管高光 */}
@@ -200,8 +200,8 @@ export function GasJarApparatus({
               y1={-15}
               x2={lipLeft + lipW * 0.7}
               y2={rightTubeH}
-              stroke={SCENE_COLORS.tube.glass || '#E0F2FE'}
-              strokeWidth={2}
+              stroke={withAlpha(SCENE_COLORS.tube.glass ?? '#E0F2FE', 0.85)}
+              strokeWidth={3}
               strokeLinecap="square"
             />
           </g>

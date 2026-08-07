@@ -1,5 +1,4 @@
-import { SCENE_COLORS, STROKE, FONT, withAlpha } from '@/theme'
-import type { FontScaler } from '@/theme'
+import { SCENE_COLORS, STROKE, withAlpha } from '@/theme'
 
 export interface GasWashingBottlePorts {
   /** 长进气管入口 (洗气瓶左上方) */
@@ -19,11 +18,15 @@ export function getGasWashingBottlePorts(
   x: number,
   y: number,
   width = 90,
-  height = 140
+  height = 140,
+  reversed = false
 ): GasWashingBottlePorts {
+  const leftX = x + width * 0.3
+  const rightX = x + width * 0.7
+  // 套接扣顶面在 y-24（与渲染中 <rect y={-24}> 一致）
   return {
-    inletPort: { x: x + width * 0.3, y: y - 20 },
-    outletPort: { x: x + width * 0.7, y: y - 10 },
+    inletPort: { x: reversed ? rightX : leftX, y: y - 24 },
+    outletPort: { x: reversed ? leftX : rightX, y: y - 24 },
     topNeckPort: { x: x + width * 0.5, y: y + 12 },
     bottomPort: { x: x + width * 0.5, y: y + height },
   }
@@ -44,10 +47,10 @@ export interface GasWashingBottleApparatusProps {
   fillLevel?: number
   /** 是否产生气体泡 (洗气通过时) */
   bubbling?: boolean
+  /** 是否管路接反 (true=短进长出/右长左短反转，极易导致喷溅) */
+  reversed?: boolean
   /** 气体名称/说明 */
   label?: string
-  /** 字体缩放函数 */
-  font?: FontScaler
 }
 
 /**
@@ -55,7 +58,7 @@ export interface GasWashingBottleApparatusProps {
  *
  * 特性：
  * - 遵守高考“长进短出”气流净化原理
- * - 双孔橡皮塞密封、长管深入液面下方、短管停留在液面上方
+ * - 双孔橡皮塞密封、支持 reversed 正反接长短管动态对调视效
  * - 动态支持澄清石灰水、浓硫酸、变色硅胶及洗气气泡效果
  * - 导出静态 `getGasWashingBottlePorts` 接口，解决导管组合错位问题
  */
@@ -67,8 +70,7 @@ export function GasWashingBottleApparatus({
   reagentType = 'acid',
   fillLevel = 0.35,
   bubbling = false,
-  label,
-  font = (n) => n,
+  reversed = false,
 }: GasWashingBottleApparatusProps) {
   const w = width
   const h = height
@@ -91,6 +93,10 @@ export function GasWashingBottleApparatus({
   // 液面高度
   const liquidH = Math.min(bodyH - 10, bodyH * fillLevel)
   const liquidY = h - 10 - liquidH
+
+  // 动态长短管 X 坐标计算 (reversed 为 true 时长短管对调)
+  const longTubeX = reversed ? w * 0.7 : w * 0.3
+  const shortTubeX = reversed ? w * 0.3 : w * 0.7
 
   return (
     <g transform={`translate(${x}, ${y})`}>
@@ -162,71 +168,75 @@ export function GasWashingBottleApparatus({
         strokeWidth={1}
       />
 
-      {/* 4. 长进气管 (长进：深入液面下方) */}
-      <g>
-        {/* 外套厚度与管壁 */}
-        <path
-          d={`
-            M ${w * 0.3 - 4} -20
-            L ${w * 0.3 + 4} -20
-            L ${w * 0.3 + 4} ${h - 20}
-            L ${w * 0.3 - 4} ${h - 20}
-            Z
-          `}
-          fill={SCENE_COLORS.materials.glass}
-          stroke={SCENE_COLORS.tube.glass}
-          strokeWidth={1}
-          opacity={0.9}
-        />
-        {/* 长管进气箭头指示 */}
+      {/* 4. 长管：外壁 strokeWidth=6 / 内高光 strokeWidth=3，与路由连接管粗细一致 */}
+      <g id="wash-long-tube">
+        {/* 外壁 */}
         <line
-          x1={w * 0.3}
-          y1={-25}
-          x2={w * 0.3}
-          y2={-10}
-          stroke={SCENE_COLORS.labels.chemicalFormula}
-          strokeWidth={2}
+          x1={longTubeX} y1={-24}
+          x2={longTubeX} y2={h - 20}
+          stroke={SCENE_COLORS.materials.glassBorder}
+          strokeWidth={6}
+          strokeLinecap="square"
         />
-      </g>
-
-      {/* 5. 短出气管 (短出：留在液面上方) */}
-      <g>
-        <path
-          d={`
-            M ${w * 0.7 - 4} -10
-            L ${w * 0.7 + 4} -10
-            L ${w * 0.7 + 4} ${neckH + 20}
-            L ${w * 0.7 - 4} ${neckH + 20}
-            Z
-          `}
-          fill={SCENE_COLORS.materials.glass}
-          stroke={SCENE_COLORS.tube.glass}
+        {/* 内高光 */}
+        <line
+          x1={longTubeX} y1={-24}
+          x2={longTubeX} y2={h - 20}
+          stroke={withAlpha(SCENE_COLORS.tube.glass, 0.85)}
+          strokeWidth={3}
+          strokeLinecap="square"
+        />
+        {/* 顶口红褐色软胶管套接扣 */}
+        <rect
+          x={longTubeX - 5.5}
+          y={-30}
+          width={11}
+          height={8}
+          rx={2}
+          fill="#B45309"
+          stroke="#78350F"
           strokeWidth={1}
-          opacity={0.9}
         />
       </g>
 
-      {/* 6. 洗气动态气泡粒子 */}
+      {/* 5. 短管：外壁 strokeWidth=6 / 内高光 strokeWidth=3 */}
+      <g id="wash-short-tube">
+        {/* 外壁 */}
+        <line
+          x1={shortTubeX} y1={-24}
+          x2={shortTubeX} y2={neckH + 20}
+          stroke={SCENE_COLORS.materials.glassBorder}
+          strokeWidth={6}
+          strokeLinecap="square"
+        />
+        {/* 内高光 */}
+        <line
+          x1={shortTubeX} y1={-24}
+          x2={shortTubeX} y2={neckH + 20}
+          stroke={withAlpha(SCENE_COLORS.tube.glass, 0.85)}
+          strokeWidth={3}
+          strokeLinecap="square"
+        />
+        {/* 顶口红褐色软胶管套接扣 */}
+        <rect
+          x={shortTubeX - 5.5}
+          y={-30}
+          width={11}
+          height={8}
+          rx={2}
+          fill="#B45309"
+          stroke="#78350F"
+          strokeWidth={1}
+        />
+      </g>
+
+      {/* 6. 洗气动态气泡粒子 (跟随长管出口底部) */}
       {bubbling && (
-        <g transform={`translate(${w * 0.3}, ${h - 20})`}>
+        <g transform={`translate(${longTubeX}, ${h - 20})`}>
           <circle cx={-3} cy={-10} r={2.5} fill="none" stroke={SCENE_COLORS.materials.glassBorder} strokeWidth={1} />
           <circle cx={4} cy={-25} r={3.5} fill="none" stroke={SCENE_COLORS.materials.glassBorder} strokeWidth={1} />
           <circle cx={-1} cy={-45} r={4.5} fill="none" stroke={SCENE_COLORS.materials.glassBorder} strokeWidth={1.2} />
         </g>
-      )}
-
-      {/* 标注提示 */}
-      {label && (
-        <text
-          x={w * 0.5}
-          y={h + 16}
-          textAnchor="middle"
-          fontSize={font(FONT.annotation)}
-          fill={SCENE_COLORS.labels.chemicalFormula}
-          fontWeight="bold"
-        >
-          {label}
-        </text>
       )}
     </g>
   )

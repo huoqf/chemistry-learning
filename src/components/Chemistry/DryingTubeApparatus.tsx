@@ -46,38 +46,11 @@ export function DryingTubeApparatus({
   return (
     <g transform={`translate(${x}, ${y})`}>
       {variant === 'spherical' ? (
-        /* 1. 球形干燥管 (横置) */
+        /* 1. 球形干燥管 (横置: 遵循高考“大口进、小口出”原则，左大右小) */
         <g transform={`translate(0, ${h * 0.5})`}>
-          {/* 左侧细进气管 */}
+          {/* 左侧大口粗进气管 (大口进) */}
           <rect
             x={0}
-            y={-4}
-            width={w * 0.25}
-            height={8}
-            fill={withAlpha(SCENE_COLORS.reactionAndGas.dryingTube, 0.4)}
-            stroke={SCENE_COLORS.container.beakerBorder}
-            strokeWidth={STROKE.reference}
-          />
-          {/* 中间膨大球/粗管 */}
-          <circle
-            cx={w * 0.45}
-            cy={0}
-            r={h * 0.4}
-            fill={withAlpha(SCENE_COLORS.reactionAndGas.dryingTube, 0.4)}
-            stroke={SCENE_COLORS.container.beakerBorder}
-            strokeWidth={STROKE.objectLine}
-          />
-          {/* 内部固体干燥剂 */}
-          <circle
-            cx={w * 0.45}
-            cy={0}
-            r={h * 0.32}
-            fill={desiccantColor}
-            opacity={0.85}
-          />
-          {/* 右侧粗出口管与脱脂棉塞 */}
-          <rect
-            x={w * 0.65}
             y={-8}
             width={w * 0.35}
             height={16}
@@ -86,9 +59,36 @@ export function DryingTubeApparatus({
             stroke={SCENE_COLORS.container.beakerBorder}
             strokeWidth={STROKE.objectLine}
           />
-          {/* 脱脂棉 (左右两侧均必须塞脱脂棉，高考常识防固体粉末吹出) */}
-          <ellipse cx={w * 0.22} cy={0} rx={3} ry={3.5} fill={SCENE_COLORS.materials.asbestos} />
-          <ellipse cx={w * 0.68} cy={0} rx={3} ry={6} fill={SCENE_COLORS.materials.asbestos} />
+          {/* 中间膨大球/粗管 */}
+          <circle
+            cx={w * 0.55}
+            cy={0}
+            r={h * 0.4}
+            fill={withAlpha(SCENE_COLORS.reactionAndGas.dryingTube, 0.4)}
+            stroke={SCENE_COLORS.container.beakerBorder}
+            strokeWidth={STROKE.objectLine}
+          />
+          {/* 内部固体干燥剂 */}
+          <circle
+            cx={w * 0.55}
+            cy={0}
+            r={h * 0.32}
+            fill={desiccantColor}
+            opacity={0.85}
+          />
+          {/* 右侧小口细出气管 (小口出) */}
+          <rect
+            x={w * 0.75}
+            y={-4}
+            width={w * 0.25}
+            height={8}
+            fill={withAlpha(SCENE_COLORS.reactionAndGas.dryingTube, 0.4)}
+            stroke={SCENE_COLORS.container.beakerBorder}
+            strokeWidth={STROKE.reference}
+          />
+          {/* 脱脂棉 (左右两侧塞脱脂棉防粉末被气体吹飞) */}
+          <ellipse cx={w * 0.3} cy={0} rx={3} ry={6} fill={SCENE_COLORS.materials.asbestos} />
+          <ellipse cx={w * 0.78} cy={0} rx={3} ry={3.5} fill={SCENE_COLORS.materials.asbestos} />
         </g>
       ) : (
         /* 2. U型管 (竖置) */
@@ -132,6 +132,12 @@ export function DryingTubeApparatus({
           {desiccantName}
         </text>
       )}
+
+      {/* 干燥管物理托架支撑 (解决半空悬浮常识 Bug) */}
+      <g id="drying-tube-holder">
+        <rect x={w * 0.5 - 2} y={variant === 'spherical' ? h * 0.5 + h * 0.4 : h - 10} width={4} height={ variant === 'spherical' ? 85 : 40 } fill="#475569" rx={1} />
+        <path d={`M ${w * 0.5 - 14} ${variant === 'spherical' ? h * 0.5 + 8 : h - 8} Q ${w * 0.5} ${variant === 'spherical' ? h * 0.5 + 20 : h + 4} ${w * 0.5 + 14} ${variant === 'spherical' ? h * 0.5 + 8 : h - 8}`} fill="none" stroke="#334155" strokeWidth={3} />
+      </g>
     </g>
   )
 }
