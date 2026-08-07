@@ -1,6 +1,10 @@
 /**
  * src/features/gas-chain/components/GasChainRightPanel.tsx
  * 气体制备/净化/尾气处理装置链工具 - 右侧屏化学量与考点面板
+ *
+ * 遵循 Rule [AGENTS.md] 规范：
+ * 100% 基于项目 UI 标准组件 ChemistryPanel 重构，将避坑诊断引擎逻辑无缝融入
+ * quantities / formulas / warnings / gaokaoPoints 标准结构，彻底消除重复与异构卡片。
  */
 
 import React from 'react'
@@ -19,9 +23,18 @@ export const GasChainRightPanel: React.FC<GasChainRightPanelProps> = ({
   params,
   chemistry,
 }) => {
-  const { gasPurity, impurityConc, tailAbsorbRate, flowRateOut, reactionEquation, purificationEquation, tailGasEquation } = chemistry
+  const {
+    gasPurity,
+    impurityConc,
+    tailAbsorbRate,
+    flowRateOut,
+    reactionEquation,
+    purificationEquation,
+    tailGasEquation,
+    issues,
+  } = chemistry
 
-  // 1. 化学量定义
+  // 1. 核心化学量定义
   const quantities = [
     {
       label: '目标气体收集纯度',
@@ -60,7 +73,17 @@ export const GasChainRightPanel: React.FC<GasChainRightPanelProps> = ({
     },
   ]
 
-  // 2. 反应公式定义
+  // 2. 净化 Note 动态计算
+  let washNote = '洗气瓶必须“长进短出”；饱和 NaCl 除 HCl 抑 Cl₂；NaOH 吸收酸性杂质。'
+  if (params.washReagent === 'none') {
+    washNote = '提示：当前选用了未净化跳过节点，请确保发生气体无有害副杂质。'
+  } else if (params.washReagent === 'fuchsin') {
+    washNote = 'SO₂ 气体通入品红溶液，使红色褪去；加热后重新恢复红色 (SO₂ 漂白特征)。'
+  } else if (params.washReagent === 'kmno4') {
+    washNote = '酸性 KMnO₄ 可氧化 SO₂ 除杂；但强氧化性会切断 C=C 双键把乙烯氧化成 CO₂！'
+  }
+
+  // 3. 反应公式定义
   const formulas = [
     {
       name: '① 发生反应方程式',
@@ -70,17 +93,25 @@ export const GasChainRightPanel: React.FC<GasChainRightPanelProps> = ({
     {
       name: '② 净化除杂与洗气反应',
       latex: purificationEquation,
-      note: '洗气瓶必须“长进短出”；饱和 NaCl 除 HCl 抑 Cl₂；NaOH 吸收酸性杂质。',
+      note: washNote,
     },
     {
       name: '③ 尾气吸收与防倒吸',
       latex: tailGasEquation,
-      note: '极易溶气体 (NH₃/HCl) 必须使用倒置漏斗/安全瓶防止引发倒吸试管炸裂。',
+      note: '极易溶气体 (NH₃/HCl/SO₂) 必须使用倒置漏斗/安全瓶防止引发倒吸试管炸裂。',
     },
   ]
 
-  // 3. 高考要点定义
-  const gaokaoPoints = [
+  // 4. 将避坑诊断 issues 转换为 ChemistryPanel 的易错警示 (warnings)
+  const warnings = issues
+    .filter((issue) => issue.level === 'danger' || issue.level === 'warning')
+    .map((issue) => ({
+      text: `【${issue.level === 'danger' ? '事故高危' : '易错扣分'}】${issue.title} — ${issue.description}`,
+      level: issue.level === 'danger' ? ('danger' as const) : ('warning' as const),
+    }))
+
+  // 5. 高考要点定义（融合经典要点与避坑引擎考点）
+  const baseGaokaoPoints = [
     {
       text: '【气体制备全链顺序】：发生 ➔ 净化除杂 ➔ 干燥脱水 ➔ 规范收集 ➔ 尾气处理/防倒吸。',
       importance: 'gaokao' as const,
@@ -97,31 +128,30 @@ export const GasChainRightPanel: React.FC<GasChainRightPanelProps> = ({
       text: '【极易溶气体防倒吸】：NH₃/HCl 直接插入水/碱液会引致剧烈倒吸炸裂；倒置漏斗大容积可在液体倒吸时自动脱离液面防倒吸。',
       importance: 'hard' as const,
     },
-    {
-      text: '【收集方法选择】：密度比空气大 (Cl₂/SO₂/NO₂) 用向上排空气法；密度比空气小 (NH₃) 用向下排空气法；难溶于水 (O₂/NO/C₂H₄) 用排水法。',
-      importance: 'basic' as const,
-    },
   ]
 
-  // 4. 易错警示
-  const warnings = [
-    ...(chemistry.hasDangerAlert
-      ? [
-          {
-            text: `高危警示：当前装置链存在事故患隐 (${chemistry.dangerType})，请查看中屏诊断卡并即时修复！`,
-            level: 'danger' as const,
-          },
-        ]
-      : []),
-  ]
+  // 加上从避坑诊断中动态提取的高考考点
+  const issuePoints = issues.map((issue) => ({
+    text: `【避坑考点】${issue.examPoint}`,
+    importance: (issue.level === 'danger' ? 'hard' : 'gaokao') as 'hard' | 'gaokao',
+  }))
+
+  // 去重后合成高考要点
+  const combinedPoints = [...baseGaokaoPoints]
+  issuePoints.forEach((ip) => {
+    if (!combinedPoints.some((p) => p.text === ip.text)) {
+      combinedPoints.push(ip)
+    }
+  })
 
   return (
     <div className="w-full h-full p-4 overflow-y-auto bg-white border-l border-slate-200">
       <ChemistryPanel
+        title="气体制备装置链化学指标与踩分面板"
         quantities={quantities}
         formulas={formulas}
-        gaokaoPoints={gaokaoPoints}
         warnings={warnings}
+        gaokaoPoints={combinedPoints}
       />
     </div>
   )

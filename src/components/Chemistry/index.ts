@@ -80,8 +80,9 @@ export { EvaporatingDishApparatus } from './EvaporatingDishApparatus'
 export type { EvaporatingDishApparatusProps } from './EvaporatingDishApparatus'
 
 // ── 干燥冷凝与提纯分离类组件 ──
-export { DryingTubeApparatus } from './DryingTubeApparatus'
-export type { DryingTubeApparatusProps } from './DryingTubeApparatus'
+export { DryingTubeApparatus, getDryingTubePorts } from './DryingTubeApparatus'
+export type { DryingTubeApparatusProps, DryingTubePorts } from './DryingTubeApparatus'
+
 
 export { CondenserApparatus } from './CondenserApparatus'
 export type { CondenserApparatusProps } from './CondenserApparatus'

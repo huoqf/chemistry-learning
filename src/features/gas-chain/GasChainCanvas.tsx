@@ -48,7 +48,7 @@ const SYSTEM_PRESETS: Record<GasChainSystemId, Partial<GasChainParams>> = {
     washReverse: false,
     dryer: 'conc-h2so4',
     collection: 'upward-air',
-    tailGas: 'naoh-absorber',
+    tailGas: 'inverted-funnel',
     temp: 25,
     heating: false,
   },

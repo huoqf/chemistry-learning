@@ -152,7 +152,8 @@ export const GasChainLeftPanel: React.FC<GasChainLeftPanelProps> = ({
                 { label: '倒置漏斗防倒吸', value: 'inverted-funnel' },
                 { label: '安全瓶防倒吸', value: 'safety-bottle' },
                 { label: 'NaOH 溶液吸收', value: 'naoh-absorber' },
-                { label: '点燃燃烧处理', value: 'combustion' },
+                { label: '点燃/灼烧处理', value: 'combustion' },
+                { label: '气球收集', value: 'balloon' },
                 { label: '直导管(高危倒吸)', value: 'direct-pipe' },
               ]}
             />

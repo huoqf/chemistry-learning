@@ -135,3 +135,29 @@ export function DryingTubeApparatus({
     </g>
   )
 }
+
+export interface DryingTubePorts {
+  inletPort: { x: number; y: number }
+  outletPort: { x: number; y: number }
+}
+
+export function getDryingTubePorts(
+  x: number,
+  y: number,
+  width: number = 110,
+  height: number = 60,
+  variant: 'spherical' | 'U-shape' = 'spherical'
+): DryingTubePorts {
+  if (variant === 'spherical') {
+    return {
+      inletPort: { x, y: y + height * 0.5 },
+      outletPort: { x: x + width, y: y + height * 0.5 },
+    }
+  } else {
+    return {
+      inletPort: { x: x + width * 0.2, y },
+      outletPort: { x: x + width * 0.8, y },
+    }
+  }
+}
+

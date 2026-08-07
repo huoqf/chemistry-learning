@@ -1,20 +1,12 @@
 /**
  * src/features/gas-chain/hooks/useGasChainChemistry.ts
  * 气体制备/净化/尾气处理装置链工具 - 纯化学计算 Hook
- *
- * 包含高考 5 大经典体系与全套避坑诊断：
- * 1. Cl₂ 体系 (MnO₂ + 浓盐酸，饱和 NaCl 洗 HCl，NaOH 尾气)
- * 2. NH₃ 体系 (固固加热试管向下倾斜，碱石灰干燥，向下排空气短进长出，防倒吸)
- * 3. SO₂ 体系 (70% H₂SO₄ + Na₂SO₃，品红/KMnO₄ 褪色检验，浓硫酸/CaCl₂ 干燥)
- * 4. NO₂ / NO 体系 (NO 易被 O₂ 氧化必须排水法，NO₂ 绝不能排水法会反应生成 NO)
- * 5. C₂H₄ 体系 (170°C 液面下温度计，NaOH 洗 CO₂/SO₂ 杂质，严禁用 KMnO₄ 除杂会产生 CO₂)
  */
 
 import { useMemo } from 'react'
 import type {
   GasChainParams,
   DiagnosticIssue,
-  GasNodeState,
 } from '../types'
 
 export interface GasChainChemistryResult {
@@ -22,7 +14,6 @@ export interface GasChainChemistryResult {
   impurityConc: number       // 杂质残留浓度 (0 - 100%)
   tailAbsorbRate: number     // 尾气吸收效率 (0 - 100%)
   flowRateOut: number        // 最终流出流速 (mL/min)
-  nodeStates: GasNodeState[] // 各节点化学状态
   issues: DiagnosticIssue[]  // 逻辑与避坑诊断提示
   hasDangerAlert: boolean    // 是否存在高危引发事故项
   dangerType: 'siphon' | 'splashing' | 'clogging' | 'none'
@@ -50,13 +41,7 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
     const issues: DiagnosticIssue[] = []
     let dangerType: 'siphon' | 'splashing' | 'clogging' | 'none' = 'none'
 
-    // 1. 确定初始生成气体与反应方程式
-    let initGasList: string[] = []
-    let reactionEquation = ''
-    let purificationEquation = ''
-    let tailGasEquation = ''
-
-    // 发生器条件与气体匹配审查
+    // 1. 发生器条件与气体匹配审查
     if ((generator === 'flask-heat' || generator === 'testtube-heat') && !heating) {
       issues.push({
         id: 'no-heating-gen',
@@ -79,6 +64,7 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
           examPoint: '反应物状态与发生装置选择：固+液加热必须使用烧瓶/蒸馏烧瓶 + 分液漏斗，严禁用倾斜试管。',
         })
       } else if (generator === 'kipp') {
+        dangerType = 'clogging'
         issues.push({
           id: 'generator-cl2-kipp-wrong',
           level: 'danger',
@@ -89,6 +75,7 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       }
     } else if (targetGas === 'NH₃' || systemId === 'nh3-prep') {
       if (generator === 'flask-noheat' || generator === 'kipp') {
+        dangerType = 'clogging'
         issues.push({
           id: 'generator-nh3-wrong',
           level: 'danger',
@@ -99,6 +86,7 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       }
     } else if (targetGas === 'C₂H₄' || systemId === 'c2h4-prep') {
       if (generator !== 'flask-heat') {
+        dangerType = 'splashing'
         issues.push({
           id: 'generator-c2h4-wrong',
           level: 'danger',
@@ -109,36 +97,58 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       }
     }
 
+    // 发生方程式计算
+    let reactionEquation = ''
     if (systemId === 'cl2-prep' || targetGas === 'Cl₂') {
-      initGasList = ['Cl₂', 'HCl', 'H₂O']
       reactionEquation = '\\text{MnO}_2 + 4\\text{HCl(浓)} \\xrightarrow{\\Delta} \\text{MnCl}_2 + \\text{Cl}_2\\uparrow + 2\\text{H}_2\\text{O}'
-      purificationEquation = '\\text{HCl} + \\text{H}_2\\text{O} \\rightarrow \\text{HCl(aq)} \\quad (\\text{饱和 NaCl 吸 HCl 抑 Cl}_2)'
-      tailGasEquation = '\\text{Cl}_2 + 2\\text{OH}^- = \\text{Cl}^- + \\text{ClO}^- + \\text{H}_2\\text{O}'
     } else if (systemId === 'nh3-prep' || targetGas === 'NH₃') {
-      initGasList = ['NH₃', 'H₂O']
       reactionEquation = '2\\text{NH}_4\\text{Cl} + \\text{Ca(OH)}_2 \\xrightarrow{\\Delta} \\text{CaCl}_2 + 2\\text{NH}_3\\uparrow + 2\\text{H}_2\\text{O}'
-      purificationEquation = '\\text{NH}_3 + \\text{H}_2\\text{O} \\rightleftharpoons \\text{NH}_3\\cdot\\text{H}_2\\text{O}'
-      tailGasEquation = '\\text{NH}_3 + \\text{H}^+ = \\text{NH}_4^+'
     } else if (systemId === 'so2-chain' || targetGas === 'SO₂') {
-      initGasList = ['SO₂', 'H₂O']
       reactionEquation = '\\text{Na}_2\\text{SO}_3 + \\text{H}_2\\text{SO}_4(70\\%) \\rightarrow \\text{Na}_2\\text{SO}_4 + \\text{SO}_2\\uparrow + \\text{H}_2\\text{O}'
-      purificationEquation = '\\text{SO}_2 + \\text{H}_2\\text{O} \\rightleftharpoons \\text{H}_2\\text{SO}_3'
-      tailGasEquation = '\\text{SO}_2 + 2\\text{OH}^- = \\text{SO}_3^{2-} + \\text{H}_2\\text{O}'
     } else if (systemId === 'no-no2-chain' || targetGas === 'NO₂' || targetGas === 'NO') {
       if (targetGas === 'NO') {
-        initGasList = ['NO', 'H₂O']
         reactionEquation = '3\\text{Cu} + 8\\text{HNO}_3(\\text{稀}) \\rightarrow 3\\text{Cu(NO}_3)_2 + 2\\text{NO}\\uparrow + 4\\text{H}_2\\text{O}'
       } else {
-        initGasList = ['NO₂', 'HNO₃(蒸气)', 'H₂O']
         reactionEquation = '\\text{Cu} + 4\\text{HNO}_3(\\text{浓}) \\rightarrow \\text{Cu(NO}_3)_2 + 2\\text{NO}_2\\uparrow + 2\\text{H}_2\\text{O}'
       }
-      purificationEquation = '3\\text{NO}_2 + \\text{H}_2\\text{O} = 2\\text{HNO}_3 + \\text{NO}'
-      tailGasEquation = '\\text{NO} + \\text{NO}_2 + 2\\text{NaOH} = 2\\text{NaNO}_2 + \\text{H}_2\\text{O}'
     } else {
-      initGasList = ['C₂H₄', 'SO₂', 'CO₂', 'H₂O']
       reactionEquation = `\\text{CH}_3\\text{CH}_2\\text{OH} \\xrightarrow[${temp}^\\circ\\text{C}]{\\text{浓 H}_2\\text{SO}_4} \\text{CH}_2=\\text{CH}_2\\uparrow + \\text{H}_2\\text{O}`
+    }
+
+    // 净化方程式计算
+    let purificationEquation = ''
+    if (washReagent === 'none') {
+      purificationEquation = '\\text{未配置净化洗气瓶 (跳过洗气)}'
+    } else if (washReagent === 'sat-nacl') {
+      purificationEquation = '\\text{HCl} + \\text{H}_2\\text{O} \\rightarrow \\text{HCl(aq)} \\quad (\\text{饱和 NaCl 吸 HCl 抑 Cl}_2)'
+    } else if (washReagent === 'fuchsin') {
+      purificationEquation = '\\text{SO}_2 + \\text{品红} \\rightarrow \\text{无色加合物 (检验 SO}_2 \\text{漂白性)}'
+    } else if (washReagent === 'kmno4') {
+      purificationEquation = '5\\text{SO}_2 + 2\\text{MnO}_4^- + 2\\text{H}_2\\text{O} = 5\\text{SO}_4^{2-} + 2\\text{Mn}^{2+} + 4\\text{H}^+'
+    } else if (washReagent === 'naoh') {
       purificationEquation = '\\text{SO}_2 + 2\\text{NaOH} = \\text{Na}_2\\text{SO}_3 + \\text{H}_2\\text{O}'
-      tailGasEquation = '\\text{CH}_2=\\text{CH}_2 + \\text{Br}_2 \\rightarrow \\text{CH}_2\\text{BrCH}_2\\text{Br}'
+    } else {
+      purificationEquation = '\\text{洗气瓶除杂中}'
+    }
+
+    // 尾气吸收方程式计算
+    let tailGasEquation = ''
+    if (tailGas === 'combustion') {
+      tailGasEquation = '\\text{CH}_2=\\text{CH}_2 + 3\\text{O}_2 \\xrightarrow{\\text{点燃}} 2\\text{CO}_2 + 2\\text{H}_2\\text{O}'
+    } else if (tailGas === 'balloon') {
+      tailGasEquation = '\\text{气球物理收集 (防尾气逸散污染)}'
+    } else if (targetGas === 'NO₂') {
+      tailGasEquation = '2\\text{NO}_2 + 2\\text{NaOH} = \\text{NaNO}_2 + \\text{NaNO}_3 + \\text{H}_2\\text{O}'
+    } else if (targetGas === 'NO') {
+      tailGasEquation = '\\text{NO} + \\text{NO}_2 + 2\\text{NaOH} = 2\\text{NaNO}_2 + \\text{H}_2\\text{O}'
+    } else if (targetGas === 'Cl₂') {
+      tailGasEquation = '\\text{Cl}_2 + 2\\text{OH}^- = \\text{Cl}^- + \\text{ClO}^- + \\text{H}_2\\text{O}'
+    } else if (targetGas === 'NH₃') {
+      tailGasEquation = '\\text{NH}_3 + \\text{H}^+ = \\text{NH}_4^+'
+    } else if (targetGas === 'SO₂') {
+      tailGasEquation = '\\text{SO}_2 + 2\\text{OH}^- = \\text{SO}_3^{2-} + \\text{H}_2\\text{O}'
+    } else {
+      tailGasEquation = '\\text{尾气吸收处理}'
     }
 
     // 2. 洗气瓶管道与除杂试剂诊断
@@ -178,6 +188,7 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
         })
       } else if (dryer === 'cacl2') {
         dryerClogged = true
+        dangerType = 'clogging'
         issues.push({
           id: 'dryer-nh3-cacl2',
           level: 'danger',
@@ -189,6 +200,7 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
     } else if (['Cl₂', 'SO₂', 'NO₂'].includes(targetGas) || systemId === 'cl2-prep' || systemId === 'so2-chain') {
       if (dryer === 'soda-lime') {
         dryerClogged = true
+        dangerType = 'clogging'
         issues.push({
           id: 'dryer-acid-sodalime',
           level: 'danger',
@@ -201,18 +213,18 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
 
     // 4. NO / NO₂ 与极易溶气体防倒吸诊断
     const isHighlySoluble = ['NH₃', 'HCl', 'SO₂'].includes(targetGas) || systemId === 'nh3-prep'
-    if (isHighlySoluble && tailGas === 'direct-pipe') {
+    if (isHighlySoluble && (tailGas === 'naoh-absorber' || tailGas === 'direct-pipe')) {
       dangerType = 'siphon'
       issues.push({
         id: 'siphon-danger',
         level: 'danger',
-        title: '高危致命错误：极易溶气体直接通入液体引发剧烈倒吸！',
-        description: '氨气/氯化氢在水中溶解度极高，导管内压强骤降，吸收液沿导管快速倒吸入热发生试管中，引发试管炸裂！',
-        examPoint: '吸收极易溶气体 (NH₃/HCl) 必须使用防倒吸装置：倒置漏斗 (刚好接触液面) 或安全瓶。',
+        title: '高危致命错误：极易溶气体直接插入液面下引发剧烈倒吸！',
+        description: `${targetGas} 极易溶于水/碱液，导管直接插入液面下会导致瓶内压强骤降，吸收液沿导管快速倒吸入热发生装置中，引发试管/烧瓶炸裂！`,
+        examPoint: '吸收极易溶气体 (NH₃/HCl/SO₂) 必须使用防倒吸装置：倒置漏斗 (刚好接触液面) 或安全瓶。',
       })
     }
 
-    // 5. 收集方式合规性诊断 (NO / NO₂ 经典高频点)
+    // 5. 收集方式合规性诊断
     if (targetGas === 'NO') {
       if (collection !== 'water-displacement') {
         issues.push({
@@ -235,6 +247,17 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
           examPoint: 'NO₂ 易溶于水并与水反应，只能用向上排空气法收集。',
         })
       }
+    }
+
+    if (targetGas === 'NH₃' && collection === 'upward-air') {
+      dangerType = 'clogging'
+      issues.push({
+        id: 'collect-nh3-upward-wrong',
+        level: 'danger',
+        title: '严重收集错误：NH₃ 密度小于空气，严禁用向上排空气法！',
+        description: '氨气 ($NH_3$) 的相对分子质量为 17，密度明显比空气 (29) 小，向上排空气法气体直接上浮逸散，无法集满瓶！',
+        examPoint: '轻气体 (NH₃) 必须使用向下排空气法 (短进长出)；重气体用向上排空气法。',
+      })
     }
 
     if (collection === 'water-displacement') {
@@ -317,45 +340,6 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       })
     }
 
-    // 7. 构建各节点化学状态
-    const nodeStates: GasNodeState[] = [
-      {
-        stage: 0,
-        gasComposition: initGasList,
-        flowRate: currentFlow,
-        color: '#F59E0B',
-        isClogged: false,
-      },
-      {
-        stage: 1,
-        gasComposition: washReagent === 'sat-nacl' ? initGasList.filter(g => g !== 'HCl') : initGasList,
-        flowRate: currentFlow,
-        color: '#10B981',
-        isClogged: washReverse,
-      },
-      {
-        stage: 2,
-        gasComposition: dryer === 'conc-h2so4' || dryer === 'soda-lime' ? [targetGas] : initGasList,
-        flowRate: dryerClogged ? 0 : currentFlow,
-        color: '#3B82F6',
-        isClogged: dryerClogged,
-      },
-      {
-        stage: 3,
-        gasComposition: [targetGas],
-        flowRate: dryerClogged ? 0 : currentFlow,
-        color: '#8B5CF6',
-        isClogged: false,
-      },
-      {
-        stage: 4,
-        gasComposition: ['尾气吸收'],
-        flowRate: dryerClogged ? 0 : Math.round(currentFlow * (1 - tailAbsorbRate / 100)),
-        color: '#EC4899',
-        isClogged: false,
-      },
-    ]
-
     const hasDangerAlert = issues.some(i => i.level === 'danger')
 
     return {
@@ -363,7 +347,6 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       impurityConc,
       tailAbsorbRate,
       flowRateOut: currentFlow,
-      nodeStates,
       issues,
       hasDangerAlert,
       dangerType,
