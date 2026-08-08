@@ -165,64 +165,64 @@ export function GasJarApparatus({
         />
       )}
 
-      {/* 洗气/集气瓶双玻璃导管 (高保真带管壁粗管: 瓶内段从橡皮塞内部 y1=4 开始) */}
+      {/* 洗气/集气瓶双玻璃导管 (高保真无缝带管壁粗管: 贯穿橡皮塞由 y=-15 直达瓶内深处) */}
       {hasTubes && (
         <g id="gas-jar-tubes">
-          {/* 左导管 (进气口：瓶内段) */}
+          {/* 左导管 (进气/出气端口) */}
           <g id="left-tube">
-            {/* 玻璃外轮廓线 */}
+            {/* 玻璃外轮廓线 (从塞上方 -15 贯穿橡皮塞) */}
             <line
               x1={lipLeft + lipW * 0.3}
-              y1={4}
+              y1={-15}
               x2={lipLeft + lipW * 0.3}
               y2={leftTubeH}
               stroke={SCENE_COLORS.materials.glassBorder}
               strokeWidth={6}
-              strokeLinecap="square"
+              strokeLinecap="round"
             />
             {/* 玻璃内管高光 */}
             <line
               x1={lipLeft + lipW * 0.3}
-              y1={4}
+              y1={-15}
               x2={lipLeft + lipW * 0.3}
               y2={leftTubeH}
               stroke={withAlpha(SCENE_COLORS.tube.glass ?? '#E0F2FE', 0.85)}
               strokeWidth={3}
-              strokeLinecap="square"
+              strokeLinecap="round"
             />
           </g>
 
-          {/* 右导管 (出气口：瓶内段) */}
+          {/* 右导管 (出气/进气端口) */}
           <g id="right-tube">
-            {/* 玻璃外轮廓线 */}
+            {/* 玻璃外轮廓线 (从塞上方 -15 贯穿橡皮塞) */}
             <line
               x1={lipLeft + lipW * 0.7}
-              y1={4}
+              y1={-15}
               x2={lipLeft + lipW * 0.7}
               y2={rightTubeH}
               stroke={SCENE_COLORS.materials.glassBorder}
               strokeWidth={6}
-              strokeLinecap="square"
+              strokeLinecap="round"
             />
             {/* 玻璃内管高光 */}
             <line
               x1={lipLeft + lipW * 0.7}
-              y1={4}
+              y1={-15}
               x2={lipLeft + lipW * 0.7}
               y2={rightTubeH}
               stroke={withAlpha(SCENE_COLORS.tube.glass ?? '#E0F2FE', 0.85)}
               strokeWidth={3}
-              strokeLinecap="square"
+              strokeLinecap="round"
             />
           </g>
 
-          {/* 双孔胶塞 (置顶盖住导管相交接缝，彻底消除打补丁感) */}
+          {/* 双孔胶塞 (置顶包裹在导管中间 y=2..12，半透明显出贯穿玻璃管壁) */}
           <rect
             x={lipLeft + 2}
             y={2}
             width={lipW - 4}
             height={10}
-            fill={SCENE_COLORS.materials.rubber}
+            fill={withAlpha(SCENE_COLORS.materials.rubber, 0.9)}
             rx={1}
           />
         </g>

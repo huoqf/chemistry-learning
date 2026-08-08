@@ -266,18 +266,18 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                 const centerX = stepLayout.x + stepLayout.width / 2
                 const roleLabel = step.role === 'purify' ? '净化除杂'
                   : step.role === 'detect' ? '检验性质'
-                  : '干燥脱水'
+                    : '干燥脱水'
                 const stepNum = i + 2  // 步骤编号：①发生, ②..., 最后收集/尾气
 
                 const reagentLabel = step.reagent === 'sat-nacl' ? '饱和食盐水'
                   : step.reagent === 'naoh' ? 'NaOH 溶液'
-                  : step.reagent === 'fuchsin' ? '品红溶液'
-                  : step.reagent === 'kmno4' ? '酸性KMnO₄'
-                  : step.reagent === 'conc-h2so4' ? '浓H₂SO₄'
-                  : step.reagent === 'soda-lime' ? '碱石灰'
-                  : step.reagent === 'cacl2' ? 'CaCl₂'
-                  : step.reagent === 'p2o5' ? 'P₂O₅'
-                  : step.reagent
+                    : step.reagent === 'fuchsin' ? '品红溶液'
+                      : step.reagent === 'kmno4' ? '酸性KMnO₄'
+                        : step.reagent === 'conc-h2so4' ? '浓H₂SO₄'
+                          : step.reagent === 'soda-lime' ? '碱石灰'
+                            : step.reagent === 'cacl2' ? 'CaCl₂'
+                              : step.reagent === 'p2o5' ? 'P₂O₅'
+                                : step.reagent
 
                 return (
                   <g key={step.id} id={`slot-${i + 1}-wash`}>
@@ -318,8 +318,8 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                           height={stepLayout.height}
                           reagentType={
                             step.reagent === 'sat-nacl' ? 'acid'
-                            : step.reagent === 'water' ? 'water'
-                            : 'base'
+                              : step.reagent === 'water' ? 'water'
+                                : 'base'
                           }
                           bubbling={flowRate > 0 && !(step.reversed)}
                           reversed={step.reversed ?? false}
@@ -408,24 +408,51 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       font={canvasSize.font}
                     />
                   ) : (
-                    <GasJarApparatus
-                      x={collLayout.x}
-                      y={collLayout.y}
-                      width={collLayout.width}
-                      height={collLayout.height}
-                      fillLevel={flowRate > 0 ? 0.85 : 0.05}
-                      fillColor={gasColor}
-                      isGasCollection={true}
-                      hasCover={false}
-                      hasTubes={true}
-                      tubeMode={
-                        collection === 'downward-air'
-                          ? 'short-in-long-out'
-                          : 'long-in-short-out'
-                      }
-                      gasLabel={targetGas}
-                      font={canvasSize.font}
-                    />
+                    <>
+                      <GasJarApparatus
+                        x={collLayout.x}
+                        y={collLayout.y}
+                        width={collLayout.width}
+                        height={collLayout.height}
+                        fillLevel={flowRate > 0 ? 0.85 : 0.05}
+                        fillColor={gasColor}
+                        isGasCollection={true}
+                        hasCover={false}
+                        hasTubes={true}
+                        tubeMode={
+                          collection === 'downward-air'
+                            ? (params.collectTubeMode === 'wrong-long-in' ? 'long-in-short-out' : 'short-in-long-out')
+                            : 'long-in-short-out'
+                        }
+                        gasLabel={targetGas}
+                        font={canvasSize.font}
+                      />
+                      {/* 仅在显式错用向下排长进短出时挂载警告 */}
+                      {collection === 'downward-air' && params.collectTubeMode === 'wrong-long-in' && (
+                        <g transform={`translate(${collLayout.x + collLayout.width / 2}, ${collLayout.y - 20})`}>
+                          <rect
+                            x={-60}
+                            y={-12}
+                            width={120}
+                            height={22}
+                            rx={4}
+                            fill={withAlpha(CANVAS_COLORS.alertRed, 0.15)}
+                            stroke={CANVAS_COLORS.alertRed}
+                            strokeWidth={1.5}
+                          />
+                          <text
+                            x={0}
+                            y={4}
+                            textAnchor="middle"
+                            fill={CANVAS_COLORS.dangerText}
+                            fontSize={canvasSize.font(FONT.annotation)}
+                            fontWeight="bold"
+                          >
+                            ⚠️ 误接长进短出: 氨气顶溢无法集满!
+                          </text>
+                        </g>
+                      )}
+                    </>
                   )}
 
                   <g transform={`translate(${slotX[3]}, ${baseY + 28})`}>
@@ -450,8 +477,8 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       {collection === 'water-displacement'
                         ? '排水法'
                         : collection === 'downward-air'
-                        ? '向下排空气'
-                        : '向上排空气'}
+                          ? (params.collectTubeMode === 'wrong-long-in' ? '向下排(误用长进短出)' : '向下排空气(短进长出)')
+                          : '向上排空气'}
                       )
                     </text>
                   </g>
@@ -530,19 +557,47 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       font={canvasSize.font}
                     />
                   ) : tailGas === 'inverted-funnel' ? (
-                    <AntiSiphonFunnelApparatus
-                      x={tailLayout.x}
-                      y={tailLayout.y}
-                      width={tailLayout.width}
-                      height={tailLayout.height}
-                      liquidColor={
-                        targetGas === 'NH₃' && flowRate > 0
-                          ? withAlpha('#EC4899', 0.7) // NH₃ 极易溶于水遇酚酞显红色
-                          : withAlpha(SCENE_COLORS.reagent.acid, 0.45)
-                      }
-                      isAbsorbing={flowRate > 0}
-                      font={canvasSize.font}
-                    />
+                    <>
+                      <AntiSiphonFunnelApparatus
+                        x={tailLayout.x}
+                        y={tailLayout.y}
+                        width={tailLayout.width}
+                        height={tailLayout.height}
+                        depthMode={params.funnelDepth ?? 'tangent'}
+                        liquidColor={
+                          targetGas === 'NH₃' && flowRate > 0
+                            ? withAlpha('#EC4899', 0.7) // NH₃ 极易溶于水遇酚酞显红色
+                            : withAlpha(SCENE_COLORS.reagent.acid, 0.45)
+                        }
+                        isAbsorbing={flowRate > 0}
+                        font={canvasSize.font}
+                      />
+                      {/* 仅在显式探底下沉时挂载警告 */}
+                      {params.funnelDepth === 'deep' && (
+                        <g transform={`translate(${tailLayout.x + tailLayout.width / 2}, ${tailLayout.y - 25})`}>
+                          <rect
+                            x={-65}
+                            y={-12}
+                            width={130}
+                            height={22}
+                            rx={4}
+                            fill={withAlpha(CANVAS_COLORS.alertRed, 0.15)}
+                            stroke={CANVAS_COLORS.alertRed}
+                            strokeWidth={1.5}
+                          />
+                          <text
+                            x={0}
+                            y={4}
+                            textAnchor="middle"
+                            fill={CANVAS_COLORS.dangerText}
+                            fontSize={canvasSize.font(FONT.annotation)}
+                            fontWeight="bold"
+                          >
+                            💥 深深深浸没: 脱离机制失效倒吸!
+                          </text>
+                        </g>
+                      )}
+                    </>
                   ) : (
                     <g transform={`translate(${tailLayout.x}, ${tailLayout.y})`}>
                       <BeakerApparatus
@@ -611,14 +666,14 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       {tailGas === 'inverted-funnel'
                         ? '倒置漏斗防倒吸'
                         : tailGas === 'safety-bottle'
-                        ? '安全瓶防倒吸'
-                        : tailGas === 'combustion'
-                        ? '点燃/灼烧法'
-                        : tailGas === 'balloon'
-                        ? '收集气球'
-                        : tailGas === 'direct-pipe'
-                        ? '直导管吸收'
-                        : 'NaOH 溶液吸收'}
+                          ? '安全瓶防倒吸'
+                          : tailGas === 'combustion'
+                            ? '点燃/灼烧法'
+                            : tailGas === 'balloon'
+                              ? '收集气球'
+                              : tailGas === 'direct-pipe'
+                                ? '直导管吸收'
+                                : 'NaOH 溶液吸收'}
                       )
                     </text>
                   </g>

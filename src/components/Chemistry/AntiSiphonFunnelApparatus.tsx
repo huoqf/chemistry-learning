@@ -40,6 +40,8 @@ export interface AntiSiphonFunnelApparatusProps {
   isAbsorbing?: boolean
   /** 倒置漏斗大口浸入/相切液面深度 (默认 2px) */
   touchDepth?: number
+  /** 浸没深度模式: 'tangent' (默认: 相切/微浸液面 [规范防倒吸]) | 'deep' (探底下沉 [错用倒吸失灵]) */
+  depthMode?: 'tangent' | 'deep'
   /** 说明文字 */
   label?: string
   /** 字体缩放 */
@@ -53,6 +55,7 @@ export interface AntiSiphonFunnelApparatusProps {
  * - 极易溶气体 (NH3, HCl 等) 的防倒吸尾气吸收
  * - 包含完整外围玻璃烧杯轮廓与液面刻度
  * - 漏斗边缘刚好触及或微浸入液面 (相切/切入 1~4px)，水极易吸收 NH₃ 破除真空防倒吸
+ * - 平时通气吸收时倒置漏斗内部透明全空，遵守高中化学教材与考试常识画法
  * - 导出静态 `getAntiSiphonFunnelPorts`
  */
 export function AntiSiphonFunnelApparatus({
@@ -63,11 +66,14 @@ export function AntiSiphonFunnelApparatus({
   liquidLevel = 0.3,
   liquidColor = withAlpha(SCENE_COLORS.reagent.acid, 0.45),
   isAbsorbing = true,
+  depthMode = 'tangent',
   label,
   font = (n) => n,
 }: AntiSiphonFunnelApparatusProps) {
   const w = width
   const h = height
+  const isDeep = depthMode === 'deep'
+
   // 利用 liquidLevel 动态微调触及深度 (1~4px)
   const touchDepth = Math.max(1, Math.min(4, liquidLevel * 10))
 
@@ -80,7 +86,11 @@ export function AntiSiphonFunnelApparatus({
   const beakerW = w + 30     // 110px
   const beakerH = 65         // 65px
   const beakerLeft = -15     // 烧杯左边缘
-  const beakerTopY = h - 25  // 烧杯上沿：液面落于 y = h - touchDepth，与倒置漏斗下口精确相切
+  const beakerTopY = h - 25  // 烧杯上沿
+
+  // 漏斗在 deep 模式下的 Y 偏移（下沉 30px 直达烧杯底部）
+  const funnelOffsetY = isDeep ? 30 : 0
+  const funnelBottomY = h + funnelOffsetY
 
   return (
     <g transform={`translate(${x}, ${y})`} id="anti-siphon-funnel-group">
@@ -102,7 +112,7 @@ export function AntiSiphonFunnelApparatus({
         strokeWidth={STROKE.objectLine}
       />
 
-      {/* 烧杯内吸收溶液 (液面恰好与倒置漏斗大口下沿 y=h 相切/微浸入 touchDepth) */}
+      {/* 烧杯内吸收溶液 (液面在 y = h - touchDepth，规范相切时漏斗大口贴在液面上) */}
       <rect
         x={beakerLeft + 2}
         y={h - touchDepth}
@@ -123,19 +133,19 @@ export function AntiSiphonFunnelApparatus({
         x={stemLeft}
         y={-20}
         width={stemW}
-        height={stemH + 20}
+        height={stemH + 20 + funnelOffsetY}
         fill={withAlpha(SCENE_COLORS.materials.glass, 0.5)}
         stroke={SCENE_COLORS.materials.glassBorder}
         strokeWidth={STROKE.objectLine}
       />
 
-      {/* ── 3. 倒置漏斗主体 (大口朝下) ── */}
+      {/* ── 3. 倒置漏斗主体 (大口朝下，平时内部保持极其干净透明的气体空间) ── */}
       <polygon
         points={`
-          ${stemLeft},${stemH}
-          ${stemLeft + stemW},${stemH}
-          ${w},${h}
-          0,${h}
+          ${stemLeft},${stemH + funnelOffsetY}
+          ${stemLeft + stemW},${stemH + funnelOffsetY}
+          ${w},${funnelBottomY}
+          0,${funnelBottomY}
         `}
         fill={withAlpha(SCENE_COLORS.materials.glass, 0.4)}
         stroke={SCENE_COLORS.materials.glassBorder}
@@ -143,34 +153,47 @@ export function AntiSiphonFunnelApparatus({
         strokeLinejoin="round"
       />
 
-      {/* 漏斗大口下边沿相切液面 */}
+      {/* 漏斗大口下边沿 */}
       <line
         x1={0}
-        y1={h}
+        y1={funnelBottomY}
         x2={w}
-        y2={h}
+        y2={funnelBottomY}
         stroke={SCENE_COLORS.materials.glassBorder}
         strokeWidth={STROKE.objectLine}
       />
 
-      {/* ── 4. 吸收过程倒吸缓冲与液面上升/破除真空气泡 ── */}
-      {isAbsorbing && (
-        <g>
-          {/* 漏斗内部上升缓冲液面 */}
+      {/* ── 4. 正规相切常态通气 (漏斗内部全空透明，仅在切口处呈现气体吸收脱离气泡) ── */}
+      {isAbsorbing && !isDeep && (
+        <g id="tangent-anti-siphon-bubbles">
+          <circle cx={w * 0.3} cy={h - 3} r={2.5} fill="none" stroke="#38BDF8" strokeWidth={1} />
+          <circle cx={w * 0.5} cy={h - 5} r={3.5} fill="none" stroke="#38BDF8" strokeWidth={1.2} />
+          <circle cx={w * 0.7} cy={h - 3} r={2} fill="none" stroke="#38BDF8" strokeWidth={1} />
+        </g>
+      )}
+
+      {/* ── 5. isDeep 探底下沉模式：发生倒吸时，漏斗口无法脱离水面，水柱被强抽入细管 ── */}
+      {isDeep && isAbsorbing && (
+        <g id="deep-siphon-disaster">
+          {/* 倒吸抽吸上卷的冲管水柱 */}
           <polygon
             points={`
-              ${stemLeft + 2},${stemH + 15}
-              ${stemLeft + stemW - 2},${stemH + 15}
-              ${w - 12},${h}
-              12,${h}
+              ${stemLeft + 1},${stemH + 30}
+              ${stemLeft + stemW - 1},${stemH + 30}
+              ${w - 3},${funnelBottomY - 2}
+              3,${funnelBottomY - 2}
             `}
             fill={liquidColor}
-            opacity={0.4}
+            opacity={0.7}
           />
-          {/* 破除真空的吸收气泡 */}
-          <circle cx={w * 0.3} cy={h - 10} r={3} fill="none" stroke="#38BDF8" strokeWidth={1} />
-          <circle cx={w * 0.5} cy={h - 22} r={4} fill="none" stroke="#38BDF8" strokeWidth={1.2} />
-          <circle cx={w * 0.7} cy={h - 12} r={2.5} fill="none" stroke="#38BDF8" strokeWidth={1} />
+          <rect
+            x={stemLeft + 2}
+            y={-20}
+            width={stemW - 4}
+            height={stemH + 50}
+            fill={liquidColor}
+            opacity={0.85}
+          />
         </g>
       )}
 

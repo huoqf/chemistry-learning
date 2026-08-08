@@ -161,6 +161,27 @@ export const GasChainLeftPanel: React.FC<GasChainLeftPanelProps> = ({
                 { label: '不收集', value: 'none' },
               ]}
             />
+
+            {/* 向下排空气法长短管接法探究 */}
+            {params.collection === 'downward-air' && (
+              <div className="mt-2 p-2 rounded-lg bg-slate-50 border border-slate-200">
+                <ToggleSwitch
+                  label="向下排导管接法"
+                  checked={params.collectTubeMode !== 'wrong-long-in'}
+                  onChange={(checked) =>
+                    updateParam('collectTubeMode', checked ? 'correct-short-in' : 'wrong-long-in')
+                  }
+                />
+                <div className="mt-1 text-[11px] font-semibold text-slate-600 flex items-center justify-between">
+                  <span>正放集气瓶接法:</span>
+                  {params.collectTubeMode !== 'wrong-long-in' ? (
+                    <span className="text-emerald-700 font-bold">✓ 短进长出 (规范)</span>
+                  ) : (
+                    <span className="text-rose-700 font-bold">❌ 长进短出 (顶溢易错)</span>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* ⑤ 尾气处理/防倒吸 */}
@@ -179,6 +200,27 @@ export const GasChainLeftPanel: React.FC<GasChainLeftPanelProps> = ({
                 { label: '直导管(高危倒吸)', value: 'direct-pipe' },
               ]}
             />
+
+            {/* 倒置漏斗浸没深度调节 */}
+            {params.tailGas === 'inverted-funnel' && (
+              <div className="mt-2 p-2 rounded-lg bg-slate-50 border border-slate-200">
+                <ToggleSwitch
+                  label="倒置漏斗浸没深度"
+                  checked={params.funnelDepth !== 'deep'}
+                  onChange={(checked) =>
+                    updateParam('funnelDepth', checked ? 'tangent' : 'deep')
+                  }
+                />
+                <div className="mt-1 text-[11px] font-semibold text-slate-600 flex items-center justify-between">
+                  <span>浸没物理状态:</span>
+                  {params.funnelDepth !== 'deep' ? (
+                    <span className="text-emerald-700 font-bold">✓ 相切/微浸 (规范防倒吸)</span>
+                  ) : (
+                    <span className="text-rose-700 font-bold">❌ 深深深浸没 (探底失灵)</span>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </LeftPanelSection>

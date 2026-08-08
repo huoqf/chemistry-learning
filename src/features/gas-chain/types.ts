@@ -83,6 +83,10 @@ export interface GasChainParams {
   flowRate: number          // 气体流速 (0 - 100 mL/min)
   temp: number              // 反应温度 (°C)
   heating: boolean          // 是否正在加热
+  /** 倒置漏斗浸没深度: 'tangent' (默认: 相切/微浸液面 [规范防倒吸]) | 'deep' (探底下沉 [错用倒吸失灵]) */
+  funnelDepth?: 'tangent' | 'deep'
+  /** 向下排空气法正放集气瓶导管模式: 'correct-short-in' (默认: 短进长出 [规范向下排]) | 'wrong-long-in' (长进短出 [错用顶溢]) */
+  collectTubeMode?: 'correct-short-in' | 'wrong-long-in'
 }
 
 // 诊断警告与风险提示

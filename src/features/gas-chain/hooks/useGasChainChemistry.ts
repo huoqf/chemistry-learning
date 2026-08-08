@@ -228,6 +228,18 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       })
     }
 
+    // 倒置漏斗深深浸没失灵诊断
+    if (tailGas === 'inverted-funnel' && params.funnelDepth === 'deep') {
+      dangerType = 'siphon'
+      issues.push({
+        id: 'funnel-deep-siphon-danger',
+        level: 'danger',
+        title: '高考核心考点警示：防倒吸漏斗深深浸没水槽底部，防倒吸失效！',
+        description: '倒置漏斗防倒吸的物理机制依赖于“液面与漏斗口脱离”。若漏斗深深浸没在烧杯底部，发生倒吸时烧杯液面下降但漏斗口无法脱离液面，液体在脱离液面之前就会直接吸入导管炸裂发生器！',
+        examPoint: '倒置漏斗吸收极易溶气体防倒吸时，漏斗大口边缘必须刚好接触液面 (相切 1~4mm)，严禁深深浸没！',
+      })
+    }
+
     // 5. 收集方式合规性诊断
     if (targetGas === 'NO') {
       if (collection !== 'water-displacement') {
@@ -261,6 +273,17 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
         title: '严重收集错误：NH₃ 密度小于空气，严禁用向上排空气法！',
         description: '氨气 ($NH_3$) 的相对分子质量为 17，密度明显比空气 (29) 小，向上排空气法气体直接上浮逸散，无法集满瓶！',
         examPoint: '轻气体 (NH₃) 必须使用向下排空气法 (短进长出)；重气体用向上排空气法。',
+      })
+    }
+
+    // 向下排空气法“长进短出”误接判断
+    if (collection === 'downward-air' && params.collectTubeMode === 'wrong-long-in') {
+      issues.push({
+        id: 'collect-nh3-longin-wrong',
+        level: 'danger',
+        title: '高考实验细节陷阱：向下排空气法接法错误（长进短出误用）！',
+        description: '氨气密度小于空气，采用向下排空气法时，正放集气瓶若误接为“长进短出”（进气管伸入瓶底），这实际上是向上排空气法，会导致氨气从长管深入瓶底后直接上升从顶部短管溢出而无法集满！',
+        examPoint: '向下排空气法正放集气瓶必须“短进长出”（轻气体从短管进积累在瓶顶部，空气由瓶底长管排出）。',
       })
     }
 
