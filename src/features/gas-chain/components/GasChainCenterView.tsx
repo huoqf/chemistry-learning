@@ -5,7 +5,6 @@ import {
   GaokaoVariantQuiz,
 } from '@/components/UI'
 import {
-  ErlenmeyerFlaskApparatus,
   KippApparatus,
   GasWashingBottleApparatus,
   DryingTubeApparatus,
@@ -16,6 +15,8 @@ import {
   NoHeatGeneratorApparatus,
   BeakerApparatus,
   BubbleEmitter,
+  SafetyBottleApparatus,
+  WaterDisplacementCollectionApparatus,
 } from '@/components/Chemistry'
 import { useAnimationViewport, useSceneScale } from '@/hooks'
 import {
@@ -50,9 +51,7 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
   const {
     viewMode,
     generator,
-    washReagent,
-    washReverse,
-    dryer,
+    washingSteps,
     collection,
     tailGas,
     heating,
@@ -80,11 +79,9 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
   // 3. 布局引擎：单一事实来源 (SSOT)
   const layout = solvePhysicalChainLayout({
     generator,
-    washReagent,
-    dryer,
+    washingSteps,
     collection,
     tailGas,
-    washReverse,
     baseY,
   })
 
@@ -95,10 +92,11 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
     apparatusLayouts.find((a) => a.id === id) ?? null
 
   const genLayout = getLayout('generator')
-  const washLayout = getLayout('wash')
-  const dryerLayout = getLayout('dryer')
   const collLayout = getLayout('collection')
   const tailLayout = getLayout('tailgas')
+
+  // 当前洗气步骤中的首个洗气试剂（用于颜色等辅助）
+  const washReagent = washingSteps[0]?.reagent ?? 'none'
 
   // 4. 视觉颜色计算
   let washSolutionColor = withAlpha(SCENE_COLORS.reagent.solution, 0.15)
@@ -259,270 +257,156 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                 </g>
               )}
 
-              {/* ─── Slot 1: 净化洗气瓶 ─── */}
-              {washLayout && (
-                <g id="slot-1-wash">
-                  <GasWashingBottleApparatus
-                    x={washLayout.x}
-                    y={washLayout.y}
-                    width={washLayout.width}
-                    height={washLayout.height}
-                    reagentType={
-                      washReagent === 'sat-nacl'
-                        ? 'acid'
-                        : washReagent === 'water'
-                        ? 'water'
-                        : 'base'
-                    }
-                    bubbling={flowRate > 0 && !washReverse}
-                    reversed={washReverse}
-                  />
+              {/* ─── Slots 1..N: 动态串联洗气/检验/干燥步骤 ─── */}
+              {washingSteps.map((step, i) => {
+                const stepId = `wash-${i}` as ApparatusLayout['id']
+                const stepLayout = apparatusLayouts.find(a => a.id === stepId) ?? null
+                if (!stepLayout) return null
 
-                  {/* 洗液着色覆盖层 */}
-                  <rect
-                    x={washLayout.x + 10}
-                    y={washLayout.y + 75}
-                    width={washLayout.width - 20}
-                    height={55}
-                    fill={washSolutionColor}
-                    rx={4}
-                  />
+                const centerX = stepLayout.x + stepLayout.width / 2
+                const roleLabel = step.role === 'purify' ? '净化除杂'
+                  : step.role === 'detect' ? '检验性质'
+                  : '干燥脱水'
+                const stepNum = i + 2  // 步骤编号：①发生, ②..., 最后收集/尾气
 
-                  {flowRate > 0 && !washReverse && (
-                    <BubbleEmitter
-                      x={washLayout.x + washLayout.width * 0.3}
-                      y={washLayout.y + 110}
-                      count={8}
-                    />
-                  )}
+                const reagentLabel = step.reagent === 'sat-nacl' ? '饱和食盐水'
+                  : step.reagent === 'naoh' ? 'NaOH 溶液'
+                  : step.reagent === 'fuchsin' ? '品红溶液'
+                  : step.reagent === 'kmno4' ? '酸性KMnO₄'
+                  : step.reagent === 'conc-h2so4' ? '浓H₂SO₄'
+                  : step.reagent === 'soda-lime' ? '碱石灰'
+                  : step.reagent === 'cacl2' ? 'CaCl₂'
+                  : step.reagent === 'p2o5' ? 'P₂O₅'
+                  : step.reagent
 
-                  {washReverse && (
-                    <g transform={`translate(${slotX[1]}, ${washLayout.y - 16})`}>
-                      <rect
-                        x={-55}
-                        y={-14}
-                        width={110}
-                        height={22}
-                        rx={4}
-                        fill={withAlpha(CANVAS_COLORS.alertRed, 0.15)}
-                        stroke={CANVAS_COLORS.alertRed}
-                        strokeWidth={1.5}
+                return (
+                  <g key={step.id} id={`slot-${i + 1}-wash`}>
+                    {step.device === 'dry-tube' ? (
+                      // 干燥管（固相干燥剂：碱石灰/CaCl2/P2O5）
+                      <DryingTubeApparatus
+                        x={stepLayout.x}
+                        y={stepLayout.y}
+                        width={stepLayout.width}
+                        height={stepLayout.height}
+                        variant={step.reagent === 'cacl2' ? 'U-shape' : 'spherical'}
+                        desiccantName={step.reagent === 'soda-lime' ? '碱石灰' : 'CaCl₂'}
+                        desiccantColor={
+                          step.reagent === 'soda-lime'
+                            ? SCENE_COLORS.reagent.precipitate
+                            : withAlpha(SCENE_COLORS.materials.glass, 0.4)
+                        }
+                        holderHeight={stepLayout.holderHeight}
+                        font={canvasSize.font}
                       />
+                    ) : step.device === 'acid-bottle' ? (
+                      // 浓硫酸洗气瓶（液相干燥/酸洗）
+                      <GasWashingBottleApparatus
+                        x={stepLayout.x}
+                        y={stepLayout.y}
+                        width={stepLayout.width}
+                        height={stepLayout.height}
+                        reagentType="acid"
+                        bubbling={flowRate > 0}
+                      />
+                    ) : (
+                      // 普通洗气瓶（饱和食盐水/NaOH/品红/KMnO4/水）
+                      <>
+                        <GasWashingBottleApparatus
+                          x={stepLayout.x}
+                          y={stepLayout.y}
+                          width={stepLayout.width}
+                          height={stepLayout.height}
+                          reagentType={
+                            step.reagent === 'sat-nacl' ? 'acid'
+                            : step.reagent === 'water' ? 'water'
+                            : 'base'
+                          }
+                          bubbling={flowRate > 0 && !(step.reversed)}
+                          reversed={step.reversed ?? false}
+                        />
+                        {/* 洗液着色覆盖层 */}
+                        <rect
+                          x={stepLayout.x + 10}
+                          y={stepLayout.y + 75}
+                          width={stepLayout.width - 20}
+                          height={55}
+                          fill={i === 0 ? washSolutionColor : withAlpha(SCENE_COLORS.reagent.solution, 0.2)}
+                          rx={4}
+                        />
+                        {flowRate > 0 && !step.reversed && (
+                          <BubbleEmitter
+                            x={stepLayout.x + stepLayout.width * 0.3}
+                            y={stepLayout.y + 110}
+                            count={8}
+                          />
+                        )}
+                        {step.reversed && (
+                          <g transform={`translate(${centerX}, ${stepLayout.y - 16})`}>
+                            <rect
+                              x={-55}
+                              y={-14}
+                              width={110}
+                              height={22}
+                              rx={4}
+                              fill={withAlpha(CANVAS_COLORS.alertRed, 0.15)}
+                              stroke={CANVAS_COLORS.alertRed}
+                              strokeWidth={1.5}
+                            />
+                            <text
+                              x={0}
+                              y={2}
+                              textAnchor="middle"
+                              fill={CANVAS_COLORS.dangerText}
+                              fontSize={canvasSize.font(FONT.annotation)}
+                              fontWeight="bold"
+                            >
+                              ⚠️ 短进长出喷溅!
+                            </text>
+                          </g>
+                        )}
+                      </>
+                    )}
+
+                    <g transform={`translate(${centerX}, ${baseY + 28})`}>
                       <text
                         x={0}
-                        y={2}
+                        y={0}
                         textAnchor="middle"
-                        fill={CANVAS_COLORS.dangerText}
-                        fontSize={canvasSize.font(FONT.annotation)}
+                        fill={SCENE_COLORS.labels.chemicalFormula}
+                        fontSize={canvasSize.font(FONT.label)}
                         fontWeight="bold"
                       >
-                        ⚠️ 短进长出喷溅!
+                        {stepNum === 2 ? '②' : stepNum === 3 ? '③' : stepNum === 4 ? '④' : `${stepNum}`} {roleLabel}
                       </text>
-                    </g>
-                  )}
-
-                  <g transform={`translate(${slotX[1]}, ${baseY + 28})`}>
-                    <text
-                      x={0}
-                      y={0}
-                      textAnchor="middle"
-                      fill={SCENE_COLORS.labels.chemicalFormula}
-                      fontSize={canvasSize.font(FONT.label)}
-                      fontWeight="bold"
-                    >
-                      ② 除杂洗气
-                    </text>
-                    <text
-                      x={0}
-                      y={15}
-                      textAnchor="middle"
-                      fill={CANVAS_COLORS.labelTextLight}
-                      fontSize={canvasSize.font(FONT.annotation)}
-                    >
-                      (
-                      {washReagent === 'sat-nacl'
-                        ? '饱和食盐水'
-                        : washReagent === 'naoh'
-                        ? 'NaOH 溶液'
-                        : washReagent === 'fuchsin'
-                        ? '品红溶液'
-                        : washReagent === 'kmno4'
-                        ? '酸性KMnO₄'
-                        : '水'}
-                      )
-                    </text>
-                  </g>
-                </g>
-              )}
-
-              {/* ─── Slot 2: 干燥装置 ─── */}
-              {dryerLayout && (
-                <g id="slot-2-dryer">
-                  {dryer === 'conc-h2so4' ? (
-                    <GasWashingBottleApparatus
-                      x={dryerLayout.x}
-                      y={dryerLayout.y}
-                      width={dryerLayout.width}
-                      height={dryerLayout.height}
-                      reagentType="acid"
-                      bubbling={flowRate > 0}
-                    />
-                  ) : (
-                    <DryingTubeApparatus
-                      x={dryerLayout.x}
-                      y={dryerLayout.y}
-                      width={dryerLayout.width}
-                      height={dryerLayout.height}
-                      variant={dryer === 'cacl2' ? 'U-shape' : 'spherical'}
-                      desiccantName={dryer === 'soda-lime' ? '碱石灰' : 'CaCl₂'}
-                      desiccantColor={
-                        dryer === 'soda-lime'
-                          ? SCENE_COLORS.reagent.precipitate
-                          : withAlpha(SCENE_COLORS.materials.glass, 0.4)
-                      }
-                      holderHeight={dryerLayout.holderHeight}
-                      font={canvasSize.font}
-                    />
-                  )}
-
-                  {hasDangerAlert && dangerType === 'clogging' && (
-                    <g transform={`translate(${slotX[2]}, ${dryerLayout.y + dryerLayout.height / 2})`}>
-                      <circle
-                        cx={0}
-                        cy={0}
-                        r={22}
-                        fill={withAlpha(CHEMISTRY_COLORS.pressure, 0.2)}
-                        stroke={CHEMISTRY_COLORS.pressure}
-                        strokeWidth={2}
-                      />
                       <text
                         x={0}
-                        y={4}
+                        y={15}
                         textAnchor="middle"
-                        fill={CANVAS_COLORS.labelText}
+                        fill={CANVAS_COLORS.labelTextLight}
                         fontSize={canvasSize.font(FONT.annotation)}
-                        fontWeight="extrabold"
                       >
-                        🚫 反应堵塞!
+                        ({reagentLabel})
                       </text>
                     </g>
-                  )}
-
-                  <g transform={`translate(${slotX[2]}, ${baseY + 28})`}>
-                    <text
-                      x={0}
-                      y={0}
-                      textAnchor="middle"
-                      fill={SCENE_COLORS.labels.chemicalFormula}
-                      fontSize={canvasSize.font(FONT.label)}
-                      fontWeight="bold"
-                    >
-                      ③ 干燥脱水
-                    </text>
-                    <text
-                      x={0}
-                      y={15}
-                      textAnchor="middle"
-                      fill={CANVAS_COLORS.labelTextLight}
-                      fontSize={canvasSize.font(FONT.annotation)}
-                    >
-                      (
-                      {dryer === 'conc-h2so4'
-                        ? '浓H₂SO₄'
-                        : dryer === 'soda-lime'
-                        ? '碱石灰'
-                        : 'CaCl₂'}
-                      )
-                    </text>
                   </g>
-                </g>
-              )}
+                )
+              })}
 
               {/* ─── Slot 3: 收集装置 ─── */}
               {collLayout && (
                 <g id="slot-3-collection">
                   {collection === 'water-displacement' ? (
-                    <g transform={`translate(${collLayout.x}, ${collLayout.y})`}>
-                      {/* 水槽 */}
-                      <rect
-                        x={0}
-                        y={70}
-                        width={150}
-                        height={80}
-                        rx={4}
-                        fill={withAlpha(SCENE_COLORS.materials.glass, 0.3)}
-                        stroke={SCENE_COLORS.container.beakerBorder}
-                        strokeWidth={2}
-                      />
-                      <rect
-                        x={4}
-                        y={80}
-                        width={142}
-                        height={66}
-                        fill={withAlpha(SCENE_COLORS.reagent.solution, 0.25)}
-                      />
-                      {/* 倒扣集气瓶（100% 复用标准 GasJarApparatus 组件，倒扣模式，带加厚磨砂唇口与圆底，彻底消除像烧杯的问题） */}
-                      <GasJarApparatus
-                        x={40}
-                        y={15}
-                        width={70}
-                        height={95}
-                        inverted={true}
-                        isGasCollection={true}
-                        fillLevel={flowRate > 0 ? 0.75 : 0.05}
-                        fillColor={gasColor}
-                        font={canvasSize.font}
-                      />
-                      {/* 弯管：左进气管深入倒扣集气瓶内部 (双层高保真玻璃管) */}
-                      <path
-                        d="M 25,10 L 25,120 L 65,120 L 65,85"
-                        fill="none"
-                        stroke={SCENE_COLORS.materials.glassBorder}
-                        strokeWidth={6}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M 25,10 L 25,120 L 65,120 L 65,85"
-                        fill="none"
-                        stroke={withAlpha(SCENE_COLORS.materials.glass, 0.85)}
-                        strokeWidth={3}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      {/* 高考规范水下弯管导出：倒扣集气瓶水下开口导管延伸出水槽至右侧 (绝对不穿墙破壁) */}
-                      {tailGas && (
-                        <>
-                          <path
-                            d="M 85,30 L 85,120 L 115,120 L 115,25"
-                            fill="none"
-                            stroke={SCENE_COLORS.materials.glassBorder}
-                            strokeWidth={6}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                          <path
-                            d="M 85,30 L 85,120 L 115,120 L 115,25"
-                            fill="none"
-                            stroke={withAlpha(SCENE_COLORS.materials.glass, 0.85)}
-                            strokeWidth={3}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </>
-                      )}
-                      {flowRate > 0 && <BubbleEmitter x={65} y={80} count={6} />}
-                      <text
-                        x={75}
-                        y={0}
-                        textAnchor="middle"
-                        fill={SCENE_COLORS.labels.chemicalFormula}
-                        fontSize={canvasSize.font(FONT.annotation)}
-                        fontWeight="bold"
-                      >
-                        排水集气 (倒扣排水)
-                      </text>
-                    </g>
+                    // 带标准端口函数的排水集气组件（替代原手绘 SVG）
+                    <WaterDisplacementCollectionApparatus
+                      x={collLayout.x}
+                      y={collLayout.y}
+                      width={collLayout.width}
+                      height={collLayout.height}
+                      gasColor={gasColor}
+                      fillLevel={flowRate > 0 ? 0.75 : 0.05}
+                      flowing={flowRate > 0}
+                      font={canvasSize.font}
+                    />
                   ) : (
                     <GasJarApparatus
                       x={collLayout.x}
@@ -637,24 +521,14 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       />
                     </g>
                   ) : tailGas === 'safety-bottle' ? (
-                    <>
-                      <ErlenmeyerFlaskApparatus
-                        x={tailLayout.x}
-                        y={tailLayout.y}
-                        width={tailLayout.width}
-                        height={tailLayout.height}
-                        fillLevel={0}
-                        hasStopper={true}
-                      />
-                      <BeakerApparatus
-                        x={tailLayout.x + tailLayout.width + 10}
-                        y={tailLayout.y + 15}
-                        width={70}
-                        height={100}
-                        fillLevel={0.5}
-                        fillColor={withAlpha(SCENE_COLORS.reagent.solution, 0.2)}
-                      />
-                    </>
+                    // 高考规范安全瓶：广口集气瓶形，双孔模皮塞，两管均不伸入液面
+                    <SafetyBottleApparatus
+                      x={tailLayout.x}
+                      y={tailLayout.y}
+                      width={tailLayout.width}
+                      height={tailLayout.height}
+                      font={canvasSize.font}
+                    />
                   ) : tailGas === 'inverted-funnel' ? (
                     <AntiSiphonFunnelApparatus
                       x={tailLayout.x}

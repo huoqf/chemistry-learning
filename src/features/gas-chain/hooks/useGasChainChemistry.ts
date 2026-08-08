@@ -28,15 +28,19 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       systemId,
       targetGas,
       generator,
-      washReagent,
-      washReverse,
-      dryer,
+      washingSteps,
       collection,
       tailGas,
       flowRate,
       temp,
       heating,
     } = params
+
+    // 从 washingSteps 提取向后兼容变量（供下方诊断逻辑使用）
+    const washReagent = washingSteps[0]?.reagent ?? 'none'
+    const washReverse = washingSteps[0]?.reversed ?? false
+    const dryer = washingSteps.find(s => s.device === 'dry-tube')?.reagent
+      ?? (washingSteps.find(s => s.device === 'acid-bottle') ? 'conc-h2so4' : 'none')
 
     const issues: DiagnosticIssue[] = []
     let dangerType: 'siphon' | 'splashing' | 'clogging' | 'none' = 'none'

@@ -228,3 +228,9 @@ export type { BeakerPorts } from './BeakerApparatus'
 export { SeparatoryFunnelSetup } from './SeparatoryFunnelSetup'
 export type { SeparatoryFunnelSetupProps, SeparatoryFunnelSetupState } from './SeparatoryFunnelSetup'
 
+// ── 气体制备/净化/收集专用组件 ──
+export { SafetyBottleApparatus, getSafetyBottlePorts } from './SafetyBottleApparatus'
+export type { SafetyBottleApparatusProps, SafetyBottlePorts } from './SafetyBottleApparatus'
+
+export { WaterDisplacementCollectionApparatus, getWaterDisplacementPorts } from './WaterDisplacementCollectionApparatus'
+export type { WaterDisplacementCollectionApparatusProps, WaterDisplacementPorts } from './WaterDisplacementCollectionApparatus'

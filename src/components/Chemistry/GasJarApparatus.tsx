@@ -3,17 +3,17 @@ import type { FontScaler } from '@/theme'
 
 export interface GasJarPorts {
   /** 瓶口左侧导管顶部端口 */
-  topStopperLeft: { x: number; y: number }
+  topStopperLeft: { x: number; y: number; direction?: 'up' }
   /** 瓶口右侧导管顶部端口 */
-  topStopperRight: { x: number; y: number }
+  topStopperRight: { x: number; y: number; direction?: 'up' }
 }
 
 export function getGasJarPorts(x: number, y: number, width = 70): GasJarPorts {
   const lipW = width * 0.7
   const lipLeft = (width - lipW) / 2
   return {
-    topStopperLeft: { x: x + lipLeft + lipW * 0.3, y: y - 15 },
-    topStopperRight: { x: x + lipLeft + lipW * 0.7, y: y - 15 },
+    topStopperLeft: { x: x + lipLeft + lipW * 0.3, y: y + 4, direction: 'up' },
+    topStopperRight: { x: x + lipLeft + lipW * 0.7, y: y + 4, direction: 'up' },
   }
 }
 
@@ -165,10 +165,58 @@ export function GasJarApparatus({
         />
       )}
 
-      {/* 洗气/集气瓶双玻璃导管 (高保真带管壁粗管) */}
+      {/* 洗气/集气瓶双玻璃导管 (高保真带管壁粗管: 瓶内段从橡皮塞内部 y1=4 开始) */}
       {hasTubes && (
         <g id="gas-jar-tubes">
-          {/* 双孔胶塞 */}
+          {/* 左导管 (进气口：瓶内段) */}
+          <g id="left-tube">
+            {/* 玻璃外轮廓线 */}
+            <line
+              x1={lipLeft + lipW * 0.3}
+              y1={4}
+              x2={lipLeft + lipW * 0.3}
+              y2={leftTubeH}
+              stroke={SCENE_COLORS.materials.glassBorder}
+              strokeWidth={6}
+              strokeLinecap="square"
+            />
+            {/* 玻璃内管高光 */}
+            <line
+              x1={lipLeft + lipW * 0.3}
+              y1={4}
+              x2={lipLeft + lipW * 0.3}
+              y2={leftTubeH}
+              stroke={withAlpha(SCENE_COLORS.tube.glass ?? '#E0F2FE', 0.85)}
+              strokeWidth={3}
+              strokeLinecap="square"
+            />
+          </g>
+
+          {/* 右导管 (出气口：瓶内段) */}
+          <g id="right-tube">
+            {/* 玻璃外轮廓线 */}
+            <line
+              x1={lipLeft + lipW * 0.7}
+              y1={4}
+              x2={lipLeft + lipW * 0.7}
+              y2={rightTubeH}
+              stroke={SCENE_COLORS.materials.glassBorder}
+              strokeWidth={6}
+              strokeLinecap="square"
+            />
+            {/* 玻璃内管高光 */}
+            <line
+              x1={lipLeft + lipW * 0.7}
+              y1={4}
+              x2={lipLeft + lipW * 0.7}
+              y2={rightTubeH}
+              stroke={withAlpha(SCENE_COLORS.tube.glass ?? '#E0F2FE', 0.85)}
+              strokeWidth={3}
+              strokeLinecap="square"
+            />
+          </g>
+
+          {/* 双孔胶塞 (置顶盖住导管相交接缝，彻底消除打补丁感) */}
           <rect
             x={lipLeft + 2}
             y={2}
@@ -177,56 +225,9 @@ export function GasJarApparatus({
             fill={SCENE_COLORS.materials.rubber}
             rx={1}
           />
-
-          {/* 左导管 (进气口) */}
-          <g id="left-tube">
-            {/* 玻璃外轮廓线 */}
-            <line
-              x1={lipLeft + lipW * 0.3}
-              y1={-15}
-              x2={lipLeft + lipW * 0.3}
-              y2={leftTubeH}
-              stroke={SCENE_COLORS.materials.glassBorder}
-              strokeWidth={6}
-              strokeLinecap="square"
-            />
-            {/* 玻璃内管高光 */}
-            <line
-              x1={lipLeft + lipW * 0.3}
-              y1={-15}
-              x2={lipLeft + lipW * 0.3}
-              y2={leftTubeH}
-              stroke={withAlpha(SCENE_COLORS.tube.glass ?? '#E0F2FE', 0.85)}
-              strokeWidth={3}
-              strokeLinecap="square"
-            />
-          </g>
-
-          {/* 右导管 (出气口) */}
-          <g id="right-tube">
-            {/* 玻璃外轮廓线 */}
-            <line
-              x1={lipLeft + lipW * 0.7}
-              y1={-15}
-              x2={lipLeft + lipW * 0.7}
-              y2={rightTubeH}
-              stroke={SCENE_COLORS.materials.glassBorder}
-              strokeWidth={6}
-              strokeLinecap="square"
-            />
-            {/* 玻璃内管高光 */}
-            <line
-              x1={lipLeft + lipW * 0.7}
-              y1={-15}
-              x2={lipLeft + lipW * 0.7}
-              y2={rightTubeH}
-              stroke={withAlpha(SCENE_COLORS.tube.glass ?? '#E0F2FE', 0.85)}
-              strokeWidth={3}
-              strokeLinecap="square"
-            />
-          </g>
         </g>
       )}
+
 
       {/* 气体名称/状态标识 */}
       {gasLabel && !isTiny && (

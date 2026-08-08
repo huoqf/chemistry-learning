@@ -22,14 +22,12 @@ export function getSolidHeatingGeneratorPorts(
   x: number,
   y: number
 ): SolidHeatingGeneratorPorts {
-  // 试管导管塞：水平向右穿过塞子 (144, -114) -> (165, -114)
-  // 水平红褐色胶管套接扣在 x=156~166, y=-117.5~-110.5
-  // 取套接扣右端中心 (166, -114)，旋转轴 (105, -114)，角度 6°
-  // dx = 166 - 105 = 61, dy = 0 → new_x = 61*cos(6°)+105 = 165.66, new_y = 61*sin(6°)-114 = -107.63
-  const tip = applyRotate({ x: 166, y: -114 }, 6, 105, -114)
+  // 试管导管塞：旋转轴 (105, -166.37)，旋转 6° 倾斜
+  // dx = 166 - 105 = 61 -> new_y = 61 * sin(6°) - 166.37 = 6.37 - 166.37 = -160.00
+  const tip = applyRotate({ x: 166, y: -166.37 }, 6, 105, -166.37)
   return {
     outletPort: { x: x + tip.x, y: y + tip.y, direction: 'right' },
-    clampPort: { x: x + 105, y: y - 114 },
+    clampPort: { x: x + 105, y: y - 166.37 },
   }
 }
 
@@ -55,10 +53,10 @@ export interface SolidHeatingGeneratorApparatusProps {
  *
  * 严密物理与化学规范封存：
  * - 铁架立杆在左侧后方，立杆与酒精灯 0 穿透
- * - 酒精灯底座 100% 稳稳盘于桌面（y = baseY），零悬空
+ * - 酒精灯下方垫有高考标准防高差木垫块(高53px)，底座 100% 稳稳盘于桌面（y = baseY）
  * - 试管中上部 (距管口 1/3 处) 精准夹持，管口稍向下倾斜 6° 防冷凝水倒流炸裂
+ * - 试管导出管口精准对齐全链条主水平天花板线 Y = baseY - 160
  * - 试管底部下壁 100% 精准相切酒精灯外焰顶端
- * - 药粉受重力自然平铺于下壁内，导管塞心精准对接导出端口 (方向: right)
  */
 export function SolidHeatingGeneratorApparatus({
   x,
@@ -82,13 +80,11 @@ export function SolidHeatingGeneratorApparatus({
   // 几何协同常量（基准桌面 y）
   const supportW = 100
   const supportH = 220
-  // 铁架台右移至 x+62：底座范围 x+67 ~ x+157，立杆中心在 x+88（试管中上部下方）
-  // 夹臂由 90px 大幅缩短为 17px 的短巧精致标准铁夹，横杆彻底离开火焰区
   const supportX = x + 62
   const supportY = y - supportH
 
-  // 目标夹持锚点 (x + 105, y - 114) — 试管旋转轴心，夹臂向右延伸至此
-  const targetClampPoint = { x: x + 105, y: y - 114 }
+  // 目标夹持锚点 (x + 105, y - 166.37) — 试管旋转轴心，导出管对齐 Y = baseY - 160
+  const targetClampPoint = { x: x + 105, y: y - 166.37 }
 
   return (
     <g id="solid-heating-generator">
@@ -103,23 +99,55 @@ export function SolidHeatingGeneratorApparatus({
         clampAngle={6} // 跟随试管倾斜 6°
       />
 
-      {/* ── 2. 酒精灯 (独立立于 x+5 ~ x+65，与右侧铁架台底座 x+67 完美并立，灯焰中心 x+35 加热药粉) ── */}
-      <g id="alcohol-lamp">
+      {/* ── 2. 木垫块 + 酒精灯 (标准化学实验室调节高度木垫块，酒精灯平盘其上) ── */}
+      <g id="wooden-block-and-lamp">
+        {/* 高考标准实验室防高差木垫块 (Sit on desktop y, height 53px) */}
+        <rect
+          x={x}
+          y={y - 53}
+          width={70}
+          height={53}
+          rx={4}
+          fill="#D97706"
+          stroke="#92400E"
+          strokeWidth={1.5}
+        />
+        {/* 木垫块表面侧边木纹细节线 */}
+        <line
+          x1={x + 5}
+          y1={y - 35}
+          x2={x + 65}
+          y2={y - 35}
+          stroke="#B45309"
+          strokeWidth={1}
+          opacity={0.6}
+        />
+        <line
+          x1={x + 5}
+          y1={y - 18}
+          x2={x + 65}
+          y2={y - 18}
+          stroke="#B45309"
+          strokeWidth={1}
+          opacity={0.6}
+        />
+
+        {/* 酒精灯 (立于木垫块上方 x+5 ~ x+65, y=y-53) */}
         <AlcoholLampApparatus
           x={x + 5}
-          y={y - 85}
+          y={y - 53 - 85}
           width={60}
           height={85}
           lit={lit}
         />
       </g>
 
-      {/* ── 3. 倾斜 6° 试管组合 (旋转轴心为铁夹夹持点 (x+105, y-114)) ── */}
+      {/* ── 3. 倾斜 6° 试管组合 (旋转轴心为铁夹夹持点 (x+105, y-166.37)) ── */}
       <g transform={`translate(${x}, ${y})`}>
-        <g id="test-tube-assembly" transform="rotate(6, 105, -114)">
+        <g id="test-tube-assembly" transform="rotate(6, 105, -166.37)">
           {/* 3.1 试管玻璃主体 (管底在左 X=30，管口在右 X=140，管径 24) */}
           <path
-            d="M 140,-126 L 42,-126 A 12 12 0 0 0 42,-102 L 140,-102 Z"
+            d="M 140,-178.37 L 42,-178.37 A 12 12 0 0 0 42,-154.37 L 140,-154.37 Z"
             fill={withAlpha(SCENE_COLORS.container.testTube, 0.4)}
             stroke={SCENE_COLORS.container.testTubeBorder}
             strokeWidth={STROKE.objectLine}
@@ -127,7 +155,7 @@ export function SolidHeatingGeneratorApparatus({
           {/* 试管口翻边 Lip */}
           <rect
             x={139}
-            y={-128}
+            y={-180.37}
             width={4}
             height={28}
             rx={1}
@@ -138,7 +166,7 @@ export function SolidHeatingGeneratorApparatus({
 
           {/* 3.2 重力自然横向平铺药粉 (平铺于试管下壁 32~80 区域) */}
           <path
-            d="M 32,-108 C 36,-103 42,-103 75,-103 L 75,-103 C 65,-106 45,-108 32,-108 Z"
+            d="M 32,-160.37 C 36,-155.37 42,-155.37 75,-155.37 L 75,-155.37 C 65,-158.37 45,-160.37 32,-160.37 Z"
             fill={powderColor}
             opacity={0.9}
           />
@@ -147,7 +175,7 @@ export function SolidHeatingGeneratorApparatus({
           <g id="stopper-and-tube">
             <rect
               x={140}
-              y={-125}
+              y={-177.37}
               width={12}
               height={22}
               rx={2}
@@ -155,12 +183,12 @@ export function SolidHeatingGeneratorApparatus({
               stroke={SCENE_COLORS.stopper.rubberStopperBorder}
               strokeWidth={1}
             />
-            {/* 水平出气玻璃管：穿过塞子向右伸出 */}
+            {/* 水平出气玻璃管：穿过塞子向右伸出，中心在 y=-166.37 */}
             <line
               x1={144}
-              y1={-114}
+              y1={-166.37}
               x2={166}
-              y2={-114}
+              y2={-166.37}
               stroke={SCENE_COLORS.tube.glass}
               strokeWidth={4}
               strokeLinecap="round"
@@ -169,10 +197,12 @@ export function SolidHeatingGeneratorApparatus({
         </g>
       </g>
 
+
+
       {/* ── 4. 警告与提示标语 ── */}
       <g transform={`translate(${x}, ${y})`}>
         {isWrongGenerator ? (
-          <g transform="translate(30, -180)">
+          <g transform="translate(25, -215)">
             <rect
               x={-15}
               y={-14}
@@ -195,7 +225,7 @@ export function SolidHeatingGeneratorApparatus({
             </text>
           </g>
         ) : (
-          <g transform="translate(35, -170)">
+          <g transform="translate(25, -215)">
             <rect
               x={-10}
               y={-12}

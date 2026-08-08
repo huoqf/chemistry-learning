@@ -45,8 +45,8 @@ export interface ResolvedApparatusPosition {
  * GasChainCenterView 直接用此数据渲染，无需再次偏移计算
  */
 export interface ApparatusLayout {
-  /** 器材标识 */
-  id: 'generator' | 'wash' | 'dryer' | 'collection' | 'tailgas'
+  /** 器材标识（wash-N 动态洗气步骤支持 N ∈ [0,9]） */
+  id: 'generator' | 'wash' | 'wash-0' | 'wash-1' | 'wash-2' | 'wash-3' | 'dryer' | 'collection' | 'tailgas'
   /** 器材左上角 x（绝对坐标，传给组件的 x prop）*/
   x: number
   /** 器材左上角 y（绝对坐标，传给组件的 y prop）*/

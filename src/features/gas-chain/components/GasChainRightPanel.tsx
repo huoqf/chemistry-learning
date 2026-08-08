@@ -74,12 +74,13 @@ export const GasChainRightPanel: React.FC<GasChainRightPanelProps> = ({
   ]
 
   // 2. 净化 Note 动态计算
+  const firstReagent = params.washingSteps[0]?.reagent ?? 'none'
   let washNote = '洗气瓶必须“长进短出”；饱和 NaCl 除 HCl 抑 Cl₂；NaOH 吸收酸性杂质。'
-  if (params.washReagent === 'none') {
+  if (firstReagent === 'none') {
     washNote = '提示：当前选用了未净化跳过节点，请确保发生气体无有害副杂质。'
-  } else if (params.washReagent === 'fuchsin') {
+  } else if (firstReagent === 'fuchsin') {
     washNote = 'SO₂ 气体通入品红溶液，使红色褪去；加热后重新恢复红色 (SO₂ 漂白特征)。'
-  } else if (params.washReagent === 'kmno4') {
+  } else if (firstReagent === 'kmno4') {
     washNote = '酸性 KMnO₄ 可氧化 SO₂ 除杂；但强氧化性会切断 C=C 双键把乙烯氧化成 CO₂！'
   }
 

@@ -14,15 +14,16 @@ import { GasChainLeftPanel } from './components/GasChainLeftPanel'
 import { GasChainCenterView } from './components/GasChainCenterView'
 import { GasChainRightPanel } from './components/GasChainRightPanel'
 
-// 5 大经典体系默认预设表
+// 5 大经典体系默认预设表（v2：washingSteps 多节点串联）
 const SYSTEM_PRESETS: Record<GasChainSystemId, Partial<GasChainParams>> = {
   'cl2-prep': {
     systemId: 'cl2-prep',
     targetGas: 'Cl₂',
     generator: 'flask-heat',
-    washReagent: 'sat-nacl',
-    washReverse: false,
-    dryer: 'conc-h2so4',
+    washingSteps: [
+      { id: 's1', device: 'wash-bottle',  reagent: 'sat-nacl',   role: 'purify' },
+      { id: 's2', device: 'acid-bottle',  reagent: 'conc-h2so4', role: 'dry'    },
+    ],
     collection: 'upward-air',
     tailGas: 'naoh-absorber',
     temp: 90,
@@ -32,9 +33,9 @@ const SYSTEM_PRESETS: Record<GasChainSystemId, Partial<GasChainParams>> = {
     systemId: 'nh3-prep',
     targetGas: 'NH₃',
     generator: 'testtube-heat',
-    washReagent: 'none',
-    washReverse: false,
-    dryer: 'soda-lime',
+    washingSteps: [
+      { id: 's1', device: 'dry-tube', reagent: 'soda-lime', role: 'dry' },
+    ],
     collection: 'downward-air',
     tailGas: 'inverted-funnel',
     temp: 110,
@@ -44,9 +45,10 @@ const SYSTEM_PRESETS: Record<GasChainSystemId, Partial<GasChainParams>> = {
     systemId: 'so2-chain',
     targetGas: 'SO₂',
     generator: 'flask-noheat',
-    washReagent: 'fuchsin',
-    washReverse: false,
-    dryer: 'conc-h2so4',
+    washingSteps: [
+      { id: 's1', device: 'wash-bottle',  reagent: 'fuchsin',    role: 'detect' },
+      { id: 's2', device: 'acid-bottle',  reagent: 'conc-h2so4', role: 'dry'    },
+    ],
     collection: 'upward-air',
     tailGas: 'inverted-funnel',
     temp: 25,
@@ -56,9 +58,9 @@ const SYSTEM_PRESETS: Record<GasChainSystemId, Partial<GasChainParams>> = {
     systemId: 'no-no2-chain',
     targetGas: 'NO₂',
     generator: 'flask-noheat',
-    washReagent: 'none',
-    washReverse: false,
-    dryer: 'conc-h2so4',
+    washingSteps: [
+      { id: 's1', device: 'acid-bottle', reagent: 'conc-h2so4', role: 'dry' },
+    ],
     collection: 'upward-air',
     tailGas: 'naoh-absorber',
     temp: 25,
@@ -68,11 +70,12 @@ const SYSTEM_PRESETS: Record<GasChainSystemId, Partial<GasChainParams>> = {
     systemId: 'c2h4-prep',
     targetGas: 'C₂H₄',
     generator: 'flask-heat',
-    washReagent: 'naoh',
-    washReverse: false,
-    dryer: 'conc-h2so4',
+    washingSteps: [
+      { id: 's1', device: 'wash-bottle',  reagent: 'naoh',       role: 'purify' },
+      { id: 's2', device: 'acid-bottle',  reagent: 'conc-h2so4', role: 'dry'    },
+    ],
     collection: 'water-displacement',
-    tailGas: 'combustion',
+    tailGas: 'none',
     temp: 170,
     heating: true,
   },
@@ -80,9 +83,10 @@ const SYSTEM_PRESETS: Record<GasChainSystemId, Partial<GasChainParams>> = {
     systemId: 'custom',
     targetGas: 'Cl₂',
     generator: 'flask-heat',
-    washReagent: 'sat-nacl',
-    washReverse: false,
-    dryer: 'conc-h2so4',
+    washingSteps: [
+      { id: 's1', device: 'wash-bottle',  reagent: 'sat-nacl',   role: 'purify' },
+      { id: 's2', device: 'acid-bottle',  reagent: 'conc-h2so4', role: 'dry'    },
+    ],
     collection: 'upward-air',
     tailGas: 'naoh-absorber',
     temp: 85,
@@ -101,9 +105,10 @@ export function GasChainCanvas() {
     systemId: 'cl2-prep',
     targetGas: 'Cl₂',
     generator: 'flask-heat',
-    washReagent: 'sat-nacl',
-    washReverse: false,
-    dryer: 'conc-h2so4',
+    washingSteps: [
+      { id: 's1', device: 'wash-bottle',  reagent: 'sat-nacl',   role: 'purify' },
+      { id: 's2', device: 'acid-bottle',  reagent: 'conc-h2so4', role: 'dry'    },
+    ],
     collection: 'upward-air',
     tailGas: 'naoh-absorber',
     flowRate: 50,

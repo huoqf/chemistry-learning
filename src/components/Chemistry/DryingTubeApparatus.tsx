@@ -48,8 +48,8 @@ export function DryingTubeApparatus({
   const w = width
   const h = height
   const isTiny = w < 45
-  // 球形干燥管支撑竖杆实际高度：优先使用 holderHeight prop，否则备用默认值
-  const resolvedHolderH = holderHeight ?? (variant === 'spherical' ? 85 : 40)
+  // 球形干燥管支撑竖杆实际高度：优先使用 holderHeight prop，否则备用默认值 136
+  const resolvedHolderH = holderHeight ?? (variant === 'spherical' ? 136 : 85)
 
   return (
     <g transform={`translate(${x}, ${y})`}>

@@ -18,14 +18,21 @@ import { getSolidHeatingGeneratorPorts } from '@/components/Chemistry/SolidHeati
 import { getLiquidHeatingGeneratorPorts } from '@/components/Chemistry/LiquidHeatingGeneratorApparatus'
 import { getNoHeatGeneratorPorts } from '@/components/Chemistry/NoHeatGeneratorApparatus'
 import { getKippApparatusPorts } from '@/components/Chemistry/KippApparatus'
+import { getWaterDisplacementPorts } from '@/components/Chemistry/WaterDisplacementCollectionApparatus'
+import { getSafetyBottlePorts } from '@/components/Chemistry/SafetyBottleApparatus'
 
 export interface LayoutEngineInput {
   generator: string
-  washReagent: string
-  dryer: string
+  /** 串联洗气/检验/干燥步骤列表（动态 N 个槽位） */
+  washingSteps: Array<{
+    id: string
+    device: 'wash-bottle' | 'dry-tube' | 'acid-bottle'
+    reagent: string
+    role: 'purify' | 'detect' | 'dry'
+    reversed?: boolean
+  }>
   collection: string
   tailGas: string
-  washReverse: boolean
   baseY?: number
 }
 
@@ -72,10 +79,11 @@ function createAbsoluteSmoothTubingPath(
 
     // 出口朝右 -> 入口朝上 (进入洗气瓶/干燥瓶/集气瓶/尾气)
     if (start.y <= end.y + 10) {
+      const cornerY = Math.min(end.y, start.y + radius)
       return [
         `M ${start.x} ${start.y}`,
         `L ${end.x - radius} ${start.y}`,
-        `Q ${end.x} ${start.y} ${end.x} ${start.y + radius}`,
+        `Q ${end.x} ${start.y} ${end.x} ${cornerY}`,
         `L ${end.x} ${end.y}`,
       ].join(' ')
     } else {
@@ -122,39 +130,42 @@ function createAbsoluteSmoothTubingPath(
 export function solvePhysicalChainLayout(
   input: LayoutEngineInput
 ): PhysicalChainSolveResult {
-  const { generator, washReagent, dryer, collection, tailGas, washReverse } = input
+  const { generator, washingSteps, collection, tailGas } = input
   const baseY = input.baseY ?? 480
 
-  const hasWash = washReagent !== 'none'
-  const hasDryer = dryer !== 'none'
   const hasCollection = collection !== 'none'
   const hasTailGas = tailGas !== 'none'
+  const numWashSteps = washingSteps.length
 
-  // ─── 1. 动态自适应 SlotX（基于活跃装置数均分） ───────────────────────────
-  const activeSlots: number[] = [0]
-  if (hasWash) activeSlots.push(1)
-  if (hasDryer) activeSlots.push(2)
-  if (hasCollection) activeSlots.push(3)
-  if (hasTailGas) activeSlots.push(4)
+  // ─── 1. 动态自适应 SlotX（基于活跃装置数均分）────────────────────────────
+  // 结构：[发生装置(0)] + [洗气步骤 1..N] + [收集(N+1)] + [尾气(N+2)]
+  const totalSlots = 1 + numWashSteps + (hasCollection ? 1 : 0) + (hasTailGas ? 1 : 0)
+  const startX = 80
+  const endX = 760
+  const stepX = totalSlots > 1 ? (endX - startX) / (totalSlots - 1) : 0
 
-  const numActive = activeSlots.length
-  const startX = 100
-  const endX = 740
-  const stepX = numActive > 1 ? (endX - startX) / (numActive - 1) : 0
+  // 生成每个槽的中心 X 坐标
+  const allSlotX: number[] = []
+  for (let i = 0; i < totalSlots; i++) {
+    allSlotX.push(startX + i * stepX)
+  }
 
-  const slotX = [100, 260, 420, 580, 740]
-  activeSlots.forEach((nodeIdx, idx) => {
-    slotX[nodeIdx] = startX + idx * stepX
-  })
+  // 槽位索引分配
+  const genSlotIdx = 0
+  const washSlotStart = 1
+  const collSlotIdx = hasCollection ? washSlotStart + numWashSteps : -1
+  const tailSlotIdx = hasTailGas
+    ? (hasCollection ? collSlotIdx + 1 : washSlotStart + numWashSteps)
+    : -1
 
   // ─── 2. 计算各器材的精确渲染坐标与端口（单一事实来源）────────────────────
   const apparatusLayouts: ApparatusLayout[] = []
 
   // ── Slot 0: 发生装置 ────────────────────────────────────────────────────────
+  const genX = allSlotX[genSlotIdx]
   let generatorLayout: ApparatusLayout
   if (generator === 'flask-heat') {
-    // LiquidHeatingGeneratorApparatus: x=slotX[0], y=baseY
-    const renderX = slotX[0]
+    const renderX = genX
     const renderY = baseY
     const ports = getLiquidHeatingGeneratorPorts(renderX, renderY)
     generatorLayout = {
@@ -167,8 +178,7 @@ export function solvePhysicalChainLayout(
       outletPort: ports.sideArmPort,
     }
   } else if (generator === 'testtube-heat') {
-    // SolidHeatingGeneratorApparatus: x=slotX[0]-60, y=baseY
-    const renderX = slotX[0] - 60
+    const renderX = genX - 60
     const renderY = baseY
     const ports = getSolidHeatingGeneratorPorts(renderX, renderY)
     generatorLayout = {
@@ -181,8 +191,7 @@ export function solvePhysicalChainLayout(
       outletPort: ports.outletPort,
     }
   } else if (generator === 'flask-noheat') {
-    // NoHeatGeneratorApparatus: x=slotX[0], y=baseY
-    const renderX = slotX[0]
+    const renderX = genX
     const renderY = baseY
     const ports = getNoHeatGeneratorPorts(renderX, renderY)
     generatorLayout = {
@@ -195,8 +204,8 @@ export function solvePhysicalChainLayout(
       outletPort: ports.outletPort,
     }
   } else {
-    // KippApparatus: x=slotX[0]-45, y=baseY-220
-    const renderX = slotX[0] - 45
+    // kipp
+    const renderX = genX - 45
     const renderY = baseY - 220
     const ports = getKippApparatusPorts(renderX, renderY, 90)
     generatorLayout = {
@@ -211,60 +220,25 @@ export function solvePhysicalChainLayout(
   }
   apparatusLayouts.push(generatorLayout)
 
-  // ── Slot 1: 洗气瓶 ─────────────────────────────────────────────────────────
+  // ── Slots 1..N: 动态串联洗气/检验/干燥步骤 ─────────────────────────────────
   const WASH_W = 90
   const WASH_H = 140
-  // 洗气瓶渲染坐标：左上角
-  const washX = slotX[1] - WASH_W / 2
-  const washY = baseY - WASH_H
-  let washLayout: ApparatusLayout | null = null
-  if (hasWash) {
-    const ports = getGasWashingBottlePorts(washX, washY, WASH_W, WASH_H, washReverse)
-    washLayout = {
-      id: 'wash',
-      x: washX,
-      y: washY,
-      width: WASH_W,
-      height: WASH_H,
-      inletPort: ports.inletPort,
-      outletPort: ports.outletPort,
-    }
-    apparatusLayouts.push(washLayout)
-  }
-
-  // ── Slot 2: 干燥装置 ───────────────────────────────────────────────────────
   const DRYER_W = 110
   const DRYER_H = 60
-  const DRYER_BOTTLE_W = 90
-  const DRYER_BOTTLE_H = 140
-  let dryerLayout: ApparatusLayout | null = null
-  if (hasDryer) {
-    if (dryer === 'conc-h2so4') {
-      const renderX = slotX[2] - DRYER_BOTTLE_W / 2
-      const renderY = baseY - DRYER_BOTTLE_H
-      const ports = getGasWashingBottlePorts(renderX, renderY, DRYER_BOTTLE_W, DRYER_BOTTLE_H)
-      dryerLayout = {
-        id: 'dryer',
-        x: renderX,
-        y: renderY,
-        width: DRYER_BOTTLE_W,
-        height: DRYER_BOTTLE_H,
-        inletPort: ports.inletPort,
-        outletPort: ports.outletPort,
-      }
-    } else {
-      // cacl2 (U型管) 或 soda-lime (球形干燥管)
-      const renderX = slotX[2] - DRYER_W / 2
-      const variant = dryer === 'cacl2' ? 'U-shape' : 'spherical'
-      // 球形干燥管：中心线与试管水平出气口精确对齐（出口 y = baseY - 107.6，经 applyRotate 计算）
-      // 中心 y = renderY + DRYER_H * 0.5 = baseY - 107.6 → renderY = baseY - 137.6
-      // U型管：保持原位（竖置，端口在顶部）
-      const renderY = variant === 'spherical' ? baseY - 137.6 : baseY - 195
-      // 支架竖杆高度 = 从干燥管中心下底 (baseY - 83.6) 到桌面的距离
-      const holderHeight = variant === 'spherical' ? 89 : 85
+
+  const washLayouts: ApparatusLayout[] = []
+  washingSteps.forEach((step, i) => {
+    const slotIdx = washSlotStart + i
+    const centerX = allSlotX[slotIdx]
+
+    if (step.device === 'dry-tube') {
+      const variant = step.reagent === 'cacl2' ? 'U-shape' : 'spherical'
+      const renderX = centerX - DRYER_W / 2
+      const renderY = variant === 'spherical' ? baseY - 190 : baseY - 195
+      const holderHeight = variant === 'spherical' ? 136 : 85
       const ports = getDryingTubePorts(renderX, renderY, DRYER_W, DRYER_H, variant)
-      dryerLayout = {
-        id: 'dryer',
+      const layout: ApparatusLayout = {
+        id: `wash-${i}` as ApparatusLayout['id'],
         x: renderX,
         y: renderY,
         width: DRYER_W,
@@ -273,36 +247,52 @@ export function solvePhysicalChainLayout(
         outletPort: ports.outletPort,
         holderHeight,
       }
+      washLayouts.push(layout)
+      apparatusLayouts.push(layout)
+    } else {
+      // 洗气瓶（wash-bottle 或 acid-bottle）
+      const renderX = centerX - WASH_W / 2
+      const renderY = baseY - WASH_H
+      const reversed = step.reversed ?? false
+      const ports = getGasWashingBottlePorts(renderX, renderY, WASH_W, WASH_H, reversed)
+      const layout: ApparatusLayout = {
+        id: `wash-${i}` as ApparatusLayout['id'],
+        x: renderX,
+        y: renderY,
+        width: WASH_W,
+        height: WASH_H,
+        inletPort: ports.inletPort,
+        outletPort: ports.outletPort,
+      }
+      washLayouts.push(layout)
+      apparatusLayouts.push(layout)
     }
-    apparatusLayouts.push(dryerLayout)
-  }
+  })
 
-  // ── Slot 3: 收集装置 ───────────────────────────────────────────────────────
+  // ── Slot 收集: 收集装置 ────────────────────────────────────────────────────
   const JAR_W = 70
   const JAR_H = 110
   let collectionLayout: ApparatusLayout | null = null
-  if (hasCollection) {
+  if (hasCollection && collSlotIdx >= 0) {
+    const centerX = allSlotX[collSlotIdx]
     if (collection === 'water-displacement') {
-      // 排水集气：水槽 + 倒扣集气瓶
-      const renderX = slotX[3] - 75
-      const renderY = baseY - 150
+      const W_W = 150
+      const W_H = 150
+      const renderX = centerX - W_W / 2
+      const renderY = baseY - W_H
+      const ports = getWaterDisplacementPorts(renderX, renderY, W_W)
       collectionLayout = {
         id: 'collection',
         x: renderX,
         y: renderY,
-        width: 150,
-        height: 150,
-        inletPort: { x: renderX + 25, y: renderY + 10 },
-        // 倒扣集气瓶右侧短出气管导出端口，平平直连接到右侧尾气处理点燃嘴
-        outletPort: hasTailGas
-          ? { x: renderX + 115, y: renderY + 25, direction: 'right' }
-          : null,
+        width: W_W,
+        height: W_H,
+        inletPort: ports.inletPort,
+        outletPort: ports.outletPort,
       }
     } else {
-      const renderX = slotX[3] - JAR_W / 2
+      const renderX = centerX - JAR_W / 2
       const renderY = baseY - JAR_H
-      // 集气瓶端口：使用与组件一致的导管口坐标 y = renderY - 15
-      // inletPort (左侧短/长管口)，outletPort (右侧长/短管口)
       const ports = getGasJarPorts(renderX, renderY, JAR_W)
       collectionLayout = {
         id: 'collection',
@@ -317,76 +307,76 @@ export function solvePhysicalChainLayout(
     apparatusLayouts.push(collectionLayout)
   }
 
-  // ── Slot 4: 尾气处理 ───────────────────────────────────────────────────────
-  let tailgasLayout: ApparatusLayout
-  if (tailGas === 'inverted-funnel') {
-    const renderX = slotX[4] - 40
-    // 修复：烧杯底部贴合桌面
-    // AntiSiphonFunnelApparatus 内部：beakerTopY = h - 25 = 75, beakerH = 65
-    // 烧杯底部绝对 y = renderY + 75 + 65 = renderY + 140 = baseY
-    // → renderY = baseY - 140
-    const renderY = baseY - 140
-    const ports = getAntiSiphonFunnelPorts(renderX, renderY, 80, 100)
-    tailgasLayout = {
-      id: 'tailgas',
-      x: renderX,
-      y: renderY,
-      width: 80,
-      height: 100,
-      inletPort: ports.topConnectPort,
-      outletPort: null,
+  // ── Slot 尾气: 尾气处理 ────────────────────────────────────────────────────
+  let tailgasLayout: ApparatusLayout | undefined
+  if (hasTailGas && tailSlotIdx >= 0) {
+    const centerX = allSlotX[tailSlotIdx]
+    if (tailGas === 'inverted-funnel') {
+      const renderX = centerX - 40
+      const renderY = baseY - 140
+      const ports = getAntiSiphonFunnelPorts(renderX, renderY, 80, 100)
+      tailgasLayout = {
+        id: 'tailgas',
+        x: renderX,
+        y: renderY,
+        width: 80,
+        height: 100,
+        inletPort: ports.topConnectPort,
+        outletPort: null,
+      }
+    } else if (tailGas === 'safety-bottle') {
+      const SAF_W = 80
+      const SAF_H = 120
+      const renderX = centerX - SAF_W / 2
+      const renderY = baseY - SAF_H
+      const ports = getSafetyBottlePorts(renderX, renderY, SAF_W)
+      tailgasLayout = {
+        id: 'tailgas',
+        x: renderX,
+        y: renderY,
+        width: SAF_W,
+        height: SAF_H,
+        inletPort: ports.inletPort,
+        outletPort: ports.outletPort,
+      }
+    } else if (tailGas === 'combustion') {
+      const renderX = centerX - 30
+      const renderY = baseY - 125
+      tailgasLayout = {
+        id: 'tailgas',
+        x: renderX,
+        y: renderY,
+        width: 60,
+        height: 125,
+        inletPort: { x: renderX, y: renderY, direction: 'left' },
+        outletPort: null,
+      }
+    } else if (tailGas === 'balloon') {
+      const renderX = centerX - 20
+      const renderY = baseY - 140
+      tailgasLayout = {
+        id: 'tailgas',
+        x: renderX,
+        y: renderY,
+        width: 70,
+        height: 140,
+        inletPort: { x: renderX, y: renderY + 20 },
+        outletPort: null,
+      }
+    } else {
+      // direct-pipe / NaOH 烧杯
+      const renderX = centerX - 45
+      const renderY = baseY - 100
+      tailgasLayout = {
+        id: 'tailgas',
+        x: renderX,
+        y: renderY,
+        width: 90,
+        height: 100,
+        inletPort: { x: centerX, y: renderY + 65 },
+        outletPort: null,
+      }
     }
-  } else if (tailGas === 'safety-bottle') {
-    const renderX = slotX[4] - 65
-    const renderY = baseY - 165
-    tailgasLayout = {
-      id: 'tailgas',
-      x: renderX,
-      y: renderY,
-      width: 50,
-      height: 75,
-      inletPort: { x: renderX + 15, y: renderY },
-      outletPort: null,
-    }
-  } else if (tailGas === 'combustion') {
-    const renderX = slotX[4] - 30
-    const renderY = baseY - 125
-    tailgasLayout = {
-      id: 'tailgas',
-      x: renderX,
-      y: renderY,
-      width: 60,
-      height: 125,
-      inletPort: { x: renderX, y: renderY, direction: 'left' },
-      outletPort: null,
-    }
-  } else if (tailGas === 'balloon') {
-    const renderX = slotX[4] - 20
-    const renderY = baseY - 140
-    tailgasLayout = {
-      id: 'tailgas',
-      x: renderX,
-      y: renderY,
-      width: 70,
-      height: 140,
-      inletPort: { x: renderX, y: renderY + 20 },
-      outletPort: null,
-    }
-  } else {
-    // direct-pipe / NaOH 烧杯：直插进气
-    const renderX = slotX[4] - 45
-    const renderY = baseY - 100
-    tailgasLayout = {
-      id: 'tailgas',
-      x: renderX,
-      y: renderY,
-      width: 90,
-      height: 100,
-      inletPort: { x: slotX[4], y: renderY + 65 },
-      outletPort: null,
-    }
-  }
-  if (hasTailGas && tailgasLayout) {
     apparatusLayouts.push(tailgasLayout)
   }
 
@@ -395,13 +385,14 @@ export function solvePhysicalChainLayout(
 
   type RouteNode = { slotIdx: number; layout: ApparatusLayout }
   const chain: RouteNode[] = []
-  chain.push({ slotIdx: 0, layout: generatorLayout })
-  if (washLayout) chain.push({ slotIdx: 1, layout: washLayout })
-  if (dryerLayout) chain.push({ slotIdx: 2, layout: dryerLayout })
-  if (collectionLayout) chain.push({ slotIdx: 3, layout: collectionLayout })
-  if (hasTailGas && tailgasLayout) chain.push({ slotIdx: 4, layout: tailgasLayout })
+  chain.push({ slotIdx: genSlotIdx, layout: generatorLayout })
+  washLayouts.forEach((wl, i) => {
+    chain.push({ slotIdx: washSlotStart + i, layout: wl })
+  })
+  if (collectionLayout) chain.push({ slotIdx: collSlotIdx, layout: collectionLayout })
+  if (tailgasLayout) chain.push({ slotIdx: tailSlotIdx, layout: tailgasLayout })
 
-  // 全链统一瓶口走线基线：以瓶口/塞顶平齐高度为基准 (Y ≈ 325)，消除高空耸立与冲高下砸
+  // 全链统一瓶口走线基线
   let minPortY = 999
   chain.forEach((node) => {
     if (node.layout.outletPort && node.layout.outletPort.direction !== 'right') {
@@ -429,8 +420,8 @@ export function solvePhysicalChainLayout(
       // 发生装置 -> 第一后级：高架桥管
       tubeType = 'bridge'
     } else if (
-      to.layout.id === 'dryer' &&
-      dryer === 'soda-lime'
+      washingSteps[to.slotIdx - washSlotStart]?.device === 'dry-tube' &&
+      washingSteps[to.slotIdx - washSlotStart]?.reagent !== 'cacl2'
     ) {
       // 球形干燥管水平插口
       tubeType = 'horizontal-socket'
@@ -459,7 +450,7 @@ export function solvePhysicalChainLayout(
 
   return {
     baseY,
-    slotX,
+    slotX: allSlotX,
     apparatuses: [],
     apparatusLayouts,
     routes,

@@ -18,7 +18,7 @@ export function getAntiSiphonFunnelPorts(
   height = 100
 ): AntiSiphonFunnelPorts {
   return {
-    topConnectPort: { x: x + width * 0.5, y, direction: 'up' },
+    topConnectPort: { x: x + width * 0.5, y: y - 20, direction: 'up' },
     bottomPort: { x: x + width * 0.5, y: y + height, direction: 'down' },
   }
 }
@@ -118,12 +118,12 @@ export function AntiSiphonFunnelApparatus({
       <line x1={beakerLeft + 6} y1={beakerTopY + 30} x2={beakerLeft + 18} y2={beakerTopY + 30} stroke={SCENE_COLORS.container.beakerBorder} strokeWidth={1} />
       <line x1={beakerLeft + 6} y1={beakerTopY + 42} x2={beakerLeft + 14} y2={beakerTopY + 42} stroke={SCENE_COLORS.container.beakerBorder} strokeWidth={1} />
 
-      {/* ── 2. 细玻璃柄 ── */}
+      {/* ── 2. 细玻璃柄 (向上延伸至 y=-20 对齐全链主水平天花板导管) ── */}
       <rect
         x={stemLeft}
-        y={0}
+        y={-20}
         width={stemW}
-        height={stemH}
+        height={stemH + 20}
         fill={withAlpha(SCENE_COLORS.materials.glass, 0.5)}
         stroke={SCENE_COLORS.materials.glassBorder}
         strokeWidth={STROKE.objectLine}

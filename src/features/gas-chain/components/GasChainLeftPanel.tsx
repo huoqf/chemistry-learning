@@ -1,8 +1,3 @@
-/**
- * src/features/gas-chain/components/GasChainLeftPanel.tsx
- * 气体制备/净化/尾气处理装置链工具 - 左屏控制台 (遵从 UI 组件库规范)
- */
-
 import React from 'react'
 import {
   LeftPanel,
@@ -16,8 +11,7 @@ import type {
   GasChainParams,
   GasChainSystemId,
   GeneratorType,
-  WashReagentType,
-  DryerType,
+  WashStepReagent,
   CollectionMethod,
   TailGasDevice,
 } from '../types'
@@ -73,12 +67,26 @@ export const GasChainLeftPanel: React.FC<GasChainLeftPanelProps> = ({
             />
           </div>
 
-          {/* ② 净化试剂 */}
+          {/* ② 净化试剂（第 1 步洗气瓶试剂） */}
           <div className="space-y-2">
             <SegmentedControl
               label="② 净化洗气瓶试剂"
-              value={params.washReagent}
-              onChange={(val) => updateParam('washReagent', val as WashReagentType)}
+              value={params.washingSteps[0]?.reagent ?? 'none'}
+              onChange={(val) => {
+                const steps = [...params.washingSteps]
+                if (val === 'none') {
+                  // 无净化：移除第一步（若为 wash-bottle）
+                  const filtered = steps.filter((s, i) => i !== 0 || s.device !== 'wash-bottle')
+                  updateParam('washingSteps', filtered)
+                } else {
+                  if (steps[0]?.device === 'wash-bottle' || steps[0]?.device === 'acid-bottle') {
+                    steps[0] = { ...steps[0], reagent: val as WashStepReagent }
+                  } else {
+                    steps.unshift({ id: 'w0', device: 'wash-bottle', reagent: val as WashStepReagent, role: 'purify' })
+                  }
+                  updateParam('washingSteps', steps)
+                }
+              }}
               cols={2}
               options={[
                 { label: '饱和食盐水', value: 'sat-nacl' },
@@ -94,10 +102,14 @@ export const GasChainLeftPanel: React.FC<GasChainLeftPanelProps> = ({
             <div className="flex items-center justify-between p-2 rounded-lg bg-neutral-50 border border-neutral-200">
               <ToggleSwitch
                 label="管路接法"
-                checked={!params.washReverse}
-                onChange={(checked) => updateParam('washReverse', !checked)}
+                checked={!(params.washingSteps[0]?.reversed)}
+                onChange={(checked) => {
+                  const steps = [...params.washingSteps]
+                  if (steps[0]) steps[0] = { ...steps[0], reversed: !checked }
+                  updateParam('washingSteps', steps)
+                }}
               />
-              {!params.washReverse ? (
+              {!(params.washingSteps[0]?.reversed) ? (
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700">
                   ✓ 长进短出
                 </span>
@@ -109,12 +121,22 @@ export const GasChainLeftPanel: React.FC<GasChainLeftPanelProps> = ({
             </div>
           </div>
 
-          {/* ③ 干燥试剂 */}
+          {/* ③ 干燥试剂（最后一步 dry-tube/acid-bottle） */}
           <div>
             <SegmentedControl
               label="③ 干燥装置与试剂"
-              value={params.dryer}
-              onChange={(val) => updateParam('dryer', val as DryerType)}
+              value={
+                params.washingSteps.find(s => s.device === 'dry-tube')?.reagent
+                ?? (params.washingSteps.find(s => s.device === 'acid-bottle') ? 'conc-h2so4' : 'none')
+              }
+              onChange={(val) => {
+                const steps = params.washingSteps.filter(s => s.device !== 'dry-tube' && s.device !== 'acid-bottle')
+                if (val !== 'none') {
+                  const device = val === 'conc-h2so4' ? 'acid-bottle' : 'dry-tube'
+                  steps.push({ id: `d${Date.now()}`, device, reagent: val as WashStepReagent, role: 'dry' })
+                }
+                updateParam('washingSteps', steps)
+              }}
               cols={2}
               options={[
                 { label: '浓硫酸洗气瓶', value: 'conc-h2so4' },
