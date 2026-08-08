@@ -16,6 +16,11 @@ export interface DryingTubeApparatusProps {
   desiccantName?: string
   /** 干燥剂颜色 */
   desiccantColor?: string
+  /**
+   * 支撑竖杆高度（px，默认 85）
+   * 由布局引擎传入，确保竖杆能精确延伸到桌面而不悬空或出头
+   */
+  holderHeight?: number
   /** 字体缩放函数 */
   font?: FontScaler
 }
@@ -37,11 +42,14 @@ export function DryingTubeApparatus({
   variant = 'spherical',
   desiccantName = '碱石灰',
   desiccantColor = SCENE_COLORS.reagent.precipitate,
+  holderHeight,
   font = (n) => n,
 }: DryingTubeApparatusProps) {
   const w = width
   const h = height
   const isTiny = w < 45
+  // 球形干燥管支撑竖杆实际高度：优先使用 holderHeight prop，否则备用默认值
+  const resolvedHolderH = holderHeight ?? (variant === 'spherical' ? 85 : 40)
 
   return (
     <g transform={`translate(${x}, ${y})`}>
@@ -91,39 +99,128 @@ export function DryingTubeApparatus({
           <ellipse cx={w * 0.78} cy={0} rx={3} ry={3.5} fill={SCENE_COLORS.materials.asbestos} />
         </g>
       ) : (
-        /* 2. U型管 (竖置) */
-        <g>
-          <path
-            d={`
-              M ${w * 0.2} 0
-              L ${w * 0.2} ${h - 20}
-              A 20 20 0 0 0 ${w * 0.8} ${h - 20}
-              L ${w * 0.8} 0
-            `}
-            fill="none"
-            stroke={SCENE_COLORS.container.beakerBorder}
-            strokeWidth={STROKE.objectLine * 3}
-          />
-          {/* U型管内部干燥剂 */}
-          <path
-            d={`
-              M ${w * 0.2} ${h * 0.4}
-              L ${w * 0.2} ${h - 20}
-              A 20 20 0 0 0 ${w * 0.8} ${h - 20}
-              L ${w * 0.8} ${h * 0.4}
-            `}
-            fill="none"
-            stroke={desiccantColor}
-            strokeWidth={STROKE.objectLine * 2}
-          />
+        /* 2. U型管 (高保真标准高中化学画法：双壁玻璃管、双孔橡皮塞、脱脂棉与干燥颗粒) */
+        <g id="u-shape-drying-tube">
+          {/* 几何常量：左右管中心与外径 */}
+          {(() => {
+            const cx1 = w * 0.25
+            const cx2 = w * 0.75
+            const tubeR = 12 // 管半径 12px (外径 24px)
+            const innerR = 9  // 内壁半径 9px (壁厚 3px)
+            const bendCenterY = h - 22
+
+            return (
+              <g>
+                {/* U 型管半透明玻璃壁内腔 */}
+                <path
+                  d={`
+                    M ${cx1 - tubeR} 0
+                    L ${cx1 - tubeR} ${bendCenterY}
+                    A ${tubeR + 10} ${tubeR + 10} 0 0 0 ${cx2 + tubeR} ${bendCenterY}
+                    L ${cx2 + tubeR} 0
+                    L ${cx2 + innerR} 0
+                    L ${cx2 + innerR} ${bendCenterY}
+                    A ${innerR} ${innerR} 0 0 1 ${cx1 - innerR} ${bendCenterY}
+                    L ${cx1 - innerR} 0
+                    Z
+                  `}
+                  fill={withAlpha(SCENE_COLORS.container.gasJar, 0.45)}
+                  stroke={SCENE_COLORS.container.beakerBorder}
+                  strokeWidth={STROKE.reference}
+                />
+
+                {/* U型管下半部装填的固体干燥剂 */}
+                <path
+                  d={`
+                    M ${cx1 - innerR + 1} ${h * 0.4}
+                    L ${cx1 - innerR + 1} ${bendCenterY}
+                    A ${innerR - 1} ${innerR - 1} 0 0 0 ${cx2 + innerR - 1} ${bendCenterY}
+                    L ${cx2 + innerR - 1} ${h * 0.4}
+                    Z
+                  `}
+                  fill={desiccantColor}
+                  opacity={0.8}
+                />
+
+                {/* 固体干燥剂颗粒散落纹理 (如 CaCl₂ 粒) */}
+                <circle cx={cx1 - 3} cy={h * 0.55} r={2} fill="#FFFFFF" opacity={0.6} />
+                <circle cx={cx1 + 4} cy={h * 0.65} r={2.5} fill="#FFFFFF" opacity={0.5} />
+                <circle cx={cx2 - 4} cy={h * 0.6} r={2} fill="#FFFFFF" opacity={0.6} />
+                <circle cx={cx2 + 3} cy={h * 0.7} r={2.5} fill="#FFFFFF" opacity={0.5} />
+                <circle cx={w * 0.5} cy={bendCenterY + 6} r={3} fill="#FFFFFF" opacity={0.5} />
+
+                {/* 脱脂棉 (左右两管内固定固体防吹飞) */}
+                <ellipse cx={cx1} cy={h * 0.38} rx={innerR - 1} ry={4} fill={SCENE_COLORS.materials.asbestos} />
+                <ellipse cx={cx2} cy={h * 0.38} rx={innerR - 1} ry={4} fill={SCENE_COLORS.materials.asbestos} />
+
+                {/* 左右管口单孔橡胶塞 */}
+                <rect
+                  x={cx1 - tubeR + 1}
+                  y={-8}
+                  width={tubeR * 2 - 2}
+                  height={10}
+                  fill={SCENE_COLORS.materials.rubber}
+                  rx={1}
+                />
+                <rect
+                  x={cx2 - tubeR + 1}
+                  y={-8}
+                  width={tubeR * 2 - 2}
+                  height={10}
+                  fill={SCENE_COLORS.materials.rubber}
+                  rx={1}
+                />
+
+                {/* 左穿管 (玻璃外壁 6px / 高光 3px) */}
+                <line
+                  x1={cx1}
+                  y1={-15}
+                  x2={cx1}
+                  y2={h * 0.32}
+                  stroke={SCENE_COLORS.materials.glassBorder}
+                  strokeWidth={6}
+                  strokeLinecap="square"
+                />
+                <line
+                  x1={cx1}
+                  y1={-15}
+                  x2={cx1}
+                  y2={h * 0.32}
+                  stroke={withAlpha(SCENE_COLORS.tube.glass, 0.85)}
+                  strokeWidth={3}
+                  strokeLinecap="square"
+                />
+
+                {/* 右穿管 (玻璃外壁 6px / 高光 3px) */}
+                <line
+                  x1={cx2}
+                  y1={-15}
+                  x2={cx2}
+                  y2={h * 0.32}
+                  stroke={SCENE_COLORS.materials.glassBorder}
+                  strokeWidth={6}
+                  strokeLinecap="square"
+                />
+                <line
+                  x1={cx2}
+                  y1={-15}
+                  x2={cx2}
+                  y2={h * 0.32}
+                  stroke={withAlpha(SCENE_COLORS.tube.glass, 0.85)}
+                  strokeWidth={3}
+                  strokeLinecap="square"
+                />
+              </g>
+            )
+          })()}
         </g>
       )}
 
       {/* 干燥剂标注 */}
       {desiccantName && !isTiny && (
         <text
-          x={w * 0.45}
-          y={variant === 'spherical' ? h * 0.5 + 4 : h * 0.5}
+          x={w * 0.5}
+          y={variant === 'spherical' ? h * 0.5 + 4 : h * 0.55}
           textAnchor="middle"
           fontSize={font(FONT.annotation)}
           fill={SCENE_COLORS.labels.chemicalFormula}
@@ -135,16 +232,30 @@ export function DryingTubeApparatus({
 
       {/* 干燥管物理托架支撑 (解决半空悬浮常识 Bug) */}
       <g id="drying-tube-holder">
-        <rect x={w * 0.5 - 2} y={variant === 'spherical' ? h * 0.5 + h * 0.4 : h - 10} width={4} height={ variant === 'spherical' ? 85 : 40 } fill="#475569" rx={1} />
-        <path d={`M ${w * 0.5 - 14} ${variant === 'spherical' ? h * 0.5 + 8 : h - 8} Q ${w * 0.5} ${variant === 'spherical' ? h * 0.5 + 20 : h + 4} ${w * 0.5 + 14} ${variant === 'spherical' ? h * 0.5 + 8 : h - 8}`} fill="none" stroke="#334155" strokeWidth={3} />
+        {/* 竖杆：从球形中心（或U型底部）延伸到桌面 */}
+        <rect
+          x={w * 0.5 - 2}
+          y={variant === 'spherical' ? h * 0.5 + h * 0.4 : h - 10}
+          width={4}
+          height={resolvedHolderH}
+          fill="#475569"
+          rx={1}
+        />
+        {/* U形托架卸 */}
+        <path
+          d={`M ${w * 0.5 - 14} ${variant === 'spherical' ? h * 0.5 + 8 : h - 8} Q ${w * 0.5} ${variant === 'spherical' ? h * 0.5 + 20 : h + 4} ${w * 0.5 + 14} ${variant === 'spherical' ? h * 0.5 + 8 : h - 8}`}
+          fill="none"
+          stroke="#334155"
+          strokeWidth={3}
+        />
       </g>
     </g>
   )
 }
 
 export interface DryingTubePorts {
-  inletPort: { x: number; y: number }
-  outletPort: { x: number; y: number }
+  inletPort: { x: number; y: number; direction?: 'left' | 'up' }
+  outletPort: { x: number; y: number; direction?: 'right' | 'up' }
 }
 
 export function getDryingTubePorts(
@@ -156,13 +267,13 @@ export function getDryingTubePorts(
 ): DryingTubePorts {
   if (variant === 'spherical') {
     return {
-      inletPort: { x, y: y + height * 0.5 },
-      outletPort: { x: x + width, y: y + height * 0.5 },
+      inletPort: { x, y: y + height * 0.5, direction: 'left' },
+      outletPort: { x: x + width, y: y + height * 0.5, direction: 'right' },
     }
   } else {
     return {
-      inletPort: { x: x + width * 0.2, y },
-      outletPort: { x: x + width * 0.8, y },
+      inletPort: { x: x + width * 0.25, y: y - 15, direction: 'up' },
+      outletPort: { x: x + width * 0.75, y: y - 15, direction: 'up' },
     }
   }
 }

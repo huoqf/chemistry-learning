@@ -43,17 +43,14 @@ export function getNoHeatGeneratorPorts(
   const flaskLeft = x - FLASK_W / 2
   const flaskTopY = y - FLASK_H
 
-  // 出气管顶端（右孔，比塞顶高出 30px 作为对外连接口）
-  const outletX = flaskLeft + RIGHT_HOLE_REL_X
-  const outletY = flaskTopY + STOPPER_TOP_REL_Y - 30
-  const RUBBER_H = 8
-
-  // 分液漏斗顶口
+  // 出气管端口：双孔塞右孔顶面处 (rightHoleX, stopperTopY)
+  const rightHoleX = flaskLeft + RIGHT_HOLE_REL_X
+  const stopperTopY = flaskTopY + STOPPER_TOP_REL_Y
   const funnelLeft = x - FLASK_W / 2 - (FUNNEL_W - FLASK_NECK_W) / 2
-  const funnelTopY = flaskTopY + STOPPER_TOP_REL_Y - FUNNEL_H
+  const funnelTopY = stopperTopY - FUNNEL_H
 
   return {
-    outletPort: { x: outletX, y: outletY - RUBBER_H },
+    outletPort: { x: rightHoleX, y: stopperTopY },
     funnelTopPort: { x: funnelLeft + FUNNEL_W * 0.5, y: funnelTopY },
   }
 }
@@ -75,8 +72,8 @@ export interface NoHeatGeneratorApparatusProps {
  * 高考标准规范：
  * - 锥形瓶底部精准落在桌面（y = baseY），不悬空
  * - 双孔橡皮塞密封，与锥形瓶瓶颈严密咬合
- * - 分液漏斗插入左孔（活塞管下端深入液面），避让右孔出气管
- * - 右孔玻璃出气导管垂直向上引出，顶部带红褐色胶管套接扣
+ * - 分液漏斗插入左孔（管口露在橡皮塞底面下方 6px 处悬空，不插入液面）
+ * - 右孔出气口位于橡皮塞顶面，由全局路由引擎一笔画连贯贯通全链导管，零补丁
  *
  * 坐标约定：x = 装置中心，y = 桌面基准线
  */
@@ -97,13 +94,13 @@ export const NoHeatGeneratorApparatus: React.FC<NoHeatGeneratorApparatusProps> =
   // 右孔 x（出气管穿出处）
   const rightHoleX = flaskLeft + RIGHT_HOLE_REL_X
 
-  // 分液漏斗左上角：使漏斗下端出口对准左孔，水平居中左孔
+  // 一体化原生分液漏斗几何解算：
   const funnelLeft = leftHoleX - FUNNEL_W * 0.5
-  const funnelTopY = stopperTopY - FUNNEL_H   // 漏斗底部恰好从塞顶插入
-
-  // 出气管：从橡皮塞顶面垂直向上 30px 为对外连接口
-  const outletY = stopperTopY - 30
-  const RUBBER_H = 8
+  // 分液漏斗下颈悬空：露在橡皮塞底面 (stopperTopY + 12) 下方 6px 处 (stopperTopY + 18)
+  const stemInBottleY = stopperTopY + 18
+  const bulbBottomY = stopperTopY - 85
+  const stemTotalLength = stemInBottleY - bulbBottomY   // 约 103px 颈管
+  const funnelTotalH = FUNNEL_H + 58
 
   return (
     <g id="no-heat-generator-group">
@@ -118,57 +115,35 @@ export const NoHeatGeneratorApparatus: React.FC<NoHeatGeneratorApparatusProps> =
         hasStopper={true}
       />
 
-      {/* 2. 分液漏斗（下端插入左孔，漏斗竖管与左孔 x 对齐） */}
+      {/* 2. 单件一体化分液漏斗（高置球腹 + 管口悬空在锥形瓶颈部空腔） */}
       <SeparatoryFunnelApparatus
         x={funnelLeft}
-        y={funnelTopY}
+        y={stemInBottleY - funnelTotalH}
         width={FUNNEL_W}
-        height={FUNNEL_H}
+        height={funnelTotalH}
+        stemLength={stemTotalLength}
         bottomFillLevel={0.8}
         bottomFillColor={withAlpha(SCENE_COLORS.reagent.acid, 0.4)}
       />
 
-      {/* 3. 分液漏斗竖管下段（穿入橡皮塞左孔，深入液面） */}
-      <path
-        d={`M ${leftHoleX} ${stopperTopY} L ${leftHoleX} ${flaskTopY + FLASK_H * 0.5}`}
-        fill="none"
-        stroke={SCENE_COLORS.materials.glassBorder}
-        strokeWidth={5}
-        strokeLinecap="round"
-      />
-      <path
-        d={`M ${leftHoleX} ${stopperTopY} L ${leftHoleX} ${flaskTopY + FLASK_H * 0.5}`}
-        fill="none"
-        stroke={withAlpha(SCENE_COLORS.tube.glass, 0.85)}
-        strokeWidth={3}
-        strokeLinecap="round"
-      />
-
-      {/* 4. 右孔出气导管：外壁 6px / 内高光 3px，与路由连接管粗细一致 */}
-      <path
-        d={`M ${rightHoleX} ${stopperTopY} L ${rightHoleX} ${outletY}`}
-        fill="none"
+      {/* 3. 塞内导管短留口 (从塞顶露出 2px) */}
+      <line
+        x1={rightHoleX}
+        y1={stopperTopY + 10}
+        x2={rightHoleX}
+        y2={stopperTopY - 2}
         stroke={SCENE_COLORS.materials.glassBorder}
         strokeWidth={6}
         strokeLinecap="square"
       />
-      <path
-        d={`M ${rightHoleX} ${stopperTopY} L ${rightHoleX} ${outletY}`}
-        fill="none"
+      <line
+        x1={rightHoleX}
+        y1={stopperTopY + 10}
+        x2={rightHoleX}
+        y2={stopperTopY - 2}
         stroke={withAlpha(SCENE_COLORS.tube.glass, 0.85)}
         strokeWidth={3}
         strokeLinecap="square"
-      />
-      {/* 顶端橡皮套接扣（outletY-8 到 outletY）*/}
-      <rect
-        x={rightHoleX - 5.5}
-        y={outletY - RUBBER_H}
-        width={11}
-        height={RUBBER_H}
-        rx={2}
-        fill="#B45309"
-        stroke="#78350F"
-        strokeWidth={1}
       />
     </g>
   )

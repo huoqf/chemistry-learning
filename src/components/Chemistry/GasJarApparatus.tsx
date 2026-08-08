@@ -38,6 +38,10 @@ export interface GasJarApparatusProps {
   tubeMode?: 'long-in-short-out' | 'short-in-long-out'
   /** 气体名称标注（如 "Cl₂" / "O₂"） */
   gasLabel?: string
+  /** 是否为干瓶排空气法收集气体 (true 时全瓶充盈半透明气体，不再画底部溶液块) */
+  isGasCollection?: boolean
+  /** 是否为倒扣模式 (用于排水集气等倒扣广口瓶场景) */
+  inverted?: boolean
   /** 字体缩放函数 */
   font?: FontScaler
 }
@@ -71,6 +75,8 @@ export function GasJarApparatus({
   hasTubes = false,
   tubeMode = 'long-in-short-out',
   gasLabel,
+  isGasCollection = false,
+  inverted = false,
   font = (n) => n,
 }: GasJarApparatusProps) {
   const w = width
@@ -94,7 +100,7 @@ export function GasJarApparatus({
   const rightTubeH = tubeMode === 'short-in-long-out' ? h - wallT - 15 : 25
 
   return (
-    <g transform={`translate(${x}, ${y})`}>
+    <g transform={inverted ? `translate(${x + w}, ${y + h}) rotate(180)` : `translate(${x}, ${y})`}>
       {/* 瓶口边缘 Lip */}
       <rect
         x={lipLeft}
@@ -119,17 +125,31 @@ export function GasJarApparatus({
         strokeWidth={STROKE.objectLine}
       />
 
-      {/* 洗液/溶液 */}
-      {fillLevel > 0 && (
-        <rect
-          x={wallT}
-          y={h - wallT - liquidH}
-          width={innerW}
-          height={liquidH}
-          fill={fillColor}
-          opacity={0.8}
-          rx={1}
-        />
+      {/* 填充层：干瓶排空气法收集气体 (isGasCollection) 时整瓶充盈；洗气/溶液时画底部液块 */}
+      {isGasCollection ? (
+        fillLevel > 0 && (
+          <rect
+            x={wallT}
+            y={bodyTopY + wallT}
+            width={innerW}
+            height={bodyH - wallT * 2}
+            fill={fillColor}
+            opacity={0.85}
+            rx={Math.max(1, w * 0.03)}
+          />
+        )
+      ) : (
+        fillLevel > 0 && (
+          <rect
+            x={wallT}
+            y={h - wallT - liquidH}
+            width={innerW}
+            height={liquidH}
+            fill={fillColor}
+            opacity={0.8}
+            rx={1}
+          />
+        )
       )}
 
       {/* 毛玻璃盖片 */}

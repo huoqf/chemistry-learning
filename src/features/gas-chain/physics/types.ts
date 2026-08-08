@@ -56,9 +56,11 @@ export interface ApparatusLayout {
   /** 器材高度 */
   height: number
   /** 进气端口绝对坐标（导管终点） */
-  inletPort: { x: number; y: number } | null
+  inletPort: { x: number; y: number; direction?: PortDirection } | null
   /** 出气端口绝对坐标（导管起点） */
-  outletPort: { x: number; y: number } | null
+  outletPort: { x: number; y: number; direction?: PortDirection } | null
+  /** 干燥管支撑柱高度（仅 dryer 使用，由布局引擎计算以确保落地） */
+  holderHeight?: number
 }
 
 export interface TubingRouteSegment {

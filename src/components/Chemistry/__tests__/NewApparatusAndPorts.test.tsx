@@ -19,8 +19,8 @@ describe('化学器材锚点 (Anchor Ports System) 测试', () => {
 
   it('getAntiSiphonFunnelPorts 能够计算防倒吸漏斗顶部连接点', () => {
     const ports = getAntiSiphonFunnelPorts(100, 100, 80, 100)
-    expect(ports.topConnectPort).toEqual({ x: 140, y: 90 })
-    expect(ports.bottomPort).toEqual({ x: 140, y: 200 })
+    expect(ports.topConnectPort).toEqual({ x: 140, y: 100, direction: 'up' })
+    expect(ports.bottomPort).toEqual({ x: 140, y: 200, direction: 'down' })
   })
 
   it('getCruciblePorts 能够计算瓷坩埚开口与底部中心', () => {

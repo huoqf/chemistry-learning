@@ -2,11 +2,11 @@
  * src/features/gas-chain/physics/layoutEngine.ts
  * 气体制备/净化/尾气处理装置链 — 装置链物理布局与贝塞尔导管路由 Engine
  *
- * 设计原则（单一事实来源）：
- * 1. 此引擎是所有器材坐标的唯一来源，输出 apparatusLayouts[]
- * 2. GasChainCenterView 直接用 apparatusLayouts 中的 {x,y,width,height} 渲染组件
- * 3. 所有 pathD 使用绝对坐标，无需任何 <g transform> 包裹偏移
- * 4. 端口坐标全部来自各组件的 getXxxPorts() 函数，坐标与渲染 100% 同步
+ * 设计原则（单一事实来源 SSOT）：
+ * 1. 此引擎是所有器材坐标与导管端口的唯一真相来源，输出 apparatusLayouts[] 与 routes[]
+ * 2. GasChainCenterView 直接使用 apparatusLayouts 中的 {x,y,width,height} 渲染组件
+ * 3. 所有 pathD 使用绝对 Design Space 坐标，视图侧无需任何 <g transform> 包裹偏移
+ * 4. 端口坐标全部由各组件 getXxxPorts() 生成，渲染与连线 100% 同步
  */
 
 import type { PhysicalChainSolveResult, TubingRouteSegment, ApparatusLayout } from './types'
@@ -31,70 +31,92 @@ export interface LayoutEngineInput {
 
 /**
  * 生成绝对坐标的平滑贝塞尔圆角 SVG Path
- * 注意：start/end 均为绝对坐标，返回的 pathD 也是绝对坐标
- * 无需任何 <g transform> 包裹
+ * 智能识别 start/end 端口朝向 (direction: 'right' | 'up' | 'down' | 'left')
+ * 彻底消除无脑向上冲高造成的额外拐弯与重叠错位
  */
 function createAbsoluteSmoothTubingPath(
-  start: { x: number; y: number },
-  end: { x: number; y: number },
+  start: { x: number; y: number; direction?: 'up' | 'down' | 'left' | 'right' },
+  end: { x: number; y: number; direction?: 'up' | 'down' | 'left' | 'right' },
   tubeType: 'bridge' | 'low-bridge' | 'horizontal-socket',
-  isSideArm = false
+  isSideArm = false,
+  customTopY?: number
 ): string {
   const dx = end.x - start.x
   const dy = end.y - start.y
+  // 高保真硬质玻璃弯头：90° 标准折角，小圆角半径 5px
+  const radius = 5
 
-  if (tubeType === 'bridge') {
-    // 高位高架避障管：比两端口的最高者再上移 30px，动态避开各类发生装置
-    const topY = Math.min(start.y, end.y) - 30
-    const radius = 10
-    const dir = dx > 0 ? 1 : -1
-
-    if (isSideArm) {
-      // 具支烧瓶侧管专用：起点 (start.y) 本身已高于洗气瓶进气口 (end.y)
-      // 导管水平向右延伸至洗气瓶进气口上方，弧形转向 90 度直接向下直插接入
-      const radius = 10
-      if (start.y <= end.y) {
+  // 1. 起点朝向为 right (如倾斜试管 L 导出管或具支烧瓶侧管)
+  if (start.direction === 'right' || isSideArm) {
+    if (end.direction === 'left' || tubeType === 'horizontal-socket') {
+      // 导管直插入左侧插口 (如干燥管)
+      const targetY = end.y
+      if (Math.abs(start.y - targetY) < 8) {
+        return `M ${start.x} ${start.y} L ${end.x} ${end.y}`
+      }
+      if (Math.abs(start.y - targetY) < 20) {
+        const midX = (start.x + end.x) / 2
         return [
           `M ${start.x} ${start.y}`,
-          `L ${end.x - radius} ${start.y}`,
-          `Q ${end.x} ${start.y} ${end.x} ${start.y + radius}`,
-          `L ${end.x} ${end.y}`,
+          `C ${midX} ${start.y} ${midX} ${end.y} ${end.x} ${end.y}`,
         ].join(' ')
       }
+      return [
+        `M ${start.x} ${start.y}`,
+        `L ${start.x + (dx - radius * 2)} ${start.y}`,
+        `Q ${start.x + dx - radius} ${start.y} ${start.x + dx - radius} ${start.y + (dy > 0 ? radius : -radius)}`,
+        `L ${start.x + dx - radius} ${end.y - (dy > 0 ? radius : -radius)}`,
+        `Q ${start.x + dx - radius} ${end.y} ${end.x} ${end.y}`,
+      ].join(' ')
     }
 
+    // 出口朝右 -> 入口朝上 (进入洗气瓶/干燥瓶/集气瓶/尾气)
+    if (start.y <= end.y + 10) {
+      return [
+        `M ${start.x} ${start.y}`,
+        `L ${end.x - radius} ${start.y}`,
+        `Q ${end.x} ${start.y} ${end.x} ${start.y + radius}`,
+        `L ${end.x} ${end.y}`,
+      ].join(' ')
+    } else {
+      const topY = customTopY ?? (Math.min(start.y, end.y) - 20)
+      return [
+        `M ${start.x} ${start.y}`,
+        `L ${start.x + 20} ${start.y}`,
+        `Q ${start.x + 35} ${start.y} ${start.x + 35} ${start.y - radius}`,
+        `L ${start.x + 35} ${topY + radius}`,
+        `Q ${start.x + 35} ${topY} ${start.x + 35 + radius} ${topY}`,
+        `L ${end.x - radius} ${topY}`,
+        `Q ${end.x} ${topY} ${end.x} ${topY + radius}`,
+        `L ${end.x} ${end.y}`,
+      ].join(' ')
+    }
+  }
+
+  // 2. 终点朝向为 left (如球形干燥管左侧平插口)
+  if (end.direction === 'left' || tubeType === 'horizontal-socket') {
+    const targetY = end.y
     return [
       `M ${start.x} ${start.y}`,
-      `L ${start.x} ${topY + radius}`,
-      `Q ${start.x} ${topY} ${start.x + dir * radius} ${topY}`,
-      `L ${end.x - dir * radius} ${topY}`,
-      `Q ${end.x} ${topY} ${end.x} ${topY + radius}`,
-      `L ${end.x} ${end.y}`,
-    ].join(' ')
-  } else if (tubeType === 'low-bridge') {
-    // 瓶间低空拱桥管（高出起点/终点中最高者 25px）
-    const archY = Math.min(start.y, end.y) - 25
-    const radius = 10
-    const dir = dx > 0 ? 1 : -1
-    return [
-      `M ${start.x} ${start.y}`,
-      `L ${start.x} ${archY + radius}`,
-      `Q ${start.x} ${archY} ${start.x + dir * radius} ${archY}`,
-      `L ${end.x - dir * radius} ${archY}`,
-      `Q ${end.x} ${archY} ${end.x} ${archY + radius}`,
-      `L ${end.x} ${end.y}`,
-    ].join(' ')
-  } else {
-    // 横向水平插口管（水平后转垂直插入）
-    const radius = 12
-    const dir = dx > 0 ? 1 : -1
-    return [
-      `M ${start.x} ${start.y}`,
-      `L ${start.x} ${end.y - radius * Math.sign(dy)}`,
-      `Q ${start.x} ${end.y} ${start.x + dir * radius} ${end.y}`,
+      `L ${start.x} ${targetY + (start.y < targetY ? -radius : radius)}`,
+      `Q ${start.x} ${targetY} ${start.x + radius} ${targetY}`,
       `L ${end.x} ${end.y}`,
     ].join(' ')
   }
+
+  // 3. 默认: 起点朝上 -> 终点朝上 (经典瓶间跨越桥管)
+  // 统一顶线高度为 customTopY (全链齐平水平线)，确保所有跨越导管顶部横向导管平铺在同一高度
+  const topY = customTopY ?? (Math.min(start.y, end.y) - 25)
+  const dir = dx > 0 ? 1 : -1
+
+  return [
+    `M ${start.x} ${start.y}`,
+    `L ${start.x} ${topY + radius}`,
+    `Q ${start.x} ${topY} ${start.x + dir * radius} ${topY}`,
+    `L ${end.x - dir * radius} ${topY}`,
+    `Q ${end.x} ${topY} ${end.x} ${topY + radius}`,
+    `L ${end.x} ${end.y}`,
+  ].join(' ')
 }
 
 export function solvePhysicalChainLayout(
@@ -106,13 +128,14 @@ export function solvePhysicalChainLayout(
   const hasWash = washReagent !== 'none'
   const hasDryer = dryer !== 'none'
   const hasCollection = collection !== 'none'
+  const hasTailGas = tailGas !== 'none'
 
   // ─── 1. 动态自适应 SlotX（基于活跃装置数均分） ───────────────────────────
   const activeSlots: number[] = [0]
   if (hasWash) activeSlots.push(1)
   if (hasDryer) activeSlots.push(2)
   if (hasCollection) activeSlots.push(3)
-  activeSlots.push(4) // 尾气始终存在
+  if (hasTailGas) activeSlots.push(4)
 
   const numActive = activeSlots.length
   const startX = 100
@@ -124,13 +147,13 @@ export function solvePhysicalChainLayout(
     slotX[nodeIdx] = startX + idx * stepX
   })
 
-  // ─── 2. 计算各器材的精确渲染坐标（单一事实来源）────────────────────────────
+  // ─── 2. 计算各器材的精确渲染坐标与端口（单一事实来源）────────────────────
   const apparatusLayouts: ApparatusLayout[] = []
 
   // ── Slot 0: 发生装置 ────────────────────────────────────────────────────────
   let generatorLayout: ApparatusLayout
   if (generator === 'flask-heat') {
-    // LiquidHeatingGeneratorApparatus: x=slotX[0], y=baseY（基准底线，组件内部自算偏移）
+    // LiquidHeatingGeneratorApparatus: x=slotX[0], y=baseY
     const renderX = slotX[0]
     const renderY = baseY
     const ports = getLiquidHeatingGeneratorPorts(renderX, renderY)
@@ -211,8 +234,7 @@ export function solvePhysicalChainLayout(
 
   // ── Slot 2: 干燥装置 ───────────────────────────────────────────────────────
   const DRYER_W = 110
-  const DRYER_H = 50
-  // 浓硫酸洗气瓶形式
+  const DRYER_H = 60
   const DRYER_BOTTLE_W = 90
   const DRYER_BOTTLE_H = 140
   let dryerLayout: ApparatusLayout | null = null
@@ -233,8 +255,13 @@ export function solvePhysicalChainLayout(
     } else {
       // cacl2 (U型管) 或 soda-lime (球形干燥管)
       const renderX = slotX[2] - DRYER_W / 2
-      const renderY = baseY - 195
       const variant = dryer === 'cacl2' ? 'U-shape' : 'spherical'
+      // 球形干燥管：中心线与试管水平出气口精确对齐（出口 y = baseY - 107.6，经 applyRotate 计算）
+      // 中心 y = renderY + DRYER_H * 0.5 = baseY - 107.6 → renderY = baseY - 137.6
+      // U型管：保持原位（竖置，端口在顶部）
+      const renderY = variant === 'spherical' ? baseY - 137.6 : baseY - 195
+      // 支架竖杆高度 = 从干燥管中心下底 (baseY - 83.6) 到桌面的距离
+      const holderHeight = variant === 'spherical' ? 89 : 85
       const ports = getDryingTubePorts(renderX, renderY, DRYER_W, DRYER_H, variant)
       dryerLayout = {
         id: 'dryer',
@@ -244,6 +271,7 @@ export function solvePhysicalChainLayout(
         height: DRYER_H,
         inletPort: ports.inletPort,
         outletPort: ports.outletPort,
+        holderHeight,
       }
     }
     apparatusLayouts.push(dryerLayout)
@@ -255,11 +283,9 @@ export function solvePhysicalChainLayout(
   let collectionLayout: ApparatusLayout | null = null
   if (hasCollection) {
     if (collection === 'water-displacement') {
-      // 排水集气：水槽 + 倒扣瓶，用固定坐标
+      // 排水集气：水槽 + 倒扣集气瓶
       const renderX = slotX[3] - 75
       const renderY = baseY - 150
-      // 排水集气进气口：水槽左上角弯管入口（与发生装置导管对接）
-      // 出气口：倒扣瓶顶部（通大气，无需后级连接）
       collectionLayout = {
         id: 'collection',
         x: renderX,
@@ -267,26 +293,25 @@ export function solvePhysicalChainLayout(
         width: 150,
         height: 150,
         inletPort: { x: renderX + 25, y: renderY + 10 },
-        outletPort: null,
+        // 倒扣集气瓶右侧短出气管导出端口，平平直连接到右侧尾气处理点燃嘴
+        outletPort: hasTailGas
+          ? { x: renderX + 115, y: renderY + 25, direction: 'right' }
+          : null,
       }
     } else {
       const renderX = slotX[3] - JAR_W / 2
       const renderY = baseY - JAR_H
+      // 集气瓶端口：使用与组件一致的导管口坐标 y = renderY - 15
+      // inletPort (左侧短/长管口)，outletPort (右侧长/短管口)
       const ports = getGasJarPorts(renderX, renderY, JAR_W)
-      // tubeMode: downward-air => 左短右长(short-in-long-out) => 气体从右下方进入
-      // 其他(upward-air) => 左长右短(long-in-short-out) => 气体从左上方进入
-      const inletPort = collection === 'downward-air'
-        ? ports.topStopperLeft   // 向下排空气: 短管进(左)
-        : ports.topStopperLeft   // 向上排空气/默认: 长管进(左)
-      const outletPort = ports.topStopperRight
       collectionLayout = {
         id: 'collection',
         x: renderX,
         y: renderY,
         width: JAR_W,
         height: JAR_H,
-        inletPort,
-        outletPort,
+        inletPort: { ...ports.topStopperLeft, direction: 'up' },
+        outletPort: { ...ports.topStopperRight, direction: 'up' },
       }
     }
     apparatusLayouts.push(collectionLayout)
@@ -296,7 +321,11 @@ export function solvePhysicalChainLayout(
   let tailgasLayout: ApparatusLayout
   if (tailGas === 'inverted-funnel') {
     const renderX = slotX[4] - 40
-    const renderY = baseY - 98
+    // 修复：烧杯底部贴合桌面
+    // AntiSiphonFunnelApparatus 内部：beakerTopY = h - 25 = 75, beakerH = 65
+    // 烧杯底部绝对 y = renderY + 75 + 65 = renderY + 140 = baseY
+    // → renderY = baseY - 140
+    const renderY = baseY - 140
     const ports = getAntiSiphonFunnelPorts(renderX, renderY, 80, 100)
     tailgasLayout = {
       id: 'tailgas',
@@ -308,7 +337,6 @@ export function solvePhysicalChainLayout(
       outletPort: null,
     }
   } else if (tailGas === 'safety-bottle') {
-    // 锥形瓶安全瓶：进气口在顶部左侧
     const renderX = slotX[4] - 65
     const renderY = baseY - 165
     tailgasLayout = {
@@ -321,20 +349,18 @@ export function solvePhysicalChainLayout(
       outletPort: null,
     }
   } else if (tailGas === 'combustion') {
-    // 点燃法：导管口
     const renderX = slotX[4] - 30
-    const renderY = baseY - 120
+    const renderY = baseY - 125
     tailgasLayout = {
       id: 'tailgas',
       x: renderX,
       y: renderY,
       width: 60,
-      height: 120,
-      inletPort: { x: renderX, y: renderY },
+      height: 125,
+      inletPort: { x: renderX, y: renderY, direction: 'left' },
       outletPort: null,
     }
   } else if (tailGas === 'balloon') {
-    // 收集气球：导管口
     const renderX = slotX[4] - 20
     const renderY = baseY - 140
     tailgasLayout = {
@@ -347,7 +373,7 @@ export function solvePhysicalChainLayout(
       outletPort: null,
     }
   } else {
-    // direct-pipe / NaOH 烧杯：直插进气（导管深入烧杯 NaOH 溶液液面下方 65px）
+    // direct-pipe / NaOH 烧杯：直插进气
     const renderX = slotX[4] - 45
     const renderY = baseY - 100
     tailgasLayout = {
@@ -360,19 +386,33 @@ export function solvePhysicalChainLayout(
       outletPort: null,
     }
   }
-  apparatusLayouts.push(tailgasLayout)
+  if (hasTailGas && tailgasLayout) {
+    apparatusLayouts.push(tailgasLayout)
+  }
 
-  // ─── 3. 求解贝塞尔拓扑导管路由（绝对坐标）─────────────────────────────────
+  // ─── 3. 求解贝塞尔拓扑导管路由（全绝对坐标）─────────────────────────────
   const routes: TubingRouteSegment[] = []
 
-  // 收集所有连接链：[上游 outletPort] -> [下游 inletPort]
   type RouteNode = { slotIdx: number; layout: ApparatusLayout }
   const chain: RouteNode[] = []
   chain.push({ slotIdx: 0, layout: generatorLayout })
   if (washLayout) chain.push({ slotIdx: 1, layout: washLayout })
   if (dryerLayout) chain.push({ slotIdx: 2, layout: dryerLayout })
   if (collectionLayout) chain.push({ slotIdx: 3, layout: collectionLayout })
-  chain.push({ slotIdx: 4, layout: tailgasLayout })
+  if (hasTailGas && tailgasLayout) chain.push({ slotIdx: 4, layout: tailgasLayout })
+
+  // 全链统一瓶口走线基线：以瓶口/塞顶平齐高度为基准 (Y ≈ 325)，消除高空耸立与冲高下砸
+  let minPortY = 999
+  chain.forEach((node) => {
+    if (node.layout.outletPort && node.layout.outletPort.direction !== 'right') {
+      minPortY = Math.min(minPortY, node.layout.outletPort.y)
+    }
+    if (node.layout.inletPort && node.layout.inletPort.direction !== 'left') {
+      minPortY = Math.min(minPortY, node.layout.inletPort.y)
+    }
+  })
+  // 统一水平主主线位于橡皮塞上方 18px 处，所有跨越管在瓶口高度平直顺接，消除拱门折弯
+  const globalTopY = Math.max(minPortY - 18, 320)
 
   for (let i = 0; i < chain.length - 1; i++) {
     const from = chain[i]
@@ -380,26 +420,32 @@ export function solvePhysicalChainLayout(
     const fromOutlet = from.layout.outletPort
     const toInlet = to.layout.inletPort
 
-    // 排水集气无 outletPort，跳过尾气连线
+    // 若前级无 outlet (如排水集气)，跳过连线
     if (!fromOutlet || !toInlet) continue
 
     // 选择管路类型
     let tubeType: 'bridge' | 'low-bridge' | 'horizontal-socket'
     if (i === 0) {
-      // 发生装置 -> 第一个后级：高架桥管（绕过铁架台/分液漏斗）
+      // 发生装置 -> 第一后级：高架桥管
       tubeType = 'bridge'
     } else if (
       to.layout.id === 'dryer' &&
-      (dryer === 'cacl2' || dryer === 'soda-lime')
+      dryer === 'soda-lime'
     ) {
-      // 干燥管水平插入
+      // 球形干燥管水平插口
       tubeType = 'horizontal-socket'
     } else {
       tubeType = 'low-bridge'
     }
 
     const isSideArm = from.slotIdx === 0 && generator === 'flask-heat'
-    const pathD = createAbsoluteSmoothTubingPath(fromOutlet, toInlet, tubeType, isSideArm)
+    const pathD = createAbsoluteSmoothTubingPath(
+      fromOutlet,
+      toInlet,
+      tubeType,
+      isSideArm,
+      globalTopY
+    )
     routes.push({
       id: `route-${from.slotIdx}-${to.slotIdx}`,
       fromSlot: from.slotIdx,
@@ -419,3 +465,4 @@ export function solvePhysicalChainLayout(
     routes,
   }
 }
+

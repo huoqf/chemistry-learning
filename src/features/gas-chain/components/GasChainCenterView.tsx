@@ -32,7 +32,6 @@ import type { GasChainParams } from '../types'
 import type { GasChainChemistryResult } from '../hooks/useGasChainChemistry'
 import type { ModelQuizData } from '@/data/quiz/types'
 import {
-  solvePhysicalConstraints,
   solvePhysicalChainLayout,
 } from '../physics'
 import type { ApparatusLayout } from '../physics/types'
@@ -77,21 +76,8 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
   const baseY = 480
   const isEthylene = systemId === 'c2h4-prep' || targetGas === 'C₂H₄'
 
-  // 2. 约束求解（仅用于倒置漏斗深度等细节参数）
-  const constraints = solvePhysicalConstraints({
-    targetGas,
-    generator,
-    washReagent,
-    dryer,
-    collection,
-    tailGas,
-    flowRate,
-    hasDangerAlert,
-    dangerType,
-    baseY,
-  })
 
-  // 3. 布局引擎：单一事实来源
+  // 3. 布局引擎：单一事实来源 (SSOT)
   const layout = solvePhysicalChainLayout({
     generator,
     washReagent,
@@ -135,6 +121,15 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
   let gasColor = withAlpha(SCENE_COLORS.reagent.solution, 0.1)
   if (targetGas === 'Cl₂') gasColor = withAlpha(PHENOMENON_COLORS.cl2Gas, 0.6)
   if (targetGas === 'NO₂') gasColor = withAlpha(PHENOMENON_COLORS.no2Gas, 0.7)
+  if (targetGas === 'NO') {
+    if (collection !== 'water-displacement') {
+      // 误选排空气法收集 NO：接触空气中的 O₂ 立即氧化生成红棕色 NO₂
+      gasColor = withAlpha(PHENOMENON_COLORS.no2Gas, 0.65)
+    } else {
+      // 排水集气法收集 NO：无色气体
+      gasColor = withAlpha(SCENE_COLORS.materials.glass, 0.15)
+    }
+  }
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden relative">
@@ -198,6 +193,8 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       height={genLayout.height}
                       isOpen={flowRate > 0}
                       gasLabel={targetGas}
+                      targetGas={targetGas}
+                      font={canvasSize.font}
                     />
                   )}
 
@@ -333,7 +330,7 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       fontSize={canvasSize.font(FONT.label)}
                       fontWeight="bold"
                     >
-                      ② 净化洗气瓶
+                      ② 除杂洗气
                     </text>
                     <text
                       x={0}
@@ -342,7 +339,17 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       fill={CANVAS_COLORS.labelTextLight}
                       fontSize={canvasSize.font(FONT.annotation)}
                     >
-                      ({washReagent})
+                      (
+                      {washReagent === 'sat-nacl'
+                        ? '饱和食盐水'
+                        : washReagent === 'naoh'
+                        ? 'NaOH 溶液'
+                        : washReagent === 'fuchsin'
+                        ? '品红溶液'
+                        : washReagent === 'kmno4'
+                        ? '酸性KMnO₄'
+                        : '水'}
+                      )
                     </text>
                   </g>
                 </g>
@@ -367,12 +374,13 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       width={dryerLayout.width}
                       height={dryerLayout.height}
                       variant={dryer === 'cacl2' ? 'U-shape' : 'spherical'}
-                      desiccantName={dryer === 'soda-lime' ? '碱石灰' : '无水 CaCl₂'}
+                      desiccantName={dryer === 'soda-lime' ? '碱石灰' : 'CaCl₂'}
                       desiccantColor={
                         dryer === 'soda-lime'
-                          ? SCENE_COLORS.desiccantAndIndicator.sodaLime
-                          : CANVAS_COLORS.gridSubtle
+                          ? SCENE_COLORS.reagent.precipitate
+                          : withAlpha(SCENE_COLORS.materials.glass, 0.4)
                       }
+                      holderHeight={dryerLayout.holderHeight}
                       font={canvasSize.font}
                     />
                   )}
@@ -453,41 +461,57 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                         height={66}
                         fill={withAlpha(SCENE_COLORS.reagent.solution, 0.25)}
                       />
-                      {/* 倒扣集气瓶 */}
-                      <rect
-                        x={45}
+                      {/* 倒扣集气瓶（100% 复用标准 GasJarApparatus 组件，倒扣模式，带加厚磨砂唇口与圆底，彻底消除像烧杯的问题） */}
+                      <GasJarApparatus
+                        x={40}
                         y={15}
-                        width={60}
+                        width={70}
                         height={95}
-                        rx={3}
-                        fill={withAlpha(SCENE_COLORS.container.beaker, 0.4)}
-                        stroke={SCENE_COLORS.container.beakerBorder}
-                        strokeWidth={2}
+                        inverted={true}
+                        isGasCollection={true}
+                        fillLevel={flowRate > 0 ? 0.75 : 0.05}
+                        fillColor={gasColor}
+                        font={canvasSize.font}
                       />
-                      {/* 瓶内气液界面 */}
-                      <rect
-                        x={47}
-                        y={17}
-                        width={56}
-                        height={flowRate > 0 ? 55 : 10}
-                        fill={gasColor}
-                        rx={2}
-                      />
-                      <rect
-                        x={47}
-                        y={17 + (flowRate > 0 ? 55 : 10)}
-                        width={56}
-                        height={91 - (flowRate > 0 ? 55 : 10)}
-                        fill={withAlpha(SCENE_COLORS.reagent.solution, 0.3)}
-                      />
-                      {/* 弯管 */}
+                      {/* 弯管：左进气管深入倒扣集气瓶内部 (双层高保真玻璃管) */}
                       <path
-                        d="M 25,10 L 25,120 L 75,120 L 75,85"
+                        d="M 25,10 L 25,120 L 65,120 L 65,85"
                         fill="none"
-                        stroke={SCENE_COLORS.container.beakerBorder}
-                        strokeWidth={4}
+                        stroke={SCENE_COLORS.materials.glassBorder}
+                        strokeWidth={6}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
-                      {flowRate > 0 && <BubbleEmitter x={75} y={80} count={6} />}
+                      <path
+                        d="M 25,10 L 25,120 L 65,120 L 65,85"
+                        fill="none"
+                        stroke={withAlpha(SCENE_COLORS.materials.glass, 0.85)}
+                        strokeWidth={3}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      {/* 高考规范水下弯管导出：倒扣集气瓶水下开口导管延伸出水槽至右侧 (绝对不穿墙破壁) */}
+                      {tailGas && (
+                        <>
+                          <path
+                            d="M 85,30 L 85,120 L 115,120 L 115,25"
+                            fill="none"
+                            stroke={SCENE_COLORS.materials.glassBorder}
+                            strokeWidth={6}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M 85,30 L 85,120 L 115,120 L 115,25"
+                            fill="none"
+                            stroke={withAlpha(SCENE_COLORS.materials.glass, 0.85)}
+                            strokeWidth={3}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </>
+                      )}
+                      {flowRate > 0 && <BubbleEmitter x={65} y={80} count={6} />}
                       <text
                         x={75}
                         y={0}
@@ -500,31 +524,24 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       </text>
                     </g>
                   ) : (
-                    <>
-                      <GasJarApparatus
-                        x={collLayout.x}
-                        y={collLayout.y}
-                        width={collLayout.width}
-                        height={collLayout.height}
-                        hasCover={false}
-                        hasTubes={true}
-                        tubeMode={
-                          collection === 'downward-air'
-                            ? 'short-in-long-out'
-                            : 'long-in-short-out'
-                        }
-                        gasLabel={targetGas}
-                      />
-                      {/* 瓶内特征气体着色 */}
-                      <rect
-                        x={collLayout.x + 8}
-                        y={collLayout.y + 20}
-                        width={collLayout.width - 16}
-                        height={collLayout.height - 35}
-                        fill={gasColor}
-                        rx={2}
-                      />
-                    </>
+                    <GasJarApparatus
+                      x={collLayout.x}
+                      y={collLayout.y}
+                      width={collLayout.width}
+                      height={collLayout.height}
+                      fillLevel={flowRate > 0 ? 0.85 : 0.05}
+                      fillColor={gasColor}
+                      isGasCollection={true}
+                      hasCover={false}
+                      hasTubes={true}
+                      tubeMode={
+                        collection === 'downward-air'
+                          ? 'short-in-long-out'
+                          : 'long-in-short-out'
+                      }
+                      gasLabel={targetGas}
+                      font={canvasSize.font}
+                    />
                   )}
 
                   <g transform={`translate(${slotX[3]}, ${baseY + 28})`}>
@@ -536,7 +553,7 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       fontSize={canvasSize.font(FONT.label)}
                       fontWeight="bold"
                     >
-                      ④ 规范收集
+                      ④ 气体收集
                     </text>
                     <text
                       x={0}
@@ -562,20 +579,32 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                 <g id="slot-4-tailgas">
                   {tailGas === 'combustion' ? (
                     <g transform={`translate(${tailLayout.x}, ${tailLayout.y})`}>
+                      {/* 双层高保真平滑尖嘴燃气导管 */}
                       <path
-                        d="M 0,0 L 40,0 L 40,-40"
+                        d="M 0,0 L 25,0 Q 35,0 40,-10 L 40,-35"
                         fill="none"
-                        stroke={SCENE_COLORS.container.beakerBorder}
-                        strokeWidth={4}
+                        stroke={SCENE_COLORS.materials.glassBorder}
+                        strokeWidth={6}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
                       <path
-                        d="M 40,-40 Q 30,-70 40,-85 Q 50,-70 40,-40"
+                        d="M 0,0 L 25,0 Q 35,0 40,-10 L 40,-35"
+                        fill="none"
+                        stroke={withAlpha(SCENE_COLORS.materials.glass, 0.85)}
+                        strokeWidth={3}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      {/* 尖嘴口处的点燃火焰 */}
+                      <path
+                        d="M 40,-35 Q 30,-65 40,-80 Q 50,-65 40,-35"
                         fill={SCENE_COLORS.heatingAndSupport.flame}
                         opacity={0.9}
                         className="animate-pulse"
                       />
                       <path
-                        d="M 40,-42 Q 35,-60 40,-70 Q 45,-60 40,-42"
+                        d="M 40,-37 Q 35,-55 40,-65 Q 45,-55 40,-37"
                         fill={SCENE_COLORS.heatingAndSupport.flameCore}
                       />
                     </g>
@@ -584,8 +613,18 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       <path
                         d="M 0,20 L 20,20 L 20,-10"
                         fill="none"
-                        stroke={SCENE_COLORS.container.beakerBorder}
-                        strokeWidth={4}
+                        stroke={SCENE_COLORS.materials.glassBorder}
+                        strokeWidth={6}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M 0,20 L 20,20 L 20,-10"
+                        fill="none"
+                        stroke={withAlpha(SCENE_COLORS.materials.glass, 0.85)}
+                        strokeWidth={3}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
                       <ellipse
                         cx={20}
@@ -622,25 +661,37 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       y={tailLayout.y}
                       width={tailLayout.width}
                       height={tailLayout.height}
+                      liquidColor={
+                        targetGas === 'NH₃' && flowRate > 0
+                          ? withAlpha('#EC4899', 0.7) // NH₃ 极易溶于水遇酚酞显红色
+                          : withAlpha(SCENE_COLORS.reagent.acid, 0.45)
+                      }
                       isAbsorbing={flowRate > 0}
-                      liquidColor={withAlpha(SCENE_COLORS.reagent.solution, 0.25)}
-                      touchDepth={constraints.funnelContactDepth}
+                      font={canvasSize.font}
                     />
                   ) : (
-                    /* direct-pipe / NaOH 烧杯 */
-                    <g>
+                    <g transform={`translate(${tailLayout.x}, ${tailLayout.y})`}>
                       <BeakerApparatus
-                        x={tailLayout.x}
-                        y={tailLayout.y}
+                        x={0}
+                        y={0}
                         width={tailLayout.width}
                         height={tailLayout.height}
-                        fillLevel={0.6}
+                        fillLevel={0.65}
                         fillColor={withAlpha(SCENE_COLORS.reagent.solution, 0.25)}
+                      />
+                      {/* 直导管插入溶液 */}
+                      <line
+                        x1={tailLayout.width * 0.5}
+                        y1={-30}
+                        x2={tailLayout.width * 0.5}
+                        y2={65}
+                        stroke={SCENE_COLORS.container.beakerBorder}
+                        strokeWidth={4}
                       />
                       {flowRate > 0 && (
                         <BubbleEmitter
-                          x={slotX[4]}
-                          y={tailLayout.y + 65}
+                          x={tailLayout.width * 0.5}
+                          y={65}
                           count={5}
                         />
                       )}
@@ -700,7 +751,7 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                 </g>
               )}
 
-              {/* ─── 导管路由：纯绝对坐标 SVG path，无 translate 包裹 ─── */}
+              {/* ─── 导管路由：纯绝对坐标 SVG path，零 transform 外包裹 ─── */}
               {routes.map((rt) => (
                 <g key={rt.id}>
                   {/* 外壁玻璃轮廓 */}

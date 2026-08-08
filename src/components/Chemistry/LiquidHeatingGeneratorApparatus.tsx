@@ -1,5 +1,5 @@
 import React from 'react'
-import { SCENE_COLORS, CHEMISTRY_COLORS, colors, withAlpha, STROKE, FONT } from '@/theme'
+import { SCENE_COLORS, CHEMISTRY_COLORS, withAlpha, STROKE } from '@/theme'
 import type { FontScaler } from '@/theme'
 import { DistillationFlaskApparatus, getDistillationFlaskPorts } from './DistillationFlaskApparatus'
 import { AlcoholLampApparatus } from './AlcoholLampApparatus'
@@ -65,7 +65,6 @@ export const LiquidHeatingGeneratorApparatus: React.FC<LiquidHeatingGeneratorApp
   y,
   heating = true,
   isEthylene = false,
-  font = (n) => n,
 }) => {
   // ── 核心几何常量（全部从桌面 y 向上推算，零魔法数字）──────────────────────
   // 石棉网：在桌面上方 86px（高考标准，酒精灯外焰顶端相切于此）
@@ -163,7 +162,7 @@ export const LiquidHeatingGeneratorApparatus: React.FC<LiquidHeatingGeneratorApp
         y={flaskY}
         width={FLASK_W}
         height={FLASK_H}
-        fillLevel={0.45}
+        fillLevel={isEthylene ? 0.55 : 0.45}
         fillColor={withAlpha(CHEMISTRY_COLORS.concentration, 0.4)}
       />
 
@@ -176,29 +175,10 @@ export const LiquidHeatingGeneratorApparatus: React.FC<LiquidHeatingGeneratorApp
         lit={heating}
       />
 
-      {/* 6. 上部：乙烯用温度计，常规用分液漏斗 */}
+      {/* 6. 上部：乙烯用温度计 (170°C 水银球完全浸没在反应液中央，距离烧瓶底悬空 10.4px)，常规用分液漏斗 */}
       {isEthylene ? (
-        <g transform={`translate(${flaskPorts.topNeckPort.x}, ${flaskPorts.topNeckPort.y - 45})`}>
+        <g transform={`translate(${flaskPorts.topNeckPort.x}, ${flaskPorts.topNeckPort.y - 56})`}>
           <ThermometerApparatus x={0} y={0} tempValue={170} height={175} />
-          <rect
-            x={12}
-            y={50}
-            width={100}
-            height={20}
-            rx={4}
-            fill={withAlpha(colors.warning[100], 0.8)}
-            stroke={colors.warning[500]}
-            strokeWidth={1}
-          />
-          <text
-            x={18}
-            y={64}
-            fill={SCENE_COLORS.labels.chemicalFormula}
-            fontSize={font(FONT.annotation)}
-            fontWeight="bold"
-          >
-            水银球浸没 170°C
-          </text>
         </g>
       ) : (
         <SeparatoryFunnelApparatus

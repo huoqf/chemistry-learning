@@ -16,6 +16,9 @@ const HARD_LIMIT = 1000
 // Justification required: file is cohesive (single-component), no physics/JSX mixing, has tests, split收益不明显.
 const ALLOWLIST = new Set([
   'src/data/knowledgeTree.ts',
+  // GasChainCenterView: 纯视觉渲染组件，5-slot apparatus JSX 无物理计算，
+  // 职责单一，拆分后 props drilling 收益不明显
+  'src/features/gas-chain/components/GasChainCenterView.tsx',
 ])
 
 function walk(dir) {

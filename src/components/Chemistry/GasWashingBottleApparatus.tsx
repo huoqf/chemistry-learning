@@ -2,13 +2,13 @@ import { SCENE_COLORS, STROKE, withAlpha } from '@/theme'
 
 export interface GasWashingBottlePorts {
   /** 长进气管入口 (洗气瓶左上方) */
-  inletPort: { x: number; y: number }
+  inletPort: { x: number; y: number; direction?: 'up' | 'down' | 'left' | 'right' }
   /** 短出气管出口 (洗气瓶右上方) */
-  outletPort: { x: number; y: number }
+  outletPort: { x: number; y: number; direction?: 'up' | 'down' | 'left' | 'right' }
   /** 橡皮塞顶部中心 */
-  topNeckPort: { x: number; y: number }
+  topNeckPort: { x: number; y: number; direction?: 'up' | 'down' | 'left' | 'right' }
   /** 洗气瓶底部中心 */
-  bottomPort: { x: number; y: number }
+  bottomPort: { x: number; y: number; direction?: 'up' | 'down' | 'left' | 'right' }
 }
 
 /**
@@ -23,12 +23,12 @@ export function getGasWashingBottlePorts(
 ): GasWashingBottlePorts {
   const leftX = x + width * 0.3
   const rightX = x + width * 0.7
-  // 套接扣顶面在 y-24（与渲染中 <rect y={-24}> 一致）
+  // 玻璃导出端口在橡皮塞上方 12px 处 (y - 12)
   return {
-    inletPort: { x: reversed ? rightX : leftX, y: y - 24 },
-    outletPort: { x: reversed ? leftX : rightX, y: y - 24 },
-    topNeckPort: { x: x + width * 0.5, y: y + 12 },
-    bottomPort: { x: x + width * 0.5, y: y + height },
+    inletPort: { x: reversed ? rightX : leftX, y: y - 12, direction: 'up' },
+    outletPort: { x: reversed ? leftX : rightX, y: y - 12, direction: 'up' },
+    topNeckPort: { x: x + width * 0.5, y: y + 12, direction: 'up' },
+    bottomPort: { x: x + width * 0.5, y: y + height, direction: 'down' },
   }
 }
 
@@ -168,11 +168,11 @@ export function GasWashingBottleApparatus({
         strokeWidth={1}
       />
 
-      {/* 4. 长管：外壁 strokeWidth=6 / 内高光 strokeWidth=3，与路由连接管粗细一致 */}
+      {/* 4. 长管：外壁 strokeWidth=6 / 内高光 strokeWidth=3，与路由连接管 100% 融为一体零补丁 */}
       <g id="wash-long-tube">
         {/* 外壁 */}
         <line
-          x1={longTubeX} y1={-24}
+          x1={longTubeX} y1={-12}
           x2={longTubeX} y2={h - 20}
           stroke={SCENE_COLORS.materials.glassBorder}
           strokeWidth={6}
@@ -180,22 +180,11 @@ export function GasWashingBottleApparatus({
         />
         {/* 内高光 */}
         <line
-          x1={longTubeX} y1={-24}
+          x1={longTubeX} y1={-12}
           x2={longTubeX} y2={h - 20}
           stroke={withAlpha(SCENE_COLORS.tube.glass, 0.85)}
           strokeWidth={3}
           strokeLinecap="square"
-        />
-        {/* 顶口红褐色软胶管套接扣 */}
-        <rect
-          x={longTubeX - 5.5}
-          y={-30}
-          width={11}
-          height={8}
-          rx={2}
-          fill="#B45309"
-          stroke="#78350F"
-          strokeWidth={1}
         />
       </g>
 
@@ -203,30 +192,19 @@ export function GasWashingBottleApparatus({
       <g id="wash-short-tube">
         {/* 外壁 */}
         <line
-          x1={shortTubeX} y1={-24}
-          x2={shortTubeX} y2={neckH + 20}
+          x1={shortTubeX} y1={-12}
+          x2={shortTubeX} y2={28}
           stroke={SCENE_COLORS.materials.glassBorder}
           strokeWidth={6}
           strokeLinecap="square"
         />
         {/* 内高光 */}
         <line
-          x1={shortTubeX} y1={-24}
-          x2={shortTubeX} y2={neckH + 20}
+          x1={shortTubeX} y1={-12}
+          x2={shortTubeX} y2={28}
           stroke={withAlpha(SCENE_COLORS.tube.glass, 0.85)}
           strokeWidth={3}
           strokeLinecap="square"
-        />
-        {/* 顶口红褐色软胶管套接扣 */}
-        <rect
-          x={shortTubeX - 5.5}
-          y={-30}
-          width={11}
-          height={8}
-          rx={2}
-          fill="#B45309"
-          stroke="#78350F"
-          strokeWidth={1}
         />
       </g>
 

@@ -50,6 +50,8 @@ export interface SeparatoryFunnelApparatusProps {
   isOpen?: boolean
   /** 是否带有顶部磨砂玻璃塞 */
   hasStopper?: boolean
+  /** 自定义下颈 Stem 长度 (用于穿过橡皮塞深插入发生容器) */
+  stemLength?: number
   /** 字体缩放函数 */
   font?: FontScaler
 }
@@ -73,19 +75,21 @@ export function SeparatoryFunnelApparatus({
   topFillColor = SCENE_COLORS.reagent.acid,
   isOpen = false,
   hasStopper = true,
+  stemLength,
 }: SeparatoryFunnelApparatusProps) {
   const w = width
   const h = height
   const isTiny = w < 40
 
   const neckW = w * 0.22
-  const neckH = h * 0.12
+  const neckH = Math.min(22, h * 0.12)
   const neckLeft = (w - neckW) / 2
   const neckRight = neckLeft + neckW
 
-  const bulbH = h * 0.55
-  const stemH = h * 0.33
-  const valveY = neckH + bulbH + stemH * 0.35
+  // 下颈 Stem 长度与球腹高度计算
+  const stemH = stemLength ?? h * 0.33
+  const bulbH = stemLength ? Math.max(40, h - neckH - stemH) : h * 0.55
+  const valveY = neckH + bulbH + Math.min(20, stemH * 0.35)
 
   // 管嘴下端 45° 斜切尖嘴 (Beveled Tip) 几何 (长边朝右，紧贴右侧烧杯内壁)
   const stemLeftX = w * 0.5 - 4

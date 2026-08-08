@@ -3,9 +3,9 @@ import type { FontScaler } from '@/theme'
 
 export interface AntiSiphonFunnelPorts {
   /** 倒置漏斗顶部连接导管口 */
-  topConnectPort: { x: number; y: number }
+  topConnectPort: { x: number; y: number; direction?: 'up' }
   /** 倒置漏斗大口底部接触面 */
-  bottomPort: { x: number; y: number }
+  bottomPort: { x: number; y: number; direction?: 'down' }
 }
 
 /**
@@ -18,8 +18,8 @@ export function getAntiSiphonFunnelPorts(
   height = 100
 ): AntiSiphonFunnelPorts {
   return {
-    topConnectPort: { x: x + width * 0.5, y: y - 10 },
-    bottomPort: { x: x + width * 0.5, y: y + height },
+    topConnectPort: { x: x + width * 0.5, y, direction: 'up' },
+    bottomPort: { x: x + width * 0.5, y: y + height, direction: 'down' },
   }
 }
 
@@ -47,11 +47,12 @@ export interface AntiSiphonFunnelApparatusProps {
 }
 
 /**
- * AntiSiphonFunnelApparatus — 高考防倒吸倒置漏斗吸收组件
+ * AntiSiphonFunnelApparatus — 高考防倒吸倒置漏斗吸收组件 (含吸收烧杯)
  *
  * 适用于：
  * - 极易溶气体 (NH3, HCl 等) 的防倒吸尾气吸收
- * - 漏斗边缘刚好触及或微浸入液面，实现防倒吸缓冲原理
+ * - 包含完整外围玻璃烧杯轮廓与液面刻度
+ * - 漏斗边缘刚好触及或微浸入液面 (相切/切入 1~4px)，水极易吸收 NH₃ 破除真空防倒吸
  * - 导出静态 `getAntiSiphonFunnelPorts`
  */
 export function AntiSiphonFunnelApparatus({
@@ -60,7 +61,7 @@ export function AntiSiphonFunnelApparatus({
   width = 80,
   height = 100,
   liquidLevel = 0.3,
-  liquidColor = withAlpha(SCENE_COLORS.reagent.acid, 0.5),
+  liquidColor = withAlpha(SCENE_COLORS.reagent.acid, 0.45),
   isAbsorbing = true,
   label,
   font = (n) => n,
@@ -73,23 +74,51 @@ export function AntiSiphonFunnelApparatus({
   // 漏斗结构细分
   const stemW = 10
   const stemH = h * 0.35
-
   const stemLeft = (w - stemW) / 2
 
+  // 吸收烧杯结构常量
+  const beakerW = w + 30     // 110px
+  const beakerH = 65         // 65px
+  const beakerLeft = -15     // 烧杯左边缘
+  const beakerTopY = h - 25  // 烧杯上沿：液面落于 y = h - touchDepth，与倒置漏斗下口精确相切
+
   return (
-    <g transform={`translate(${x}, ${y})`}>
-      {/* 1. 烧杯/吸收容器液面 (使液面恰好与倒置漏斗大口下沿 y=h 相切/微浸入 1~4px) */}
+    <g transform={`translate(${x}, ${y})`} id="anti-siphon-funnel-group">
+      {/* ── 1. 外围吸收烧杯玻璃主体 (杯口在 y = h - 25) ── */}
       <rect
-        x={-20}
-        y={h - touchDepth}
-        width={w + 40}
-        height={35}
-        fill={liquidColor}
-        opacity={0.7}
-        rx={3}
+        x={beakerLeft}
+        y={beakerTopY}
+        width={beakerW}
+        height={beakerH}
+        rx={4}
+        fill={withAlpha(SCENE_COLORS.container.beaker, 0.3)}
+        stroke={SCENE_COLORS.container.beakerBorder}
+        strokeWidth={STROKE.objectLine}
+      />
+      {/* 烧杯嘴 Lip 倾倒口 */}
+      <path
+        d={`M ${beakerLeft - 3} ${beakerTopY} L ${beakerLeft} ${beakerTopY + 4}`}
+        stroke={SCENE_COLORS.container.beakerBorder}
+        strokeWidth={STROKE.objectLine}
       />
 
-      {/* 2. 细玻璃柄 */}
+      {/* 烧杯内吸收溶液 (液面恰好与倒置漏斗大口下沿 y=h 相切/微浸入 touchDepth) */}
+      <rect
+        x={beakerLeft + 2}
+        y={h - touchDepth}
+        width={beakerW - 4}
+        height={beakerH - (h - touchDepth - beakerTopY) - 2}
+        fill={liquidColor}
+        opacity={0.8}
+        rx={2}
+      />
+
+      {/* 烧杯刻度线 */}
+      <line x1={beakerLeft + 6} y1={beakerTopY + 18} x2={beakerLeft + 14} y2={beakerTopY + 18} stroke={SCENE_COLORS.container.beakerBorder} strokeWidth={1} />
+      <line x1={beakerLeft + 6} y1={beakerTopY + 30} x2={beakerLeft + 18} y2={beakerTopY + 30} stroke={SCENE_COLORS.container.beakerBorder} strokeWidth={1} />
+      <line x1={beakerLeft + 6} y1={beakerTopY + 42} x2={beakerLeft + 14} y2={beakerTopY + 42} stroke={SCENE_COLORS.container.beakerBorder} strokeWidth={1} />
+
+      {/* ── 2. 细玻璃柄 ── */}
       <rect
         x={stemLeft}
         y={0}
@@ -99,19 +128,8 @@ export function AntiSiphonFunnelApparatus({
         stroke={SCENE_COLORS.materials.glassBorder}
         strokeWidth={STROKE.objectLine}
       />
-      {/* 细柄顶端红褐色软胶管套接扣 (y = -10 ~ 0)，使顶端连接点与 topConnectPort (y-10) 视觉 100% 吻合 */}
-      <rect
-        x={stemLeft - 1}
-        y={-10}
-        width={stemW + 2}
-        height={10}
-        rx={2}
-        fill="#B45309"
-        stroke="#78350F"
-        strokeWidth={1}
-      />
 
-      {/* 3. 倒置漏斗主体 (大口朝下) */}
+      {/* ── 3. 倒置漏斗主体 (大口朝下) ── */}
       <polygon
         points={`
           ${stemLeft},${stemH}
@@ -125,7 +143,7 @@ export function AntiSiphonFunnelApparatus({
         strokeLinejoin="round"
       />
 
-      {/* 4. 漏斗大口下边沿微接触液面 */}
+      {/* 漏斗大口下边沿相切液面 */}
       <line
         x1={0}
         y1={h}
@@ -135,7 +153,7 @@ export function AntiSiphonFunnelApparatus({
         strokeWidth={STROKE.objectLine}
       />
 
-      {/* 5. 吸收过程倒吸缓冲气泡与液面微升 */}
+      {/* ── 4. 吸收过程倒吸缓冲与液面上升/破除真空气泡 ── */}
       {isAbsorbing && (
         <g>
           {/* 漏斗内部上升缓冲液面 */}
@@ -149,7 +167,7 @@ export function AntiSiphonFunnelApparatus({
             fill={liquidColor}
             opacity={0.4}
           />
-          {/* 微小吸收气泡 */}
+          {/* 破除真空的吸收气泡 */}
           <circle cx={w * 0.3} cy={h - 10} r={3} fill="none" stroke="#38BDF8" strokeWidth={1} />
           <circle cx={w * 0.5} cy={h - 22} r={4} fill="none" stroke="#38BDF8" strokeWidth={1.2} />
           <circle cx={w * 0.7} cy={h - 12} r={2.5} fill="none" stroke="#38BDF8" strokeWidth={1} />
@@ -160,7 +178,7 @@ export function AntiSiphonFunnelApparatus({
       {label && (
         <text
           x={w * 0.5}
-          y={h + 20}
+          y={beakerTopY + beakerH + 16}
           textAnchor="middle"
           fontSize={font(FONT.annotation)}
           fill={SCENE_COLORS.labels.chemicalFormula}

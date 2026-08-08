@@ -3,13 +3,13 @@ import type { FontScaler } from '@/theme'
 
 export interface DistillationFlaskPorts {
   /** 烧瓶颈部橡皮塞/温度计插入口 (顶部中心) */
-  topNeckPort: { x: number; y: number }
+  topNeckPort: { x: number; y: number; direction?: 'up' | 'down' | 'left' | 'right' }
   /** 侧边支管口出口 (对准冷凝管进气口) */
-  sideArmPort: { x: number; y: number }
+  sideArmPort: { x: number; y: number; direction?: 'up' | 'down' | 'left' | 'right' }
   /** 瓶颈铁夹夹持点 */
   clampPoint: { x: number; y: number }
   /** 烧瓶底部中心 */
-  bottomPort: { x: number; y: number }
+  bottomPort: { x: number; y: number; direction?: 'up' | 'down' | 'left' | 'right' }
 }
 
 /**
@@ -28,10 +28,10 @@ export function getDistillationFlaskPorts(
   const neckRight = neckLeft + width * 0.28
 
   return {
-    topNeckPort: { x: x + width * 0.5, y: y },
-    sideArmPort: { x: x + neckRight + sideTubeW, y: y + sideTubeY + 9 },
+    topNeckPort: { x: x + width * 0.5, y: y, direction: 'up' },
+    sideArmPort: { x: x + neckRight + sideTubeW, y: y + sideTubeY + 9, direction: 'right' },
     clampPoint: { x: x + width * 0.5, y: y + neckH * 0.5 },
-    bottomPort: { x: x + width * 0.5, y: y + height },
+    bottomPort: { x: x + width * 0.5, y: y + height, direction: 'down' },
   }
 }
 
