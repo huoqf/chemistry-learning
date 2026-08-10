@@ -20,6 +20,7 @@ import { modelIndustrialFlow } from './model-industrial-flow'
 import { modelReactionPrincipleNexus } from './model-reaction-principle-nexus'
 import { modelElectrochemicalTwin } from './model-electrochemical-twin'
 import { modelGasChainQuiz } from './model-gas-chain'
+import { vseprHybridQuizData } from './model-vsepr-hybrid-3d'
 
 import type { ModelQuizData } from './types'
 
@@ -39,6 +40,7 @@ export const modelQuizMap: Record<string, ModelQuizData> = {
   [modelReactionPrincipleNexus.modelId]: modelReactionPrincipleNexus,
   [modelElectrochemicalTwin.modelId]: modelElectrochemicalTwin,
   [modelGasChainQuiz.modelId]: modelGasChainQuiz,
+  [vseprHybridQuizData.modelId]: vseprHybridQuizData,
 }
 
 export function getModelQuizData(modelId: string): ModelQuizData | undefined {

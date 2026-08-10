@@ -1,0 +1,78 @@
+import type { ModelQuizData } from './types'
+
+export const vseprHybridQuizData: ModelQuizData = {
+  modelId: 'model-vsepr-hybrid-3d',
+  scoringSteps: [
+    {
+      id: 'step-1',
+      title: '步骤 1：明确中心原子价电子数 b 与配位原子贡献数 cx',
+      type: 'fill-in',
+      questionText: '计算微粒中心原子价电子数 b。在 CO₃²⁻ 中，碳原子价电子数 b 为 4，配位氧原子需求 cx 为 6，带 2 个单位负电荷。修正后中心 C 价电子总和为多少？',
+      placeholder: '输入整数',
+      correctAnswer: ['6'],
+      explanation: '中心 C 原子价电子 b = 4，阴离子加 2 个电荷，4 + 2 = 6。',
+    },
+    {
+      id: 'step-2',
+      title: '步骤 2：计算价层电子对数 VSEPR 与孤电子对数',
+      type: 'calculation',
+      questionText: '运用 VSEPR 公式，SO₂ 中中心 S 原子价电子数 b=6，配位 O 原子需求 cx=4。则 SO₂ 的价层电子对数与孤电子对数分别为（用 comma 分隔）：',
+      formulaLatex: '\\text{VSEPR } = a + \\frac{b - cx}{2} = 2 + \\frac{6 - 4}{2} = 3',
+      placeholder: '3,1 或 3, 1',
+      correctAnswer: ['3,1', '3, 1'],
+      explanation: '价层电子对数 = 2 + (6 - 4)/2 = 3，孤电子对数 = (6 - 4)/2 = 1。',
+    },
+    {
+      id: 'step-3',
+      title: '步骤 3：由 VSEPR 电子对数判定中心原子杂化轨道类型',
+      type: 'fill-in',
+      questionText: '价层电子对数为 4 时，中心原子（如 CH₄、NH₃、H₂O 中的 C/N/O）的杂化轨道类型为：',
+      placeholder: '如 sp3',
+      correctAnswer: ['sp3', 'sp³'],
+      explanation: '电子对数 2 → sp；3 → sp²；4 → sp³。',
+    },
+    {
+      id: 'step-4',
+      title: '步骤 4：孤电子对排斥效应对实际键角的压制推导',
+      type: 'fill-in',
+      questionText: 'CH₄、NH₃、H₂O 中心原子均为 sp³ 杂化，但在 CH₄(109.5°)、NH₃(107.3°)、H₂O(104.5°) 中键角依次减小。导致键角压缩的核心微观因素是中心原子包含的什么数目增多？',
+      placeholder: '输入词语（如孤电子对）',
+      correctAnswer: ['孤电子对', '孤电子对数', '孤对电子'],
+      explanation: '孤电子对对成键电子对的排斥作用大于成键电子对之间的排斥作用。孤电子对越多，成键电子对被挤压越严重，键角越小。',
+    },
+  ],
+  variantQuizzes: [
+    {
+      id: 'quiz-vsepr-1',
+      yearProvince: '2024 全国新课标卷',
+      modelId: 'model-vsepr-hybrid-3d',
+      title: 'SO₂ 与 SO₃ 分子空间构型与键角差异比较',
+      contextDescription: '已知第三周期元素 S 可形成 SO₂ 与 SO₃ 两种常见氧化物。某同学通过 VSEPR 模型分析 SO₂ 与 SO₃ 分子的空间构型与键角差异。',
+      questionText: '下列关于 SO₂ 与 SO₃ 分子结构及键角的判断，正确的是（ ）',
+      options: [
+        { label: 'A', text: 'SO₂ 键角大于 SO₃；SO₂ 中 S 为 sp³ 杂化', isCorrect: false },
+        { label: 'B', text: 'SO₃ 键角大于 SO₂；SO₂ 中 S 含有 1 对孤电子对，对成键电子对产生排斥使键角被压缩', isCorrect: true },
+        { label: 'C', text: '两者键角均为 120°；中心 S 原子杂化类型相同且无孤电子对排斥', isCorrect: false },
+        { label: 'D', text: 'SO₂ 键角为 180°；SO₃ 键角为 109.5°', isCorrect: false },
+      ],
+      modelAlignmentAnalysis: '【母题模型对齐】：考查 VSEPR 电子对数计算 (SO₂ 为 3, SO₃ 为 3) 以及孤电子对排斥对键角的压缩效应。',
+      detailedExplanation: '1. SO₂ 中 S 价电子对数 = 2 + (6 - 2×2)/2 = 3，含 1 对孤电子对，sp² 杂化，VSEPR 模型为平面三角形，由于孤电子对的排斥，实际键角小于 120° (~119.5°)；\n2. SO₃ 中 S 价电子对数 = 3 + (6 - 2×3)/2 = 3，无孤电子对，sp² 杂化，实际构型为平面三角形，键角为 120°。\n3. 因此 SO₃ 键角 (120°) > SO₂ 键角 (~119.5°)。',
+    },
+    {
+      id: 'quiz-vsepr-2',
+      yearProvince: '2025 高考考前摸底',
+      modelId: 'model-vsepr-hybrid-3d',
+      title: '常见离子 (NH₄⁺、H₃O⁺) VSEPR 模型与杂化判别',
+      contextDescription: '在水溶液与晶体结构中，离子如 CO₃²⁻、NH₄⁺、H₃O⁺ 广泛存在。',
+      questionText: '关于下列微粒的杂化轨道类型与空间构型的判断，完全正确的是（ ）',
+      options: [
+        { label: 'A', text: 'CO₃²⁻ 中 C 为 sp³ 杂化，构型为正四面体', isCorrect: false },
+        { label: 'B', text: 'NH₄⁺ 与 H₃O⁺ 中心原子杂化类型相同，且空间构型也相同', isCorrect: false },
+        { label: 'C', text: 'NH₄⁺ 为 sp³ 杂化呈正四面体；H₃O⁺ 也为 sp³ 杂化但含 1 对孤电子对呈三角锥形', isCorrect: true },
+        { label: 'D', text: 'NO₃⁻ 与 CO₃²⁻ 中心原子杂化类型不同', isCorrect: false },
+      ],
+      modelAlignmentAnalysis: '【母题模型对齐】：考查阴阳离子 VSEPR 电荷修正公式与分子实际空间构型的区分。',
+      detailedExplanation: 'NH₄⁺ 价层电子对数 = 4 + (5 - 1 - 4×1)/2 = 4，无孤电子对，sp³ 杂化，正四面体；H₃O⁺ 价层电子对数 = 3 + (6 - 1 - 3×1)/2 = 4，含 1 对孤电子对，sp³ 杂化，三角锥形。故两者杂化相同 (sp³)，但实际构型不同。',
+    },
+  ],
+}
