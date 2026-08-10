@@ -17,6 +17,7 @@ import { OrganicRetrosynthesisCanvas } from '@/features/organic-retrosynthesis/O
 import { ElementPeriodicPropertyCanvas } from '@/features/element-periodic-property/ElementPeriodicPropertyCanvas'
 import { ElectrochemicalTwinCanvas } from '@/features/electrochemical-twin/ElectrochemicalTwinCanvas'
 import { GasChainCanvas } from '@/features/gas-chain'
+import { Crystal3DSplitCanvas } from '@/features/crystal-3d-split'
 
 export default function GaokaoToolPage() {
   const { id } = useParams<{ id: string }>()
@@ -38,7 +39,7 @@ export default function GaokaoToolPage() {
     )
   }
 
-  // 13 个已完成专题分发
+  // 14 个已完成专题分发
   switch (model.id) {
     case 'model-valence-matrix':
       return <ValenceMatrixCanvas defaultElementSymbol="Fe" />
@@ -82,8 +83,10 @@ export default function GaokaoToolPage() {
     case 'model-gas-chain':
       return <GasChainCanvas />
 
-    // 2 个待升级/暂未开放的专题，使用统一的 GaokaoToolPlaceholderCanvas 占位与预告
     case 'model-crystal-3d-split':
+      return <Crystal3DSplitCanvas />
+
+    // 1 个待升级/暂未开放的专题，使用统一的 GaokaoToolPlaceholderCanvas 占位与预告
     case 'model-vsepr-hybrid-3d':
     default:
       return <GaokaoToolPlaceholderCanvas modelId={model.id} />

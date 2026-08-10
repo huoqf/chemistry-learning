@@ -130,6 +130,10 @@ export const CANVAS_COLORS = {
   dangerBorder:       '#FECACA',
   dangerBgFill:       '#fee2e2',
   dangerGradient:     '#7F1D1D',
+
+  // 3D 晶胞与空间几何对角线
+  diagonalBody:       '#E11D48',
+  diagonalFace:       '#2563EB',
 } as const
 
 export type CanvasColorKey = keyof typeof CANVAS_COLORS
@@ -144,22 +148,24 @@ export const ATOM_COLORS = {
   N:  '#3B82F6', // 氮 (蓝)
   O:  '#EF4444', // 氧 (红)
   F:  '#22C55E', // 氟 (浅绿)
-  Na: '#8B5CF6', // 钠 (紫)
+  Na: '#F59E0B', // 钠 (黄/橙)
   Mg: '#9CA3AF', // 镁 (银灰)
   Al: '#B0BEC5', // 铝 (浅银灰)
   Si: '#D97706', // 硅 (赭石)
   P:  '#F97316', // 磷 (橙)
   S:  '#EAB308', // 硫 (黄)
-  Cl: '#10B981', // 氯 (绿)
+  Cl: '#38BDF8', // 氯 (天蓝)
   K:  '#7C3AED', // 钾 (深紫)
-  Ca: '#64748B', // 钙 (灰)
+  Ca: '#6366F1', // 钙 (靛蓝)
+  Ti: '#EC4899', // 钛 (玫红)
   Cr: '#059669', // 铬 (铬绿)
   Mn: '#EC4899', // 锰 (粉紫)
-  Fe: '#B45309', // 铁 (棕)
-  Cu: '#C2410C', // 铜 (红铜)
+  Fe: '#64748B', // 铁 (钢灰/棕灰)
+  Cu: '#F97316', // 铜 (红铜/紫铜)
   Zn: '#78716C', // 锌 (灰)
   Br: '#991B1B', // 溴 (深红棕)
   I:  '#581C87', // 碘 (紫黑)
+  Cs: '#8B5CF6', // 铯 (紫)
   Ag: '#CBD5E1', // 银 (亮银)
   Ba: '#475569', // 钡 (深灰)
   Pb: '#475569', // 铅 (铅灰)
