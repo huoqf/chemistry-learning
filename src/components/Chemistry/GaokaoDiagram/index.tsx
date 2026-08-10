@@ -245,33 +245,20 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
         <div className={`my-2.5 p-3 bg-slate-50 border border-slate-200 rounded-lg ${className}`}>
           <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between">
             <span>{title || '高考真题：m(沉淀) - V(NaOH) 图像'}</span>
-            <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">
-              高考真题原图
-            </span>
+            <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">高考真题原图</span>
           </div>
           <svg viewBox="0 0 340 170" className="w-full h-auto bg-white rounded border border-slate-200 shadow-2xs">
             <line x1="40" y1="140" x2="320" y2="140" stroke="#334155" strokeWidth="1.5" />
             <line x1="40" y1="20" x2="40" y2="140" stroke="#334155" strokeWidth="1.5" />
             <line x1="40" y1="40" x2="320" y2="40" stroke="#E2E8F0" strokeDasharray="3 3" />
             <line x1="40" y1="90" x2="320" y2="90" stroke="#E2E8F0" strokeDasharray="3 3" />
-
             <line x1="200" y1="40" x2="200" y2="140" stroke="#94A3B8" strokeDasharray="2 2" />
             <circle cx="200" cy="40" r="3" fill="#475569" />
             <text x="200" y="152" fontSize="8" fill="#64748B" textAnchor="middle">V₁</text>
-
             <line x1="250" y1="90" x2="250" y2="140" stroke="#94A3B8" strokeDasharray="2 2" />
             <circle cx="250" cy="90" r="3" fill="#475569" />
             <text x="250" y="152" fontSize="8" fill="#64748B" textAnchor="middle">V₂</text>
-
-            <polyline
-              points="40,140 200,40 250,90 310,90"
-              fill="none"
-              stroke="#2563EB"
-              strokeWidth="2.5"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-            />
-
+            <polyline points="40,140 200,40 250,90 310,90" fill="none" stroke="#2563EB" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
             <text x="35" y="143" fontSize="9" fill="#475569" textAnchor="end">0</text>
             <text x="35" y="93" fontSize="9" fill="#475569" textAnchor="end">m₁</text>
             <text x="35" y="43" fontSize="9" fill="#475569" textAnchor="end">m₂</text>
