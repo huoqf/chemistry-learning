@@ -116,51 +116,121 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
   }
 
   if (diagramType === 'valence-matrix-chart') {
+    const title = config?.title || ''
+    const isS = title.includes('硫') || title.includes('S')
+    const isN = title.includes('氮') || title.includes('N')
+    const isCl = title.includes('氯') || title.includes('Cl')
+    const isFe = title.includes('铁') || title.includes('Fe')
+
     return (
       <div className={`my-2.5 p-3 bg-slate-50 border border-slate-200 rounded-lg ${className}`}>
         <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between">
-          <span>{config?.title || '高考真题：无机元素价态-物质类别二维图像'}</span>
+          <span>{title || '高考真题：无机元素价态-物质类别二维图像'}</span>
           <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">
             高考真题原图
           </span>
         </div>
         <svg viewBox="0 0 340 180" className="w-full h-auto bg-white rounded border border-slate-200 shadow-2xs">
+          {/* 坐标轴 */}
           <line x1="50" y1="150" x2="320" y2="150" stroke="#334155" strokeWidth="1.5" />
           <line x1="50" y1="20" x2="50" y2="150" stroke="#334155" strokeWidth="1.5" />
 
+          {/* 网格参考线 */}
           <line x1="50" y1="125" x2="320" y2="125" stroke="#F1F5F9" strokeDasharray="3 3" />
           <line x1="50" y1="95" x2="320" y2="95" stroke="#F1F5F9" strokeDasharray="3 3" />
           <line x1="50" y1="65" x2="320" y2="65" stroke="#F1F5F9" strokeDasharray="3 3" />
           <line x1="50" y1="35" x2="320" y2="35" stroke="#F1F5F9" strokeDasharray="3 3" />
 
-          <text x="42" y="128" fontSize="8" fill="#64748B" textAnchor="end">-2</text>
-          <text x="42" y="98" fontSize="8" fill="#64748B" textAnchor="end">0</text>
-          <text x="42" y="68" fontSize="8" fill="#64748B" textAnchor="end">+4</text>
-          <text x="42" y="38" fontSize="8" fill="#64748B" textAnchor="end">+6</text>
           <text x="32" y="85" fontSize="8" fill="#1E293B" fontWeight="bold" transform="rotate(-90 32 85)" textAnchor="middle">化合价</text>
-
           <text x="90" y="163" fontSize="8" fill="#475569" textAnchor="middle">氢化物</text>
           <text x="150" y="163" fontSize="8" fill="#475569" textAnchor="middle">单质</text>
           <text x="210" y="163" fontSize="8" fill="#475569" textAnchor="middle">氧化物</text>
           <text x="275" y="163" fontSize="8" fill="#475569" textAnchor="middle">酸 / 盐</text>
 
-          <path d="M 98 120 L 142 98" stroke="#64748B" strokeWidth="1.5" strokeDasharray="2 2" />
-          <polygon points="142,98 134,95 137,103" fill="#64748B" />
+          {/* 1. N 氮元素价类图 */}
+          {isN && (
+            <g>
+              <text x="42" y="145" fontSize="8" fill="#64748B" textAnchor="end">-3</text>
+              <text x="42" y="115" fontSize="8" fill="#64748B" textAnchor="end">0</text>
+              <text x="42" y="85" fontSize="8" fill="#64748B" textAnchor="end">+2</text>
+              <text x="42" y="55" fontSize="8" fill="#64748B" textAnchor="end">+4</text>
+              <text x="42" y="30" fontSize="8" fill="#64748B" textAnchor="end">+5</text>
 
-          <path d="M 202 70 L 158 92" stroke="#64748B" strokeWidth="1.5" strokeDasharray="2 2" />
-          <polygon points="158,92 163,85 166,93" fill="#64748B" />
+              <path d="M 90 140 L 150 110 L 210 80 L 210 50 L 275 25" fill="none" stroke="#6366F1" strokeWidth="1.5" strokeDasharray="3 3" />
+              <circle cx="90" cy="140" r="13" fill="#EEF2FF" stroke="#6366F1" strokeWidth="1.5" />
+              <text x="90" y="143" fontSize="8" fill="#312E81" textAnchor="middle" fontWeight="bold">NH₃</text>
+              <circle cx="150" cy="110" r="13" fill="#FEF3C7" stroke="#D97706" strokeWidth="1.5" />
+              <text x="150" y="113" fontSize="8" fill="#B45309" textAnchor="middle" fontWeight="bold">N₂</text>
+              <circle cx="210" cy="80" r="13" fill="#EEF2FF" stroke="#6366F1" strokeWidth="1.5" />
+              <text x="210" y="83" fontSize="8" fill="#312E81" textAnchor="middle" fontWeight="bold">NO</text>
+              <circle cx="210" cy="50" r="13" fill="#EEF2FF" stroke="#6366F1" strokeWidth="1.5" />
+              <text x="210" y="53" fontSize="8" fill="#312E81" textAnchor="middle" fontWeight="bold">NO₂</text>
+              <circle cx="275" cy="25" r="13" fill="#EEF2FF" stroke="#6366F1" strokeWidth="1.5" />
+              <text x="275" y="28" fontSize="8" fill="#312E81" textAnchor="middle" fontWeight="bold">HNO₃</text>
+            </g>
+          )}
 
-          <circle cx="90" cy="125" r="14" fill="#F1F5F9" stroke="#64748B" strokeWidth="1.5" />
-          <text x="90" y="128" fontSize="8" fill="#334155" textAnchor="middle" fontWeight="bold">H₂S</text>
+          {/* 2. Fe 铁元素价类图 */}
+          {isFe && (
+            <g>
+              <text x="42" y="125" fontSize="8" fill="#64748B" textAnchor="end">0</text>
+              <text x="42" y="85" fontSize="8" fill="#64748B" textAnchor="end">+2</text>
+              <text x="42" y="45" fontSize="8" fill="#64748B" textAnchor="end">+3</text>
 
-          <circle cx="150" cy="95" r="15" fill="#FEF3C7" stroke="#D97706" strokeWidth="2" />
-          <text x="150" y="98" fontSize="9" fill="#B45309" textAnchor="middle" fontWeight="bold">S (单质)</text>
+              <path d="M 150 120 L 210 80 L 275 40" fill="none" stroke="#EC4899" strokeWidth="1.5" strokeDasharray="3 3" />
+              <circle cx="150" cy="120" r="13" fill="#FEF3C7" stroke="#D97706" strokeWidth="1.5" />
+              <text x="150" y="123" fontSize="8" fill="#B45309" textAnchor="middle" fontWeight="bold">Fe</text>
+              <circle cx="210" cy="80" r="13" fill="#FCE7F3" stroke="#EC4899" strokeWidth="1.5" />
+              <text x="210" y="83" fontSize="8" fill="#9D174D" textAnchor="middle" fontWeight="bold">FeO</text>
+              <circle cx="275" cy="80" r="13" fill="#FCE7F3" stroke="#EC4899" strokeWidth="1.5" />
+              <text x="275" y="83" fontSize="7" fill="#9D174D" textAnchor="middle" fontWeight="bold">Fe²⁺/盐</text>
+              <circle cx="275" cy="40" r="13" fill="#FCE7F3" stroke="#EC4899" strokeWidth="2" />
+              <text x="275" y="43" fontSize="7" fill="#9D174D" textAnchor="middle" fontWeight="bold">Fe³⁺/KSCN</text>
+            </g>
+          )}
 
-          <circle cx="210" cy="65" r="14" fill="#F1F5F9" stroke="#64748B" strokeWidth="1.5" />
-          <text x="210" y="68" fontSize="8" fill="#334155" textAnchor="middle" fontWeight="bold">SO₂</text>
+          {/* 3. Cl 氯元素价类图 */}
+          {isCl && (
+            <g>
+              <text x="42" y="140" fontSize="8" fill="#64748B" textAnchor="end">-1</text>
+              <text x="42" y="110" fontSize="8" fill="#64748B" textAnchor="end">0</text>
+              <text x="42" y="80" fontSize="8" fill="#64748B" textAnchor="end">+1</text>
+              <text x="42" y="50" fontSize="8" fill="#64748B" textAnchor="end">+5</text>
+              <text x="42" y="25" fontSize="8" fill="#64748B" textAnchor="end">+7</text>
 
-          <circle cx="275" cy="35" r="14" fill="#F1F5F9" stroke="#64748B" strokeWidth="1.5" />
-          <text x="275" y="38" fontSize="8" fill="#334155" textAnchor="middle" fontWeight="bold">H₂SO₄</text>
+              <path d="M 90 135 L 150 105 L 275 75 L 275 45 L 275 20" fill="none" stroke="#10B981" strokeWidth="1.5" strokeDasharray="3 3" />
+              <circle cx="90" cy="135" r="13" fill="#ECFDF5" stroke="#10B981" strokeWidth="1.5" />
+              <text x="90" y="138" fontSize="8" fill="#065F46" textAnchor="middle" fontWeight="bold">HCl</text>
+              <circle cx="150" cy="105" r="13" fill="#FEF3C7" stroke="#D97706" strokeWidth="1.5" />
+              <text x="150" y="108" fontSize="8" fill="#B45309" textAnchor="middle" fontWeight="bold">Cl₂</text>
+              <circle cx="275" cy="75" r="13" fill="#ECFDF5" stroke="#10B981" strokeWidth="1.5" />
+              <text x="275" y="78" fontSize="7" fill="#065F46" textAnchor="middle" fontWeight="bold">NaClO</text>
+              <circle cx="275" cy="45" r="13" fill="#ECFDF5" stroke="#10B981" strokeWidth="1.5" />
+              <text x="275" y="48" fontSize="7" fill="#065F46" textAnchor="middle" fontWeight="bold">KClO₃</text>
+              <circle cx="275" cy="20" r="13" fill="#ECFDF5" stroke="#10B981" strokeWidth="1.5" />
+              <text x="275" y="23" fontSize="7" fill="#065F46" textAnchor="middle" fontWeight="bold">KClO₄</text>
+            </g>
+          )}
+
+          {/* 4. S 硫元素及默认价类图 */}
+          {(isS || (!isN && !isFe && !isCl)) && (
+            <g>
+              <text x="42" y="128" fontSize="8" fill="#64748B" textAnchor="end">-2</text>
+              <text x="42" y="98" fontSize="8" fill="#64748B" textAnchor="end">0</text>
+              <text x="42" y="68" fontSize="8" fill="#64748B" textAnchor="end">+4</text>
+              <text x="42" y="38" fontSize="8" fill="#64748B" textAnchor="end">+6</text>
+
+              <path d="M 90 125 L 150 95 L 210 65 L 275 35" fill="none" stroke="#2563EB" strokeWidth="1.5" strokeDasharray="3 3" />
+              <circle cx="90" cy="125" r="14" fill="#EFF6FF" stroke="#2563EB" strokeWidth="1.5" />
+              <text x="90" y="128" fontSize="8" fill="#1E40AF" textAnchor="middle" fontWeight="bold">H₂S</text>
+              <circle cx="150" cy="95" r="15" fill="#FEF3C7" stroke="#D97706" strokeWidth="2" />
+              <text x="150" y="98" fontSize="9" fill="#B45309" textAnchor="middle" fontWeight="bold">S (单质)</text>
+              <circle cx="210" cy="65" r="14" fill="#EFF6FF" stroke="#2563EB" strokeWidth="1.5" />
+              <text x="210" y="68" fontSize="8" fill="#1E40AF" textAnchor="middle" fontWeight="bold">SO₂</text>
+              <circle cx="275" cy="35" r="14" fill="#EFF6FF" stroke="#2563EB" strokeWidth="1.5" />
+              <text x="275" y="38" fontSize="8" fill="#1E40AF" textAnchor="middle" fontWeight="bold">H₂SO₄</text>
+            </g>
+          )}
         </svg>
       </div>
     )

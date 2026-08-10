@@ -55,6 +55,11 @@ export const modelFlashCards: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '母题对比分析：SO₂ 漂白为结合型（加热复原）；Cl₂ 漂白为强氧化型（加热不复原）；等摩尔混合发生氧化还原反应 $SO_2 + Cl_2 + 2H_2O = H_2SO_4 + 2HCl$ 失去漂白能力；SO₂ 使酸性 KMnO₄ 褪色体现还原性而非漂白性。',
       detailedExplanation: '选项 B 正确。选项 A 中 Cl₂ 生成的 HClO 氧化漂白不可逆；选项 C 中两者按 1:1 反应生成硫酸和盐酸无漂白性；选项 D 体现 SO₂ 的还原性。',
+      diagramType: 'titration-error-diagram',
+      diagramConfig: {
+        errorDiagramType: 'permanganate-view-angle',
+        title: 'SO₂ 与 Cl₂ 漂白原理及品红加热复原实验对比图',
+      },
     },
     {
       id: 'var-2',
@@ -71,6 +76,11 @@ export const modelFlashCards: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '母题钝化对比：常温下 Fe、Al 遇浓 H₂SO₄/浓 HNO₃ 发生钝化（生成致密氧化膜），属于化学变化；加热破坏钝化膜，强氧化性酸被还原生成 SO₂（或 NO₂）气体。',
       detailedExplanation: '选项 B 正确。钝化是化学变化，表面形成氧化膜致使反应暂停。加热后发生反应生成 SO₂ 气体。稀硫酸与铁常温下剧烈反应生成 H₂。',
+      diagramType: 'titration-error-diagram',
+      diagramConfig: {
+        errorDiagramType: 'cod-back-titration',
+        title: '常温钝化 (表面致密氧化膜) 与加热破钝化反应对比图',
+      },
     },
     {
       id: 'var-3',
@@ -87,6 +97,52 @@ export const modelFlashCards: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '母题加压对比：压缩体积瞬间浓度 $c(NO_2)$ 增大颜色变深；加压平衡正向移动，但根据勒夏特列原理，平衡移动只能“减弱”而不能“消除”浓度的增加，新平衡 $c(NO_2)$ 依然大于压缩前；正反应放热，降温平衡右移颜色变浅。',
       detailedExplanation: '选项 C 正确。加压瞬间 $c(NO_2)$ 增大使颜色加深；平衡正向移动使 $c(NO_2)$ 有所减小，但新平衡浓度仍高于压缩前，故最终颜色比压缩前深。',
+      diagramType: 'distribution-fraction',
+      diagramConfig: {
+        title: 'NO₂ 与 N₂O₄ 注射器加压瞬间与平衡恢复颜色变化图',
+      },
+    },
+    {
+      id: 'var-4',
+      yearProvince: '2023 浙江高考真题',
+      modelId: 'model-flash-cards',
+      title: '卤代烃水解检验卤素原子中加入硝酸酸化的关键步骤',
+      contextDescription: '在检验 1-溴丁烷中的溴元素时，在加入 NaOH 溶液加热水解后，再加入 AgNO₃ 溶液之前必须加入稀硝酸。',
+      questionText: '加入稀硝酸的核心作用是：',
+      options: [
+        { label: 'A', text: '催化反应进行', isCorrect: false },
+        { label: 'B', text: '中和过量的 NaOH，防止生成 Ag₂O 棕黑色沉淀干扰 AgBr 检验', isCorrect: true },
+        { label: 'C', text: '将单质溴氧化为溴离子', isCorrect: false },
+        { label: 'D', text: '溶解生成的 AgBr 淡黄色沉淀', isCorrect: false },
+      ],
+      modelAlignmentAnalysis: '母题易错对比：水解后溶液强碱性，若直接加 AgNO₃，OH⁻ 会与 Ag⁺ 生成黑色 Ag₂O 沉淀覆盖遮挡淡黄色 AgBr 沉淀。必须先加 HNO₃ 酸化中和。',
+      detailedExplanation: '加入稀硝酸可以中和未反应的强碱 OH⁻，排除 Ag₂O 黑色沉淀对 AgBr 淡黄色沉淀的严重干扰。故 B 项正确。',
+      diagramType: 'titration-error-diagram',
+      diagramConfig: {
+        errorDiagramType: 'iodometry-purity',
+        title: '1-溴丁烷水解 ➔ 稀硝酸酸化中和 ➔ AgNO₃ 检验淡黄色 AgBr 沉淀流程图',
+      },
+    },
+    {
+      id: 'var-5',
+      yearProvince: '2024 全国甲卷',
+      modelId: 'model-flash-cards',
+      title: 'Na₂O₂ 过氧化物阴离子结构与转移电子数拆解',
+      contextDescription: 'Na₂O₂ 广泛用作呼吸面具中的供氧剂，发生反应：2Na₂O₂ + 2CO₂ = 2Na₂CO₃ + O₂。',
+      questionText: '下列关于该反应及过氧化钠结构特性的说法正确的是：',
+      options: [
+        { label: 'A', text: 'Na₂O₂ 晶体中含有的阴离子为 O²⁻', isCorrect: false },
+        { label: 'B', text: '每反应 1 mol Na₂O₂ 转移 2 mol 电子', isCorrect: false },
+        { label: 'C', text: 'Na₂O₂ 中存在共价键与离子键，1 mol Na₂O₂ 中阴阳离子个数比为 1:2', isCorrect: true },
+        { label: 'D', text: 'CO₂ 在反应中作还原剂被氧化', isCorrect: false },
+      ],
+      modelAlignmentAnalysis: '母题陷阱对比：Na₂O₂ 的阴离子为过氧根 [O-O]²⁻ 整体；2Na₂O₂ 歧化反应中 -1 价 O 一半升至 0 价 O₂，一半降至 -2 价 Na₂CO₃，1 mol Na₂O₂ 转移 1 mol 电子。',
+      detailedExplanation: 'Na₂O₂ 属于离子化合物，由 Na⁺ 与 O₂²⁻ 构成（比值为 2:1），含有 O-O 非极性共价键与 Na⁺~O₂²⁻ 离子键。氧化剂与还原剂均为 Na₂O₂。',
+      diagramType: 'titration-error-diagram',
+      diagramConfig: {
+        errorDiagramType: 'permanganate-view-angle',
+        title: 'Na₂O₂ [O-O]²⁻ 过氧键歧化与供氧反应原理图',
+      },
     },
   ],
 }

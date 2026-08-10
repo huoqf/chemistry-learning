@@ -1,5 +1,5 @@
 import React from 'react'
-import { LeftPanel, LeftPanelSection, ParamControl, SegmentedControl } from '@/components/UI'
+import { LeftPanel, LeftPanelSection, OptionButton, ParamControl, SegmentedControl } from '@/components/UI'
 import type { CrystalTypeId, DisplayMode } from '../types'
 import { CRYSTAL_DATA_MAP } from '../data/crystalData'
 
@@ -46,26 +46,18 @@ export const Crystal3DLeftPanel: React.FC<Crystal3DLeftPanelProps> = ({
 
   return (
     <LeftPanel>
-      {/* 高考晶胞选择（卡片按钮组件，只显示标题） */}
+      {/* 高考晶胞选择（使用 OptionButton 网格平铺，完全无下拉列表） */}
       <LeftPanelSection title="1. 选择高考晶胞模型">
         <div className="grid grid-cols-2 gap-1.5">
-          {crystalList.map((c) => {
-            const isSelected = c.id === selectedTypeId
-            return (
-              <button
-                key={c.id}
-                onClick={() => onSelectType(c.id)}
-                title={c.name}
-                className={`px-2.5 py-2 rounded-lg border text-left text-xs font-semibold truncate transition-all ${
-                  isSelected
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
-                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
-                }`}
-              >
-                {c.name}
-              </button>
-            )
-          })}
+          {crystalList.map((c) => (
+            <OptionButton
+              key={c.id}
+              label={c.name}
+              selected={c.id === selectedTypeId}
+              onClick={() => onSelectType(c.id)}
+              variant="preset"
+            />
+          ))}
         </div>
 
         {/* 当前选中晶胞要点说明卡片 */}

@@ -51,24 +51,8 @@ export const modelAvogadroConstant: ModelQuizData = {
   ],
   variantQuizzes: [
     {
-      id: 'var-na-1',
-      yearProvince: '2024 全国高考真题',
-      modelId: 'model-avogadro-constant',
-      title: '设 $N_{\\text{A}}$ 为阿伏加德罗常数的值，下列说法正确的是？',
-      contextDescription: '考查重水 D₂O 结构、Na₂O₂ 晶体离子构成、标况 SO₃ 状态及溶液 pH 定义。',
-      questionText: '设 $N_{\\text{A}}$ 为阿伏加德罗常数的值，下列说法正确的是？',
-      options: [
-        { label: 'A', text: '18 g D₂O 中含有的质子数为 10 $N_{\\text{A}}$', isCorrect: false },
-        { label: 'B', text: '1 mol Na₂O₂ 晶体中含有的阴离子数为 1 $N_{\\text{A}}$', isCorrect: true },
-        { label: 'C', text: '标准状况下 22.4 L SO₃ 中含有的分子数为 $N_{\\text{A}}$', isCorrect: false },
-        { label: 'D', text: 'pH = 1 的 H₂SO₄ 溶液中含有的 H⁺ 数为 0.1 $N_{\\text{A}}$', isCorrect: false },
-      ],
-      modelAlignmentAnalysis: '【母题模型对齐】：高考必考选择题 $N_{\\text{A}}$ 陷阱拆解。\nA项：D₂O 摩尔质量为 20 g/mol，18 g D₂O 为 0.9 mol，含 9 $N_{\\text{A}}$ 质子；\nB项：Na₂O₂ 由 Na⁺ 与 O₂²⁻ 构成，1 mol 晶体中阴离子 O₂²⁻ 为 1 mol ($N_{\\text{A}}$)；\nC项：标况下 SO₃ 为固体，不可用 22.4 L/mol；\nD项：pH = 1 仅给定浓度未说明溶液体积。',
-      detailedExplanation: '正确答案 B。Na₂O₂ 中的阴离子是过氧根离子 O₂²⁻，1 mol Na₂O₂ 晶体中含有 1 mol 阴离子，即 1 $N_{\\text{A}}$。',
-    },
-    {
       id: 'var-na-2',
-      yearProvince: '2024 湖南高考真题',
+      yearProvince: '2024 湖南高考真题卷',
       modelId: 'model-avogadro-constant',
       title: '设 $N_{\\text{A}}$ 为阿伏加德罗常数的值，下列说法正确的是？',
       contextDescription: '考查弱电解质水解、可逆反应受限与歧化反应电子转移。',
@@ -81,10 +65,15 @@ export const modelAvogadroConstant: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：\nA项：胶体粒子是上百至上千个 Fe(OH)₃ 聚集体，胶粒数远小于 0.1 $N_{\\text{A}}$；\nB项：2SO₂ + O₂ ⇌ 2SO₃ 为可逆反应，不能反应完全，生成 SO₃ 小于 2 $N_{\\text{A}}$；\nC项：Cl₂ + 2NaOH = NaCl + NaClO + H₂O 歧化反应转移 1 $N_{\\text{A}}$ 电子；\nD项：CH₄ 自由基取代反应为连续取代，生成 CH₃Cl、CH₂Cl₂、CHCl₃、CCl₄ 混合物。',
       detailedExplanation: '正确答案 C。Cl₂ 在碱性条件下歧化生成 Cl⁻ (-1) 和 ClO⁻ (+1)，1 mol Cl₂ 转移 1 mol 电子。',
+      diagramType: 'titration-error-diagram',
+      diagramConfig: {
+        errorDiagramType: 'cod-back-titration',
+        title: 'Fe(OH)₃ 胶粒聚集体与可逆反应限度对比示意图',
+      },
     },
     {
       id: 'var-na-3',
-      yearProvince: '2024 广东高考真题',
+      yearProvince: '2024 广东高考真题卷',
       modelId: 'model-avogadro-constant',
       title: '设 $N_{\\text{A}}$ 为阿伏加德罗常数的值，下列说法正确的是？',
       contextDescription: '考查晶体共价键均摊法（SiO₂ 与 P₄）及 14C 同位素中子数。',
@@ -97,6 +86,11 @@ export const modelAvogadroConstant: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：\nA项：1 mol SiO₂ (60 g) 含 4 mol Si-O 共价键 (4 $N_{\\text{A}}$)；\nB项：31 g P₄ 为 0.25 mol，正四面体有 6 条键，0.25 × 6 = 1.5 $N_{\\text{A}}$（正确）；\nC项：¹⁴C 摩尔质量为 14 g/mol，14 g 即 1 mol，1 个 ¹⁴C 有 8 个中子，含 8 $N_{\\text{A}}$ 中子；\nD项：CCl₄ 标况下为液体，不可套用 22.4 L/mol。',
       detailedExplanation: '正确答案 B。白磷 P₄ 为正四面体构型，含有 6 个 P-P 共价键，31 g 为 0.25 mol，含 1.5 $N_{\\text{A}}$ 共价键。',
+      diagramType: 'titration-error-diagram',
+      diagramConfig: {
+        errorDiagramType: 'iodometry-purity',
+        title: 'SiO₂ (4个Si-O键) 与 P₄ (正四面体6个P-P键) 微观键数对比图',
+      },
     },
   ],
 }
