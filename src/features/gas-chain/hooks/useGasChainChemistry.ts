@@ -144,7 +144,10 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
     } else if (targetGas === 'NO₂') {
       tailGasEquation = '2\\text{NO}_2 + 2\\text{NaOH} = \\text{NaNO}_2 + \\text{NaNO}_3 + \\text{H}_2\\text{O}'
     } else if (targetGas === 'NO') {
-      tailGasEquation = '\\text{NO} + \\text{NO}_2 + 2\\text{NaOH} = 2\\text{NaNO}_2 + \\text{H}_2\\text{O}'
+      // 纯 NO 不与 NaOH 反应；高中实验室尾气处理：
+      // 先向尾气中通入少量 O₂（开窗通风）将 NO 氧化为 NO₂，再用 NaOH 吸收
+      // 等物质量混合气 (NO + NO₂) 才可直接被 NaOH 吸收：
+      tailGasEquation = '\\text{（纯 NO 不与 NaOH 反应）}\\\\\\text{尾气处理: }2\\text{NO} + \\text{O}_2 \\rightarrow 2\\text{NO}_2,\\quad \\text{NO} + \\text{NO}_2 + 2\\text{NaOH} = 2\\text{NaNO}_2 + \\text{H}_2\\text{O}'
     } else if (targetGas === 'Cl₂') {
       tailGasEquation = '\\text{Cl}_2 + 2\\text{OH}^- = \\text{Cl}^- + \\text{ClO}^- + \\text{H}_2\\text{O}'
     } else if (targetGas === 'NH₃') {
@@ -215,6 +218,20 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       }
     }
 
+    // C₂H₄ 不能用浓H₂SO₄干燥（浓H₂SO₄会与乙烯的碳碳双键加成/氧化，消耗乙烯）
+    if ((targetGas === 'C₂H₄' || systemId === 'c2h4-prep') && dryer === 'conc-h2so4') {
+      dryerClogged = true
+      dangerType = 'clogging'
+      issues.push({
+        id: 'dryer-c2h4-h2so4-wrong',
+        level: 'danger',
+        title: '高考经典错误：浓硫酸不能用于干燥乙烯 ($C_2H_4$)！',
+        description: '浓 H₂SO₄ 具有强氧化性，会与乙烯碳碳双键发生加成或氧化反应，将 C₂H₄ 消耗破坏，引入 CO₂、SO₂ 等杂质！乙烯制备体系已使用浓 H₂SO₄ 催化，收集前可直接通过 NaOH 洗气瓶除去酸性杂质，无需再次浓硫酸干燥。',
+        examPoint: '乙烯 (C₂H₄) 含碳碳双键，浓 H₂SO₄ 氧化性强，严禁用于干燥乙烯；可用无水 CaCl₂ 或 P₂O₅ 干燥管。',
+      })
+    }
+
+
     // 4. NO / NO₂ 与极易溶气体防倒吸诊断
     const isHighlySoluble = ['NH₃', 'HCl', 'SO₂'].includes(targetGas) || systemId === 'nh3-prep'
     if (isHighlySoluble && (tailGas === 'naoh-absorber' || tailGas === 'direct-pipe')) {
@@ -227,6 +244,18 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
         examPoint: '吸收极易溶气体 (NH₃/HCl/SO₂) 必须使用防倒吸装置：倒置漏斗 (刚好接触液面) 或安全瓶。',
       })
     }
+
+    // NO 不溶于 NaOH，直接通入 NaOH 溶液无效（高考易错）
+    if (targetGas === 'NO' && (tailGas === 'naoh-absorber' || tailGas === 'direct-pipe')) {
+      issues.push({
+        id: 'no-naoh-invalid',
+        level: 'warning',
+        title: '化学原理错误：NO 不与 NaOH 溶液反应，直接通入无法吸收尾气！',
+        description: 'NO 为不活泼氮氧化物，不溶于水也不与 NaOH 反应。实验室处理 NO 尾气须先通入适量 O₂ 将 NO 氧化为 NO₂，再用浓 NaOH 溶液吸收 NO₂，或在通风橱中将尾气在排风口处直接稀释。',
+        examPoint: 'NO 与 NaOH 不反应 (牢记！)；只有 NO + NO₂ 等物质量混合气才可被 NaOH 吸收：NO + NO₂ + 2NaOH = 2NaNO₂ + H₂O。',
+      })
+    }
+
 
     // 倒置漏斗深深浸没失灵诊断
     if (tailGas === 'inverted-funnel' && params.funnelDepth === 'deep') {
@@ -338,9 +367,10 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       if (washReagent === 'naoh') {
         impurityConc -= 60
       } else if (washReagent === 'kmno4') {
-        impurityConc = 90 // 引入新杂质 CO2
+        impurityConc = 90 // 引入新杂质 CO₂，纯度反降
       }
-      if (dryer === 'conc-h2so4' || dryer === 'cacl2') {
+      // 浓H₂SO₄会与乙烯反应（已触发 dryerClogged），不计入有效干燥
+      if (dryer === 'cacl2' || dryer === 'p2o5') {
         impurityConc -= 40
       }
     } else {

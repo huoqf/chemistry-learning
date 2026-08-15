@@ -52,6 +52,7 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
 
     if (params.catalyst === 'catalyst-a') {
       forward *= 0.65
+      // 催化剂同等降低正逆反应活化能，不改变反应热: Ea(逆) = Ea(正) - ΔH (ΔH < 0 时为 + |ΔH|)
       reverse = forward - system.deltaH
     } else if (params.catalyst === 'catalyst-b') {
       forward *= 0.5
@@ -114,6 +115,7 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
     const deltaH_J = system.deltaH * 1000
     const points: { invT: number; lnK: number; temp: number }[] = []
 
+    // 范特霍夫方程: ln K = -ΔH/(R*T) + C，其中常数 C = ΔS/R
     for (let t = 273; t <= 600; t += 20) {
       const invT = 1 / t
       const lnK = (-deltaH_J / (R * t)) - 12.0
@@ -155,17 +157,24 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
         if (params.addedReactant > 0) {
           cReactant += params.addedReactant
           vF *= 1 + params.addedReactant * 0.8
-        } else if (params.temperature > system.defaultTemp) {
+        } else if (params.temperature !== system.defaultTemp) {
+          // 放热反应 (ΔH < 0):
+          // 升温 (factor > 0): vF 与 vR 均增大，但吸热方向(逆反应)增大幅度更大 (1.4 > 0.8) => vR > vF，平衡逆移
+          // 降温 (factor < 0): vF 与 vR 均减小，但吸热方向(逆反应)减小幅度更大 => vF > vR，平衡正移
           const factor = (params.temperature - system.defaultTemp) / 100
-          vF += 0.8 * factor
-          vR += 1.4 * factor
+          vF = Math.max(0.05, vF + 0.8 * factor)
+          vR = Math.max(0.05, vR + 1.4 * factor)
         } else if (params.pressure !== system.defaultPressure) {
+          // 体系反应均为气体分子数减小反应 (gasMolesDiff < 0):
+          // 增压 (pFactor > 1): 正反应(更高分子数)速率增长比率高于逆反应 (pFactor^2 > pFactor) => vF > vR，平衡正移
+          // 减压 (pFactor < 1): 正反应速率下降更快 => vF < vR，平衡逆移
           const pFactor = params.pressure / system.defaultPressure
-          vF *= pFactor
-          vR *= pFactor * 1.2
+          vF *= pFactor * pFactor
+          vR *= pFactor
         } else if (params.inertGasMode === 'constant-p') {
-          vF *= 0.7
-          vR *= 0.5
+          // 恒温恒压充入惰性气体: 容器体积膨胀，各组分分压等效减压，平衡向气体分子数增大的逆方向移动 => vF < vR
+          vF *= 0.5
+          vR *= 0.7
         }
       } else {
         const decay = Math.exp(-(timeRound - perturbTime) * 0.8)

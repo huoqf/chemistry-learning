@@ -277,7 +277,7 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     angles: [
       { id: 'a1', atom1Id: 'o1', centerAtomId: 'c', atom2Id: 'o2', angleDegree: 120, displayLabel: '120°' },
     ],
-    examNotes: '阴离子 VSEPR 计算公式：VSEPR = (4 + 2 - 3×2)/2 + 3 = 3，无孤电子对，中心 C 为 sp² 杂化，呈平面三角形。',
+    examNotes: '阴离子 VSEPR 计算公式：先修正价电子数 b\' = b + |q| = 4 + 2 = 6；再代入：VSEPR = a + (b\' - cx)/2 = 3 + (6 - 3×2)/2 = 3 + 0 = 3，无孤电子对，中心 C 为 sp² 杂化，呈平面三角形。',
   },
 
   // 8. NH4(+) 阳离子
@@ -318,7 +318,7 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     angles: [
       { id: 'a1', atom1Id: 'h1', centerAtomId: 'n', atom2Id: 'h2', angleDegree: 109.5, displayLabel: '109.5°' },
     ],
-    examNotes: '阳离子 VSEPR 计算公式：VSEPR = (5 - 1 - 4×1)/2 + 4 = 4，中心 N 为 sp³ 杂化，4 个 N-H 键完全对称，呈正四面体形 (键角由 107.3° 增大为 109.5°)。',
+    examNotes: '阳离子 VSEPR 计算公式：先修正价电子数 b\' = b - |q| = 5 - 1 = 4；再代入：VSEPR = a + (b\' - cx)/2 = 4 + (4 - 4×1)/2 = 4 + 0 = 4，中心 N 为 sp³ 杂化，4 个 N-H 键完全对称，呈正四面体形 (键角由 107.3° 增大为 109.5°)。',
   },
 
   // 9. PCl5 (超价分子拓展, sp3d, 三角双锥)

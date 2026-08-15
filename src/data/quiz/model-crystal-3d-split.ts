@@ -119,7 +119,7 @@ export const modelCrystal3dSplit: ModelQuizData = {
         { label: 'D', text: 'ZnS 晶胞化学式为 Zn₂S', isCorrect: false },
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：面心立方有 8 个四面体空隙，为了满足 ZnS 1:1 化学式，Zn²⁺ 仅填入其中 4 个四面体空隙（占 1/2）。',
-      detailedExplanation: 'S²⁻ 在面心立方共有 4 个。四面体空隙共有 8 个，Zn²⁺ 填入 4 个（占 1/2）使得 Zn:S = 4:4 = 1:1，化学式为 ZnS，Zn²⁺ 配位数为 4。',
+      detailedExplanation: 'S²⁻ 在面心立方共有 4 个。面心立方中共有 8 个四面体空隙和 4 个八面体空隙，Zn²⁺ 仅填入其中的 4 个四面体空隙（占 1/2），使得 Zn:S = 4:4 = 1:1，化学式为 ZnS，Zn²⁺ 配位数为 4。',
       diagramType: 'titration-error-diagram',
       diagramConfig: {
         errorDiagramType: 'iodometry-purity',

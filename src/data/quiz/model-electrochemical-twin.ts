@@ -37,13 +37,13 @@ export const modelElectrochemicalTwin: ModelQuizData = {
     },
     {
       id: 'step-4',
-      title: '第四步：阳往正阴、阴往负阳，确定膜透性与电子守恒计算',
+      title: '第四步：离子定向迁移（阳往正阴、阴往负阳）与法拉第定量守恒',
       type: 'calculation',
       questionText: '利用法拉第电解定律计算，n(e⁻) 与电流 I 及时间 t 的关系式是什么？',
       formulaLatex: 'n(e^-) = \\frac{I \\cdot t}{F}',
       correctAnswer: 'n(e⁻) = (I · t) / F',
       explanation:
-        '电子只在导线中传递。阳离子向正极/阴极移动，阴离子向负极/阳极移动；串联电路中转移电子物质的量 n(e⁻) 恒定相等。',
+        '电子只在导线中传递。离子迁移口诀：原电池中“阳往正、阴往负”，电解池中“阳往阴、阴往阳”（合并简记为“阳往正阴、阴往负阳”）；串联电路中各电极转移电子物质的量 n(e⁻) 守恒相等。',
     },
   ],
   variantQuizzes: [
@@ -64,8 +64,8 @@ export const modelElectrochemicalTwin: ModelQuizData = {
       modelAlignmentAnalysis: '本题考查二次电池放电（原电池）与充电（电解池）工作原理转换及质子交换膜透膜方向判定。',
       detailedExplanation:
         '1. 放电时（原电池）：V²⁺ 化合价由 +2 升至 +3，失电子作负极，反应式为 V²⁺ - e⁻ = V³⁺；\n' +
-        '2. 放电时，阳离子 H⁺ 向正极区迁移（“阳往正阴”）；\n' +
-        '3. 充电时，阳极与电源正极相连，发生氧化反应：VO²⁺ + H₂O - e⁻ = VO₂⁺ + 2H⁺，D 项完全正确。',
+        '2. 放电时（原电池），阳离子 H⁺ 向正极区迁移（原电池中“阳往正”）；\n' +
+        '3. 充电时（电解池），阳极与电源正极相连，发生氧化反应：VO²⁺ + H₂O - e⁻ = VO₂⁺ + 2H⁺，D 项完全正确。',
       diagramType: 'titration-error-diagram',
       diagramConfig: {
         errorDiagramType: 'cod-back-titration',
@@ -89,7 +89,7 @@ export const modelElectrochemicalTwin: ModelQuizData = {
       modelAlignmentAnalysis: '本题考查多室电解池与双极膜 BPM 催化水解离生成 H⁺ 和 OH⁻ 定向迁移制备强酸强碱应用。',
       detailedExplanation:
         '1. 阴极区发生还原反应：2H₂O + 2e⁻ = H₂↑ + 2OH⁻，双极膜生成的 H⁺ 移向酸室，Na⁺ 从盐室穿过阳离子膜进入阴极室，与 OH⁻ 结合形成高浓度 NaOH，C 项正确。\n' +
-        '2. 双极膜解离出的 OH⁻ 显负电性，移向阳极方向（“阴往阳”），B 项错误。',
+        '2. 双极膜解离出的 OH⁻ 为阴离子，在电解池电场驱动下移向阳极室（电解池中“阴往阳”），B 项错误。',
       diagramType: 'titration-error-diagram',
       diagramConfig: {
         errorDiagramType: 'permanganate-view-angle',

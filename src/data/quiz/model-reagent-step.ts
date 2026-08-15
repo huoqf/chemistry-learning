@@ -84,11 +84,11 @@ export const modelReagentStep: ModelQuizData = {
       options: [
         { label: 'A', text: '滴加氨水至过量时，产生的 Al(OH)₃ 沉淀会重新完全溶解', isCorrect: false },
         { label: 'B', text: '滴加 NaOH 溶液到达沉淀最大值与沉淀恰好完全溶解，消耗 NaOH 的体积比为 3:1', isCorrect: true },
-        { label: 'C', text: '滴加氨水过程生成的 NH₄⁺ 对水解起抑制作用', isCorrect: false },
+        { label: 'C', text: '继续滴加过量氨水能促使 Al(OH)₃ 发生酸式电离溶解', isCorrect: false },
         { label: 'D', text: '两反应生成的沉淀化学式完全不同', isCorrect: false },
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查 Al³⁺ + 3OH⁻ = Al(OH)₃↓ 及 Al(OH)₃ + OH⁻ = [Al(OH)₄]⁻ 反应消耗 NaOH 的 3:1 体积比及弱碱不溶解沉淀特性。',
-      detailedExplanation: 'Al(OH)₃ 为两性氢氧化物，溶于强碱 NaOH，生成 [Al(OH)₄]⁻，消耗 OH⁻ 比为 3:1；一水合氨为弱碱，无法提供足够强度的碱性使 Al(OH)₃ 溶解。',
+      detailedExplanation: 'Al(OH)₃ 为两性氢氧化物，溶于强碱 NaOH 生成 [Al(OH)₄]⁻，消耗 OH⁻ 的体积比为 3:1；一水合氨为弱碱，电离出的 OH⁻ 浓度极低，无法促使 Al(OH)₃ 发生酸式电离溶解，故滴加过量氨水沉淀不溶解。',
       diagramType: 'precipitation-curve',
       diagramConfig: {
         title: 'AlCl₃ 滴加强碱 NaOH (先沉淀后溶解 3:1) 曲线图',

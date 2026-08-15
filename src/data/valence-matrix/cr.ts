@@ -31,7 +31,7 @@ export const CR_CONFIG: ElementValenceConfig = {
       colorStyle: 'bg-emerald-800 text-white border-emerald-900',
       rgbColor: PHENOMENON_COLORS.cro42Minus,
       testReaction: '俗称铬绿，两性氧化物，与熔融碱反应生成铬酸盐',
-      equation: 'Cr₂O₃ + 4OH⁻ + 3O₂ =熔融= 2CrO₄²⁻ + 2H₂O',
+      equation: '2Cr₂O₃ + 8OH⁻ + 3O₂ =熔融= 4CrO₄²⁻ + 4H₂O',
       roleDescription: '两性氧化物',
     },
     {

@@ -26,7 +26,7 @@ export interface ValenceTransformation {
   reagent: string
   equation: string
   electronTransfer: string
-  type: 'oxidation' | 'reduction' | 'disproportionation' | 'comproportionation'
+  type: 'oxidation' | 'reduction' | 'disproportionation' | 'comproportionation' | 'other'
 }
 
 export interface ElementValenceConfig {

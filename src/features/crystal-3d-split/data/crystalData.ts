@@ -324,7 +324,7 @@ export const CRYSTAL_DATA_MAP: Record<CrystalTypeId, CrystalTypeData> = {
     id: 'hcp-mg',
     name: 'Mg (六方最密堆积 A3)',
     chemicalFormula: 'Mg',
-    description: '六方平行六面体晶胞。Mg 原子位于 8 个顶角 (4×1/12 + 4×1/6 = 1) 与 1 个内部 (1×1 = 1)，单个平行六面体晶胞净含 2 个 Mg 原子。',
+    description: '六方平行六面体晶胞。Mg 原子位于 8 个顶角 (4个60°顶角×1/12 + 4个120°顶角×1/6 = 1) 与 1 个内部 (1×1 = 1)，单个平行六面体晶胞净含 2 个 Mg 原子。',
     cellParams: HEX_CELL,
     defaultEdgeLengthPm: 321,
     defaultHeightPm: 521,

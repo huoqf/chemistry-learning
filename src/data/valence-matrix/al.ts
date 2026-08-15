@@ -85,7 +85,7 @@ export const AL_CONFIG: ElementValenceConfig = {
       reagent: '适量 NaOH / 氨水',
       equation: 'Al³⁺ + 3NH₃·H₂O = Al(OH)₃↓ + 3NH₄⁺',
       electronTransfer: '非氧化还原 (复分解沉淀)',
-      type: 'oxidation',
+      type: 'other',
     },
     {
       id: 't-al-3',
@@ -94,7 +94,7 @@ export const AL_CONFIG: ElementValenceConfig = {
       reagent: '过量 NaOH',
       equation: 'Al(OH)₃ + OH⁻ = [Al(OH)₄]⁻',
       electronTransfer: '非氧化还原 (两性溶解)',
-      type: 'oxidation',
+      type: 'other',
     },
     {
       id: 't-al-4',
@@ -103,7 +103,7 @@ export const AL_CONFIG: ElementValenceConfig = {
       reagent: '通入过量 CO₂',
       equation: '[Al(OH)₄]⁻ + CO₂ = Al(OH)₃↓ + HCO₃⁻',
       electronTransfer: '非氧化还原 (弱酸制强酸/胶体生成)',
-      type: 'reduction',
+      type: 'other',
     },
   ],
   examTips: [

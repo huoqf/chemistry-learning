@@ -64,7 +64,7 @@ export const FLASH_CARDS: FlashCard[] = [
     optionA: '错，常温发生钝化（表面氧化为致密薄膜），钝化属于化学变化',
     optionB: '对，常温下铁金属性弱无法与浓硫酸反应，加热才能反应',
     correctOption: 'A',
-    explanation: '常温下浓硫酸、浓硝酸具有强氧化性，使 Fe、Al 表面立即氧化生成一层致密的钝化氧化膜（如 Fe₃O₄），阻止反应继续进行。钝化是化学变化！',
+    explanation: '常温下浓硫酸、浓硝酸具有强氧化性，使 Fe、Al 表面立即氧化生成一层致密的钝化氧化膜（主要为 Fe₂O₃、Al₂O₃ 等），阻止反应继续进行。钝化是化学变化！',
     chemicalEquations: [
       'Fe / Al + \\text{浓}H_2SO_4 / \\text{浓}HNO_3 \\xrightarrow{\\text{常温}} \\text{致密氧化物薄膜 (钝化阻断反应)}',
       '2Fe + 6H_2SO_4(\\text{浓}) \\xrightarrow{\\Delta} Fe_2(SO_4)_3 + 3SO_2\\uparrow + 6H_2O (加热破膜反应)',
@@ -157,7 +157,7 @@ export const FLASH_CARDS: FlashCard[] = [
     explanation: '2Na₂O₂ + 2CO₂ = 2Na₂CO₃ + O₂ 是歧化反应，Na₂O₂ 中 -1 价氧既作氧化剂又作还原剂，1 mol Na₂O₂ 转移 1 mol e⁻。2Na₂O₂ → 2Na₂CO₃ 相当于固体增加了 2 mol CO。',
     chemicalEquations: [
       '2Na_2O_2 + 2CO_2 = 2Na_2CO_3 + O_2 (1mol Na_2O_2 转移 1mol e^-)',
-      'Na_2O_2 + CO = Na_2CO_3 (固体重增量等于通入 CO 的质量)',
+      '2Na_2O_2 + 2H_2O = 4NaOH + O_2\\uparrow (差量法：固体增重 \\Delta m = m(CO) \\text{ 或 } m(H_2))',
     ],
     warningTip: '高考避坑红线：Na₂O₂ 与 CO₂/H₂O 反应中，每生成 1 mol O₂ 转移 2 mol 电子，消解 2 mol Na₂O₂！',
     examPoint: '歧化反应电子转移数计算与 Na₂O₂ 差量法质量推算',

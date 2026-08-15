@@ -137,7 +137,7 @@ export const modelFlashCards: ModelQuizData = {
         { label: 'D', text: 'CO₂ 在反应中作还原剂被氧化', isCorrect: false },
       ],
       modelAlignmentAnalysis: '母题陷阱对比：Na₂O₂ 的阴离子为过氧根 [O-O]²⁻ 整体；2Na₂O₂ 歧化反应中 -1 价 O 一半升至 0 价 O₂，一半降至 -2 价 Na₂CO₃，1 mol Na₂O₂ 转移 1 mol 电子。',
-      detailedExplanation: 'Na₂O₂ 属于离子化合物，由 Na⁺ 与 O₂²⁻ 构成（比值为 2:1），含有 O-O 非极性共价键与 Na⁺~O₂²⁻ 离子键。氧化剂与还原剂均为 Na₂O₂。',
+      detailedExplanation: 'Na₂O₂ 属于离子化合物，由 Na⁺ 与 O₂²⁻ 构成（阳离子与阴离子个数比为 2:1，即阴阳离子个数比为 1:2），含有 O-O 非极性共价键与 Na⁺~O₂²⁻ 离子键。氧化剂与还原剂均为 Na₂O₂。',
       diagramType: 'titration-error-diagram',
       diagramConfig: {
         errorDiagramType: 'permanganate-view-angle',

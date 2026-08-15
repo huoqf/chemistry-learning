@@ -106,7 +106,7 @@ export const modelTitrationBalance: ModelQuizData = {
       diagramConfig: {
         titrationType: 'weakBase-strongAcid',
         vEq: 20,
-        phJumpRange: [6.3, 4.3],
+        phJumpRange: [4.3, 6.3],
         pKa: 9.25,
         title: '0.1 mol/L 盐酸滴定 20 mL 0.1 mol/L 氨水滴定突跃曲线',
       },

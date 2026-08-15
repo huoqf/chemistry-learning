@@ -97,7 +97,7 @@ export const vseprHybridQuizData: ModelQuizData = {
         { label: 'C', text: 'NO₃⁻ 中心 N 原子含有 1 对孤电子对', isCorrect: false },
         { label: 'D', text: 'CO₃²⁻ 中 C-O 键长完全不相等', isCorrect: false },
       ],
-      modelAlignmentAnalysis: '【母题模型对齐】：考查等电子体原理及 sp² 杂化。CO₃²⁻ 电子对数 = 3 + (4+2-6)/2 = 3，sp² 杂化，平面三角形，含有 4 轨道 6 电子的大 π 键 (π₄⁶)。',
+      modelAlignmentAnalysis: '【母题模型对齐】：考查等电子体原理及 sp² 杂化。CO₃²⁻ 电子对数 = 3 + (4+2-6)/2 = 3，sp² 杂化，平面三角形，含有 4 轨道 6 电子的大 π 键 (Π₄⁶)。',
       detailedExplanation: 'CO₃²⁻ 与 NO₃⁻ 为等电子体，中心原子均为 sp² 杂化，无孤电子对，均为平面三角形，3 个 C-O 键完全等同。',
       diagramType: 'titration-error-diagram',
       diagramConfig: {

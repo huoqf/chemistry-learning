@@ -75,7 +75,7 @@ export const SI_CONFIG: ElementValenceConfig = {
       reagent: '盐酸 (H⁺) / 通入 CO₂',
       equation: 'SiO₃²⁻ + 2H⁺ = H₂SiO₃↓',
       electronTransfer: '非氧化还原 (复分解胶体生成)',
-      type: 'oxidation',
+      type: 'other',
     },
   ],
   examTips: [

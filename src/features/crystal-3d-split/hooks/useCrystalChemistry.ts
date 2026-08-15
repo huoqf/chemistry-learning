@@ -104,7 +104,7 @@ export function useCrystalChemistry(
       const cPm = crystalData.defaultHeightPm || Math.sqrt(8 / 3) * edgeLengthPm
       const cCm = cPm * 1e-10
       cellVolumeCm3 = aCm * aCm * Math.sin(Math.PI / 3) * cCm
-      cellVolumeLatex = `V = a^2 c \\sin(60^\\circ) = ${edgeLengthPm}^2 \\cdot ${Math.round(cPm)} \\cdot \\frac{\\sqrt{3}}{2} \\cdot 10^{-30} \\text{ cm}^3`
+      cellVolumeLatex = `V = a^2 c \\sin(60^\\circ) = (${edgeLengthPm} \\times 10^{-10})^2 \\cdot (${Math.round(cPm)} \\times 10^{-10}) \\cdot \\frac{\\sqrt{3}}{2} = ${edgeLengthPm}^2 \\cdot ${Math.round(cPm)} \\cdot \\frac{\\sqrt{3}}{2} \\cdot 10^{-30} \\text{ cm}^3`
       densityLatex = `\\rho = \\frac{${totalZ} \\cdot M}{\\frac{\\sqrt{3}}{2} a^2 c \\cdot 10^{-30} \\cdot N_{\\text{A}}} \\text{ g/cm}^3`
     } else {
       // 立方晶胞 V = a³

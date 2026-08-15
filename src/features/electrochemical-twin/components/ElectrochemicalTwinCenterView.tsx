@@ -210,13 +210,13 @@ export const ElectrochemicalTwinCenterView: React.FC<Props> = ({
             {/* 阳极 (C) */}
             <rect x="45" y="-55" width="30" height="250" rx="4" fill="#334155" stroke="#0F172A" strokeWidth="2" />
             <text x="60" y="-68" textAnchor="middle" fill="#1E293B" fontSize={canvasSize.font(13)} fontWeight="bold">
-              阳极 (失氧化)
+              阳极 (氧化·失e⁻)
             </text>
 
-            {/* 阴极 (Cu) */}
+            {/* 阴极 (Cu/C) */}
             <rect x="225" y="-55" width="30" height="250" rx="4" fill="#B45309" stroke="#78350F" strokeWidth="2" />
             <text x="240" y="-68" textAnchor="middle" fill="#1E293B" fontSize={canvasSize.font(13)} fontWeight="bold">
-              阴极 (得还原)
+              阴极 (还原·得e⁻)
             </text>
 
             {/* 外接 DC 电源导线 */}
@@ -234,15 +234,27 @@ export const ElectrochemicalTwinCenterView: React.FC<Props> = ({
               <circle cx="-6" cy={-((tick * 60) % 60)} r="3.5" fill="#34D399" opacity={0.8} />
               <circle cx="6" cy={-(((tick + 0.5) * 60) % 60)} r="4.5" fill="#34D399" opacity={0.9} />
               <text x="-25" y="-45" fill="#059669" fontSize={canvasSize.font(11)} fontWeight="bold">
-                Cl₂ / O₂ 气体
+                {params.mode === 2 ? 'Cl₂ 气体' : 'O₂ 气体'}
               </text>
             </g>
 
-            {/* 阴极金属沉积 */}
-            <rect x="220" y="80" width="10" height="140" fill="#D97706" opacity={0.85} />
-            <text x="240" y="240" fill="#B45309" fontSize={canvasSize.font(11)} fontWeight="bold">
-              Cu 沉积 (+{quantResult.massChangeRight}g)
-            </text>
+            {/* 阴极现象：模式 2 析出 H2 气泡，模式 3/0 析出金属 Cu */}
+            {params.mode === 2 ? (
+              <g transform="translate(240, 140)">
+                <circle cx="-6" cy={-((tick * 60) % 60)} r="3" fill="#60A5FA" opacity={0.8} />
+                <circle cx="6" cy={-(((tick + 0.5) * 60) % 60)} r="4" fill="#60A5FA" opacity={0.9} />
+                <text x="-15" y="-45" fill="#2563EB" fontSize={canvasSize.font(11)} fontWeight="bold">
+                  H₂ 气体
+                </text>
+              </g>
+            ) : (
+              <>
+                <rect x="220" y="80" width="10" height="140" fill="#D97706" opacity={0.85} />
+                <text x="240" y="240" fill="#B45309" fontSize={canvasSize.font(11)} fontWeight="bold">
+                  Cu 沉积 (+{quantResult.massChangeRight}g)
+                </text>
+              </>
+            )}
           </g>
         </AnimationSvgCanvas>
       )}

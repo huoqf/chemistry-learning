@@ -20,6 +20,7 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
 
   return useMemo(() => {
     const Ka = Math.pow(10, -pKa)
+    // 在 strongAcidWeakBase 体系中，用户输入的 pKa 实际对应弱碱的 pKb
     const Kb = Math.pow(10, -pKa)
     const vEq = V0 // 假定滴定剂与被滴定剂浓度相等 c_titrant = c0 = 0.1 mol/L
     const cTitrant = c0
@@ -84,7 +85,7 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
       chargeEq = {
         title: '电荷守恒 (全过程恒成立)',
         equationLatex: 'c(\\text{Na}^+) + c(\\text{H}^+) = c(\\text{A}^-) + c(\\text{OH}^-)',
-        explanation: '溶液呈电中性，所有阳极电荷浓度之和等于所有阴极电荷浓度之和。',
+        explanation: '溶液呈电中性，溶液中所有阳离子所带正电荷总浓度之和等于所有阴离子所带负电荷总浓度之和。',
       }
       massEq = {
         title: '物料守恒 (以 A 元素与 Na 元素比例为依据)',
@@ -104,9 +105,9 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
         concOrderingLatex = 'c(\\text{Na}^+) > c(\\text{A}^-) > c(\\text{HA}) > c(\\text{OH}^-) > c(\\text{H}^+)'
         orderingExplanation = '半中和点 HA 与 NaA 1:1 混合。通常弱酸 HA 的电离程度大于 A⁻ 的水解程度，故 c(A⁻) > c(HA)；溶液呈弱酸性。'
         protonEq = {
-          title: '质子守恒代数化简 (半中和点 1:1 混合)',
+          title: '物料守恒变形 (半中和点 1:1 混合 Na:A = 1:2)',
           equationLatex: '2c(\\text{Na}^+) = c(\\text{A}^-) + c(\\text{HA})',
-          explanation: '将物料守恒代入电荷守恒化简得出。',
+          explanation: '由物料守恒代入电荷守恒化简得出。',
         }
       } else if (vRatio >= 0.95 && vRatio <= 1.05) {
         concOrderingLatex = 'c(\\text{Na}^+) > c(\\text{A}^-) > c(\\text{OH}^-) > c(\\text{HA}) > c(\\text{H}^+)'
@@ -117,8 +118,8 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
           explanation: '水电离出的 OH⁻ 一部分存在于溶液中，一部分与 H⁺ 结合生成 HA。',
         }
       } else if (vRatio > 1.4) {
-        concOrderingLatex = 'c(\\text{Na}^+) > c(\\text{OH}^-) > c(\\text{A}^-) > c(\\text{HA}) > c(\\text{H}^+)'
-        orderingExplanation = '过量 NaOH 使得强碱 OH⁻ 浓度大幅增加，超过了 A⁻ 的浓度。'
+        concOrderingLatex = 'c(\\text{Na}^+) > c(\\text{A}^-) > c(\\text{OH}^-) > c(\\text{HA}) > c(\\text{H}^+)'
+        orderingExplanation = '过量 NaOH 使得强碱 OH⁻ 浓度大幅增加，但主电解质 A⁻ 浓度仍占主导。'
         protonEq = {
           title: '过量强碱溶液物理平衡',
           equationLatex: 'c(\\text{OH}^-) \\approx c(\\text{Na}^+) - c(\\text{A}^-)',
@@ -191,12 +192,12 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
       }
 
       if (vRatio >= 0.45 && vRatio <= 0.55) {
-        concOrderingLatex = 'c(\\text{BH}^+) > c(\\text{Cl}^-) > c(\\text{B}) > c(\\text{H}^+) > c(\\text{OH}^-)'
-        orderingExplanation = '半中和点 B 与 BHCl 1:1 混合。弱碱电离大于阳离子水解，溶液显碱性或弱酸性。'
+        concOrderingLatex = 'c(\\text{BH}^+) > c(\\text{Cl}^-) > c(\\text{B}) > c(\\text{OH}^-) > c(\\text{H}^+)'
+        orderingExplanation = '半中和点 B 与 BHCl 1:1 混合。弱碱电离程度大于阳离子水解程度，溶液显碱性 c(OH⁻) > c(H⁺)，由电荷守恒必有 c(BH⁺) > c(Cl⁻)。'
         protonEq = {
           title: '半中和点守恒',
           equationLatex: '2c(\\text{Cl}^-) = c(\\text{BH}^+) + c(\\text{B})',
-          explanation: '由物料守恒代入电荷守恒导出。',
+          explanation: '由物料守恒导出：此时加入的 Cl 与体系中总 B 物质的量之比为 1:2。',
         }
       } else if (vRatio >= 0.95 && vRatio <= 1.05) {
         concOrderingLatex = 'c(\\text{Cl}^-) > c(\\text{BH}^+) > c(\\text{H}^+) > c(\\text{B}) > c(\\text{OH}^-)'
@@ -260,8 +261,8 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
       }
 
       if (vRatio < 0.95) {
-        concOrderingLatex = 'c(\\text{Cl}^-) > c(\\text{H}^+) > c(\\text{Na}^+) > c(\\text{OH}^-)'
-        orderingExplanation = '未达中和点，酸过量，H⁺ 浓度高于 Na⁺。'
+        concOrderingLatex = 'c(\\text{Cl}^-) > c(\\text{Na}^+) > c(\\text{H}^+) > c(\\text{OH}^-)'
+        orderingExplanation = '未达中和点，酸过量，Cl⁻ 与 Na⁺ 来自已加入离子，过量酸电离使 H⁺ 显著高于 OH⁻。'
       } else if (vRatio <= 1.05) {
         concOrderingLatex = 'c(\\text{Na}^+) = c(\\text{Cl}^-) > c(\\text{H}^+) = c(\\text{OH}^-)'
         orderingExplanation = '恰好完全中和生成 NaCl 中性溶液。'

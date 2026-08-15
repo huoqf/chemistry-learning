@@ -50,7 +50,7 @@ export const REAGENT_SCENES: Record<ReagentSceneId, ReagentSceneConfig> = {
         precipitateText: '灰绿色沉淀',
         precipitateColor: PHENOMENON_COLORS.feOh2Transition,
         precipitateLevel: 0.42,
-        equation: '4Fe(OH)_2 + O_2 + 2H_2O = 4Fe(OH)_3 \\text{ (灰绿中间态)}',
+        equation: '4Fe(OH)_2 + O_2 + 2H_2O \\to 4Fe(OH)_3 \\text{ (部分氧化, Fe(II)/Fe(III)混合呈灰绿)}',
         ph: 9.2,
       },
       {
@@ -194,7 +194,7 @@ export const REAGENT_SCENES: Record<ReagentSceneId, ReagentSceneConfig> = {
         precipitateText: '沉淀完全溶解',
         precipitateColor: 'transparent',
         precipitateLevel: 0,
-        equation: 'Cu^{2+} + 4NH_3 = [Cu(NH_3)_4]^{2+} \\text{ (深蓝色)}',
+        equation: 'Cu(OH)_2 + 4NH_3 = [Cu(NH_3)_4]^{2+} + 2OH^- \\text{ (完全溶解, 深蓝色)}',
         ph: 11.2,
       },
     ],

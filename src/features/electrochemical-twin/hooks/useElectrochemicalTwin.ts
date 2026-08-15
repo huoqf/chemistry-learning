@@ -13,7 +13,7 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
   const { mode, batteryState, membraneType, currentAmp, timeSec, electrolyteConc } = params
 
   /**
-   * 法拉第定量计算
+   * 法拉第定量计算（依模式分支精准计算）
    * n(e-) = (I * t) / F
    */
   const quantResult = useMemo<QuantResult>(() => {
@@ -22,18 +22,47 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
     // 电子转移量 n(e-) = Q / F (mol)
     const molesElectron = chargeC / FARADAY_CONST
 
-    // 以 Cu-Zn / Cu-C 反应为例：
-    // Zn -> Zn2+ + 2e- (M_Zn = 65.38 g/mol)
-    // Cu2+ + 2e- -> Cu (M_Cu = 63.55 g/mol)
-    // 2H+ + 2e- -> H2 (V_m = 22.4 L/mol)
-    const molesProductLeft = molesElectron / 2 // Zn 溶解或 H2 生成 (mol)
-    const molesProductRight = molesElectron / 2 // Cu 沉积或 O2/Cl2 生成 (mol)
+    let molesProductLeft = 0
+    let molesProductRight = 0
+    let massChangeLeft = 0
+    let massChangeRight = 0
+    let gasVolumeRight = 0
 
-    const massChangeLeft = -(molesProductLeft * 65.38) // 负极溶解或质量增加
-    const massChangeRight = molesProductRight * 63.55 // 正极/阴极 Cu 沉积
-
-    // 假设右极析出气体：2Cl- - 2e- -> Cl2 或 4OH- - 4e- -> 2H2O + O2
-    const gasVolumeRight = (molesElectron / 4) * 22.4 // 假设析出 O2，V = (n(e-)/4) * 22.4 L
+    if (mode === 0) {
+      // 模式 0：Cu-Zn 原电池
+      // 负极(左): Zn - 2e⁻ -> Zn²⁺ (M_Zn = 65.38 g/mol)
+      // 正极(右): Cu²⁺ + 2e⁻ -> Cu (M_Cu = 63.55 g/mol)
+      molesProductLeft = molesElectron / 2
+      molesProductRight = molesElectron / 2
+      massChangeLeft = -(molesProductLeft * 65.38)
+      massChangeRight = molesProductRight * 63.55
+      gasVolumeRight = 0
+    } else if (mode === 1) {
+      // 模式 1：全钒液流电池（无电极质量变化与气体生成）
+      molesProductLeft = molesElectron
+      molesProductRight = molesElectron
+      massChangeLeft = 0
+      massChangeRight = 0
+      gasVolumeRight = 0
+    } else if (mode === 2) {
+      // 模式 2：饱和食盐水电解（氯碱工业）
+      // 阳极(左): 2Cl⁻ - 2e⁻ -> Cl₂↑ (V_m = 22.4 L/mol)
+      // 阴极(右): 2H₂O + 2e⁻ -> H₂↑ + 2OH⁻
+      molesProductLeft = molesElectron / 2
+      molesProductRight = molesElectron / 2
+      massChangeLeft = 0
+      massChangeRight = 0
+      gasVolumeRight = (molesElectron / 2) * 22.4 // 析出气体体积 (标况)
+    } else {
+      // 模式 3：电解硫酸铜溶液
+      // 阳极(左): 2H₂O - 4e⁻ -> O₂↑ + 4H⁺ 或 4OH⁻ - 4e⁻ -> 2H₂O + O₂↑
+      // 阴极(右): Cu²⁺ + 2e⁻ -> Cu (沉积)
+      molesProductLeft = molesElectron / 4
+      molesProductRight = molesElectron / 2
+      massChangeLeft = 0
+      massChangeRight = molesProductRight * 63.55
+      gasVolumeRight = (molesElectron / 4) * 22.4 // 阳极析出 O₂ 体积 (标况)
+    }
 
     // 溶液 pH 动态偏移估算 (按 1L 溶液)
     const deltaPH = +(molesElectron * 0.5).toFixed(2)
@@ -47,7 +76,7 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
       gasVolumeRight: +gasVolumeRight.toFixed(3),
       deltaPH,
     }
-  }, [currentAmp, timeSec])
+  }, [currentAmp, timeSec, mode])
 
   /**
    * 反应与电极元数据构建
@@ -71,11 +100,11 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
           poleType: 'positive',
           reactionFormula: '\\text{Cu}^{2+} + 2e^- \\rightarrow \\text{Cu}',
           electronChange: '得到 2e⁻',
-          phenomenon: '铜片表面析出红红色固体，溶液蓝色逐渐变浅',
+          phenomenon: '铜片表面析出红色固体，溶液蓝色逐渐变浅',
         },
         overallReaction: '\\text{Zn} + \\text{Cu}^{2+} = \\text{Zn}^{2+} + \\text{Cu}',
         energyConversion: '化学能 \\rightarrow 电能 (\\Delta G < 0)',
-        electrolyteInfo: '左烧杯 CuSO₄ 溶液，右烧杯 ZnSO₄ 溶液（配双液盐桥）',
+        electrolyteInfo: '左烧杯 ZnSO₄ 溶液（负极），右烧杯 CuSO₄ 溶液（正极），两烧杯由盐桥连通',
         membraneFunction: '盐桥中的 K⁺ 移向正极(Cu)，Cl⁻ 移向负极(Zn)，维持电荷平衡',
       }
     }
@@ -105,7 +134,7 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
           overallReaction: '\\text{V}^{2+} + \\text{VO}_2^+ + 2\\text{H}^+ = \\text{V}^{3+} + \\text{VO}^{2+} + \\text{H}_2\\text{O}',
           energyConversion: '化学能 \\rightarrow 电能',
           electrolyteInfo: '酸性钒盐溶液 ($H_2SO_4$ 介质)',
-          membraneFunction: '阳离子/质子交换膜：$H^+$ 从负极区向正极区迁移',
+          membraneFunction: '阳离子/质子交换膜：$H^+$ 从负极区向正极区迁移（阳离子向正极方向移动）',
         }
       } else {
         return {
@@ -129,13 +158,13 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
           overallReaction: '\\text{V}^{3+} + \\text{VO}^{2+} + \\text{H}_2\\text{O} = \\text{V}^{2+} + \\text{VO}_2^+ + 2\\text{H}^+',
           energyConversion: '电能 \\rightarrow 化学能',
           electrolyteInfo: '酸性钒盐溶液 ($H_2SO_4$ 介质)',
-          membraneFunction: '阳离子/质子交换膜：$H^+$ 从阳极区向阴极区迁移',
+          membraneFunction: '阳离子/质子交换膜：$H^+$ 从阳极区向阴极区迁移（阳离子向阴极方向移动）',
         }
       }
     }
 
     if (mode === 2) {
-      // 模式 2：双极膜与膜法电解
+      // 模式 2：双极膜与膜法电解（对应右池布局：左阳极失电子放电析出 Cl2，右阴极得电子还原析出 H2）
       let membraneDesc = '无膜/普通隔膜'
       if (membraneType === 1) membraneDesc = '阳离子交换膜（只透阳离子 $Na^+$ / $H^+$）'
       if (membraneType === 2) membraneDesc = '阴离子交换膜（只透阴离子 $Cl^-$ / $SO_4^{2-}$）'
@@ -146,18 +175,18 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
         subtitle: `当前隔膜：${membraneDesc}`,
         cellType: 'electrolytic',
         leftElectrode: {
-          name: '阴极 (得电子)',
-          poleType: 'cathode',
-          reactionFormula: '2\\text{H}_2\\text{O} + 2e^- \\rightarrow \\text{H}_2\\uparrow + 2\\text{OH}^-',
-          electronChange: '得到 2e⁻',
-          phenomenon: '阴极产生无色气体，pH 显著升高生成烧碱 $NaOH$',
-        },
-        rightElectrode: {
-          name: '阳极 (失电子)',
+          name: '阳极 (接电源正极) - 氧化反应',
           poleType: 'anode',
           reactionFormula: '2\\text{Cl}^- - 2e^- \\rightarrow \\text{Cl}_2\\uparrow',
           electronChange: '失去 2e⁻',
           phenomenon: '阳极产生黄绿色气体，刺激性气味 (工业氯碱)',
+        },
+        rightElectrode: {
+          name: '阴极 (接电源负极) - 还原反应',
+          poleType: 'cathode',
+          reactionFormula: '2\\text{H}_2\\text{O} + 2e^- \\rightarrow \\text{H}_2\\uparrow + 2\\text{OH}^-',
+          electronChange: '得到 2e⁻',
+          phenomenon: '阴极产生无色气体，pH 显著升高生成烧碱 $NaOH$',
         },
         overallReaction: '2\\text{NaCl} + 2\\text{H}_2\\text{O} \\xrightarrow{\\text{电解}} 2\\text{NaOH} + \\text{H}_2\\uparrow + \\text{Cl}_2\\uparrow',
         energyConversion: '电能 \\rightarrow 化学能',
@@ -166,29 +195,29 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
       }
     }
 
-    // 模式 3：法拉第定量计算
+    // 模式 3：法拉第定量计算（对应右池布局：左阳极氧化析出 O2，右阴极还原沉积 Cu）
     return {
       title: '法拉第电解定律与定量守恒模型',
       subtitle: `当前调控：I = ${currentAmp} A, t = ${timeSec} s`,
       cellType: 'electrolytic',
       leftElectrode: {
-        name: '阴极还原反应',
-        poleType: 'cathode',
-        reactionFormula: '\\text{Cu}^{2+} + 2e^- \\rightarrow \\text{Cu}',
-        electronChange: `转移 ${quantResult.molesElectron} mol 电子`,
-        phenomenon: `析出 Cu 质量：${quantResult.massChangeRight} g`,
-      },
-      rightElectrode: {
-        name: '阳极氧化反应',
+        name: '阳极 (接电源正极) - 氧化反应',
         poleType: 'anode',
         reactionFormula: '4\\text{OH}^- - 4e^- \\rightarrow 2\\text{H}_2\\text{O} + \\text{O}_2\\uparrow',
         electronChange: `转移 ${quantResult.molesElectron} mol 电子`,
         phenomenon: `析出 O₂ 体积 (标况)：${quantResult.gasVolumeRight} L`,
       },
+      rightElectrode: {
+        name: '阴极 (接电源负极) - 还原反应',
+        poleType: 'cathode',
+        reactionFormula: '\\text{Cu}^{2+} + 2e^- \\rightarrow \\text{Cu}',
+        electronChange: `转移 ${quantResult.molesElectron} mol 电子`,
+        phenomenon: `析出 Cu 质量：${quantResult.massChangeRight} g`,
+      },
       overallReaction: '2\\text{CuSO}_4 + 2\\text{H}_2\\text{O} \\xrightarrow{\\text{电解}} 2\\text{Cu} + 2\\text{H}_2\\text{SO}_4 + \\text{O}_2\\uparrow',
       energyConversion: '电能 \\rightarrow 化学能',
       electrolyteInfo: `硫酸铜溶液 (c₀ = ${electrolyteConc} mol/L)`,
-      membraneFunction: '法拉第守恒：$n(e^-) = 2n(Cu) = 4n(O_2) = \\frac{I \\cdot t}{F}$',
+      membraneFunction: '法拉第守恒：$n(e^-) = 2n(\\text{Cu}) = 4n(\\text{O}_2) = \\frac{I \\cdot t}{F}$',
     }
   }, [mode, batteryState, membraneType, currentAmp, timeSec, electrolyteConc, quantResult])
 
