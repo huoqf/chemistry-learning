@@ -86,7 +86,7 @@ export const IndustrialFlowRightPanel: React.FC<IndustrialFlowRightPanelProps> =
           },
           {
             name: '加 NaF 沉淀除 Ca²⁺/Mg²⁺ 反应式',
-            latex: 'Mg^{2+} + 2F^- = MgF_2\\downarrow \\quad (K_{sp} = 1.8\\times 10^{-11})',
+            latex: 'Mg^{2+} + 2F^- = MgF_2\\downarrow \\quad (K_{sp} = 6.5\\times 10^{-9})',
             note: '加入 NaF 生成 MgF₂/CaF₂ 难溶氟化物沉淀除去钙镁杂质',
           },
         ]

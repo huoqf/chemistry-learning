@@ -85,13 +85,13 @@ export const modelIndustrialFlow: ModelQuizData = {
       options: [
         { label: 'A', text: 'pH < 3.2', isCorrect: false },
         { label: 'B', text: '3.2 ≤ pH < 4.7', isCorrect: false },
-        { label: 'C', text: '4.7 ≤ pH < 8.4', isCorrect: true },
-        { label: 'D', text: 'pH ≥ 8.4', isCorrect: false },
+        { label: 'C', text: '4.7 ≤ pH < 8.1', isCorrect: true },
+        { label: 'D', text: 'pH ≥ 8.1', isCorrect: false },
       ],
       modelAlignmentAnalysis:
-        '【盲盒剖析：沉淀完全 pH 判定】\n1. 计算 Fe³⁺ 完全沉淀 pH: Ksp[Fe(OH)₃]=4.0×10⁻³⁸, c(OH⁻)=∛(Ksp/10⁻⁵)=1.59×10⁻¹¹, pOH=10.8 ⇒ pH=3.2。\n2. 计算 Al³⁺ 完全沉淀 pH: Ksp[Al(OH)₃]=1.0×10⁻³³, c(OH⁻)=∛(Ksp/10⁻⁵)=2.15×10⁻¹⁰, pOH=9.67 ⇒ pH=4.7。\n3. 计算 Mn²⁺ 开始沉淀 pH: Ksp[Mn(OH)₂]=1.9×10⁻¹³, c(OH⁻)=√(Ksp/0.10)=1.38×10⁻⁶, pOH=5.86 ⇒ pH=8.4。\n因此安全沉淀 pH 区间为 4.7 ≤ pH < 8.4。',
+        '【盲盒剖析：沉淀完全 pH 判定】\n1. 计算 Fe³⁺ 完全沉淀 pH: Ksp[Fe(OH)₃]=4.0×10⁻³⁸, c(OH⁻)=∛(Ksp/10⁻⁵)=1.59×10⁻¹¹, pOH=10.8 ⇒ pH=3.2。\n2. 计算 Al³⁺ 完全沉淀 pH: Ksp[Al(OH)₃]=1.0×10⁻³³, c(OH⁻)=∛(Ksp/10⁻⁵)=2.15×10⁻¹⁰, pOH=9.67 ⇒ pH=4.7。\n3. 计算 Mn²⁺ 开始沉淀 pH: Ksp[Mn(OH)₂]=1.9×10⁻¹³, c(OH⁻)=√(Ksp/0.10)=1.38×10⁻⁶, pOH=5.86 ⇒ pH=8.14。\n因此安全沉淀 pH 区间为 4.7 ≤ pH < 8.1。',
       detailedExplanation:
-        '选 C。杂质 Al³⁺ 完全沉淀所需 pH 为 4.7（若 pH<4.7，Al³⁺ 未完全沉淀）；而 Mn²⁺ 开始沉淀的 pH 为 8.4（若 pH≥8.4，主产物 Mn²⁺ 将沉淀损失）。故溶液 pH 须控制在 4.7 至 8.4 之间。',
+        '选 C。杂质 Al³⁺ 完全沉淀所需 pH 为 4.7（若 pH<4.7，Al³⁺ 未完全沉淀）；而 Mn²⁺ 开始沉淀的 pH 为 8.1（若 pH≥8.1，主产物 Mn²⁺ 将沉淀损失）。故溶液 pH 须控制在 4.7 至 8.1 之间。',
     },
     {
       id: 'var-industrial-2',
@@ -177,7 +177,7 @@ export const modelIndustrialFlow: ModelQuizData = {
         { label: 'D', text: '可以改用过量 NaOH 代替 Na₂CO₃ 调 pH，效果完全一致', isCorrect: false },
       ],
       modelAlignmentAnalysis:
-        '【盲盒剖析：还原酸浸与氟化物深度除杂】\n1. 三元正极中 Co/Ni 为高价态不溶物，H₂O₂ 在此作“还原剂”，将 Co³⁺/Ni³⁺ 还原为可溶的 Co²⁺/Ni²⁺。\n2. 调 pH 至 5.0~5.2 可使 Fe³⁺ (pH 3.2) 和 Al³⁺ (pH 4.7) 完全沉淀，而 Co²⁺/Ni²⁺ 开始沉淀 pH > 7.0，不会沉淀损失。\n3. Ca²⁺/Mg²⁺ 沉淀 pH 极高，调 pH 无法除去，加入 NaF 生成 MgF₂ (Ksp=1.8×10⁻¹¹) 沉淀除去。',
+        '【盲盒剖析：还原酸浸与氟化物深度除杂】\n1. 三元正极中 Co/Ni 为高价态不溶物，H₂O₂ 在此作“还原剂”，将 Co³⁺/Ni³⁺ 还原为可溶的 Co²⁺/Ni²⁺。\n2. 调 pH 至 5.0~5.2 可使 Fe³⁺ (pH 3.2) 和 Al³⁺ (pH 4.7) 完全沉淀，而 Co²⁺/Ni²⁺ 开始沉淀 pH > 7.0，不会沉淀损失。\n3. Ca²⁺/Mg²⁺ 沉淀 pH 极高，调 pH 无法除去，加入 NaF 生成 MgF₂ (Ksp=6.5×10⁻⁹) 沉淀除去。',
       detailedExplanation:
         '选 B。H₂O₂ 作还原剂把高价 Co/Ni 还原为 +2 价；调 pH 至 5.0~5.2 仅沉淀铁铝；加入 NaF 利用难溶氟化物深度除去 Ca²⁺/Mg²⁺ 杂质。不能用过量 NaOH，否则 Al(OH)₃ 会溶解且 Co²⁺/Ni²⁺ 沉淀损失。',
     },

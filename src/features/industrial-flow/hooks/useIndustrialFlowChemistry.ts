@@ -11,10 +11,22 @@ import type {
   IonConcentrationPoint,
 } from '../types'
 
+/**
+ * 25℃ 各金属氢氧化物溶度积常数统一采用高中化学（人教版选择性必修1附录/高考真题标准题设）：
+ * - Fe(OH)₃: 4.0e-38 (对应完全沉淀 pH=3.20)
+ * - Fe(OH)₂: 8.0e-16 (对应完全沉淀 pH=8.95)
+ * - Al(OH)₃: 1.0e-33 (对应完全沉淀 pH=4.70)
+ * - Mn(OH)₂: 1.9e-13 (对应开始沉淀 pH=8.40)
+ * - Cu(OH)₂: 2.2e-20
+ * - Zn(OH)₂: 1.2e-17
+ * - Mg(OH)₂: 1.8e-11
+ * - Co(OH)₂: 1.0e-15
+ * - Ni(OH)₂: 2.0e-15
+ */
 export function useIndustrialFlowChemistry(
   params: IndustrialFlowParams
 ): IndustrialFlowChemistry {
-  const { systemId, pH, leachTemp, crushSize, oxidantAmount, reagent } = params
+  const { systemId, pH, leachTemp, crushSize, oxidantAmount } = params
 
   return useMemo(() => {
     // 1. 浸出率计算 (%)
@@ -374,7 +386,7 @@ export function useIndustrialFlowChemistry(
       filtrateSummary,
       curveData,
     }
-  }, [systemId, pH, leachTemp, crushSize, oxidantAmount, reagent])
+  }, [systemId, pH, leachTemp, crushSize, oxidantAmount])
 }
 
 function kspCalculated(ksp: number, charge: number, cOH: number, c0: number): number {
