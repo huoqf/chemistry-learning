@@ -13,7 +13,7 @@ export function PhenolFormaldehydeScene({ reactionStage, font }: MechanismSceneP
         fontSize={font(FONT.title)}
         fontWeight="bold"
       >
-        苯酚邻对位 C-H 键极化活化 (2,4,6-三溴苯酚取代与酚醛缩聚)
+        苯酚邻对位 C-H 键极化活化 (2,4,6-三溴苯酚三取代反应与酚醛缩聚机理)
       </text>
 
       <g transform="translate(250, 130)">
@@ -190,7 +190,7 @@ export function PhenolFormaldehydeScene({ reactionStage, font }: MechanismSceneP
             fontSize={font(FONT.title)}
             fontWeight="bold"
           >
-            生成物：2,4,6-三溴苯酚白色沉淀 ↓ + 3 HBr (或缩聚生成酚醛树脂)
+            生成物：2,4,6-三溴苯酚白色沉淀 ↓ + 3 HBr (邻对位 3 个 C-H 键全取代)
           </text>
           <text
             x={240}
@@ -199,7 +199,7 @@ export function PhenolFormaldehydeScene({ reactionStage, font }: MechanismSceneP
             fill={CHEMISTRY_COLORS.concentration}
             fontSize={font(FONT.axis)}
           >
-            ✓ 酚羟基增大邻对位电子云密度，使 2,4,6 位 C-H 键极易断裂发生取代/缩聚
+            ✓ 酚羟基推电子使 2,4,6 位电子云密度增大，C-H 键易断裂发生取代；酸/碱催化下与 HCHO 缩聚亦在邻对位发生
           </text>
         </g>
       )}

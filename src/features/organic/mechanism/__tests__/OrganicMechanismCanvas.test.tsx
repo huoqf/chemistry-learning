@@ -53,10 +53,10 @@ describe('OrganicMechanismCanvas Component', () => {
     fireEvent.click(peptideBtn)
     expect(screen.getByText('氨基酸脱水缩合形成肽键 (-CO-NH-) 与水解断键')).toBeDefined()
 
-    // 机制 5：酚醛缩聚与取代
-    const phenolBtn = screen.getByText('酚醛缩聚与取代')
+    // 机制 5：酚羟基活化机制
+    const phenolBtn = screen.getByText('酚羟基活化机制')
     fireEvent.click(phenolBtn)
-    expect(screen.getByText('苯酚邻对位 C-H 键极化活化 (2,4,6-三溴苯酚取代与酚醛缩聚)')).toBeDefined()
+    expect(screen.getByText('苯酚邻对位 C-H 键极化活化 (2,4,6-三溴苯酚三取代反应与酚醛缩聚机理)')).toBeDefined()
   })
 
   it('should toggle reaction stages (reactants / transition / products)', () => {

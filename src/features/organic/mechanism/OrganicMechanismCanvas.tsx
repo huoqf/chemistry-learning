@@ -38,7 +38,7 @@ const ORGANIC_MECHANISM_CONTROLS: ControlMeta[] = [
       { value: 2, label: '醇催化氧化', description: 'α-C 上需有 H，叔醇无法氧化' },
       { value: 3, label: '消去与取代', description: '扎伊采夫规则，脱 HX/H2O 生成双键' },
       { value: 4, label: '肽键生成与水解', description: '脱水形成 -CO-NH-，水解切断 C-N 键' },
-      { value: 5, label: '酚醛缩聚与取代', description: '酚羟基活化邻对位 C-H 键' },
+      { value: 5, label: '酚羟基活化机制', description: '酚羟基活化邻对位 (2,4,6位) C-H 键' },
     ],
   },
   {

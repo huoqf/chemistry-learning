@@ -201,7 +201,7 @@ export function AlkeneAdditionScene({ reactionStage, font }: MechanismSceneProps
             fill={CHEMISTRY_COLORS.concentration}
             fontSize={font(FONT.axis)}
           >
-            ✓ 马氏规则：氢原子优先加到含氢较多的 1号碳 (-CH₃)，氯原子加到 2号碳
+            ✓ 马氏规则：氢原子优先加到含氢较多的双键碳 (1号碳 =CH₂)，氯原子加到 2号碳 (=CH-)
           </text>
         </g>
       )}
