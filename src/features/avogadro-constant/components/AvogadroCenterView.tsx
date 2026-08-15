@@ -205,7 +205,7 @@ export const AvogadroCenterView: React.FC<AvogadroCenterViewProps> = ({
                 ) : params.structureItem === 'T2O' ? (
                   <g>
                     <circle cx="0" cy="0" r="30" fill="#0284c7" />
-                    <text x="0" y="5" fill="#ffffff" fontSize={canvasSize.font(14)} textAnchor="middle" fontWeight="bold">¹⁸O</text>
+                    <text x="0" y="5" fill="#ffffff" fontSize={canvasSize.font(14)} textAnchor="middle" fontWeight="bold">¹⁶O</text>
                     <circle cx="-50" cy="40" r="22" fill="#7c3aed" />
                     <text x="-50" y="45" fill="#ffffff" fontSize={canvasSize.font(13)} textAnchor="middle" fontWeight="bold">³H (T)</text>
                     <circle cx="50" cy="40" r="22" fill="#7c3aed" />

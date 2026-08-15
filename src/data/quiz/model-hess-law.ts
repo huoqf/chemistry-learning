@@ -11,7 +11,7 @@ export const modelHessLaw: ModelQuizData = {
       formulaLatex: '\\Delta H_3 = \\Delta H_1 - \\frac{1}{2}\\Delta H_2',
       placeholder: '-110.5',
       correctAnswer: ['-110.5'],
-      explanation: 'ΔH₃ = ΔH₁ - 1/2 ΔH₂ = -393.5 - (-283.0) = -110.5 kJ/mol。',
+      explanation: '目标反应为 ① - ½②：ΔH₃ = ΔH₁ - ½ΔH₂ = -393.5 - (-283.0) = -110.5 kJ/mol。',
     },
     {
       id: 'step-2',
@@ -50,13 +50,13 @@ export const modelHessLaw: ModelQuizData = {
       contextDescription: '利用 CO₂ 与 CH₄ 重整制备合成气 (CO + H₂)，涉及催化积碳与消碳循环。已知以下热化学方程式：\n① CH₄(g) = C(s) + 2H₂(g) ΔH₁ = +74.8 kJ/mol\n② CO₂(g) + 2H₂(g) = C(s) + 2H₂O(g) ΔH₂ = -90.1 kJ/mol\n③ C(s) + H₂O(g) = CO(g) + H₂(g) ΔH₃ = +131.3 kJ/mol',
       questionText: '消碳主反应 CO₂(g) + C(s) = 2CO(g) 的 ΔH 为多少？升高温度消碳平衡如何移动？',
       options: [
-        { label: 'A', text: 'ΔH = +352.7 kJ/mol，升高温度平衡正向移动', isCorrect: true },
-        { label: 'B', text: 'ΔH = -352.7 kJ/mol，升高温度平衡逆向移动', isCorrect: false },
-        { label: 'C', text: 'ΔH = +116.0 kJ/mol，使用催化剂可增大 ΔH', isCorrect: false },
-        { label: 'D', text: 'ΔH = -116.0 kJ/mol，增大压强可提高 CO 产率', isCorrect: false },
+        { label: 'A', text: 'ΔH = +172.5 kJ/mol，升高温度平衡正向移动', isCorrect: true },
+        { label: 'B', text: 'ΔH = -172.5 kJ/mol，升高温度平衡逆向移动', isCorrect: false },
+        { label: 'C', text: 'ΔH = +352.7 kJ/mol，使用催化剂可增大 ΔH', isCorrect: false },
+        { label: 'D', text: 'ΔH = -352.7 kJ/mol，增大压强可提高 CO 产率', isCorrect: false },
       ],
-      modelAlignmentAnalysis: '【母题模型对齐】：目标反应为 CO₂(g) + C(s) = 2CO(g)。由方程式 ③ × 2 - ② 可得目标反应 CO₂(g) + C(s) = 2CO(g)。代数叠加 ΔH = 2 × (+131.3 kJ/mol) - (-90.1 kJ/mol) = +352.7 kJ/mol。',
-      detailedExplanation: '根据盖斯定律：反应 ③ × 2 - 反应 ② 即可消除中间产物 H₂O(g) 与 H₂(g)，得目标反应 CO₂(g) + C(s) = 2CO(g)，ΔH = 2 × (+131.3 kJ/mol) - (-90.1 kJ/mol) = +352.7 kJ/mol (吸热)。升高温度平衡向吸热的正反应方向移动。',
+      modelAlignmentAnalysis: '【母题模型对齐】：目标反应为 CO₂(g) + C(s) = 2CO(g)。由方程式 2 × ③ + ② 可得目标反应 CO₂(g) + C(s) = 2CO(g)。代数叠加 ΔH = 2 × (+131.3 kJ/mol) + (-90.1 kJ/mol) = +172.5 kJ/mol。',
+      detailedExplanation: '根据盖斯定律：反应 2 × ③ + 反应 ② 即可消除中间产物 H₂O(g) 与 H₂(g)，得目标反应 CO₂(g) + C(s) = 2CO(g)，ΔH = 2 × (+131.3 kJ/mol) + (-90.1 kJ/mol) = +172.5 kJ/mol (吸热)。升高温度平衡向吸热的正反应方向移动。',
       diagramType: 'titration-curve',
       diagramConfig: {
         title: 'CO₂ 重整消碳反应热化学能量阶梯叠加示意图',

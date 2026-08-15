@@ -423,7 +423,7 @@ function calculateStructureBondsTrap(
         vmValue: 22.4,
         particleStats: [
           { label: 'T₂O 摩尔数', theoreticalMoles: effectiveUnit === 'g' ? val / 18 : molesT2O, actualMoles: molesT2O, unit: 'N_A', isTrap: effectiveUnit === 'g', trapExplanation: effectiveUnit === 'g' ? '错用 H₂O 摩尔质量 18 g/mol！22 g T₂O 才为 1 mol！' : undefined },
-          { label: '中子数', theoreticalMoles: effectiveUnit === 'g' ? (val / 18) * 10 : molesT2O * 10, actualMoles: neutronsMoles, unit: 'N_A', isTrap: true, trapExplanation: '错用普通水中子数 8 或 10！1 个 T₂O 含 12 个中子 (22 g 含 12 N_A 中子)。' },
+          { label: '中子数', theoreticalMoles: effectiveUnit === 'g' ? (val / 18) * 8 : molesT2O * 8, actualMoles: neutronsMoles, unit: 'N_A', isTrap: true, trapExplanation: '错用普通水中子数 8！1 个 T₂O 含 12 个中子 (22 g 含 12 N_A 中子)。' },
         ],
         trapType: '氚水同位素中子数陷阱',
         trapBadge: 'M(T₂O) = 22g/mol',
@@ -441,6 +441,117 @@ function calculateStructureBondsTrap(
           { stepName: '三审结构', checkTarget: '氚原子核构成', pass: false, finding: '1 个 T 含 2 个中子 ➔ 1 个 T₂O 含 12 个中子！' },
           { stepName: '四审过程', checkTarget: '变化', pass: true, finding: '无' },
           { stepName: '五审电子', checkTarget: '电子', pass: true, finding: '10 mol 电子' },
+        ],
+      }
+    }
+
+    case 'D2O': {
+      // D 为 2_1 H (氘)，M(D2O) = 2*2 + 16 = 20 g/mol。
+      // 1 个 D 原子含 1 质子 1 中子。1 个 D2O 分子含 10 个质子、10 个中子！
+      const molesD2O = effectiveUnit === 'g' ? val / 20 : val
+      const neutronsMoles = molesD2O * 10
+      return {
+        title: 'D₂O (重水) 摩尔质量与中子数陷阱',
+        subtitle: 'D₂O 摩尔质量为 20 g/mol，1 mol D₂O (20 g) 含有 10 mol 中子',
+        isStateGas: false,
+        physicalState: '液态',
+        vmValue: 22.4,
+        particleStats: [
+          { label: 'D₂O 摩尔数', theoreticalMoles: effectiveUnit === 'g' ? val / 18 : molesD2O, actualMoles: molesD2O, unit: 'N_A', isTrap: effectiveUnit === 'g', trapExplanation: effectiveUnit === 'g' ? '错用普通水 H₂O 摩尔质量 18 g/mol！20 g D₂O 才为 1 mol！' : undefined },
+          { label: '中子数', theoreticalMoles: effectiveUnit === 'g' ? (val / 18) * 8 : molesD2O * 8, actualMoles: neutronsMoles, unit: 'N_A', isTrap: true, trapExplanation: '错用普通水中子数 8 (忽略 D 中含 1 个中子)！1 个 D₂O 含 10 个中子 (20 g 含 10 N_A 中子)。' },
+        ],
+        trapType: '重水同位素中子数陷阱',
+        trapBadge: 'M(D₂O) = 20g/mol',
+        trapLevel: 'high',
+        keyPointAnalysis: [
+          'D 代表 ²H (氘)，含有 1 个质子和 1 个中子，摩尔质量为 2*2 + 16 = 20 g/mol。',
+          '1 个 D₂O 分子含有 10 个质子和 10 个中子 (O 8 个中子 + 2 个 D 各 1 个中子)。',
+          '20 g D₂O 为 1 mol，含有 10 mol 中子和 10 mol 质子。',
+        ],
+        formulaLatex: 'M(\\text{D}_2\\text{O}) = 20 \\text{ g/mol} \\implies 1 \\text{ mol D}_2\\text{O} (20 \\text{ g}) \\implies 10 \\text{ mol 中子}',
+        correctAnswerSummary: `${val} ${effectiveUnit} D₂O 含有 ${neutronsMoles.toFixed(2)} N_A 个中子`,
+        stepByStepMatrix: [
+          { stepName: '一审环境', checkTarget: '环境', pass: true, finding: '液态' },
+          { stepName: '二审状态', checkTarget: '状态', pass: true, finding: '液体' },
+          { stepName: '三审结构', checkTarget: '氘原子核构成', pass: false, finding: '1 个 D 含 1 个中子 ➔ 1 个 D₂O 含 10 个中子！' },
+          { stepName: '四审过程', checkTarget: '变化', pass: true, finding: '无' },
+          { stepName: '五审电子', checkTarget: '电子', pass: true, finding: '10 mol 电子' },
+        ],
+      }
+    }
+
+    case 'SiO2': {
+      // 1 mol SiO2 晶体中，Si 原子与 4 个 O 形成 4 个 Si-O 键 ➔ 1 mol SiO2 (60 g) 含有 4 mol Si-O 键
+      const molesSiO2 = effectiveUnit === 'g' ? val / 60 : val
+      const bondsMoles = molesSiO2 * 4
+      return {
+        title: 'SiO₂ (二氧化硅) 晶体共价键统计陷阱',
+        subtitle: '1 mol SiO₂ (60 g) 晶体中含有 4 mol Si-O 共价键（非 2 mol！）',
+        isStateGas: false,
+        physicalState: '固态',
+        vmValue: 22.4,
+        particleStats: [
+          { label: 'SiO₂ 摩尔数', theoreticalMoles: molesSiO2, actualMoles: molesSiO2, unit: 'N_A', isTrap: false },
+          {
+            label: 'Si-O 共价键数',
+            theoreticalMoles: molesSiO2 * 2,
+            actualMoles: bondsMoles,
+            unit: '$N_{\\text{A}}$',
+            isTrap: true,
+            trapExplanation: '错按分子式中氧原子数 2 误以为只有 2 mol Si-O 键！SiO₂ 是立体网状共价晶体，每个 Si 连 4 个 O ➔ 4 mol Si-O 键。',
+          },
+        ],
+        trapType: '共价晶体网状结构键数陷阱',
+        trapBadge: '1 mol SiO₂ = 4 mol 键',
+        trapLevel: 'high',
+        keyPointAnalysis: [
+          '二氧化硅 (SiO₂) 属于共价晶体，无独立 SiO₂ 分子。',
+          '每个 Si 原子与 4 个 O 原子形成 4 个 Si-O 单键；每个 O 原子与 2 个 Si 原子相连。',
+          '因此 1 mol SiO₂ (60 g) 含有 4 mol Si-O 共价键。',
+        ],
+        formulaLatex: '1 \\text{ mol SiO}_2 (60 \\text{ g}) \\implies 4 \\text{ mol Si-O 键}',
+        correctAnswerSummary: `${val} ${effectiveUnit} SiO₂ 晶体中含有 ${bondsMoles.toFixed(2)} N_A 个 Si-O 共价键`,
+        stepByStepMatrix: [
+          { stepName: '一审环境', checkTarget: '环境', pass: true, finding: '固态晶体' },
+          { stepName: '二审状态', checkTarget: '状态', pass: true, finding: '共价晶体' },
+          { stepName: '三审结构', checkTarget: '网状结构', pass: false, finding: '每个 Si 形成 4 个 Si-O 键 ➔ 4 mol 共价键！' },
+          { stepName: '四审过程', checkTarget: '变化', pass: true, finding: '无' },
+          { stepName: '五审电子', checkTarget: '电子', pass: true, finding: '30 mol 电子/mol SiO₂' },
+        ],
+      }
+    }
+
+    case 'Na2O2': {
+      // 1 mol Na2O2 (78 g) 含有 2 mol Na+ 和 1 mol O2^2- 阴离子（阴阳离子比 1:2）
+      // O2^2- 内部存在 1 mol O-O 非极性共价键
+      const molesNa2O2 = effectiveUnit === 'g' ? val / 78 : val
+      return {
+        title: 'Na₂O₂ (过氧化钠) 离子与共价键统计陷阱',
+        subtitle: '1 mol Na₂O₂ (78 g) 含有 2 mol Na⁺、1 mol O₂²⁻ 阴离子及 1 mol O-O 共价键',
+        isStateGas: false,
+        physicalState: '固态',
+        vmValue: 22.4,
+        particleStats: [
+          { label: '阴离子数 (O₂²⁻)', theoreticalMoles: molesNa2O2 * 2, actualMoles: molesNa2O2, unit: 'N_A', isTrap: true, trapExplanation: '错把 O₂²⁻ 拆成 2 个 O⁻ 阴离子！1 mol Na₂O₂ 仅含 1 mol O₂²⁻ 阴离子 (阴阳比 1:2)。' },
+          { label: 'O-O 共价键数', theoreticalMoles: molesNa2O2 * 2, actualMoles: molesNa2O2, unit: 'N_A', isTrap: false },
+          { label: '阳离子数 (Na⁺)', theoreticalMoles: molesNa2O2 * 2, actualMoles: molesNa2O2 * 2, unit: 'N_A', isTrap: false },
+        ],
+        trapType: '过氧化物阴阳离子配比与键数陷阱',
+        trapBadge: '阴阳离子比 1:2',
+        trapLevel: 'high',
+        keyPointAnalysis: [
+          'Na₂O₂ 是离子晶体，由 Na⁺ 和 O₂²⁻ 构成。',
+          '1 mol Na₂O₂ 含有 2 mol Na⁺ 阳离子，1 mol O₂²⁻ 阴离子（阴阳离子个数比为 1:2）。',
+          'O₂²⁻ 过氧根离子内部存在 1 mol O-O 非极性共价键。',
+        ],
+        formulaLatex: '1 \\text{ mol Na}_2\\text{O}_2 \\implies 2 \\text{ mol Na}^+ + 1 \\text{ mol O}_2^{2-} \\text{ (含 1 mol O-O 键)}',
+        correctAnswerSummary: `${val} ${effectiveUnit} Na₂O₂ 含有 ${molesNa2O2.toFixed(2)} N_A 个 O₂²⁻ 阴离子和 ${molesNa2O2.toFixed(2)} N_A 个 O-O 键`,
+        stepByStepMatrix: [
+          { stepName: '一审环境', checkTarget: '环境', pass: true, finding: '固态' },
+          { stepName: '二审状态', checkTarget: '晶体', pass: true, finding: '离子晶体' },
+          { stepName: '三审结构', checkTarget: '过氧根离子整体性', pass: false, finding: 'O₂²⁻ 为整体阴离子 ➔ 阴阳离子比 1:2！' },
+          { stepName: '四审过程', checkTarget: '变化', pass: true, finding: '无' },
+          { stepName: '五审电子', checkTarget: '电子', pass: true, finding: '38 mol 电子/mol Na₂O₂' },
         ],
       }
     }
@@ -587,6 +698,71 @@ function calculateElectrolyteHydrolysisTrap(
       }
     }
 
+    case 'FeCl3': {
+      const feMoles = totalMoles
+      return {
+        title: 'FeCl₃ 水解与 Fe(OH)₃ 胶体粒子数陷阱',
+        subtitle: `${vol} L ${conc} mol/L FeCl₃ 溶液中 Fe³⁺ 水解制得胶体微粒数远小于 ${feMoles.toFixed(2)} N_A`,
+        isStateGas: false,
+        physicalState: '溶液',
+        vmValue: 22.4,
+        particleStats: [
+          { label: 'Fe(OH)₃ 胶体粒子数', theoreticalMoles: feMoles, actualMoles: feMoles * 0.001, unit: 'N_A', isTrap: true, trapExplanation: `胶粒是上百至上千个 Fe(OH)₃ 分子的聚集体，胶体粒子数远小于 ${feMoles.toFixed(2)} N_A！` },
+          { label: '溶液中 Fe³⁺ 离子数', theoreticalMoles: feMoles, actualMoles: feMoles * 0.95, unit: 'N_A', isTrap: true, trapExplanation: `Fe³⁺ 发生水解 Fe³⁺ + 3H₂O ⇌ Fe(OH)₃ + 3H⁺，Fe³⁺ 数目小于 ${feMoles.toFixed(2)} N_A。` },
+        ],
+        trapType: '胶体粒子聚集与水解可逆陷阱',
+        trapBadge: '胶粒数 ≪ n(Fe³⁺)',
+        trapLevel: 'high',
+        keyPointAnalysis: [
+          '向沸水中滴加饱和 FeCl₃ 溶液制备 Fe(OH)₃ 胶体：Fe³⁺ + 3H₂O ≜ Fe(OH)₃(胶体) + 3H⁺。',
+          '胶体微粒是很多个（成百上千个）Fe(OH)₃ 分子的聚集体，因此胶粒数远小于投料的 Fe³⁺ 离子数。',
+          '同时水解是可逆反应，Fe³⁺ 不能完全水解转化为 Fe(OH)₃。',
+        ],
+        formulaLatex: '\\text{Fe}^{3+} + 3\\text{H}_2\\text{O} \\rightleftharpoons \\text{Fe(OH)}_3\\text{(胶体)} + 3\\text{H}^+ \\implies N(\\text{胶粒}) \\ll n(\\text{Fe}^{3+}) \\cdot N_A',
+        correctAnswerSummary: `制得的 Fe(OH)₃ 胶体粒子数远小于 ${feMoles.toFixed(2)} N_A`,
+        stepByStepMatrix: [
+          { stepName: '一审环境', checkTarget: '溶液体积/浓度', pass: true, finding: `V = ${vol} L, c = ${conc} mol/L` },
+          { stepName: '二审状态', checkTarget: '胶体分散系', pass: true, finding: '胶体分散系' },
+          { stepName: '三审结构', checkTarget: '胶粒聚集态', pass: false, finding: '胶粒为高分子/多分子聚集体！' },
+          { stepName: '四审过程', checkTarget: '水解可逆限度', pass: false, finding: '水解不可进行彻底' },
+          { stepName: '五审守恒', checkTarget: 'Fe 元素守恒', pass: true, finding: 'Fe 元素总数恒为 c·V' },
+        ],
+      }
+    }
+
+    case 'pureH2O': {
+      const waterMoles = vol * (1000 / 18)
+      const hMoles = vol * 1e-7
+      return {
+        title: '纯水电离微粒数陷阱',
+        subtitle: `${vol} L 纯水中 H₂O 分子发生微弱电离，水电离出的 H⁺ 仅为 ${hMoles.toExponential(2)} N_A`,
+        isStateGas: false,
+        physicalState: '溶液',
+        vmValue: 22.4,
+        particleStats: [
+          { label: 'H₂O 分子数', theoreticalMoles: waterMoles, actualMoles: waterMoles, unit: 'N_A', isTrap: false },
+          { label: '水电离产生的 H⁺ 数', theoreticalMoles: vol * 1, actualMoles: hMoles, unit: 'N_A', isTrap: true, trapExplanation: `常温下水极微弱电离 (c(H⁺) = 10⁻⁷ mol/L)，${vol} L 水电离出的 H⁺ 仅为 ${hMoles.toExponential(1)} N_A！` },
+        ],
+        trapType: '水的微弱电离陷阱',
+        trapBadge: '水电离极微弱',
+        trapLevel: 'high',
+        keyPointAnalysis: [
+          '水是极弱电解质：H₂O ⇌ H⁺ + OH⁻。',
+          '常温 (25℃) 下，纯水中 c(H⁺) = c(OH⁻) = 1.0 × 10⁻⁷ mol/L。',
+          '1 L 纯水中含约 55.6 mol H₂O 分子，但电离出的 H⁺ 和 OH⁻ 各仅有 10⁻⁷ mol (10⁻⁷ N_A)。',
+        ],
+        formulaLatex: 'K_w = c(\\text{H}^+) \\cdot c(\\text{OH}^-) = 10^{-14} \\implies c(\\text{H}^+) = 10^{-7} \\text{ mol/L (25}^\\circ\\text{C)}',
+        correctAnswerSummary: `${vol} L 纯水电离出的 H⁺ 仅为 ${hMoles.toExponential(2)} N_A`,
+        stepByStepMatrix: [
+          { stepName: '一审环境', checkTarget: '常温纯水', pass: true, finding: '25℃ 纯水' },
+          { stepName: '二审状态', checkTarget: '液态水', pass: true, finding: '液态' },
+          { stepName: '三审结构', checkTarget: '水分子', pass: true, finding: '极性共价键' },
+          { stepName: '四审过程', checkTarget: '弱电离平衡', pass: false, finding: '水分子极微弱电离！' },
+          { stepName: '五审守恒', checkTarget: '电荷守恒', pass: true, finding: 'c(H⁺) = c(OH⁻)' },
+        ],
+      }
+    }
+
     default: {
       return {
         title: 'Na₂CO₃ 水解与阴离子总数变动陷阱',
@@ -723,6 +899,109 @@ function calculateRedoxElectronTrap(
           { stepName: '三审结构', checkTarget: 'Cl₂ 分子', pass: true, finding: '双原子分子' },
           { stepName: '四审过程', checkTarget: '歧化反应', pass: false, finding: '1 个 Cl 升高，1 个 Cl 降低 ➔ 转移 1 个电子！' },
           { stepName: '五审电子', checkTarget: '电子转移数', pass: true, finding: 'n_e = n(Cl₂) × 1' },
+        ],
+      }
+    }
+
+    case 'NO2-H2O': {
+      // 3NO2 + H2O = 2HNO3 + NO
+      // 3 mol NO2 发生歧化反应转移 2 mol 电子，1 mol NO2 转移 2/3 mol 电子
+      const molesNO2 = moles
+      const ne = molesNO2 * (2 / 3)
+      return {
+        title: 'NO₂ + H₂O 歧化反应电子转移陷阱',
+        subtitle: '3 mol NO₂ 与水反应生成 2 mol HNO₃ 和 1 mol NO，转移 2 mol 电子 (1 mol NO₂ 转移 2/3 mol 电子)',
+        isStateGas: true,
+        physicalState: '气态',
+        vmValue: 22.4,
+        particleStats: [
+          { label: '转移电子数 n_e', theoreticalMoles: molesNO2 * 1, actualMoles: ne, unit: 'N_A', isTrap: true, trapExplanation: '3 mol NO₂ 反应中 2 个 N 升到 +5，1 个 N 降到 +2 ➔ 3 mol NO₂ 转移 2 mol 电子 (即 1 mol 转移 2/3 e⁻)！' },
+          { label: '生成 NO 分子数', theoreticalMoles: molesNO2, actualMoles: molesNO2 / 3, unit: 'N_A', isTrap: true, trapExplanation: '3 mol NO₂ 生成 1 mol NO 气体！' },
+        ],
+        trapType: '非对称歧化反应电子转移陷阱',
+        trapBadge: '3NO₂ 转移 2e⁻',
+        trapLevel: 'high',
+        keyPointAnalysis: [
+          '3NO₂ + H₂O = 2HNO₃ + NO 为歧化反应。',
+          '3 个 +4 价 N 原子中：2 个升高到 +5 价 (HNO₃)，1 个降低到 +2 价 (NO)。',
+          '总计消耗 3 mol NO₂ 转移 2 mol 电子，因此 1 mol NO₂ 反应转移 2/3 N_A 电子。',
+        ],
+        formulaLatex: '3\\overset{+4}{\\text{NO}}_2 + \\text{H}_2\\text{O} = 2\\text{H}\\overset{+5}{\\text{NO}}_3 + \\overset{+2}{\\text{NO}} \\implies 1 \\text{ mol NO}_2 \\text{ 转移 } \\frac{2}{3} \\text{ mol } e^-',
+        correctAnswerSummary: `${val} ${unit} NO₂ 与水完全反应转移 ${ne.toFixed(2)} N_A 电子`,
+        stepByStepMatrix: [
+          { stepName: '一审环境', checkTarget: '标况/气体', pass: true, finding: '标况气体反应' },
+          { stepName: '二审状态', checkTarget: 'NO₂ 气体', pass: true, finding: '红棕色气体' },
+          { stepName: '三审结构', checkTarget: 'N 化合价', pass: true, finding: '+4 价氮' },
+          { stepName: '四审过程', checkTarget: '歧化化学计量', pass: false, finding: '3 分子 NO₂ 转移 2 个电子！' },
+          { stepName: '五审电子', checkTarget: '电子计算', pass: true, finding: 'n_e = (2/3) × n(NO₂)' },
+        ],
+      }
+    }
+
+    case 'SO2-O2-reversible': {
+      // 2SO2 + O2 <=> 2SO3
+      const molesSO2 = moles
+      const theoreticalNe = molesSO2 * 2
+      return {
+        title: '2SO₂ + O₂ ⇌ 2SO₃ 可逆反应电子转移与限度陷阱',
+        subtitle: '2 mol SO₂ 与 1 mol O₂ 反应为可逆反应，生成 SO₃ < 2 N_A，转移电子数 < 4 N_A',
+        isStateGas: true,
+        physicalState: '气态',
+        vmValue: 22.4,
+        particleStats: [
+          { label: '实际转移电子数 n_e', theoreticalMoles: theoreticalNe, actualMoles: theoreticalNe * 0.85, unit: 'N_A', isTrap: true, trapExplanation: '可逆反应不能进行彻底！实际转化率小于 100%，转移电子数小于理论上限！' },
+          { label: 'SO₃ 生成分子数', theoreticalMoles: molesSO2, actualMoles: molesSO2 * 0.85, unit: 'N_A', isTrap: true, trapExplanation: '可逆反应有反应限度，生成 SO₃ 分子数小于理论完全转化量！' },
+        ],
+        trapType: '可逆反应限度电子与微粒数陷阱',
+        trapBadge: '可逆反应不可到底',
+        trapLevel: 'high',
+        keyPointAnalysis: [
+          '2SO₂ + O₂ ⇌ 2SO₃ (催化剂、加热) 为工业制硫酸接触氧化反应，属于典型可逆反应。',
+          '无论反应时间多长，反应物都不能 100% 转化为产物。',
+          '因此 2 mol SO₂ 与 1 mol O₂ 充分反应，转移电子数必然小于 4 N_A，生成 SO₃ 分子数小于 2 N_A。',
+        ],
+        formulaLatex: '2\\text{SO}_2 + \\text{O}_2 \\rightleftharpoons 2\\text{SO}_3 \\implies n_e < 2 \\cdot n(\\text{SO}_2) \\text{ mol}',
+        correctAnswerSummary: `可逆反应无法完全进行到底，生成 SO₃ 分子数及转移电子数均小于理论值`,
+        stepByStepMatrix: [
+          { stepName: '一审环境', checkTarget: '密闭容器催化反应', pass: true, finding: '密闭容器' },
+          { stepName: '二审状态', checkTarget: '气体混合物', pass: true, finding: '反应体系' },
+          { stepName: '三审结构', checkTarget: 'SO₂ 分子', pass: true, finding: '极性分子' },
+          { stepName: '四审过程', checkTarget: '可逆反应符号 ⇌', pass: false, finding: '可逆反应不可进行到底！' },
+          { stepName: '五审电子', checkTarget: '转化率限度', pass: false, finding: '转移电子数必然小于理论极值' },
+        ],
+      }
+    }
+
+    case 'Fe-HNO3': {
+      // 1 mol Fe 与足量稀硝酸：Fe + 4HNO3(稀) = Fe(NO3)3 + NO + 2H2O -> 转移 3 mol e-
+      const molesFe = unit === 'g' ? val / 56 : val
+      const ne = molesFe * 3
+      return {
+        title: 'Fe 与稀硝酸氧化还原电子转移陷阱',
+        subtitle: '1 mol Fe 与足量稀硝酸充分反应生成 Fe(NO₃)₃ 和 NO，转移 3 mol 电子',
+        isStateGas: false,
+        physicalState: '固态',
+        vmValue: 22.4,
+        particleStats: [
+          { label: '转移电子数 n_e (足量硝酸)', theoreticalMoles: molesFe * 2, actualMoles: ne, unit: 'N_A', isTrap: true, trapExplanation: '稀硝酸具有强氧化性，足量时将 Fe 氧化为 +3 价 Fe³⁺ (转移 3 N_A 电子)，非 +2 价！' },
+          { label: '生成 NO 气体分子数', theoreticalMoles: molesFe, actualMoles: molesFe * 1, unit: 'N_A', isTrap: false },
+        ],
+        trapType: '强氧化性酸变价电子数陷阱',
+        trapBadge: 'Fe + 足量HNO₃ 转移 3e⁻',
+        trapLevel: 'high',
+        keyPointAnalysis: [
+          '稀硝酸具有强氧化性：Fe + 4HNO₃(稀) = Fe(NO₃)₃ + NO↑ + 2H₂O。',
+          '当硝酸足量时，Fe 被完全氧化为 +3 价，1 mol Fe 转移 3 N_A 电子。',
+          '对比：若 Fe 过量，产物为 Fe(NO₃)₂，1 mol Fe 则转移 2 N_A 电子。',
+        ],
+        formulaLatex: '\\overset{0}{\\text{Fe}} + 4\\text{H}\\overset{+5}{\\text{NO}}_3(\\text{稀}) = \\overset{+3}{\\text{Fe}}(\\text{NO}_3)_3 + \\overset{+2}{\\text{NO}}\\uparrow + 2\\text{H}_2\\text{O} \\implies 1 \\text{ mol Fe } \\text{转移 3 mol } e^-',
+        correctAnswerSummary: `1 mol Fe 与足量稀硝酸反应转移 3 N_A 电子 (生成 Fe³⁺)`,
+        stepByStepMatrix: [
+          { stepName: '一审环境', checkTarget: '足量稀硝酸', pass: true, finding: '稀硝酸强氧化剂' },
+          { stepName: '二审状态', checkTarget: '固液反应', pass: true, finding: '固体溶解' },
+          { stepName: '三审结构', checkTarget: 'Fe 原料', pass: true, finding: '金属晶体' },
+          { stepName: '四审过程', checkTarget: '完全氧化产物', pass: false, finding: '硝酸足量生成 Fe³⁺ 转移 3 个电子！' },
+          { stepName: '五审电子', checkTarget: '电子转移数', pass: true, finding: 'n_e = n(Fe) × 3' },
         ],
       }
     }

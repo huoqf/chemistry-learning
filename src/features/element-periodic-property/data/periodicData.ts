@@ -566,7 +566,7 @@ export const PERIODIC_ELEMENTS: Record<number, ElementInfo> = {
 // 等电子体微粒半径高保真数据
 export const ISO_ELECTRON_SERIES: Record<'10e' | '18e', IsoElectronParticle[]> = {
   '10e': [
-    { symbol: 'O²', name: '氧化物阴离子', charge: -2, z: 8, radius: 140, electronCount: 10, configStr: '1s²2s²2p⁶' },
+    { symbol: 'O²⁻', name: '氧离子', charge: -2, z: 8, radius: 140, electronCount: 10, configStr: '1s²2s²2p⁶' },
     { symbol: 'F⁻', name: '氟离子', charge: -1, z: 9, radius: 133, electronCount: 10, configStr: '1s²2s²2p⁶' },
     { symbol: 'Na⁺', name: '钠离子', charge: 1, z: 11, radius: 102, electronCount: 10, configStr: '1s²2s²2p⁶' },
     { symbol: 'Mg²⁺', name: '镁离子', charge: 2, z: 12, radius: 72, electronCount: 10, configStr: '1s²2s²2p⁶' },
@@ -588,7 +588,7 @@ export const GAOKAO_INFERENCE_CASES: GaokaoInferenceCase[] = [
     title: '2024 山东高考真题：短周期 X/Y/Z/W 结构推断',
     source: '2024 全国高考山东卷',
     coreQuestion: '推断短周期元素 X, Y, Z, W 身份，并比较简单离子半径与第一电离能大小。',
-    analysis: 'X 的基态 p 轨道电子数等于 s 轨道电子数 ➔ X=O (1s²2s²2p⁴, s=4, p=4)；Y 的电负性在同周期中最强 ➔ Y=F；Z 的最外层 p 轨道 3p³ 半充满 ➔ Z=P；W 常见金属 ➔ Na。',
+    analysis: 'X 的基态 p 轨道电子数等于 s 轨道电子数 ➔ X=O (1s²2s²2p⁴, s=4, p=4)；Y 的电负性在同周期中最强 ➔ Y=F；Z 的最外层 p 轨道 3p³ 半充满 ➔ Z=P；W 的简单离子在同周期阴阳离子中半径最小 ➔ W=Al (Al³⁺ 核电荷数最大，10电子体半径最小)。',
     elements: [
       {
         elementCode: 'X',
@@ -613,10 +613,10 @@ export const GAOKAO_INFERENCE_CASES: GaokaoInferenceCase[] = [
       },
       {
         elementCode: 'W',
-        realSymbol: 'Na',
-        clues: ['第 3 周期主族金属', '单质与水剧烈反应生成碱性气体/溶液'],
-        derivation: '[Ne]3s¹ ➔ 钠 (Na)',
-        keyPoint: '10电子离子半径：O²⁻ > F⁻ > Na⁺',
+        realSymbol: 'Al',
+        clues: ['第 3 周期主族金属', '简单离子在同周期阴阳离子中半径最小'],
+        derivation: 'Al³⁺ 为 10 电子体，核电荷数 Z=13 最大，离子半径在 O²⁻/F⁻/Na⁺/Mg²⁺/Al³⁺ 中最小 ➔ 铝 (Al)',
+        keyPoint: '10电子体半径：O²⁻ > F⁻ > Na⁺ > Mg²⁺ > Al³⁺，Al³⁺ 最小',
       },
     ],
   },

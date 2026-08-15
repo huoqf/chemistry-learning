@@ -46,7 +46,7 @@ export const HESS_PRESETS: HessGroupPreset[] = [
         reactantsText: 'C(s) + H₂O(g)',
         productsText: 'CO(g) + H₂(g)',
         deltaH: 131.3,
-        defaultK: 2,
+        defaultK: 1,
       },
       {
         id: 'eq-2',

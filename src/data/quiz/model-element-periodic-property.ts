@@ -48,12 +48,12 @@ export const modelElementPeriodicProperty: ModelQuizData = {
       questionText: '下列关于这些元素及其化合物的说法正确的是？',
       options: [
         { label: 'A', text: '简单离子半径：W > Z > Y > X', isCorrect: false },
-        { label: 'B', text: '第一电离能：Y > Z > X', isCorrect: true },
+        { label: 'B', text: '第一电离能：Y > X > Z', isCorrect: true },
         { label: 'C', text: '最高价氧化物对应水化物的酸性：X > Z', isCorrect: false },
         { label: 'D', text: '基态 Z 原子的未成对电子数为 0', isCorrect: false },
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查电子排布特征推断、第一电离能 VA>VIA (P>O) 反常与 10/18 电子体半径规律。',
-      detailedExplanation: '推断过程：X (p=s) ➔ O (1s²2s²2p⁴, 4=4)；Y (同周期电负性最强) ➔ F (4.0)；Z (3p³半充满) ➔ P (15号)；W (10电子半径最小) ➔ Al (13号)。第一电离能 F(1681) > P(1012) > O(1314) 且 P>S，因此 Y(F) > X(O) > Z(P)，B 选项正确。',
+      detailedExplanation: '推断过程：X (p=s) ➔ O (1s²2s²2p⁴, 4=4)；Y (同周期电负性最强) ➔ F (4.0)；Z (3p³半充满) ➔ P (15号)；W (10电子体半径最小) ➔ Al (13号)。第一电离能：F(1681) > O(1314) > P(1012)，因此 Y(F) > X(O) > Z(P)，B 选项正确。注意：P 的 3p³ 半充满使 I₁(P) 反常高于 S，但仍低于 O。',
       diagramType: 'titration-error-diagram',
       diagramConfig: {
         errorDiagramType: 'permanganate-view-angle',
