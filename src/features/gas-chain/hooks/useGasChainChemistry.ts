@@ -88,6 +88,25 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
           examPoint: '固+固加热制气 (NH₃/O₂) 试管口必须略向下倾斜，防止反应生成的水蒸气冷凝倒流炸裂试管。',
         })
       }
+    } else if (targetGas === 'SO₂' || systemId === 'so2-chain') {
+      if (generator === 'kipp') {
+        dangerType = 'clogging'
+        issues.push({
+          id: 'generator-so2-kipp-wrong',
+          level: 'danger',
+          title: '化学逻辑错误：SO₂ 制备不能使用启普发生器！',
+          description: 'Na₂SO₃ 为粉末状固体且易溶于水，且生成的 SO₂ 易溶于水，完全不符合启普发生器使用条件（块状难溶固体+液体常温生成难溶气体）！',
+          examPoint: '启普发生器使用条件：①块状固体(非粉末)；②液体；③不加热；④生成难溶/微溶气体。',
+        })
+      } else if (generator === 'testtube-heat') {
+        issues.push({
+          id: 'generator-so2-testtube-wrong',
+          level: 'warning',
+          title: '装置选择不当：Na₂SO₃ 与 H₂SO₄ 反应为固液常温，无需固固试管加热',
+          description: '实验室制 SO₂ 用亚硫酸钠粉末与 70% 硫酸常温反应即可快速发生，使用固固加热试管存在液体倒流腐蚀风险。',
+          examPoint: '反应物为粉末固体+液体且常温反应，应选用分液漏斗+圆底/蒸馏/锥形瓶。',
+        })
+      }
     } else if (targetGas === 'C₂H₄' || systemId === 'c2h4-prep') {
       if (generator !== 'flask-heat') {
         dangerType = 'splashing'
@@ -363,15 +382,13 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       if (dryer === 'conc-h2so4') {
         impurityConc = 0
       }
-    } else if (targetGas === 'C₂H₄') {
+    } else if (targetGas === 'C₂H₄' || systemId === 'c2h4-prep') {
       if (washReagent === 'naoh') {
-        impurityConc -= 60
+        impurityConc = (collection === 'water-displacement' || dryer === 'cacl2' || dryer === 'p2o5') ? 0 : 20
       } else if (washReagent === 'kmno4') {
         impurityConc = 90 // 引入新杂质 CO₂，纯度反降
-      }
-      // 浓H₂SO₄会与乙烯反应（已触发 dryerClogged），不计入有效干燥
-      if (dryer === 'cacl2' || dryer === 'p2o5') {
-        impurityConc -= 40
+      } else {
+        impurityConc = 60
       }
     } else {
       impurityConc = Math.max(0, 100 - (washReagent !== 'none' ? 50 : 0) - (dryer !== 'none' ? 50 : 0))
@@ -385,6 +402,8 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       tailAbsorbRate = 100
     } else if (tailGas === 'direct-pipe') {
       tailAbsorbRate = 75
+    } else if (tailGas === 'none' && collection === 'water-displacement') {
+      tailAbsorbRate = 100 // 水槽排水集气完全封闭，无尾气外逸
     }
 
     if (issues.length === 0) {

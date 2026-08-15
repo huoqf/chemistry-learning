@@ -46,6 +46,49 @@ export const GasChainLeftPanel: React.FC<GasChainLeftPanelProps> = ({
             { label: '自定义探究', value: 'custom' },
           ]}
         />
+
+        {/* NO/NO2 氮氧化物体系探究气体切换 */}
+        {params.systemId === 'no-no2-chain' && (
+          <div className="mt-3">
+            <SegmentedControl
+              label="探究目标氮氧化物"
+              value={params.targetGas}
+              onChange={(val) => {
+                updateParam('targetGas', val)
+                if (val === 'NO') {
+                  updateParam('collection', 'water-displacement')
+                } else if (val === 'NO₂') {
+                  updateParam('collection', 'upward-air')
+                }
+              }}
+              cols={2}
+              options={[
+                { label: 'NO₂ (红棕色/排空气)', value: 'NO₂' },
+                { label: 'NO (无色/排水法)', value: 'NO' },
+              ]}
+            />
+          </div>
+        )}
+
+        {/* 自定义探究模式目标气体选择 */}
+        {params.systemId === 'custom' && (
+          <div className="mt-3">
+            <SegmentedControl
+              label="自定义目标气体"
+              value={params.targetGas}
+              onChange={(val) => updateParam('targetGas', val)}
+              cols={3}
+              options={[
+                { label: 'Cl₂', value: 'Cl₂' },
+                { label: 'NH₃', value: 'NH₃' },
+                { label: 'SO₂', value: 'SO₂' },
+                { label: 'NO₂', value: 'NO₂' },
+                { label: 'NO', value: 'NO' },
+                { label: 'C₂H₄', value: 'C₂H₄' },
+              ]}
+            />
+          </div>
+        )}
       </LeftPanelSection>
 
       {/* 2. 5 大节点装置及试剂自由调控 */}

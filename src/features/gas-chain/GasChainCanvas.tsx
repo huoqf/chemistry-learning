@@ -71,8 +71,7 @@ const SYSTEM_PRESETS: Record<GasChainSystemId, Partial<GasChainParams>> = {
     targetGas: 'C₂H₄',
     generator: 'flask-heat',
     washingSteps: [
-      { id: 's1', device: 'wash-bottle',  reagent: 'naoh',       role: 'purify' },
-      { id: 's2', device: 'acid-bottle',  reagent: 'conc-h2so4', role: 'dry'    },
+      { id: 's1', device: 'wash-bottle', reagent: 'naoh', role: 'purify' },
     ],
     collection: 'water-displacement',
     tailGas: 'none',
