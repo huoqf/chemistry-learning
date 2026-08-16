@@ -65,7 +65,7 @@ export function OrganicRetrosynthesisRightPanel({
       importance: 'gaokao' as const,
     },
     {
-      text: '【官能团保护 4 大经典】：酚/醇 -OH 乙酰化成酯；双键加加成 Br₂；醛/酮与乙二醇成缩醛；氨基乙酰化。',
+      text: '【官能团保护 4 大经典】：酚/醇 -OH 乙酰化成酯；双键加成 Br₂；醛/酮与乙二醇成缩醛；氨基乙酰化。',
       importance: 'core' as const,
     },
     {
@@ -85,7 +85,7 @@ export function OrganicRetrosynthesisRightPanel({
       level: 'danger' as const,
     },
     {
-      text: '注意试剂选择性：含有碳碳双键时，强氧化剂 (KMnO₄/H⁺) 会无差别氧化双键，必须先进行 Protection。',
+      text: '注意试剂选择性：含有碳碳双键时，酸性强氧化剂 (KMnO₄/H⁺) 会氧化双键破坏骨架，必须先进行 Protection。',
       level: 'warning' as const,
     },
     {
@@ -101,7 +101,7 @@ export function OrganicRetrosynthesisRightPanel({
         formulas={formulas}
         gaokaoPoints={gaokaoPoints}
         warnings={warnings}
-        mnemonic="切断找双键或酯，保护瞄准活泼氢。加加成脱溴用锌粉，缩醛还原酸水解。"
+        mnemonic="切断找双键或酯，保护瞄准活泼氢。加成脱溴用锌粉，缩醛还原酸水解。"
       />
     </div>
   )

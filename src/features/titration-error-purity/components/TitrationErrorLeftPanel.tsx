@@ -178,6 +178,16 @@ export const TitrationErrorLeftPanel: React.FC<TitrationErrorLeftPanelProps> = (
         unit: 'g',
       },
       {
+        key: 'rawMaterialMolarMass',
+        label: 'M(原料)',
+        value: params.rawMaterialMolarMass,
+        min: 10,
+        max: 200,
+        step: 0.5,
+        unit: 'g/mol',
+        description: 'Fe=55.85, Cu=63.5, Al=27, Zn=65.4',
+      },
+      {
         key: 'molarMassProduct',
         label: 'M(目标产物)',
         value: params.molarMassProduct,
@@ -196,7 +206,7 @@ export const TitrationErrorLeftPanel: React.FC<TitrationErrorLeftPanelProps> = (
         unit: 'g',
       },
     ],
-    [params.rawMaterialMass, params.molarMassProduct, params.actualProductMass]
+    [params.rawMaterialMass, params.rawMaterialMolarMass, params.molarMassProduct, params.actualProductMass]
   )
 
   const handleParamChange = (key: string, value: number) => {

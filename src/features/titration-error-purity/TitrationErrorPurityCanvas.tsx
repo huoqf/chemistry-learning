@@ -36,6 +36,7 @@ export const TitrationErrorPurityCanvas: React.FC = () => {
     reagent2Vol: 20.0,
 
     rawMaterialMass: 2.8,
+    rawMaterialMolarMass: 55.85, // Fe 铁粉
     molarMassProduct: 392.14,
     actualProductMass: 19.6,
   })
@@ -99,6 +100,7 @@ export const TitrationErrorPurityCanvas: React.FC = () => {
       reagent2Vol: 20.0,
 
       rawMaterialMass: 2.8,
+      rawMaterialMolarMass: 55.85, // Fe 铁粉
       molarMassProduct: 392.14,
       actualProductMass: 19.6,
     })

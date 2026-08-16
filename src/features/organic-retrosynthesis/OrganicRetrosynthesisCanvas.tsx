@@ -88,7 +88,7 @@ export function OrganicRetrosynthesisCanvas() {
   )
 
   return (
-    <div className="w-full h-screen bg-slate-100 flex flex-col font-sans text-slate-900 overflow-hidden">
+    <div className="w-full h-screen flex flex-col font-sans text-slate-900 overflow-hidden">
       {/* 统一 Header */}
       <GaokaoToolHeader
         modelId="model-organic-retrosynthesis"

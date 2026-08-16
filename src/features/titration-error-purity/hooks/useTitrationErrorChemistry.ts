@@ -27,6 +27,7 @@ export function useTitrationErrorChemistry(
       reagent2Conc,
       reagent2Vol,
       rawMaterialMass,
+      rawMaterialMolarMass,
       molarMassProduct,
       actualProductMass,
     } = params
@@ -203,11 +204,11 @@ export function useTitrationErrorChemistry(
       const vStdL = reagent2Vol / 1000
       nAliquot = reagent2Conc * vStdL
       nTotalSample = nAliquot * (solutionTotalVol / pipetteVol)
-      const M = 222.1 // g/mol 碱式碳酸铜 CuCO3·Cu(OH)2 含有 2个 Cu²⁺，故 1mol 消耗 2mol S2O32-
+      const M = 221.1 // g/mol 碱式碳酸铜 Cu₂(OH)₂CO₃ 含有2个 Cu²⁺，故 1mol 消耗 2mol S2O32-
       mPureProduct = (nTotalSample / 2) * M
       purityPct = Math.min(100, (mPureProduct / sampleMass) * 100)
-      stoichiometryRatio = '1 CuCO₃·Cu(OH)₂ ～ 2 Cu²⁺ ～ 2 S₂O₃²⁻'
-      calcStepsLatex = `w\\% = \\frac{0.5 \\times ${reagent2Conc.toFixed(2)} \\times ${(vStdL).toFixed(4)} \\times \\frac{${solutionTotalVol}}{${pipetteVol}} \\times 222.1}{${sampleMass.toFixed(2)}} \\times 100\\% = ${purityPct.toFixed(2)}\\%`
+      stoichiometryRatio = '1 Cu₂(OH)₂CO₃ ～ 2 Cu²⁺ ～ 2 S₂O₃²⁻'
+      calcStepsLatex = `w\\% = \\frac{0.5 \\times ${reagent2Conc.toFixed(2)} \\times ${(vStdL).toFixed(4)} \\times \\frac{${solutionTotalVol}}{${pipetteVol}} \\times 221.1}{${sampleMass.toFixed(2)}} \\times 100\\% = ${purityPct.toFixed(2)}\\%`
     }
 
     const purityResult: PurityResult = {
@@ -220,11 +221,11 @@ export function useTitrationErrorChemistry(
     }
 
     // 3. 产率计算 Yield
-    // 以铁粉制备摩尔盐为例：Fe (M=55.85) -> 摩尔盐 (M=392.14)
-    const nTheoretical = rawMaterialMass / 55.85
+    // 原料摩尔质量使用参数 rawMaterialMolarMass，支持任意原料（Fe=55.85, Cu=63.5, Al=27...)
+    const nTheoretical = rawMaterialMass / rawMaterialMolarMass
     const mTheoretical = nTheoretical * molarMassProduct
     const yieldPct = Math.min(100, (actualProductMass / mTheoretical) * 100)
-    const calcFormulaLatex = `\\text{Yield}\\% = \\frac{m_{\\text{实际}}}{m_{\\text{理论}}} = \\frac{${actualProductMass.toFixed(2)}}{${mTheoretical.toFixed(2)}} \\times 100\\% = ${yieldPct.toFixed(2)}\\%`
+    const calcFormulaLatex = `\\text{Yield}\\% = \\frac{m_{\\text{实际}}}{m_{\\text{理论}}} = \\frac{${actualProductMass.toFixed(2)}}{\\frac{${rawMaterialMass.toFixed(2)}}{${rawMaterialMolarMass}} \\times ${molarMassProduct}} \\times 100\\% = ${yieldPct.toFixed(2)}\\%`
 
     const yieldResult: YieldResult = {
       nTheoretical: Number(nTheoretical.toFixed(4)),

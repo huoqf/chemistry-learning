@@ -70,7 +70,7 @@ export function OrganicRetrosynthesisCenterView({
   // 视角 1: 规范踩分卡视角 (DOM 条件渲染)
   if (viewMode === 1) {
     return (
-      <div className="w-full h-full flex flex-col p-4 bg-slate-50 overflow-y-auto">
+      <div className="w-full h-full flex flex-col p-4 overflow-y-auto">
         {quizData && quizData.scoringSteps.length > 0 ? (
           <ScoringCardSection steps={quizData.scoringSteps} />
         ) : (
@@ -83,7 +83,7 @@ export function OrganicRetrosynthesisCenterView({
   // 视角 2: 高考真题变式视角 (DOM 条件渲染)
   if (viewMode === 2) {
     return (
-      <div className="w-full h-full flex flex-col p-4 bg-slate-50 overflow-y-auto">
+      <div className="w-full h-full flex flex-col p-4 overflow-y-auto">
         {quizData && quizData.variantQuizzes.length > 0 ? (
           <GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />
         ) : (
@@ -95,7 +95,7 @@ export function OrganicRetrosynthesisCenterView({
 
   // 视角 0: 有机逆合成历程演练 (AnimationSvgCanvas 840x650 全屏逆合成树布局 + 动态切断/护盾)
   return (
-    <div className="w-full h-full flex flex-col relative overflow-hidden bg-slate-900/5 select-none">
+    <div className="w-full h-full flex flex-col relative overflow-hidden select-none">
       {/* 画布核心区域 */}
       <div ref={containerRef} className="flex-1 w-full relative overflow-hidden">
         <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>

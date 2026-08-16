@@ -47,6 +47,7 @@ export interface TitrationErrorParams {
   
   // 产率计算参数
   rawMaterialMass: number // g 原料质量
+  rawMaterialMolarMass: number // g/mol 原料摩尔质量（如 Fe=55.85, Cu=63.5, Al=27...）
   molarMassProduct: number // g/mol 目标产物摩尔质量
   actualProductMass: number // g 实际提纯获得质量
 }

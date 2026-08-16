@@ -159,7 +159,7 @@ export function OrganicRetrosynthesisLeftPanel({
             解题技巧
           </div>
           <p className="text-[11px] text-indigo-800 leading-relaxed">
-            「切断找双键或酯，保护瞄准活泼氢。加加成脱溴用锌粉，缩醛还原酸水解。」
+            「切断找双键或酯，保护瞄准活泼氢。加成脱溴用锌粉，缩醛还原酸水解。」
           </p>
         </div>
       </LeftPanelSection>

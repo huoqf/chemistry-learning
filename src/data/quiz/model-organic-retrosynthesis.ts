@@ -21,7 +21,7 @@ export const modelOrganicRetrosynthesis: ModelQuizData = {
         '在含有碳碳双键和醇羟基的化合物中，若需用酸性 KMnO₄ 溶液将醇羟基氧化为羧基，为何必须先对双键进行 Protection？写出高频考点。',
       correctAnswer: ['双键被氧化', '强氧化剂', '选择性', '加成保护'],
       explanation:
-        '【踩分点】：酸性 KMnO₄ 等强氧化剂会无选择性地同时氧化 C=C 双键与醇羟基。先将双键加加成 Br₂ (保护)，可实现醇羟基的选择性氧化。',
+        '【踩分点】：酸性 KMnO₄ 等强氧化剂会氧化破坏 C=C 双键。先将双键加成 Br₂ 保护，可实现醇羟基的选择性氧化，最后用 Zn 粉脱溴复原双键。',
     },
     {
       id: 'step-3',
