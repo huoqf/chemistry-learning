@@ -106,6 +106,68 @@ export const AvogadroCenterView: React.FC<AvogadroCenterViewProps> = ({
             </defs>
             <rect x="0" y="0" width="420" height="650" fill="url(#avogadro-grid)" opacity={0.5} />
 
+            {/* 0. 五步秒杀诊断流水线 (当在五步秒杀模式时优先呈现) */}
+            {params.trapCategory === '5-step-matrix' && (
+              <g transform="translate(30, 70)">
+                <text x="180" y="20" fill="#1e293b" fontSize={canvasSize.font(15)} textAnchor="middle" fontWeight="bold">
+                  五步秒杀盲盒排查流水线
+                </text>
+                <text x="180" y="42" fill="#64748b" fontSize={canvasSize.font(11)} textAnchor="middle">
+                  高考阿伏加德罗常数选择题选项 100% 秒杀闭环
+                </text>
+
+                {[
+                  { step: '① 审环境', target: '标准状况 (0℃) / 常温 (25℃) / 溶液体积 V', desc: '环境决定适用公式：非气体禁用 Vm=22.4；无体积无法求微粒数', pass: params.matrixStepIndex >= 0 },
+                  { step: '② 审状态', target: 'SO₃ (固), HF (液), CCl₄ (液), H₂O (冰/水)', desc: '识别标况非气体：严禁套用 22.4 L/mol 计算！', pass: params.matrixStepIndex >= 1 },
+                  { step: '③ 审结构', target: 'SiO₂ (4键), 石墨 (1.5键), P₄ (6键), 冰 (2氢键)', desc: '共价晶体/分子晶体均摊法与同位素中子数统计', pass: params.matrixStepIndex >= 2 },
+                  { step: '④ 审过程', target: 'CH₃COOH 电离 / FeCl₃ 水解胶粒 / 熔融 NaHSO₄', desc: '弱电解质部分电离、胶粒为多分子聚集体、熔融不拆共价键', pass: params.matrixStepIndex >= 3 },
+                  { step: '⑤ 审电子', target: 'Cl₂/Na₂O₂ 歧化 1e⁻ / Cu+S 变价 1e⁻ / 电子数', desc: '变价元素代数求和，歧化反应只看一侧化合价升降', pass: params.matrixStepIndex >= 4 },
+                ].map((item, idx) => {
+                  const isCurrent = params.matrixStepIndex === idx
+                  const yPos = 65 + idx * 64
+                  return (
+                    <g key={idx} transform={`translate(0, ${yPos})`}>
+                      <rect
+                        x="0"
+                        y="0"
+                        width="360"
+                        height="52"
+                        rx="10"
+                        fill={isCurrent ? '#f0fdf4' : '#ffffff'}
+                        stroke={isCurrent ? '#16a34a' : '#cbd5e1'}
+                        strokeWidth={isCurrent ? 2.5 : 1}
+                      />
+                      <rect
+                        x="0"
+                        y="0"
+                        width="6"
+                        height="52"
+                        rx="3"
+                        fill={isCurrent ? '#16a34a' : '#94a3b8'}
+                      />
+                      <text x="16" y="22" fill={isCurrent ? '#15803d' : '#334155'} fontSize={canvasSize.font(13)} fontWeight="bold">
+                        {item.step}
+                      </text>
+                      <text x="92" y="21" fill="#475569" fontSize={canvasSize.font(11)} fontWeight="medium">
+                        {item.target}
+                      </text>
+                      <text x="16" y="40" fill="#64748b" fontSize={canvasSize.font(10)}>
+                        {item.desc}
+                      </text>
+                      {isCurrent && (
+                        <circle cx="340" cy="26" r="10" fill="#16a34a" />
+                      )}
+                      {isCurrent && (
+                        <text x="340" y="30" fill="#ffffff" fontSize={canvasSize.font(10)} textAnchor="middle" fontWeight="bold">
+                          ✓
+                        </text>
+                      )}
+                    </g>
+                  )
+                })}
+              </g>
+            )}
+
             {/* 1. 标况状态与 22.4 L 空间体积标尺 */}
             {params.trapCategory === 'state-volume' && (
               <g transform="translate(60, 80)">
@@ -155,7 +217,49 @@ export const AvogadroCenterView: React.FC<AvogadroCenterViewProps> = ({
             {/* 2. 结构化学与化学键高保真拓扑 */}
             {params.trapCategory === 'structure-bonds' && (
               <g transform="translate(210, 240)">
-                {params.structureItem === 'P4' ? (
+                {params.structureItem === 'SiO2' ? (
+                  /* SiO2 空间网状硅氧四面体拓扑 */
+                  <g>
+                    <line x1="0" y1="0" x2="0" y2="-65" stroke="#38bdf8" strokeWidth="3" />
+                    <line x1="0" y1="0" x2="-60" y2="40" stroke="#38bdf8" strokeWidth="3" />
+                    <line x1="0" y1="0" x2="60" y2="40" stroke="#38bdf8" strokeWidth="3" />
+                    <line x1="0" y1="0" x2="0" y2="60" stroke="#38bdf8" strokeWidth="3" strokeDasharray="3 3" />
+                    <line x1="0" y1="-65" x2="40" y2="-100" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
+                    <line x1="-60" y1="40" x2="-100" y2="60" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
+                    <line x1="60" y1="40" x2="100" y2="60" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
+                    <circle cx="0" cy="0" r="22" fill="#0284c7" stroke="#0369a1" strokeWidth="2" />
+                    <text x="0" y="6" fill="#ffffff" fontSize={canvasSize.font(13)} textAnchor="middle" fontWeight="bold">Si</text>
+                    <circle cx="0" cy="-65" r="14" fill="#f87171" stroke="#dc2626" strokeWidth="1.5" />
+                    <text x="0" y="-60" fill="#ffffff" fontSize={canvasSize.font(10)} textAnchor="middle" fontWeight="bold">O</text>
+                    <circle cx="-60" cy="40" r="14" fill="#f87171" stroke="#dc2626" strokeWidth="1.5" />
+                    <text x="-60" y="45" fill="#ffffff" fontSize={canvasSize.font(10)} textAnchor="middle" fontWeight="bold">O</text>
+                    <circle cx="60" cy="40" r="14" fill="#f87171" stroke="#dc2626" strokeWidth="1.5" />
+                    <text x="60" y="45" fill="#ffffff" fontSize={canvasSize.font(10)} textAnchor="middle" fontWeight="bold">O</text>
+                    <circle cx="0" cy="60" r="14" fill="#f87171" stroke="#dc2626" strokeWidth="1.5" />
+                    <text x="0" y="65" fill="#ffffff" fontSize={canvasSize.font(10)} textAnchor="middle" fontWeight="bold">O</text>
+                    <text x="0" y="115" fill="#0369a1" fontSize={canvasSize.font(13)} textAnchor="middle" fontWeight="bold">
+                      1 mol SiO₂ (60 g) 含 4 mol Si-O 键 (每个Si连4个O)
+                    </text>
+                  </g>
+                ) : params.structureItem === 'graphite' ? (
+                  /* 石墨六元环平面网状拓扑 */
+                  <g>
+                    <polygon points="0,-60 52,-30 52,30 0,60 -52,30 -52,-30" fill="#f1f5f9" stroke="#475569" strokeWidth="3" />
+                    <line x1="52" y1="-30" x2="90" y2="-50" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
+                    <line x1="52" y1="30" x2="90" y2="50" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
+                    <line x1="-52" y1="-30" x2="-90" y2="-50" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
+                    <line x1="-52" y1="30" x2="-90" y2="50" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
+                    {[[0, -60], [52, -30], [52, 30], [0, 60], [-52, 30], [-52, -30]].map(([x, y], idx) => (
+                      <g key={idx}>
+                        <circle cx={x} cy={y} r="14" fill="#334155" stroke="#0f172a" strokeWidth="1.5" />
+                        <text x={x} y={y + 4} fill="#ffffff" fontSize={canvasSize.font(10)} textAnchor="middle" fontWeight="bold">C</text>
+                      </g>
+                    ))}
+                    <text x="0" y="105" fill="#334155" fontSize={canvasSize.font(13)} textAnchor="middle" fontWeight="bold">
+                      石墨均摊法：1 mol C 形成 1.5 mol C-C 键 (3 × 1/2)
+                    </text>
+                  </g>
+                ) : params.structureItem === 'P4' ? (
                   <g>
                     <polygon points="0,-110 -100,60 100,60" fill="none" stroke="#a855f7" strokeWidth="3.5" />
                     <line x1="0" y1="-110" x2="0" y2="0" stroke="#a855f7" strokeWidth="3.5" />
@@ -231,7 +335,7 @@ export const AvogadroCenterView: React.FC<AvogadroCenterViewProps> = ({
               </g>
             )}
 
-            {/* 3. 弱电解质与水解/熔融对比 (精准消灭张冠李戴残留) */}
+            {/* 3. 弱电解质与水解/熔融/胶体对比 */}
             {params.trapCategory === 'electrolyte-hydrolysis' && (
               <g transform="translate(110, 150)">
                 {params.electrolyteItem === 'NaHSO4-molten' ? (
@@ -246,6 +350,31 @@ export const AvogadroCenterView: React.FC<AvogadroCenterViewProps> = ({
                     <text x="40" y="26" fill="#ffffff" fontSize={canvasSize.font(11)} textAnchor="middle" fontWeight="bold">HSO₄⁻</text>
                     <text x="0" y="60" fill="#9a3412" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">
                       仅断裂离子键 ➔ 生成 2 mol 离子！
+                    </text>
+                  </g>
+                ) : params.electrolyteItem === 'FeCl3' ? (
+                  /* FeCl3 胶体粒子聚集态场景 */
+                  <g>
+                    <BeakerApparatus
+                      x={40}
+                      y={40}
+                      width={140}
+                      height={160}
+                      fillLevel={0.7}
+                      fillColor="#fef3c7"
+                      label="Fe(OH)₃ 胶体分散系"
+                      font={canvasSize.font}
+                    />
+                    {/* 纳米胶团聚集体 */}
+                    <circle cx="110" cy="130" r="32" fill="#b45309" opacity="0.85" stroke="#78350f" strokeWidth="2" strokeDasharray="3 3" />
+                    <text x="110" y="125" fill="#ffffff" fontSize={canvasSize.font(10)} textAnchor="middle" fontWeight="bold">
+                      胶粒聚集体
+                    </text>
+                    <text x="110" y="140" fill="#fef3c7" fontSize={canvasSize.font(8)} textAnchor="middle">
+                      (含数百个Fe(OH)₃)
+                    </text>
+                    <text x="110" y="220" fill="#b45309" fontSize={canvasSize.font(11)} textAnchor="middle" fontWeight="bold">
+                      🛑 胶体微粒数 ≪ 0.1 NA！
                     </text>
                   </g>
                 ) : params.electrolyteItem === 'Na2CO3' ? (
@@ -290,11 +419,11 @@ export const AvogadroCenterView: React.FC<AvogadroCenterViewProps> = ({
               </g>
             )}
 
-            {/* 4. 氧化还原与 NO2 二聚平衡 (精准消除 NO2 二聚出现双线桥的残存 Bug) */}
+            {/* 4. 氧化还原与 NO2 二聚平衡 */}
             {params.trapCategory === 'redox-electron' && (
               <g transform="translate(210, 240)">
                 {params.redoxItem === 'NO2-N2O4-reversible' ? (
-                  /* 2NO2 <-> N2O4 二聚碰撞分子变少矢量图 (绝对不放双线桥) */
+                  /* 2NO2 <-> N2O4 二聚碰撞分子变少矢量图 */
                   <g>
                     <rect x="-100" y="-80" width="200" height="160" rx="16" fill="#fef2f2" stroke="#ef4444" strokeWidth="2.5" />
                     <text x="0" y="-55" fill="#991b1b" fontSize={canvasSize.font(14)} textAnchor="middle" fontWeight="bold">

@@ -42,6 +42,30 @@ export const AvogadroRightPanel: React.FC<AvogadroRightPanelProps> = ({
     }
 
     if (trapCategory === 'structure-bonds') {
+      if (structureItem === 'SiO2') {
+        return [
+          {
+            text: '【立体网状共价晶体】SiO₂ 中无独立分子！每个 Si 与 4 个 O 形成 4 个 Si-O 单键 ➔ 1 mol SiO₂ (60 g) 含 4 mol Si-O 共价键（非 2 mol！）。',
+            level: 'danger' as const,
+          },
+          {
+            text: '高考高频题设：60 g SiO₂ 晶体中含有的 Si-O 键数为 4 N_A（1 mol Si 原子对应 4 mol Si-O 键）。',
+            level: 'warning' as const,
+          },
+        ]
+      }
+      if (structureItem === 'graphite') {
+        return [
+          {
+            text: '【石墨平面六元环均摊】石墨每个 C 与 3 个 C 成键，每个 C-C 键由 2 个碳共享 ➔ 1 mol C 对应 1.5 mol C-C 键 (12 g 石墨含 1.5 N_A 键)。',
+            level: 'danger' as const,
+          },
+          {
+            text: '每个六元环实际占有碳原子数：6 × 1/3 = 2 个 C 原子。',
+            level: 'warning' as const,
+          },
+        ]
+      }
       if (structureItem === 'Na2O2') {
         return [
           {
@@ -97,6 +121,18 @@ export const AvogadroRightPanel: React.FC<AvogadroRightPanelProps> = ({
     }
 
     if (trapCategory === 'electrolyte-hydrolysis') {
+      if (electrolyteItem === 'FeCl3') {
+        return [
+          {
+            text: '【胶粒多分子聚集陷阱】Fe(OH)₃ 胶体微粒是成百上千个 Fe(OH)₃ 分子的聚集体，因此胶粒数远小于 0.1 N_A！',
+            level: 'danger' as const,
+          },
+          {
+            text: '水解是可逆反应，Fe³⁺ 不能完全水解转化为 Fe(OH)₃。',
+            level: 'warning' as const,
+          },
+        ]
+      }
       if (electrolyteItem === 'NaHSO4-molten') {
         return [
           {

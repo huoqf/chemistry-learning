@@ -51,6 +51,27 @@ export const modelAvogadroConstant: ModelQuizData = {
   ],
   variantQuizzes: [
     {
+      id: 'var-na-1',
+      yearProvince: '2024 全国甲卷高考真题',
+      modelId: 'model-avogadro-constant',
+      title: '设 $N_{\\text{A}}$ 为阿伏加德罗常数的值，下列说法正确的是？',
+      contextDescription: '考查过氧化物歧化电子转移、弱电解质电离与标准状况物理状态。',
+      questionText: '设 $N_{\\text{A}}$ 为阿伏加德罗常数的值，下列说法正确的是？',
+      options: [
+        { label: 'A', text: '7.8 g Na₂O₂ 与足量水完全反应，转移的电子数为 0.2 $N_{\\text{A}}$', isCorrect: false },
+        { label: 'B', text: '标况下 22.4 L HF 中含有的氟化氢分子数为 $N_{\\text{A}}$', isCorrect: false },
+        { label: 'C', text: '78 g Na₂O₂ 固体中含有的阴离子数为 $N_{\\text{A}}$', isCorrect: true },
+        { label: 'D', text: '1 L 0.1 mol/L 氨水中含有的 NH₄⁺ 离子数为 0.1 $N_{\\text{A}}$', isCorrect: false },
+      ],
+      modelAlignmentAnalysis: '【母题模型对齐】：\nA项：2Na₂O₂ + 2H₂O = 4NaOH + O₂↑ 中 -1价O发生歧化，7.8 g (0.1 mol) Na₂O₂ 转移 0.1 $N_{\\text{A}}$ 电子；\nB项：HF 沸点 19.5℃，标况 (0℃) 下为发烟液体，不可套用 22.4 L/mol；\nC项：Na₂O₂ 阴离子为 O₂²⁻ 整体，78 g (1 mol) 含 1 $N_{\\text{A}}$ 阴离子（正确）；\nD项：一水合氨为弱电解质，部分电离，NH₄⁺ 数目小于 0.1 $N_{\\text{A}}$。',
+      detailedExplanation: '正确答案 C。Na₂O₂ 由 Na⁺ 和 O₂²⁻ 构成，阴阳离子个数比为 1:2，1 mol Na₂O₂ 含 1 mol O₂²⁻ 阴离子。',
+      diagramType: 'titration-error-diagram',
+      diagramConfig: {
+        errorDiagramType: 'iodometry-purity',
+        title: 'Na₂O₂ 阴阳离子晶体结构与歧化反应电子转移图',
+      },
+    },
+    {
       id: 'var-na-2',
       yearProvince: '2024 湖南高考真题卷',
       modelId: 'model-avogadro-constant',
