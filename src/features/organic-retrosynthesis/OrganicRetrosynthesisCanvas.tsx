@@ -8,7 +8,6 @@ import { OrganicRetrosynthesisCenterView } from './components/OrganicRetrosynthe
 import { OrganicRetrosynthesisRightPanel } from './components/OrganicRetrosynthesisRightPanel'
 
 export function OrganicRetrosynthesisCanvas() {
-
   const {
     modelId,
     selectModel,
@@ -21,6 +20,8 @@ export function OrganicRetrosynthesisCanvas() {
     totalSteps,
     isPlaying,
     setIsPlaying,
+    showCrashContrast,
+    setShowCrashContrast,
     handleNextStep,
     handleResetStep,
   } = useOrganicRetrosynthesisChemistry()
@@ -55,19 +56,18 @@ export function OrganicRetrosynthesisCanvas() {
       onSelectModel={selectModel}
       synthesisMode={synthesisMode}
       onSetSynthesisMode={setSynthesisMode}
-      viewMode={viewMode}
-      onSetViewMode={setViewMode}
       currentModel={currentModel}
-      currentStep={currentStep}
       currentStepIndex={currentStepIndex}
-      totalSteps={totalSteps}
       onStepChange={(s) => setCurrentStepIndex(s)}
+      showCrashContrast={showCrashContrast}
+      onToggleCrashContrast={() => setShowCrashContrast(!showCrashContrast)}
     />
   )
 
   const centerContent = (
     <OrganicRetrosynthesisCenterView
       viewMode={viewMode}
+      synthesisMode={synthesisMode}
       currentModel={currentModel}
       currentStep={currentStep}
       currentStepIndex={currentStepIndex}
@@ -77,6 +77,8 @@ export function OrganicRetrosynthesisCanvas() {
       onTogglePlay={() => setIsPlaying(!isPlaying)}
       onResetStep={handleResetStep}
       onStepChange={(s) => setCurrentStepIndex(s)}
+      showCrashContrast={showCrashContrast}
+      onToggleCrashContrast={() => setShowCrashContrast(!showCrashContrast)}
     />
   )
 
@@ -84,6 +86,7 @@ export function OrganicRetrosynthesisCanvas() {
     <OrganicRetrosynthesisRightPanel
       currentModel={currentModel}
       currentStep={currentStep}
+      synthesisMode={synthesisMode}
     />
   )
 

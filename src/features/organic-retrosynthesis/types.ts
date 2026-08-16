@@ -4,7 +4,15 @@ export type RetrosynthesisModelId =
   | 'double-bond-protection'
   | 'carbon-carbon-builder'
 
-export type SynthesisMode = 'forward' | 'retrosynthetic' | 'protection-breakdown'
+export type SynthesisMode = 'retrosynthetic' | 'forward' | 'protection-breakdown'
+
+export interface FunctionalGroupBadge {
+  name: string
+  formula: string
+  color: 'red' | 'blue' | 'emerald' | 'amber' | 'purple'
+  isReacting?: boolean
+  isProtected?: boolean
+}
 
 export interface SvgMoleculeNode {
   id: string
@@ -16,6 +24,8 @@ export interface SvgMoleculeNode {
   badge?: string
   isTarget?: boolean
   isProtectedGroup?: boolean
+  synthonCharge?: 'δ+' | 'δ-' | '+ (亲电)' | '- (亲核)'
+  functionalGroups?: FunctionalGroupBadge[]
 }
 
 export interface SvgConnection {
@@ -25,6 +35,20 @@ export interface SvgConnection {
   isDisconnection?: boolean // 是否为逆合成切断 (✂)
   isProtectionShield?: boolean // 是否为保护盾牌
   condition?: string
+}
+
+export interface SynthonPair {
+  electrophilicSynthon: string // 亲电合成子 (如 [Ar-CO]+)
+  nucleophilicSynthon: string  // 亲核合成子 (如 [Ar'-O]-)
+  electrophilicReagent: string // 实际亲电等价物 (如 乙酰水杨酸酰氯/酸酐)
+  nucleophilicReagent: string  // 实际亲核等价物 (如 对乙酰氨基酚)
+}
+
+export interface SideReactionContrast {
+  riskTitle: string
+  crashCondition: string
+  byproductDesc: string
+  explanation: string
 }
 
 export interface RetrosynthesisStep {
@@ -46,10 +70,21 @@ export interface RetrosynthesisStep {
     positionDesc: string
     retroSynthon: string
   } | null
+  synthonPair?: SynthonPair
+  sideReactionContrast?: SideReactionContrast
   atomEconomy: number // 原子利用率 %
   fgiType: string // 官能团转换类型 (FGI)
   nodes: SvgMoleculeNode[]
   connections: SvgConnection[]
+}
+
+export interface ProtectionCheatItem {
+  targetGroup: string
+  reagents: string
+  protectedForm: string
+  tolerance: string
+  deprotection: string
+  examTip: string
 }
 
 export interface RetrosynthesisModelData {
@@ -63,6 +98,11 @@ export interface RetrosynthesisModelData {
   coreStrategy: string
   steps: RetrosynthesisStep[]
   protectionKeyPoints: string[]
+  unprotectedCrashDemo?: {
+    warningTitle: string
+    consequence: string
+    solution: string
+  }
   infoReaction?: {
     name: string
     equation: string

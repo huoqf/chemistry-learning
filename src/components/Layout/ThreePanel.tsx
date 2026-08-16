@@ -77,7 +77,7 @@ export const ThreePanel: React.FC<ThreePanelProps> = ({
           </>
         ) : (
           <div
-            className="flex-shrink-0 bg-neutral-50 border-r border-neutral-200 overflow-y-auto"
+            className="flex-shrink-0 bg-neutral-50 border-r border-neutral-200 overflow-y-auto overflow-x-hidden"
             style={{ width: leftW }}
           >
             {left}
@@ -95,14 +95,14 @@ export const ThreePanel: React.FC<ThreePanelProps> = ({
       {right && (
         rightBelow ? (
           <div
-            className="flex-shrink-0 bg-neutral-50 border-t border-neutral-200 overflow-y-auto"
+            className="flex-shrink-0 bg-neutral-50 border-t border-neutral-200 overflow-y-auto overflow-x-hidden"
             style={{ maxHeight: '40vh' }}
           >
             {right}
           </div>
         ) : (
           <div
-            className="flex-shrink-0 bg-neutral-50 border-l border-neutral-200 overflow-y-auto"
+            className="flex-shrink-0 bg-neutral-50 border-l border-neutral-200 overflow-y-auto overflow-x-hidden"
             style={{ width: rightW }}
           >
             {right}

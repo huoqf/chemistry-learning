@@ -51,8 +51,8 @@ export const KatexFormula: React.FC<KatexFormulaProps> = ({
   const isBlock = mode === 'block'
 
   const baseClass = isBlock
-    ? 'my-2 px-1 py-2 bg-primary-50 rounded-sm max-w-full'
-    : 'inline-block align-middle mx-1 my-0.5'
+    ? 'my-2 px-1 py-1.5 bg-primary-50 rounded-sm w-full max-w-full overflow-x-auto overflow-y-hidden text-center'
+    : 'inline-block align-middle mx-1 my-0.5 max-w-full overflow-x-auto overflow-y-hidden'
 
   return (
     <div
