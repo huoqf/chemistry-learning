@@ -35,7 +35,6 @@ export function FlashCardCanvas() {
 
   const leftContent = (
     <FlashCardLeftPanel
-      viewMode={params.viewMode}
       category={params.category}
       currentIndex={currentIndex}
       totalCards={totalCards}
@@ -43,7 +42,6 @@ export function FlashCardCanvas() {
       isHeating={params.isHeating}
       isCompressing={params.isCompressing}
       sceneType={currentCard.sceneType}
-      onUpdateParam={(k, v) => updateParam(k as any, v)}
       onChangeCategory={changeCategory}
       onNextCard={nextCard}
       onPrevCard={prevCard}

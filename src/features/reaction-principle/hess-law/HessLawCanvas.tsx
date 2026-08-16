@@ -56,8 +56,6 @@ export const HessLawCanvas: React.FC = () => {
           left={
             <HessLawLeftPanel
               params={params}
-              viewMode={viewMode}
-              setViewMode={setViewMode}
               onUpdateParams={handleUpdateParams}
               onReset={handleReset}
             />

@@ -169,65 +169,7 @@ export function ValenceMatrixCanvas({
   // ───────────────────────────────────────────────────────────────────────────
   const leftContent = (
     <LeftPanel>
-      {/* 1. 中屏主视角平行切换 */}
-      <LeftPanelSection
-        title={
-          <span className="flex items-center gap-1.5 font-bold text-slate-800">
-            <Sparkles className="w-4 h-4 text-indigo-600" />
-            中屏主视角切换
-          </span>
-        }
-        subtitle="中屏舞台平行体验，视野更宽广"
-      >
-        <div className="flex flex-col gap-1.5 pt-1">
-          <button
-            onClick={() => setMainView('matrix')}
-            className={`w-full py-2 px-2.5 text-xs font-bold rounded-lg border text-left flex items-center justify-between transition-all ${
-              mainView === 'matrix'
-                ? 'bg-indigo-600 text-white border-indigo-700 shadow-sm scale-[1.02]'
-                : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-indigo-50'
-            }`}
-          >
-            <span className="flex items-center gap-1.5">
-              <Layers className="w-4 h-4" />
-              1. 价类二维矩阵 & 显色
-            </span>
-            {mainView === 'matrix' && <span className="text-xs">✓</span>}
-          </button>
-
-          <button
-            onClick={() => setMainView('scoring')}
-            className={`w-full py-2 px-2.5 text-xs font-bold rounded-lg border text-left flex items-center justify-between transition-all ${
-              mainView === 'scoring'
-                ? 'bg-indigo-600 text-white border-indigo-700 shadow-sm scale-[1.02]'
-                : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-indigo-50'
-            }`}
-          >
-            <span className="flex items-center gap-1.5">
-              <Edit3 className="w-4 h-4" />
-              2. 踩分点规范手算演练
-            </span>
-            {mainView === 'scoring' && <span className="text-xs">✓</span>}
-          </button>
-
-          <button
-            onClick={() => setMainView('quiz')}
-            className={`w-full py-2 px-2.5 text-xs font-bold rounded-lg border text-left flex items-center justify-between transition-all ${
-              mainView === 'quiz'
-                ? 'bg-indigo-600 text-white border-indigo-700 shadow-sm scale-[1.02]'
-                : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-indigo-50'
-            }`}
-          >
-            <span className="flex items-center gap-1.5">
-              <HelpCircle className="w-4 h-4" />
-              3. 高考真题变式盲盒
-            </span>
-            {mainView === 'quiz' && <span className="text-xs">✓</span>}
-          </button>
-        </div>
-      </LeftPanelSection>
-
-      {/* 2. 元素选择 Section */}
+      {/* 1. 元素选择 Section */}
       <LeftPanelSection
         title={
           <span className="flex items-center gap-1.5 font-bold text-slate-800">

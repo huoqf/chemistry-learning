@@ -122,8 +122,6 @@ export const TitrationErrorPurityCanvas: React.FC = () => {
         <ThreePanel
           left={
             <TitrationErrorLeftPanel
-              viewMode={viewMode}
-              onViewModeChange={setViewMode}
               params={params}
               onUpdateParams={handleUpdateParams}
               onReset={handleReset}

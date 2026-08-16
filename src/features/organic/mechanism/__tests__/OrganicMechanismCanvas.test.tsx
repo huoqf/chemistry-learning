@@ -27,8 +27,7 @@ describe('OrganicMechanismCanvas Component', () => {
 
     // 验证机制选择与渲染
     expect(screen.getByText('母题八：有机反应官能团断键机制工具')).toBeDefined()
-    expect(screen.getByText('中屏视角模式切换')).toBeDefined()
-    expect(screen.getByText('动画场景')).toBeDefined()
+    expect(screen.getByText('图谱探究')).toBeDefined()
   })
 
   it('should switch reaction mechanism upon clicking mechanism buttons for all 6 mechanisms', () => {

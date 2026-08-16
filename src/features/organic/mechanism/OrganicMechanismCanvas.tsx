@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { Sparkles, BookOpen, Eye, FileCheck, HelpCircle } from 'lucide-react'
 import { ThreePanel, AnimationSvgCanvas } from '@/components/Layout'
 import { LeftPanel, ControlPanel, ScoringCardSection, GaokaoVariantQuiz, GaokaoToolHeader } from '@/components/UI'
@@ -14,24 +14,11 @@ import { scenes } from './scenes'
 
 const ORGANIC_MECHANISM_CONTROLS: ControlMeta[] = [
   {
-    type: 'segmented',
-    key: 'viewMode',
-    label: '中屏视角模式切换',
-    group: '高考视角导航',
-    options: [
-      { label: '动画场景', value: 0 },
-      { label: '规范踩分', value: 1 },
-      { label: '真题变式', value: 2 },
-    ],
-  },
-  {
     type: 'modeGrid',
     key: 'mechanism',
     label: '高考 6 大反应机制选择',
     group: '高考核心机制',
     cols: 1,
-    showIf: 'viewMode',
-    showIfValue: 0,
     modes: [
       { value: 0, label: '酯化与水解', description: '酸脱羟基 -OH 醇脱氢 -H (18O 示踪)' },
       { value: 1, label: '烯烃加成与马氏规则', description: 'π 键打开，H 加在 H 多的碳上' },
@@ -46,8 +33,6 @@ const ORGANIC_MECHANISM_CONTROLS: ControlMeta[] = [
     key: 'stage',
     label: '反应历程演练',
     group: '反应历程控制',
-    showIf: 'viewMode',
-    showIfValue: 0,
     options: [
       { label: '1.反应物', value: 0 },
       { label: '2.断键过渡', value: 1 },
@@ -103,13 +88,7 @@ export function OrganicMechanismCanvas({}: OrganicMechanismCanvasProps) {
   const model = getGaokaoModel('model-organic-mechanism')
   const quizData = getModelQuizData('model-organic-mechanism')
 
-  const visibleControls = useMemo(() => {
-    return ORGANIC_MECHANISM_CONTROLS.filter((ctrl) => {
-      if ('key' in ctrl && ctrl.key === 'viewMode') return true
-      if (params.viewMode !== 0) return false
-      return true
-    })
-  }, [params.viewMode])
+  const visibleControls = ORGANIC_MECHANISM_CONTROLS
 
   const renderMechanismSvgScene = () => {
     const SceneComponent = scenes[params.mechanism]

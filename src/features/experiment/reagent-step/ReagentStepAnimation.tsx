@@ -54,8 +54,6 @@ export function ReagentStepAnimation() {
               sceneId={sceneId}
               currentScene={currentScene}
               progress={progress}
-              viewMode={viewMode}
-              setViewMode={setViewMode}
               isAirIsolated={isAirIsolated}
               setIsAirIsolated={setIsAirIsolated}
               isReverseTitration={isReverseTitration}

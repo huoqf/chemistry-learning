@@ -6,8 +6,6 @@ import { HESS_PRESETS, BOND_PRESETS } from '../hooks/useHessLawChemistry'
 
 interface HessLawLeftPanelProps {
   params: HessLawParams
-  viewMode: number
-  setViewMode: (mode: number) => void
   onUpdateParams: (updated: Partial<HessLawParams>) => void
   onReset: () => void
 }
@@ -26,8 +24,6 @@ const COEFF_MARKS = [
 
 export const HessLawLeftPanel: React.FC<HessLawLeftPanelProps> = ({
   params,
-  viewMode,
-  setViewMode,
   onUpdateParams,
   onReset,
 }) => {
@@ -36,22 +32,9 @@ export const HessLawLeftPanel: React.FC<HessLawLeftPanelProps> = ({
   const controlMetas: ControlMeta[] = [
     {
       type: 'segmented',
-      key: 'viewMode',
-      label: '高考中屏视角切换',
-      group: '高考视角',
-      options: [
-        { label: '图谱探究', value: 0 },
-        { label: '规范踩分', value: 1 },
-        { label: '真题研析', value: 2 },
-      ],
-    },
-    {
-      type: 'segmented',
       key: 'modeVal',
       label: '母题九核心模块探究',
       group: '热化学三域',
-      showIf: 'viewMode',
-      showIfValue: 0,
       options: [
         { label: '盖斯定律叠加', value: 0 },
         { label: '微观键能计算', value: 1 },
@@ -142,7 +125,6 @@ export const HessLawLeftPanel: React.FC<HessLawLeftPanelProps> = ({
   ]
 
   const controlParams: Record<string, number> = {
-    viewMode,
     modeVal: modeIndex,
     hessGroupIndex: params.hessGroupIndex,
     k1: params.k1,
@@ -152,9 +134,7 @@ export const HessLawLeftPanel: React.FC<HessLawLeftPanelProps> = ({
   }
 
   const handleControlUpdate = (key: string, value: number) => {
-    if (key === 'viewMode') {
-      setViewMode(value)
-    } else if (key === 'modeVal') {
+    if (key === 'modeVal') {
       const modeStr = MODE_MAP[value] || 'hess-overlay'
       const currentGroup = HESS_PRESETS[params.hessGroupIndex] || HESS_PRESETS[0]
       onUpdateParams({

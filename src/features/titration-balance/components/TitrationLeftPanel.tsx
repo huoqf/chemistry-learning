@@ -28,15 +28,6 @@ export function TitrationLeftPanel({
     []
   )
 
-  const viewModeOptions = useMemo(
-    () => [
-      { label: '动画与图表', value: 0 },
-      { label: '规范踩分', value: 1 },
-      { label: '真题变式', value: 2 },
-    ],
-    []
-  )
-
   const indicatorOptions = useMemo(
     () => [
       { label: '无指示剂', value: 'none' },
@@ -76,14 +67,6 @@ export function TitrationLeftPanel({
 
   return (
     <LeftPanel>
-      <LeftPanelSection title="高考视角导航">
-        <SegmentedControl
-          options={viewModeOptions}
-          value={params.viewMode}
-          onChange={(v) => updateParam('viewMode', v)}
-        />
-      </LeftPanelSection>
-
       <LeftPanelSection title="滴定体系选择">
         <div className="flex flex-col gap-1.5">
           {systemOptions.map((opt) => (

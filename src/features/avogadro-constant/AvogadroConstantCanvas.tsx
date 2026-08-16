@@ -64,8 +64,6 @@ export const AvogadroConstantCanvas: React.FC = () => {
           left={
             <AvogadroLeftPanel
               params={params}
-              viewMode={viewMode}
-              setViewMode={setViewMode}
               onUpdateParams={handleUpdateParams}
               onReset={handleReset}
             />

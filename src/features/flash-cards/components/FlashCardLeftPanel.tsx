@@ -1,11 +1,9 @@
-import { LeftPanel, LeftPanelSection, ControlPanel, Button } from '@/components/UI'
+import { LeftPanel, LeftPanelSection, Button } from '@/components/UI'
 import { FLASH_CARD_CATEGORIES } from '../constants'
 import type { FlashCardCategory } from '../types'
-import type { ControlMeta } from '@/data/types'
 import { Sparkles, Shuffle, ChevronLeft, ChevronRight, Eye, Flame, Gauge } from 'lucide-react'
 
 interface FlashCardLeftPanelProps {
-  viewMode: number
   category: FlashCardCategory
   currentIndex: number
   totalCards: number
@@ -13,7 +11,6 @@ interface FlashCardLeftPanelProps {
   isHeating: boolean
   isCompressing: boolean
   sceneType: string
-  onUpdateParam: (key: string, value: any) => void
   onChangeCategory: (cat: FlashCardCategory) => void
   onNextCard: () => void
   onPrevCard: () => void
@@ -24,7 +21,6 @@ interface FlashCardLeftPanelProps {
 }
 
 export function FlashCardLeftPanel({
-  viewMode,
   category,
   currentIndex,
   totalCards,
@@ -32,7 +28,6 @@ export function FlashCardLeftPanel({
   isHeating,
   isCompressing,
   sceneType,
-  onUpdateParam,
   onChangeCategory,
   onNextCard,
   onPrevCard,
@@ -41,36 +36,9 @@ export function FlashCardLeftPanel({
   onToggleHeating,
   onToggleCompressing,
 }: FlashCardLeftPanelProps) {
-  const controls: ControlMeta[] = [
-    {
-      type: 'segmented',
-      key: 'viewMode',
-      label: '中屏视角模式切换',
-      group: '高考视角导航',
-      options: [
-        { label: '动画/盲盒探究', value: 0 },
-        { label: '规范踩分', value: 1 },
-        { label: '真题变式', value: 2 },
-      ],
-    },
-  ]
-
   return (
     <LeftPanel>
-      <ControlPanel
-        controls={controls}
-        params={{ viewMode }}
-        updateParam={(k, v) => onUpdateParam(k, v)}
-        setParams={(p) => {
-          Object.entries(p).forEach(([k, v]) => onUpdateParam(k, v))
-        }}
-        resetAnimation={() => {}}
-        restartAnimation={() => {}}
-      />
-
-      {viewMode === 0 && (
-        <>
-          <LeftPanelSection title="易错事实盲盒分类筛选">
+      <LeftPanelSection title="易错事实盲盒分类筛选">
             <div className="flex flex-col gap-1.5">
               {FLASH_CARD_CATEGORIES.map((cat) => (
                 <button
@@ -153,8 +121,6 @@ export function FlashCardLeftPanel({
               </Button>
             </LeftPanelSection>
           )}
-        </>
-      )}
     </LeftPanel>
   )
 }

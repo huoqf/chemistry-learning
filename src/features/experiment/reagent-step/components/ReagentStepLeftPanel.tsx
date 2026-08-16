@@ -1,15 +1,13 @@
-import { LeftPanel, LeftPanelSection, OptionButton, SegmentedControl } from '@/components/UI'
+import { LeftPanel, LeftPanelSection, OptionButton } from '@/components/UI'
 import { ShieldAlert, ArrowLeftRight, FlaskConical } from 'lucide-react'
 
 import { REAGENT_SCENES } from '../data/reagentData'
-import type { ReagentSceneId, ViewMode, ReagentSceneConfig, ReagentStepPoint } from '../types'
+import type { ReagentSceneId, ReagentSceneConfig, ReagentStepPoint } from '../types'
 
 export interface ReagentStepLeftPanelProps {
   sceneId: ReagentSceneId
   currentScene: ReagentSceneConfig
   progress: number
-  viewMode: ViewMode
-  setViewMode: (v: ViewMode) => void
 
   isAirIsolated: boolean
   setIsAirIsolated: (v: boolean) => void
@@ -27,8 +25,6 @@ export interface ReagentStepLeftPanelProps {
 export function ReagentStepLeftPanel({
   sceneId,
   currentScene,
-  viewMode,
-  setViewMode,
 
   isAirIsolated,
   setIsAirIsolated,
@@ -43,20 +39,7 @@ export function ReagentStepLeftPanel({
 }: ReagentStepLeftPanelProps) {
   return (
     <LeftPanel>
-      {/* 1. 中屏探究视角模式平级切换 */}
-      <LeftPanelSection title="中屏探究视角" subtitle="切换中屏视图模式">
-        <SegmentedControl
-          options={[
-            { value: 'animation', label: '动画演练' },
-            { value: 'scoring', label: '规范踩分' },
-            { value: 'quiz', label: '真题变式' },
-          ]}
-          value={viewMode}
-          onChange={(val) => setViewMode(val as ViewMode)}
-        />
-      </LeftPanelSection>
-
-      {/* 2. 高考核心母题场景选择 */}
+      {/* 1. 高考核心母题场景选择 */}
       <LeftPanelSection title="高考核心母题场景" subtitle="点击切换 5 大高频滴加演练专题">
         <div className="flex flex-col gap-2">
           {Object.values(REAGENT_SCENES).map((s) => (

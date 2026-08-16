@@ -10,34 +10,17 @@ import type { ChartTabMode, SystemReactionId, CatalystType, NexusParams } from '
 
 interface ReactionPrincipleLeftPanelProps {
   params: NexusParams
-  viewMode: number
-  setViewMode: (v: number) => void
   onUpdateParams: (updated: Partial<NexusParams>) => void
   onReset: () => void
 }
 
 export const ReactionPrincipleLeftPanel: React.FC<ReactionPrincipleLeftPanelProps> = ({
   params,
-  viewMode,
-  setViewMode,
   onUpdateParams,
   onReset,
 }) => {
   return (
     <LeftPanel>
-      {/* 平级三视角选择 */}
-      <LeftPanelSection title="高考探究视角">
-        <SegmentedControl
-          options={[
-            { label: '图谱探究', value: 0 },
-            { label: '规范踩分', value: 1 },
-            { label: '真题研析', value: 2 },
-          ]}
-          value={viewMode}
-          onChange={(val) => setViewMode(Number(val))}
-        />
-      </LeftPanelSection>
-
       {/* 视图图谱类型 */}
       <LeftPanelSection title="探究图谱选择">
         <SegmentedControl

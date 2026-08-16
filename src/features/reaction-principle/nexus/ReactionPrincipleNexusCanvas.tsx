@@ -56,8 +56,6 @@ export const ReactionPrincipleNexusCanvas: React.FC = () => {
           left={
             <ReactionPrincipleLeftPanel
               params={params}
-              viewMode={viewMode}
-              setViewMode={setViewMode}
               onUpdateParams={handleUpdateParams}
               onReset={handleReset}
             />

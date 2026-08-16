@@ -8,7 +8,6 @@ import {
   ParamControl,
 } from '@/components/UI'
 import type {
-  ViewMode,
   TitrationErrorParams,
   TitrationMode,
   TitrationType,
@@ -17,8 +16,6 @@ import type {
 } from '../types'
 
 interface TitrationErrorLeftPanelProps {
-  viewMode: ViewMode
-  onViewModeChange: (mode: ViewMode) => void
   params: TitrationErrorParams
   onUpdateParams: (updated: Partial<TitrationErrorParams>) => void
   onReset: () => void
@@ -40,8 +37,6 @@ const ERROR_OPERATIONS: { id: ErrorOperation; label: string }[] = [
 ]
 
 export const TitrationErrorLeftPanel: React.FC<TitrationErrorLeftPanelProps> = ({
-  viewMode,
-  onViewModeChange,
   params,
   onUpdateParams,
   onReset,
@@ -215,153 +210,118 @@ export const TitrationErrorLeftPanel: React.FC<TitrationErrorLeftPanelProps> = (
 
   return (
     <LeftPanel>
-      {/* 顶层视角 */}
-      <LeftPanelSection title="解题视角">
+      <LeftPanelSection title="探究模式">
         <SegmentedControl
-          value={viewMode}
-          onChange={(val) => onViewModeChange(val as ViewMode)}
+          value={params.mode}
+          onChange={(val) => onUpdateParams({ mode: val as TitrationMode })}
           options={[
-            { value: 'explore', label: '图谱探究' },
-            { value: 'scoring', label: '规范踩分' },
-            { value: 'quiz', label: '真题研析' },
+            { value: 'error-analysis', label: '误差分析' },
+            { value: 'purity-calc', label: '纯度/返滴定' },
+            { value: 'yield-calc', label: '产率推导' },
           ]}
         />
       </LeftPanelSection>
 
-      {/* 当处于 图谱探究 ('explore') 时 */}
-      {viewMode === 'explore' && (
+      {/* 1. 误差分析 */}
+      {params.mode === 'error-analysis' && (
         <>
-          <LeftPanelSection title="探究模式">
+          <LeftPanelSection title="滴定体系">
             <SegmentedControl
-              value={params.mode}
-              onChange={(val) => onUpdateParams({ mode: val as TitrationMode })}
+              value={params.titrationType}
+              onChange={(val) => onUpdateParams({ titrationType: val as TitrationType })}
               options={[
-                { value: 'error-analysis', label: '误差分析' },
-                { value: 'purity-calc', label: '纯度/返滴定' },
-                { value: 'yield-calc', label: '产率推导' },
+                { value: 'acid-base', label: '酸碱滴定' },
+                { value: 'redox', label: '氧化还原' },
+                { value: 'precipitation', label: '沉淀滴定' },
               ]}
             />
           </LeftPanelSection>
 
-          {/* 1. 误差分析 */}
-          {params.mode === 'error-analysis' && (
-            <>
-              <LeftPanelSection title="滴定体系">
-                <SegmentedControl
-                  value={params.titrationType}
-                  onChange={(val) => onUpdateParams({ titrationType: val as TitrationType })}
-                  options={[
-                    { value: 'acid-base', label: '酸碱滴定' },
-                    { value: 'redox', label: '氧化还原' },
-                    { value: 'precipitation', label: '沉淀滴定' },
-                  ]}
+          <LeftPanelSection title="典型误操作">
+            <div className="space-y-1.5 max-h-52 overflow-y-auto pr-1">
+              {ERROR_OPERATIONS.map((op) => (
+                <OptionButton
+                  key={op.id}
+                  label={op.label}
+                  variant="preset"
+                  selected={params.errorOp === op.id}
+                  onClick={() => onUpdateParams({ errorOp: op.id })}
                 />
-              </LeftPanelSection>
+              ))}
+            </div>
+          </LeftPanelSection>
 
-              <LeftPanelSection title="典型误操作">
-                <div className="space-y-1.5 max-h-52 overflow-y-auto pr-1">
-                  {ERROR_OPERATIONS.map((op) => (
-                    <OptionButton
-                      key={op.id}
-                      label={op.label}
-                      variant="preset"
-                      selected={params.errorOp === op.id}
-                      onClick={() => onUpdateParams({ errorOp: op.id })}
-                    />
-                  ))}
-                </div>
-              </LeftPanelSection>
+          <LeftPanelSection title="视线与浓度微调">
+            <ParamControl
+              params={errorAnalysisParams}
+              onParamChange={handleParamChange}
+            />
+          </LeftPanelSection>
+        </>
+      )}
 
-              <LeftPanelSection title="视线与浓度微调">
-                <ParamControl
-                  params={errorAnalysisParams}
-                  onParamChange={handleParamChange}
-                />
-              </LeftPanelSection>
-            </>
-          )}
+      {/* 2. 纯度/返滴定 */}
+      {params.mode === 'purity-calc' && (
+        <>
+          <LeftPanelSection title="计算方法">
+            <SegmentedControl
+              value={params.purityMethod}
+              onChange={(val) => onUpdateParams({ purityMethod: val as PurityCalcMethod })}
+              options={[
+                { value: 'direct', label: '直接滴定' },
+                { value: 'back-titration', label: '返滴定' },
+                { value: 'multistep-redox', label: '氧化还原链' },
+              ]}
+            />
+          </LeftPanelSection>
 
-          {/* 2. 纯度/返滴定 */}
-          {params.mode === 'purity-calc' && (
-            <>
-              <LeftPanelSection title="计算方法">
-                <SegmentedControl
-                  value={params.purityMethod}
-                  onChange={(val) => onUpdateParams({ purityMethod: val as PurityCalcMethod })}
-                  options={[
-                    { value: 'direct', label: '直接滴定' },
-                    { value: 'back-titration', label: '返滴定' },
-                    { value: 'multistep-redox', label: '氧化还原链' },
-                  ]}
-                />
-              </LeftPanelSection>
+          <LeftPanelSection title="样品与定容">
+            <ParamControl
+              params={purityCommonParams}
+              onParamChange={handleParamChange}
+            />
+          </LeftPanelSection>
 
-              <LeftPanelSection title="样品与定容">
-                <ParamControl
-                  params={purityCommonParams}
-                  onParamChange={handleParamChange}
-                />
-              </LeftPanelSection>
-
-              {params.purityMethod === 'back-titration' && (
-                <LeftPanelSection title="过量试剂 1">
-                  <ParamControl
-                    params={backTitrationReagent1Params}
-                    onParamChange={handleParamChange}
-                  />
-                </LeftPanelSection>
-              )}
-
-              <LeftPanelSection
-                title={
-                  params.purityMethod === 'back-titration'
-                    ? '滴定液 2'
-                    : '标准滴定液'
-                }
-              >
-                <ParamControl
-                  params={standardReagent2Params}
-                  onParamChange={handleParamChange}
-                />
-              </LeftPanelSection>
-            </>
-          )}
-
-          {/* 3. 产率推导 */}
-          {params.mode === 'yield-calc' && (
-            <LeftPanelSection title="投料与提纯">
+          {params.purityMethod === 'back-titration' && (
+            <LeftPanelSection title="过量试剂 1">
               <ParamControl
-                params={yieldCalcParams}
+                params={backTitrationReagent1Params}
                 onParamChange={handleParamChange}
               />
             </LeftPanelSection>
           )}
 
-          {/* 重置 */}
-          <div className="pt-2">
-            <Button variant="secondary" onClick={onReset} className="w-full text-xs">
-              重置参数
-            </Button>
-          </div>
+          <LeftPanelSection
+            title={
+              params.purityMethod === 'back-titration'
+                ? '滴定液 2'
+                : '标准滴定液'
+            }
+          >
+            <ParamControl
+              params={standardReagent2Params}
+              onParamChange={handleParamChange}
+            />
+          </LeftPanelSection>
         </>
       )}
 
-      {/* 视角 'scoring' / 'quiz' 导引 */}
-      {viewMode === 'scoring' && (
-        <LeftPanelSection title="踩分卡说明">
-          <p className="text-xs text-neutral-600 leading-relaxed">
-            中屏已载入定量滴定与计算答题规范踩分卡，核对表达式与单位要求。
-          </p>
+      {/* 3. 产率推导 */}
+      {params.mode === 'yield-calc' && (
+        <LeftPanelSection title="投料与提纯">
+          <ParamControl
+            params={yieldCalcParams}
+            onParamChange={handleParamChange}
+          />
         </LeftPanelSection>
       )}
 
-      {viewMode === 'quiz' && (
-        <LeftPanelSection title="真题说明">
-          <p className="text-xs text-neutral-600 leading-relaxed">
-            中屏已载入全国高考真题变式，分析滴定突跃曲线并查看模型对齐。
-          </p>
-        </LeftPanelSection>
-      )}
+      {/* 重置 */}
+      <div className="pt-2">
+        <Button variant="secondary" onClick={onReset} className="w-full text-xs">
+          重置参数
+        </Button>
+      </div>
     </LeftPanel>
   )
 }

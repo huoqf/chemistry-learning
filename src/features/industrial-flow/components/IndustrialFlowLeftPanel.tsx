@@ -28,12 +28,6 @@ export const IndustrialFlowLeftPanel: React.FC<IndustrialFlowLeftPanelProps> = (
   isPhInSafeRange,
   safePhRange,
 }) => {
-  const viewOptions = [
-    { label: '流程与曲线', value: 0 },
-    { label: '规范踩分', value: 1 },
-    { label: '高考真题', value: 2 },
-  ]
-
   const systemOptions: { label: string; value: IndustrialFlowSystemId }[] = [
     { label: 'Fe-Al-Mn 软锰矿', value: 'fe-al-mn' },
     { label: 'Fe-Cu-Zn 铜锌渣', value: 'fe-cu-zn' },
@@ -65,16 +59,7 @@ export const IndustrialFlowLeftPanel: React.FC<IndustrialFlowLeftPanelProps> = (
 
   return (
     <LeftPanel className="p-4 flex flex-col gap-4 overflow-y-auto">
-      {/* 1. 视图模式切换 */}
-      <LeftPanelSection title="平行解题视角切换">
-        <SegmentedControl
-          options={viewOptions}
-          value={params.viewMode}
-          onChange={(val) => updateParam('viewMode', val)}
-        />
-      </LeftPanelSection>
-
-      {/* 2. 工艺系统模板 */}
+      {/* 1. 工艺系统模板 */}
       <LeftPanelSection title="工业流程考题系统 (5 大经典模式)">
         <SegmentedControl
           options={systemOptions}

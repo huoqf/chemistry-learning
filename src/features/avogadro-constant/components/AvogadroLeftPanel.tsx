@@ -11,8 +11,6 @@ import type { AvogadroParams, TrapCategory } from '../types'
 
 interface AvogadroLeftPanelProps {
   params: AvogadroParams
-  viewMode: number
-  setViewMode: (mode: number) => void
   onUpdateParams: (updated: Partial<AvogadroParams>) => void
   onReset: () => void
 }
