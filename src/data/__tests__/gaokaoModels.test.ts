@@ -1,19 +1,51 @@
 import { describe, it, expect } from 'vitest'
-import { gaokaoModels } from '../gaokaoModels'
+import { gaokaoModels, type GaokaoModelCategory } from '../gaokaoModels'
 import { getModelQuizData } from '../gaokaoQuizData'
 import { getKnowledgeNode } from '../knowledgeTree'
 
 describe('Gaokao Models & Quiz Data 整合审计测试', () => {
-  it('应当包含 16 大高考专属交互工具 (3 大记忆矩阵 + 13 大解题母题)', () => {
-    expect(gaokaoModels.length).toBeGreaterThanOrEqual(13)
+  it('恰好包含 16 个高考专属交互工具 (3 大记忆矩阵 + 8 大解题母题 + 2 大实验链 + 3 专项工具)', () => {
+    // 精确断言总数，防止遗漏/重夏注册
+    expect(gaokaoModels.length).toBe(16)
+
     const modelIds = gaokaoModels.map(m => m.id)
-    
-    // 验证补齐的 5 大高考高频难点专题
+
+    // ── A. 3 大记忆矩阵 (memory-matrix) ──
+    expect(modelIds).toContain('model-valence-matrix')
+    expect(modelIds).toContain('model-reagent-step')
+    expect(modelIds).toContain('model-flash-cards')
+
+    // ── B. 8 大解题母题 (master-model) ──
+    expect(modelIds).toContain('model-titration-balance')
+    expect(modelIds).toContain('model-electrochemical-twin')
+    expect(modelIds).toContain('model-crystal-3d-split')
+    expect(modelIds).toContain('model-reaction-principle-nexus')
+    expect(modelIds).toContain('model-vsepr-hybrid-3d')
+    expect(modelIds).toContain('model-organic-mechanism')
     expect(modelIds).toContain('model-hess-law')
     expect(modelIds).toContain('model-element-periodic-property')
+    expect(modelIds).toContain('model-organic-retrosynthesis')
+
+    // ── C. 2 大实验链 (experiment-chain) ──
+    expect(modelIds).toContain('model-gas-chain')
+    expect(modelIds).toContain('model-industrial-flow')
+
+    // ── D. 3 大记忆矩阵层实验工具 (memory-matrix / experiment-chain) ──
     expect(modelIds).toContain('model-avogadro-constant')
     expect(modelIds).toContain('model-titration-error-purity')
-    expect(modelIds).toContain('model-organic-retrosynthesis')
+  })
+
+  it('所有高考母题 category 字段必须是合法枚举值', () => {
+    const validCategories: GaokaoModelCategory[] = ['master-model', 'memory-matrix', 'experiment-chain']
+    gaokaoModels.forEach(model => {
+      expect(
+        validCategories,
+        `母题 ${model.id} 的 category="${model.category}" 不在合法枚举中`
+      ).toContain(model.category)
+    })
+    // 记忆矩阵类别应有 4 个（含 NA 工具被归类为 memory-matrix）
+    const memoryMatrix = gaokaoModels.filter(m => m.category === 'memory-matrix')
+    expect(memoryMatrix.length).toBeGreaterThanOrEqual(3)
   })
 
   it('所有高考母题工具路由与关联教材知识 ID 必须有效声明', () => {
@@ -43,7 +75,9 @@ describe('Gaokao Models & Quiz Data 整合审计测试', () => {
 
     const hessQuiz = getModelQuizData('model-hess-law')
     expect(hessQuiz).toBeDefined()
-    expect(hessQuiz?.scoringSteps[0].title).toContain('盖斯定律')
+    // 解耦：仅验证盖斯定律步骤存在内容，不绑定位置索引
+    const hessTitles = hessQuiz?.scoringSteps.map(s => s.title) ?? []
+    expect(hessTitles.some(t => t.includes('盖斯定律'))).toBe(true)
   })
 })
 

@@ -7,6 +7,20 @@ const ANIMATION_PAGES = [
   { id: 'anim-vsepr', title: 'VSEPR 模型' },
   { id: 'anim-unit-cell-calculation', title: '晶胞结构与密度计算' },
   { id: 'anim-chirality', title: '手性分子与立体异构' },
+  { id: 'anim-primary-cell', title: '原电池工作原理' },
+  { id: 'anim-electrolytic-cell', title: '电解池工作原理' },
+  { id: 'anim-electrochemical-application', title: '电化学综合应用' },
+  { id: 'anim-extraction-distillation', title: '萩取分液与蒸馏实验' },
+  { id: 'anim-redox-electron-transfer', title: '电子转移与化合价' },
+]
+
+const GAOKAO_TOOL_ROUTES = [
+  'model-valence-matrix',
+  'model-reagent-step',
+  'model-gas-chain',
+  'model-industrial-flow',
+  'model-electrochemical-twin',
+  'model-hess-law',
 ]
 
 test.describe('高中化学学习系统 - 页面基础渲染检查', () => {
@@ -99,6 +113,26 @@ test.describe('高中化学学习系统 - 页面基础渲染检查', () => {
       for (const info of overflows) {
         expect(info.overflow, `公式卡片横向溢出: scrollWidth=${info.scrollWidth}, clientWidth=${info.clientWidth}`).toBe(false)
       }
+    })
+  }
+
+  for (const toolId of GAOKAO_TOOL_ROUTES) {
+    test(`高考工具路由 /gaokao-tool/${toolId} 正常加载`, async ({ page }) => {
+      await page.goto(`/#/gaokao-tool/${toolId}`)
+      await page.waitForLoadState('networkidle')
+      await expect(page.locator('text=Loading...')).toHaveCount(0, { timeout: 10000 })
+
+      // 页面主体须有内容，不为空（防止路由 404 或白屏）
+      const bodyText = await page.locator('body').innerText()
+      expect(bodyText.length).toBeGreaterThan(20)
+
+      // 页面须包含"化学"或工具标题相关关键词
+      const hasChemContent =
+        bodyText.includes('化学') ||
+        bodyText.includes('高考') ||
+        bodyText.includes('母题') ||
+        bodyText.includes('矩阵')
+      expect(hasChemContent, `工具 ${toolId} 页面内容缺少化学相关文字`).toBe(true)
     })
   }
 })
