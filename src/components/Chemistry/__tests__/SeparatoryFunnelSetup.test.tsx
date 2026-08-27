@@ -17,23 +17,27 @@ describe('SeparatoryFunnelSetup 预制萃取分液装配体组件测试', () => 
     isTilted: false,
     isValveOpen: false,
     hasStopper: true,
+    isStopperLifted: false,
+    isBlocked: false,
+    isEthanolMiscible: false,
+    funnelTransform: { x: 0, y: 0, rotate: 0 },
     isGassing: false,
     waterLayerLabel: '水相(无色)',
     orgLayerLabel: 'CCl₄相(紫红)',
     progressText: '1. 装入碘水与无色 CCl₄',
   }
 
-  it('成功渲染装配体及其内部铁架台、分液漏斗、双烧杯与铁律提示', () => {
+  it('成功渲染装配体及其内部铁架台、分液漏斗、双烧杯与操作提示', () => {
     const { container } = render(
       <svg>
         <SeparatoryFunnelSetup extraction={mockState} />
       </svg>
     )
 
-    // 检查铁律文本说明
-    expect(container.textContent).toContain('烧杯A (接下层液·45°斜切尖嘴紧贴内壁)')
-    expect(container.textContent).toContain('烧杯B (接上层液·上口倒出)')
-    expect(container.textContent).toContain('高考铁律：下层液体由下口靠壁流出 (45°斜切尖嘴紧贴烧杯 A 内壁)')
+    // 检查文本说明
+    expect(container.textContent).toContain('烧杯A (接下层液·45°尖嘴贴壁)')
+    expect(container.textContent).toContain('烧杯B (接上层液·上口倒入)')
+    expect(container.textContent).toContain('1. 装入碘水与无色 CCl₄')
 
     // 检查整体 SVG 路径与渲染节点
     const paths = container.querySelectorAll('path')

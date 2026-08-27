@@ -92,4 +92,34 @@ describe('useExtractionDistillationChemistry Hook', () => {
     expect(distillation.isWaterReversed).toBe(true)
     expect(distillation.waterFillLevel).toBe(0.35)
   })
+
+  it('萃取反例 (乙醇)：乙醇与水完全互溶不分层，无法萃取', () => {
+    const { result } = renderHook(() =>
+      useExtractionDistillationChemistry({
+        experimentMode: 0,
+        solvent: 2, // 乙醇
+        time: 6.0,
+      })
+    )
+
+    const { extraction } = result.current
+    expect(extraction.isEthanolMiscible).toBe(true)
+    expect(extraction.topLevel).toBe(0)
+    expect(extraction.isValveOpen).toBe(false)
+  })
+
+  it('萃取错操作 (未拔塞)：放液受负压阻断停止流出', () => {
+    const { result } = renderHook(() =>
+      useExtractionDistillationChemistry({
+        experimentMode: 0,
+        solvent: 0,
+        extractionMisoperation: 1, // 未拔塞
+        time: 9.0,
+      })
+    )
+
+    const { extraction } = result.current
+    expect(extraction.isBlocked).toBe(true)
+    expect(extraction.isValveOpen).toBe(false)
+  })
 })
