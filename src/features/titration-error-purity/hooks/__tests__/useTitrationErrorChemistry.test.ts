@@ -100,6 +100,51 @@ describe('useTitrationErrorChemistry — 滴定误差与纯度产率测试', () 
       expect(result.current.errorResult.effectDirection).toBe('high')
       expect(result.current.errorResult.cCalculated).toBeGreaterThan(baseParams.cSampleTrue)
     })
+
+    it('始仰终俯 (view-start-up-end-down): 测得体积 ΔV 偏小，测定结果偏低', () => {
+      const { result } = renderHook(() =>
+        useTitrationErrorChemistry({ ...baseParams, errorOp: 'view-start-up-end-down' })
+      )
+
+      expect(result.current.errorResult.effectDirection).toBe('low')
+      expect(result.current.errorResult.cCalculated).toBeLessThan(baseParams.cSampleTrue)
+    })
+
+    it('始俯终仰 (view-start-down-end-up): 测得体积 ΔV 偏大，测定结果偏高', () => {
+      const { result } = renderHook(() =>
+        useTitrationErrorChemistry({ ...baseParams, errorOp: 'view-start-down-end-up' })
+      )
+
+      expect(result.current.errorResult.effectDirection).toBe('high')
+      expect(result.current.errorResult.cCalculated).toBeGreaterThan(baseParams.cSampleTrue)
+    })
+
+    it('容量瓶定容俯视 (volumetric-flask-down): 标准液浓度偏高，消耗体积偏小，测定结果偏低', () => {
+      const { result } = renderHook(() =>
+        useTitrationErrorChemistry({ ...baseParams, errorOp: 'volumetric-flask-down' })
+      )
+
+      expect(result.current.errorResult.effectDirection).toBe('low')
+      expect(result.current.errorResult.cCalculated).toBeLessThan(baseParams.cSampleTrue)
+    })
+
+    it('指示剂变色过早 (indicator-early): 终点提前，测定结果偏低', () => {
+      const { result } = renderHook(() =>
+        useTitrationErrorChemistry({ ...baseParams, errorOp: 'indicator-early' })
+      )
+
+      expect(result.current.errorResult.effectDirection).toBe('low')
+      expect(result.current.errorResult.cCalculated).toBeLessThan(baseParams.cSampleTrue)
+    })
+
+    it('指示剂变色过迟 (indicator-late): 终点滞后滴入过量，测定结果偏高', () => {
+      const { result } = renderHook(() =>
+        useTitrationErrorChemistry({ ...baseParams, errorOp: 'indicator-late' })
+      )
+
+      expect(result.current.errorResult.effectDirection).toBe('high')
+      expect(result.current.errorResult.cCalculated).toBeGreaterThan(baseParams.cSampleTrue)
+    })
   })
 
   // ──────────────────────────────────────────────
@@ -131,6 +176,41 @@ describe('useTitrationErrorChemistry — 滴定误差与纯度产率测试', () 
   describe('样品纯度与产率计算', () => {
     it('直接滴定法正确计算纯度百分比与物质的量', () => {
       const { result } = renderHook(() => useTitrationErrorChemistry(baseParams))
+      const { purityResult } = result.current
+
+      expect(purityResult.purityPct).toBeGreaterThan(0)
+      expect(purityResult.purityPct).toBeLessThanOrEqual(100)
+    })
+
+    it('返滴定法正确计算过量酸被中和后的样品纯度', () => {
+      const { result } = renderHook(() =>
+        useTitrationErrorChemistry({
+          ...baseParams,
+          purityMethod: 'back-titration',
+          reagent1Conc: 0.2,
+          reagent1Vol: 30.0,
+          reagent2Conc: 0.1,
+          reagent2Vol: 20.0,
+          sampleMass: 1.0,
+        })
+      )
+      const { purityResult } = result.current
+
+      expect(purityResult.purityPct).toBeGreaterThan(0)
+      expect(purityResult.calcStepsLatex).toBeDefined()
+      expect(purityResult.stoichiometryRatio).toContain('n(HCl总) - n(NaOH反滴)')
+    })
+
+    it('氧化还原滴定法正确根据得失电子比例计算纯度', () => {
+      const { result } = renderHook(() =>
+        useTitrationErrorChemistry({
+          ...baseParams,
+          purityMethod: 'multistep-redox',
+          reagent1Conc: 0.05,
+          reagent1Vol: 20.0,
+          sampleMass: 1.0,
+        })
+      )
       const { purityResult } = result.current
 
       expect(purityResult.purityPct).toBeGreaterThan(0)
