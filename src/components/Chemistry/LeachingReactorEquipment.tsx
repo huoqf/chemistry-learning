@@ -65,90 +65,139 @@ export function LeachingReactorEquipment({
   const cx = w * 0.5
 
   return (
-    <g transform={`translate(${x}, ${y})`}>
-      {/* 顶部搅拌电机机座 */}
-      <rect
-        x={cx - w * 0.15}
-        y={0}
-        width={w * 0.3}
-        height={bodyY}
-        rx={2}
-        fill={SCENE_COLORS.materials.iron}
-        stroke={SCENE_COLORS.materials.metalBorder}
-        strokeWidth={STROKE.reference}
-      />
+    <g transform={`translate(${x}, ${y})`} id="leaching-reactor">
+      {/* 1. 顶部搅拌电机与减速箱 (Motor & Gearbox) */}
+      <g id="top-motor">
+        <rect
+          x={cx - w * 0.12}
+          y={0}
+          width={w * 0.24}
+          height={bodyY * 0.65}
+          rx={2}
+          fill={SCENE_COLORS.materials.iron}
+          stroke={SCENE_COLORS.materials.metalBorder}
+          strokeWidth={1}
+        />
+        {/* 减速箱连接底盘法兰 */}
+        <rect
+          x={cx - w * 0.18}
+          y={bodyY * 0.65}
+          width={w * 0.36}
+          height={bodyY * 0.35}
+          fill={SCENE_COLORS.materials.metalBorder}
+        />
+      </g>
 
-      {/* 槽体外壳（圆角矩形） */}
+      {/* 2. 槽体外壳（带圆弧底与保温夹套） */}
       <rect
         x={0}
         y={bodyY}
         width={w}
         height={bodyH}
-        rx={6}
+        rx={8}
         fill={SCENE_COLORS.industrialEquipment.leachingReactor}
         stroke={SCENE_COLORS.industrialEquipment.leachingReactorBorder}
         strokeWidth={STROKE.objectLine}
       />
+      {/* 夹套外壁高光 */}
+      <line
+        x1={3}
+        y1={bodyY + 6}
+        x2={3}
+        y2={h - 10}
+        stroke={SCENE_COLORS.materials.metalSheen}
+        strokeWidth={1}
+        opacity={0.4}
+      />
 
-      {/* 槽内浸出液/矿浆 */}
+      {/* 3. 槽内浸出液/矿浆 (带凹液面与沉淀悬浮) */}
       {fillLevel > 0 && (
-        <rect
-          x={wallT}
-          y={h - wallT - liquidH}
-          width={innerW}
-          height={liquidH}
-          fill={fillColor}
-          opacity={0.85}
-          rx={2}
-        />
+        <g clipPath={`url(#leaching-clip-${x}-${y})`}>
+          <rect
+            x={wallT}
+            y={h - wallT - liquidH}
+            width={innerW}
+            height={liquidH}
+            fill={fillColor}
+            opacity={0.85}
+          />
+          {/* 液面微波纹 */}
+          <line
+            x1={wallT}
+            y1={h - wallT - liquidH}
+            x2={w - wallT}
+            y2={h - wallT - liquidH}
+            stroke={fillColor}
+            strokeWidth={STROKE.reference}
+          />
+        </g>
       )}
 
-      {/* 搅拌轴与桨叶 */}
-      <g opacity={0.9}>
+      {/* 剪裁模板 */}
+      <defs>
+        <clipPath id={`leaching-clip-${x}-${y}`}>
+          <rect x={0} y={bodyY} width={w} height={bodyH} rx={8} />
+        </clipPath>
+      </defs>
+
+      {/* 4. 搅拌轴与双层斜桨叶 (Agitator Impellers) */}
+      <g opacity={0.95}>
         {/* 竖轴 */}
         <line
           x1={cx}
           y1={bodyY}
           x2={cx}
-          y2={h - bodyH * 0.25}
-          stroke={SCENE_COLORS.materials.metalBorder}
-          strokeWidth={STROKE.objectLine}
+          y2={h - bodyH * 0.15}
+          stroke={SCENE_COLORS.materials.iron}
+          strokeWidth={STROKE.objectLine + 0.5}
         />
-        {/* 搅拌桨叶（运行状态下加 spin 动画） */}
+        {/* 上层桨叶 */}
         <g
-          transform={`translate(${cx}, ${h - bodyH * 0.25})`}
           style={{
-            transformOrigin: `${cx}px ${h - bodyH * 0.25}px`,
-            animation: isRunning ? 'spin 2s linear infinite' : 'none',
+            transformOrigin: `${cx}px ${h - bodyH * 0.45}px`,
+            animation: isRunning ? 'spin 1.8s linear infinite' : 'none',
           }}
         >
-          <path
-            d={`
-              M -${w * 0.25} -4
-              L ${w * 0.25} 4
-              M -${w * 0.25} 4
-              L ${w * 0.25} -4
-            `}
-            stroke={SCENE_COLORS.materials.iron}
-            strokeWidth={STROKE.objectLine}
-            strokeLinecap="round"
-          />
+          <line x1={cx - w * 0.22} y1={h - bodyH * 0.45 - 2} x2={cx + w * 0.22} y2={h - bodyH * 0.45 + 2} stroke={SCENE_COLORS.materials.metalBorder} strokeWidth={2.5} strokeLinecap="round" />
+        </g>
+        {/* 下层底层推流桨叶 */}
+        <g
+          style={{
+            transformOrigin: `${cx}px ${h - bodyH * 0.2}px`,
+            animation: isRunning ? 'spin 1.8s linear infinite' : 'none',
+          }}
+        >
+          <line x1={cx - w * 0.28} y1={h - bodyH * 0.2 - 3} x2={cx + w * 0.28} y2={h - bodyH * 0.2 + 3} stroke={SCENE_COLORS.materials.metalBorder} strokeWidth={3} strokeLinecap="round" />
         </g>
       </g>
 
-      {/* 管道链接口 (顶部进液/底部出液) */}
+      {/* 5. 管道法兰接头 (顶部进酸管 / 底部出矿浆管) */}
       {!isTiny && (
-        <g fill={SCENE_COLORS.industrialPipeline.liquidPipe}>
-          <rect x={w * 0.15} y={bodyY - 6} width={10} height={6} />
-          <rect x={w - 16} y={h - 20} width={16} height={8} />
+        <g id="reactor-flanges">
+          {/* 顶部进酸口法兰 */}
+          <rect x={w * 0.12} y={bodyY - 7} width={12} height={7} rx={1} fill={SCENE_COLORS.industrialPipeline.liquidPipe} stroke={SCENE_COLORS.materials.metalBorder} strokeWidth={0.8} />
+          {/* 底部排矿浆口法兰 */}
+          <rect x={w - 18} y={h - 18} width={18} height={9} rx={1} fill={SCENE_COLORS.industrialPipeline.slurryPipe} stroke={SCENE_COLORS.materials.metalBorder} strokeWidth={0.8} />
         </g>
       )}
 
-      {/* 标题 */}
+      {/* 6. 观察视镜 (Sight Glass) */}
+      {!isTiny && (
+        <circle
+          cx={w * 0.8}
+          cy={bodyY + 24}
+          r={5.5}
+          fill={SCENE_COLORS.materials.glass}
+          stroke={SCENE_COLORS.materials.metalBorder}
+          strokeWidth={1.5}
+        />
+      )}
+
+      {/* 7. 标题 */}
       {title && !isTiny && (
         <text
           x={cx}
-          y={bodyY + 20}
+          y={bodyY + 18}
           textAnchor="middle"
           fontSize={font(FONT.small)}
           fill="white"

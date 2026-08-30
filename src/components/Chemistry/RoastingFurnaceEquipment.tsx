@@ -63,8 +63,8 @@ export function RoastingFurnaceEquipment({
   const chamberY = furnaceY + furnaceH * 0.25
 
   return (
-    <g transform={`translate(${x}, ${y})`}>
-      {/* 顶部烟囱 (排废气 SO₂ / CO₂ 等) */}
+    <g transform={`translate(${x}, ${y})`} id="roasting-furnace">
+      {/* 1. 顶部排废气烟囱 (SO₂ / CO₂) 带加固法兰圈 */}
       <rect
         x={chimneyX}
         y={0}
@@ -74,8 +74,17 @@ export function RoastingFurnaceEquipment({
         stroke={SCENE_COLORS.materials.metalBorder}
         strokeWidth={STROKE.objectLine}
       />
+      {/* 烟囱顶部防雨帽法兰 */}
+      <rect
+        x={chimneyX - 3}
+        y={0}
+        width={chimneyW + 6}
+        height={4}
+        rx={1}
+        fill={SCENE_COLORS.materials.metalBorder}
+      />
 
-      {/* 炉体主框架（耐火砖红） */}
+      {/* 2. 炉体主框架（耐火砖红） */}
       <rect
         x={0}
         y={furnaceY}
@@ -87,7 +96,17 @@ export function RoastingFurnaceEquipment({
         strokeWidth={STROKE.objectLine}
       />
 
-      {/* 内部炉膛（高温燃烧室） */}
+      {/* 耐火砖接缝纹理 (Brick lines) */}
+      {!isTiny && (
+        <g stroke={SCENE_COLORS.materials.wood} strokeWidth={0.8} opacity={0.4}>
+          <line x1={4} y1={furnaceY + furnaceH * 0.2} x2={w - 4} y2={furnaceY + furnaceH * 0.2} />
+          <line x1={4} y1={furnaceY + furnaceH * 0.4} x2={w - 4} y2={furnaceY + furnaceH * 0.4} />
+          <line x1={4} y1={furnaceY + furnaceH * 0.6} x2={w - 4} y2={furnaceY + furnaceH * 0.6} />
+          <line x1={4} y1={furnaceY + furnaceH * 0.8} x2={w - 4} y2={furnaceY + furnaceH * 0.8} />
+        </g>
+      )}
+
+      {/* 3. 内部炉膛（高温燃烧室） */}
       <rect
         x={chamberX}
         y={chamberY}
@@ -95,36 +114,68 @@ export function RoastingFurnaceEquipment({
         height={chamberH}
         rx={4}
         fill={isHeating ? SCENE_COLORS.heatingAndSupport.flame : SCENE_COLORS.materials.iron}
-        opacity={isHeating ? 0.9 : 0.8}
+        opacity={isHeating ? 0.92 : 0.8}
+        stroke={SCENE_COLORS.materials.metalBorder}
+        strokeWidth={1}
       />
 
-      {/* 高温火焰效果 (若加热状态) */}
+      {/* 4. 高温火焰与流化态沸腾效果 */}
       {isHeating && !isTiny && (
-        <path
-          d={`
-            M ${chamberX + 8} ${chamberY + chamberH}
-            Q ${chamberX + chamberW * 0.25} ${chamberY + 5}, ${chamberX + chamberW * 0.5} ${chamberY + chamberH * 0.4}
-            Q ${chamberX + chamberW * 0.75} ${chamberY + 5}, ${chamberX + chamberW - 8} ${chamberY + chamberH}
-            Z
-          `}
-          fill={SCENE_COLORS.heatingAndSupport.flameCore}
-          opacity={0.8}
-        />
-      )}
-
-      {/* 进料/出料口指示纹路 */}
-      {!isTiny && (
-        <g stroke={SCENE_COLORS.materials.wood} strokeWidth={STROKE.reference} opacity={0.6}>
-          <line x1={4} y1={furnaceY + 15} x2={16} y2={furnaceY + 15} />
-          <line x1={w - 16} y1={furnaceY + furnaceH - 15} x2={w - 4} y2={furnaceY + furnaceH - 15} />
+        <g>
+          <path
+            d={`
+              M ${chamberX + 8} ${chamberY + chamberH}
+              Q ${chamberX + chamberW * 0.25} ${chamberY + 5}, ${chamberX + chamberW * 0.5} ${chamberY + chamberH * 0.35}
+              Q ${chamberX + chamberW * 0.75} ${chamberY + 5}, ${chamberX + chamberW - 8} ${chamberY + chamberH}
+              Z
+            `}
+            fill={SCENE_COLORS.heatingAndSupport.flameCore}
+            opacity={0.88}
+          />
+          {/* 炽热矿粉沸腾颗粒 */}
+          <circle cx={chamberX + chamberW * 0.3} cy={chamberY + chamberH * 0.6} r={2} fill={SCENE_COLORS.reagentCharacteristic.kmno4} opacity={0.8} />
+          <circle cx={chamberX + chamberW * 0.7} cy={chamberY + chamberH * 0.5} r={2.5} fill={SCENE_COLORS.reagentCharacteristic.kmno4} opacity={0.8} />
+          <circle cx={chamberX + chamberW * 0.5} cy={chamberY + chamberH * 0.7} r={2} fill={SCENE_COLORS.reagentCharacteristic.kmno4} opacity={0.8} />
         </g>
       )}
 
-      {/* 标注 */}
+      {/* 5. 进出料口法兰漏斗 */}
+      {!isTiny && (
+        <g id="in-out-ports">
+          {/* 左侧进料口漏斗 */}
+          <polygon
+            points={`-6,${furnaceY + 12} 0,${furnaceY + 16} 0,${furnaceY + 28} -6,${furnaceY + 32}`}
+            fill={SCENE_COLORS.materials.iron}
+            stroke={SCENE_COLORS.materials.metalBorder}
+            strokeWidth={1}
+          />
+          {/* 右下出渣口 */}
+          <polygon
+            points={`${w},${furnaceY + furnaceH - 28} ${w + 6},${furnaceY + furnaceH - 24} ${w + 6},${furnaceY + furnaceH - 12} ${w},${furnaceY + furnaceH - 16}`}
+            fill={SCENE_COLORS.materials.iron}
+            stroke={SCENE_COLORS.materials.metalBorder}
+            strokeWidth={1}
+          />
+        </g>
+      )}
+
+      {/* 6. 观察视镜 (Sight Glass) */}
+      {!isTiny && (
+        <circle
+          cx={w * 0.5}
+          cy={chamberY + chamberH + 12}
+          r={5}
+          fill={SCENE_COLORS.materials.glass}
+          stroke={SCENE_COLORS.materials.metalBorder}
+          strokeWidth={1.5}
+        />
+      )}
+
+      {/* 7. 标注 */}
       {title && !isTiny && (
         <text
           x={w * 0.5}
-          y={furnaceY + 20}
+          y={furnaceY + 18}
           textAnchor="middle"
           fontSize={font(FONT.small)}
           fill="white"

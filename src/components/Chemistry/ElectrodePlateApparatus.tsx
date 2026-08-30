@@ -62,14 +62,14 @@ export function ElectrodePlateApparatus({
         return SCENE_COLORS.materials.iron // 锌银灰色
       case 'Cu':
       case 'ImpureCu':
-        return '#B45309' // 铜红棕色
+        return SCENE_COLORS.reagentCharacteristic.cuMetal // 铜红棕色
       case 'Carbon':
       case 'Pt':
         return '#334155' // 石墨/铂石墨黑
       case 'Pb':
-        return '#64748B' // 铅暗灰色
+        return SCENE_COLORS.materials.iron // 铅暗灰色
       case 'PbO2':
-        return '#78350F' // 二氧化铅棕黑色
+        return SCENE_COLORS.reagentCharacteristic.fePptRedBrown // 二氧化铅棕黑色
       default:
         return SCENE_COLORS.materials.metal
     }
@@ -114,9 +114,9 @@ export function ElectrodePlateApparatus({
           width={width + depositThickness}
           height={height * 0.7}
           rx={3}
-          fill="#B45309"
+          fill={SCENE_COLORS.reagentCharacteristic.cuMetal}
           opacity={0.85}
-          stroke="#78350F"
+          stroke={SCENE_COLORS.materials.wood}
           strokeWidth={1}
         />
       )}
@@ -129,9 +129,9 @@ export function ElectrodePlateApparatus({
           width={width + 4}
           height={height * 0.65}
           rx={3}
-          fill="#E2E8F0"
-          opacity={0.75}
-          stroke="#94A3B8"
+          fill={SCENE_COLORS.reagentCharacteristic.leadSulfateWhite}
+          opacity={0.85}
+          stroke={SCENE_COLORS.materials.metal}
           strokeWidth={1}
           strokeDasharray="2 2"
         />
@@ -140,15 +140,15 @@ export function ElectrodePlateApparatus({
       {/* 4. 阳极泥沉淀 (粗铜精炼底部 Au/Ag 沉积) */}
       {attachmentType === 'AnodeMud' && (
         <g transform={`translate(${x}, ${y + height + 10})`}>
-          <circle cx={-8} cy={4} r={3} fill="#EAB308" />
-          <circle cx={0} cy={6} r={2.5} fill="#94A3B8" />
-          <circle cx={8} cy={3} r={3} fill="#EAB308" />
+          <circle cx={-8} cy={4} r={3} fill={SCENE_COLORS.reagentCharacteristic.anodeMudGold} />
+          <circle cx={0} cy={6} r={2.5} fill={SCENE_COLORS.materials.metal} />
+          <circle cx={8} cy={3} r={3} fill={SCENE_COLORS.reagentCharacteristic.anodeMudGold} />
           <text
             x={0}
             y={18}
             textAnchor="middle"
             fontSize={font(9)}
-            fill="#EAB308"
+            fill={SCENE_COLORS.reagentCharacteristic.anodeMudGold}
             fontWeight="bold"
           >
             阳极泥(Au/Ag)

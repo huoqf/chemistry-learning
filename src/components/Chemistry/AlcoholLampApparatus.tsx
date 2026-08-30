@@ -62,9 +62,19 @@ export function AlcoholLampApparatus({
           C ${w} ${h - baseH * 0.5}, ${w * 0.9} ${baseTopY}, ${w - neckLeft} ${baseTopY}
           Z
         `}
-        fill={withAlpha(SCENE_COLORS.container.beaker, 0.5)}
+        fill={withAlpha(SCENE_COLORS.container.beaker, 0.4)}
         stroke={SCENE_COLORS.container.beakerBorder}
         strokeWidth={STROKE.objectLine}
+      />
+
+      {/* 玻璃灯壶右侧高光弧 */}
+      <path
+        d={`M ${w * 0.85} ${baseTopY + 6} C ${w * 0.95} ${h - baseH * 0.5}, ${w * 0.9} ${h - 8}, ${w * 0.75} ${h - 2}`}
+        fill="none"
+        stroke={SCENE_COLORS.materials.glassHighlight}
+        strokeWidth={1.5}
+        opacity={0.65}
+        strokeLinecap="round"
       />
 
       {/* 2. 内部酒精填充 */}
@@ -74,31 +84,32 @@ export function AlcoholLampApparatus({
         rx={baseR * 0.8}
         ry={baseH * 0.3}
         fill={SCENE_COLORS.heatingAndSupport.alcoholLamp}
-        opacity={0.35}
+        opacity={0.38}
       />
 
       {/* 3. 灯芯瓷套管与灯芯 */}
       {!capped && (
-        <g>
+        <g id="wick-assembly">
           {/* 瓷套管 */}
           <rect
             x={neckLeft - 2}
             y={baseTopY - neckH}
             width={neckW + 4}
             height={neckH}
-            rx={1}
+            rx={2}
             fill={SCENE_COLORS.materials.ceramic}
             stroke={SCENE_COLORS.materials.wood}
             strokeWidth={STROKE.reference}
           />
-          {/* 灯芯 */}
+          {/* 灯芯棉绳 */}
           <line
             x1={w * 0.5}
             y1={baseTopY - neckH}
             x2={w * 0.5}
             y2={baseTopY - neckH - 6}
             stroke={SCENE_COLORS.materials.rubber}
-            strokeWidth={STROKE.objectLine}
+            strokeWidth={STROKE.objectLine + 0.5}
+            strokeLinecap="round"
           />
         </g>
       )}
@@ -119,21 +130,31 @@ export function AlcoholLampApparatus({
         />
       )}
 
-      {/* 5. 三层火焰 (外焰、内焰、焰心) — 根部精准对接在灯芯顶端 (baseTopY - neckH - 6) */}
+      {/* 5. 三层火焰 (外焰、内焰、焰心) + 外层高温辉光 */}
       {isBurning && (
-        <g transform={`translate(${w * 0.5}, ${baseTopY - neckH - 6})`}>
-          {/* 外焰 (最高温，橙黄渐变) */}
+        <g transform={`translate(${w * 0.5}, ${baseTopY - neckH - 6})`} id="lamp-flame">
+          {/* 外围高温淡橙微光晕 (Glow) */}
+          <ellipse
+            cx={0}
+            cy={-(flameH * 0.5)}
+            rx={flameH * 0.45}
+            ry={flameH * 0.6}
+            fill={SCENE_COLORS.heatingAndSupport.flame}
+            opacity={0.25}
+          />
+
+          {/* 外焰 (最高温，橙黄渐变，供加热相切) */}
           <path
             d={`
               M 0 -${flameH}
-              C ${flameH * 0.6} -${flameH * 0.5}, ${flameH * 0.5} 0, 0 0
-              C -${flameH * 0.5} 0, -${flameH * 0.6} -${flameH * 0.5}, 0 -${flameH}
+              C ${flameH * 0.58} -${flameH * 0.5}, ${flameH * 0.48} 0, 0 0
+              C -${flameH * 0.48} 0, -${flameH * 0.58} -${flameH * 0.5}, 0 -${flameH}
               Z
             `}
             fill={SCENE_COLORS.heatingAndSupport.flame}
             opacity={0.95}
           />
-          {/* 内焰 */}
+          {/* 内焰 (明亮黄) */}
           <path
             d={`
               M 0 -${flameH * 0.65}
@@ -142,9 +163,9 @@ export function AlcoholLampApparatus({
               Z
             `}
             fill={SCENE_COLORS.heatingAndSupport.flameCore}
-            opacity={0.85}
+            opacity={0.88}
           />
-          {/* 焰心 (最内侧高亮) */}
+          {/* 焰心 (最内侧淡蓝/浅白) */}
           <ellipse
             cx={0}
             cy={-(flameH * 0.2)}

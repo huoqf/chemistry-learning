@@ -8,11 +8,16 @@ export const SCENE_COLORS = {
   materials: {
     glass: '#E0F2FE',         // 玻璃主体填充
     glassBorder: '#7DD3FC',   // 玻璃高亮描边
+    glassHighlight: '#FFFFFF', // 玻璃高光反光弧 (纯白高光)
+    glassShadow: 'rgba(56, 189, 248, 0.18)', // 玻璃器壁内腔折射暗部
     metal: '#9CA3AF',         // 金属银灰色
     metalBorder: '#6B7280',   // 金属暗色描边
+    metalSheen: '#E2E8F0',    // 精工金属反光亮色
     iron: '#475569',          // 铁质器皿/铁架台
     rubber: '#374151',        // 橡胶塞/导管
     wood: '#92400E',          // 木质试管架
+    woodenBench: '#D97706',   // 实验室木垫块/台面木纹
+    woodenBenchBorder: '#92400E', // 木垫块边框
     ceramic: '#FDE68A',       // 瓷质蒸发皿/坩埚
     plastic: '#DBEAFE',       // 塑料材质
     asbestos: '#E2E8F0',      // 石棉网/陶土网
@@ -155,6 +160,20 @@ export const SCENE_COLORS = {
   porcelain: {
     porcelainWhite: '#FAFAFA',      // 耐火瓷坩埚/蒸发皿
     incandescentGlow: '#F97316',    // 灼热红热感
+  },
+
+  // ── 高考特征物质与专属沉淀色 ──
+  reagentCharacteristic: {
+    kmno4: '#701A75',               // 高锰酸钾紫黑粉末
+    cuMetal: '#B45309',             // 单质铜/镀铜红棕
+    cuOxide: '#1E293B',             // 氧化铜黑
+    fePptRedBrown: '#78350F',       // Fe(OH)3 红褐沉淀
+    feIonYellow: '#D97706',         // Fe3+ 棕黄溶液
+    fe2IonGreen: '#86EFAC',         // Fe2+ 浅绿溶液
+    bromineWater: '#EA580C',        // 溴水橙黄
+    iodineVapor: '#6B21A8',         // 碘蒸气深紫
+    anodeMudGold: '#EAB308',        // 阳极泥 Au/Ag 金黄
+    leadSulfateWhite: '#F8FAFC',    // PbSO4 铅蓄电池白色沉淀
   },
 } as const
 

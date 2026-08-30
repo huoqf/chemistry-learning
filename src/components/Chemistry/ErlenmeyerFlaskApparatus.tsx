@@ -76,51 +76,96 @@ export function ErlenmeyerFlaskApparatus({
     Z
   `
 
-  // 液体填充 Path（梯形+圆角底）
-  const liquidPath = () => {
-    if (fillLevel <= 0) return ''
-    const effFill = Math.min(1, Math.max(0, fillLevel))
-    const bodyH = h - neckH - wallT
-    const liquidTopY = h - wallT - bodyH * effFill
-
-    // 根据 liquidTopY 计算该高度下的左/右 x 坐标
-    const t = (liquidTopY - neckH) / bodyH
-    const currentW = neckW + (w - neckW) * (1 - Math.max(0, t))
-    const currentLeft = (w - currentW) / 2
-    const currentRight = currentLeft + currentW
-
-    return `
-      M ${currentLeft} ${liquidTopY}
-      L ${currentRight} ${liquidTopY}
-      L ${w - wallT - bottomCornerR} ${h - wallT - bottomCornerR}
-      Q ${w - wallT} ${h - wallT} ${w - wallT - bottomCornerR} ${h - wallT}
-      L ${wallT + bottomCornerR} ${h - wallT}
-      Q ${wallT} ${h - wallT} ${wallT + bottomCornerR} ${h - wallT - bottomCornerR}
-      Z
-    `
-  }
+  const effFill = Math.min(1, Math.max(0, fillLevel))
+  const bodyH = h - neckH - wallT
+  const liquidTopY = h - wallT - bodyH * effFill
+  const t = (liquidTopY - neckH) / bodyH
+  const currentW = neckW + (w - neckW) * (1 - Math.max(0, t))
+  const currentLeft = (w - currentW) / 2
+  const currentRight = currentLeft + currentW
 
   return (
     <g transform={`translate(${x}, ${y})`}>
-      {/* 锥形瓶主体背景 */}
+      {/* 1. 锥形瓶玻璃主体背景 */}
       <path
         d={flaskPath}
-        fill={withAlpha(SCENE_COLORS.container.flask, 0.4)}
+        fill={withAlpha(SCENE_COLORS.container.flask, 0.35)}
         stroke={SCENE_COLORS.container.flaskBorder}
         strokeWidth={STROKE.objectLine}
         strokeLinejoin="round"
       />
 
-      {/* 液体 */}
+      {/* 2. 瓶口加厚翻边圆唇 (Beaded Neck Rim) */}
+      <rect
+        x={neckLeft - 2}
+        y={-1}
+        width={neckW + 4}
+        height={3}
+        rx={1}
+        fill={SCENE_COLORS.container.flask}
+        stroke={SCENE_COLORS.container.flaskBorder}
+        strokeWidth={STROKE.reference}
+      />
+
+      {/* 3. 液体填充与表面凹液面 */}
       {fillLevel > 0 && (
-        <path
-          d={liquidPath()}
-          fill={fillColor}
-          opacity={0.8}
-        />
+        <g clipPath={`url(#erlen-clip-${x}-${y})`}>
+          <path
+            d={`
+              M ${currentLeft} ${liquidTopY}
+              L ${currentRight} ${liquidTopY}
+              L ${w - wallT - bottomCornerR} ${h - wallT - bottomCornerR}
+              Q ${w - wallT} ${h - wallT} ${w - wallT - bottomCornerR} ${h - wallT}
+              L ${wallT + bottomCornerR} ${h - wallT}
+              Q ${wallT} ${h - wallT} ${wallT + bottomCornerR} ${h - wallT - bottomCornerR}
+              Z
+            `}
+            fill={fillColor}
+            opacity={0.82}
+          />
+          {/* 凹液面弧线 */}
+          <path
+            d={`M ${currentLeft} ${liquidTopY} Q ${w * 0.5} ${liquidTopY + 2.5} ${currentRight} ${liquidTopY}`}
+            fill="none"
+            stroke={fillColor}
+            strokeWidth={STROKE.reference}
+            opacity={0.9}
+          />
+        </g>
       )}
 
-      {/* 瓶口橡皮塞 */}
+      {/* 4. 玻璃高光反光弧 (右侧倾斜高光) */}
+      {!isTiny && (
+        <g opacity={0.65}>
+          <line
+            x1={neckRight - 2}
+            y1={4}
+            x2={neckRight - 2}
+            y2={neckH}
+            stroke={SCENE_COLORS.materials.glassHighlight}
+            strokeWidth={1}
+            strokeLinecap="round"
+          />
+          <line
+            x1={neckRight}
+            y1={neckH + 4}
+            x2={w - bottomCornerR - 3}
+            y2={h - bottomCornerR - 6}
+            stroke={SCENE_COLORS.materials.glassHighlight}
+            strokeWidth={STROKE.objectThin}
+            strokeLinecap="round"
+          />
+        </g>
+      )}
+
+      {/* 剪裁模板 */}
+      <defs>
+        <clipPath id={`erlen-clip-${x}-${y}`}>
+          <path d={flaskPath} />
+        </clipPath>
+      </defs>
+
+      {/* 5. 瓶口橡皮塞 */}
       {hasStopper && (
         <polygon
           points={`
@@ -135,20 +180,20 @@ export function ErlenmeyerFlaskApparatus({
         />
       )}
 
-      {/* 刻度线（非微缩模式） */}
+      {/* 6. 刻度线（非微缩模式） */}
       {!isTiny && (
-        <g opacity={0.6}>
+        <g opacity={0.65}>
           {[0.3, 0.5, 0.7].map((ratio) => {
             const lineY = h - (h - neckH) * ratio
-            const t = (lineY - neckH) / (h - neckH)
-            const currentW = neckW + (w - neckW) * (1 - Math.max(0, t))
-            const lineLeft = (w - currentW) / 2 + wallT
+            const tr = (lineY - neckH) / (h - neckH)
+            const cW = neckW + (w - neckW) * (1 - Math.max(0, tr))
+            const lineLeft = (w - cW) / 2 + wallT
             return (
               <line
                 key={ratio}
                 x1={lineLeft}
                 y1={lineY}
-                x2={lineLeft + currentW * 0.25}
+                x2={lineLeft + cW * 0.25}
                 y2={lineY}
                 stroke={SCENE_COLORS.container.flaskBorder}
                 strokeWidth={STROKE.reference}
@@ -158,7 +203,7 @@ export function ErlenmeyerFlaskApparatus({
         </g>
       )}
 
-      {/* 瓶身标注 */}
+      {/* 7. 瓶身标注 */}
       {label && !isTiny && (
         <text
           x={w * 0.5}
@@ -166,7 +211,8 @@ export function ErlenmeyerFlaskApparatus({
           textAnchor="middle"
           fontSize={font(FONT.small)}
           fill={SCENE_COLORS.labels.coefficient}
-          opacity={0.6}
+          opacity={0.65}
+          fontWeight="500"
         >
           {label}
         </text>

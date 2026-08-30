@@ -40,12 +40,12 @@ export function SolidHeatingGeneratorApparatus({
   // 试管内平铺药粉颜色
   const powderColor =
     targetGas === 'O₂'
-      ? '#701A75' // 紫黑色 KMnO₄ 固体
+      ? SCENE_COLORS.reagentCharacteristic.kmno4 // 紫黑色 KMnO₄ 固体
       : targetGas === 'NH₃'
-      ? '#E2E8F0' // 灰白色 NH₄Cl + Ca(OH)₂ 固体
+      ? SCENE_COLORS.materials.asbestos // 灰白色 NH₄Cl + Ca(OH)₂ 固体
       : targetGas === 'Cl₂' || targetGas === 'C₂H₄'
-      ? '#FACC15' // 错选液体黄
-      : '#D97706' // 其他固体
+      ? SCENE_COLORS.heatingAndSupport.flame // 错选液体黄
+      : SCENE_COLORS.materials.woodenBench // 其他固体
 
   const isWrongGenerator = targetGas === 'Cl₂' || targetGas === 'C₂H₄'
 
@@ -80,8 +80,8 @@ export function SolidHeatingGeneratorApparatus({
           width={70}
           height={53}
           rx={4}
-          fill="#D97706"
-          stroke="#92400E"
+          fill={SCENE_COLORS.materials.woodenBench}
+          stroke={SCENE_COLORS.materials.woodenBenchBorder}
           strokeWidth={1.5}
         />
         {/* 木垫块表面侧边木纹细节线 */}
@@ -90,7 +90,7 @@ export function SolidHeatingGeneratorApparatus({
           y1={y - 35}
           x2={x + 65}
           y2={y - 35}
-          stroke="#B45309"
+          stroke={SCENE_COLORS.materials.wood}
           strokeWidth={1}
           opacity={0.6}
         />
@@ -99,7 +99,7 @@ export function SolidHeatingGeneratorApparatus({
           y1={y - 18}
           x2={x + 65}
           y2={y - 18}
-          stroke="#B45309"
+          stroke={SCENE_COLORS.materials.wood}
           strokeWidth={1}
           opacity={0.6}
         />

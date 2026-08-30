@@ -71,6 +71,7 @@ export function TestTubeApparatus({
   const maxLiquidH = h - wallT - 8
   const liquidH = maxLiquidH * Math.min(1, Math.max(0, fillLevel))
   const pptH = maxLiquidH * Math.min(1, Math.max(0, precipitateLevel))
+  const liquidY = h - liquidH
 
   // 试管外轮廓 Path (带底部圆弧)
   const tubePath = `
@@ -83,19 +84,7 @@ export function TestTubeApparatus({
 
   return (
     <g transform={`translate(${x}, ${y}) rotate(${tiltAngle}, ${w * 0.5}, 0)`}>
-      {/* 试管口翻边 */}
-      <rect
-        x={-2}
-        y={-3}
-        width={w + 4}
-        height={4}
-        rx={1}
-        fill={SCENE_COLORS.container.testTube}
-        stroke={SCENE_COLORS.container.testTubeBorder}
-        strokeWidth={STROKE.reference}
-      />
-
-      {/* 试管玻璃主体 */}
+      {/* 1. 试管玻璃主体 */}
       <path
         d={tubePath}
         fill={withAlpha(SCENE_COLORS.container.testTube, 0.35)}
@@ -103,21 +92,41 @@ export function TestTubeApparatus({
         strokeWidth={STROKE.objectThin}
       />
 
-      {/* 液体填充 */}
+      {/* 2. 试管口加厚外翻翻唇 (Beaded Tube Rim) */}
+      <rect
+        x={-2.5}
+        y={-3}
+        width={w + 5}
+        height={4}
+        rx={1.5}
+        fill={SCENE_COLORS.container.testTube}
+        stroke={SCENE_COLORS.container.testTubeBorder}
+        strokeWidth={STROKE.reference}
+      />
+
+      {/* 3. 液体填充与表面凹液面 */}
       {fillLevel > 0 && (
         <g clipPath={`url(#testtube-clip-${x}-${y})`}>
           <rect
             x={wallT}
-            y={h - liquidH}
+            y={liquidY}
             width={innerW}
             height={liquidH}
             fill={fillColor}
             opacity={0.85}
           />
+          {/* 凹液面 */}
+          <path
+            d={`M ${wallT} ${liquidY} Q ${w * 0.5} ${liquidY + 2} ${w - wallT} ${liquidY}`}
+            fill="none"
+            stroke={fillColor}
+            strokeWidth={STROKE.reference}
+            opacity={0.9}
+          />
         </g>
       )}
 
-      {/* 沉淀填充 */}
+      {/* 4. 底部沉淀填充与颗粒质感 */}
       {precipitateLevel > 0 && (
         <g clipPath={`url(#testtube-clip-${x}-${y})`}>
           <rect
@@ -126,7 +135,38 @@ export function TestTubeApparatus({
             width={innerW}
             height={pptH}
             fill={precipitateColor}
-            opacity={0.9}
+            opacity={0.92}
+          />
+          {!isTiny && (
+            <g fill={withAlpha(SCENE_COLORS.labels.coefficient, 0.3)}>
+              <circle cx={w * 0.35} cy={h - pptH * 0.4} r={1.2} />
+              <circle cx={w * 0.65} cy={h - pptH * 0.3} r={1.5} />
+              <circle cx={w * 0.5} cy={h - pptH * 0.7} r={1.2} />
+            </g>
+          )}
+        </g>
+      )}
+
+      {/* 5. 玻璃高光反光线条 */}
+      {!isTiny && (
+        <g opacity={0.65}>
+          {/* 右侧纵向反光 */}
+          <line
+            x1={w - wallT - 1.5}
+            y1={4}
+            x2={w - wallT - 1.5}
+            y2={tubeBodyH - 2}
+            stroke={SCENE_COLORS.materials.glassHighlight}
+            strokeWidth={1}
+            strokeLinecap="round"
+          />
+          {/* 底部圆弧反光 */}
+          <path
+            d={`M ${w * 0.25} ${h - 2} Q ${w * 0.5} ${h - 0.5} ${w * 0.75} ${h - 2}`}
+            fill="none"
+            stroke={SCENE_COLORS.materials.glassHighlight}
+            strokeWidth={1}
+            opacity={0.5}
           />
         </g>
       )}
@@ -138,7 +178,7 @@ export function TestTubeApparatus({
         </clipPath>
       </defs>
 
-      {/* 橡皮塞 */}
+      {/* 6. 橡皮塞 */}
       {hasStopper && (
         <polygon
           points={`
@@ -153,7 +193,7 @@ export function TestTubeApparatus({
         />
       )}
 
-      {/* 试管编号/标注 */}
+      {/* 7. 试管编号/标注 */}
       {label && !isTiny && (
         <text
           x={w * 0.5}
@@ -161,7 +201,8 @@ export function TestTubeApparatus({
           textAnchor="middle"
           fontSize={font(FONT.small)}
           fill={SCENE_COLORS.labels.coefficient}
-          opacity={0.6}
+          opacity={0.65}
+          fontWeight="500"
         >
           {label}
         </text>

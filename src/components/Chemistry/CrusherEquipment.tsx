@@ -58,8 +58,8 @@ export function CrusherEquipment({
   const cy = funnelH + bodyH * 0.5
 
   return (
-    <g transform={`translate(${x}, ${y})`}>
-      {/* 顶部进料漏斗 */}
+    <g transform={`translate(${x}, ${y})`} id="crusher-equipment">
+      {/* 1. 顶部进料漏斗 (Trapezoidal Hopper with flange) */}
       <polygon
         points={`
           ${(w - topW) / 2}, 0
@@ -71,8 +71,27 @@ export function CrusherEquipment({
         stroke={SCENE_COLORS.materials.metalBorder}
         strokeWidth={STROKE.objectLine}
       />
+      {/* 漏斗上法兰边 */}
+      <line
+        x1={(w - topW) / 2 - 2}
+        y1={0}
+        x2={(w + topW) / 2 + 2}
+        y2={0}
+        stroke={SCENE_COLORS.materials.metalBorder}
+        strokeWidth={STROKE.objectLine}
+      />
+      {/* 漏斗内斜面高光 */}
+      <line
+        x1={(w - topW) / 2 + 3}
+        y1={2}
+        x2={(w - botW) / 2 + 2}
+        y2={funnelH - 2}
+        stroke={SCENE_COLORS.materials.metalSheen}
+        strokeWidth={1}
+        opacity={0.5}
+      />
 
-      {/* 粉碎机主体（倒梯形/矩形） */}
+      {/* 2. 粉碎机主体机身 */}
       <polygon
         points={`
           ${(w - botW) / 2}, ${funnelH}
@@ -85,52 +104,62 @@ export function CrusherEquipment({
         strokeWidth={STROKE.objectLine}
       />
 
-      {/* 内部旋转锤头/齿轮（运行状态） */}
+      {/* 3. 内部双辊机械粉碎轮 (Dual Crushing Rollers) */}
       {!isTiny && (
-        <g
-          transform={`translate(${cx}, ${cy})`}
-          style={{
-            transformOrigin: `${cx}px ${cy}px`,
-            animation: isRunning ? 'spin 3s linear infinite' : 'none',
-          }}
-        >
-          {/* 交叉锤头 */}
-          <rect
-            x={-w * 0.18}
-            y={-w * 0.04}
-            width={w * 0.36}
-            height={w * 0.08}
-            rx={2}
-            fill={SCENE_COLORS.materials.iron}
-          />
-          <rect
-            x={-w * 0.04}
-            y={-w * 0.18}
-            width={w * 0.08}
-            height={w * 0.36}
-            rx={2}
-            fill={SCENE_COLORS.materials.iron}
-          />
-          <circle cx={0} cy={0} r={w * 0.06} fill={SCENE_COLORS.materials.metalBorder} />
+        <g id="crushing-rollers">
+          {/* 左辊 */}
+          <g
+            style={{
+              transformOrigin: `${cx - 14}px ${cy}px`,
+              animation: isRunning ? 'spin 2.5s linear infinite' : 'none',
+            }}
+          >
+            <circle cx={cx - 14} cy={cy} r={12} fill={SCENE_COLORS.materials.iron} stroke={SCENE_COLORS.materials.metalBorder} strokeWidth={1} />
+            <line x1={cx - 26} y1={cy} x2={cx - 2} y2={cy} stroke={SCENE_COLORS.materials.metalSheen} strokeWidth={1.5} />
+            <line x1={cx - 14} y1={cy - 12} x2={cx - 14} y2={cy + 12} stroke={SCENE_COLORS.materials.metalSheen} strokeWidth={1.5} />
+          </g>
+
+          {/* 右辊 (反向旋转啮合) */}
+          <g
+            style={{
+              transformOrigin: `${cx + 14}px ${cy}px`,
+              animation: isRunning ? 'spin 2.5s linear infinite reverse' : 'none',
+            }}
+          >
+            <circle cx={cx + 14} cy={cy} r={12} fill={SCENE_COLORS.materials.iron} stroke={SCENE_COLORS.materials.metalBorder} strokeWidth={1} />
+            <line x1={cx + 2} y1={cy} x2={cx + 26} y2={cy} stroke={SCENE_COLORS.materials.metalSheen} strokeWidth={1.5} />
+            <line x1={cx + 14} y1={cy - 12} x2={cx + 14} y2={cy + 12} stroke={SCENE_COLORS.materials.metalSheen} strokeWidth={1.5} />
+          </g>
+
+          {/* 运行中粉碎矿石颗粒碎屑 */}
+          {isRunning && (
+            <g fill={SCENE_COLORS.materials.iron}>
+              <circle cx={cx} cy={cy - 8} r={2.5} />
+              <circle cx={cx - 2} cy={cy + 6} r={1.5} />
+              <circle cx={cx + 2} cy={cy + 10} r={1.2} />
+            </g>
+          )}
         </g>
       )}
 
-      {/* 底部出料口 */}
+      {/* 4. 底部出料导槽 */}
       <rect
         x={cx - botW * 0.25}
         y={funnelH + bodyH}
         width={botW * 0.5}
         height={h - (funnelH + bodyH)}
         fill={SCENE_COLORS.materials.iron}
+        stroke={SCENE_COLORS.materials.metalBorder}
+        strokeWidth={1}
       />
 
-      {/* 设备名称文本 */}
+      {/* 5. 设备名称文本 */}
       {title && !isTiny && (
         <text
           x={cx}
-          y={h - 4}
+          y={h - 3}
           textAnchor="middle"
-          fontSize={font(FONT.small)}
+          fontSize={font(FONT.annotation)}
           fill="white"
           fontWeight="bold"
         >

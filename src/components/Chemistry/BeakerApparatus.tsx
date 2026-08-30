@@ -60,89 +60,154 @@ export function BeakerApparatus({
   const wallT = Math.max(2, w * 0.04)
   const isTiny = w < 40
 
-  // 倒液嘴偏移
-  const spoutW = Math.max(3, w * 0.08)
-  const spoutH = Math.max(3, h * 0.06)
+  // 倒液嘴与翻边卷唇
+  const spoutW = Math.max(3, w * 0.09)
+  const spoutH = Math.max(3, h * 0.07)
+  const rimH = Math.max(2, h * 0.035)
 
   const innerW = w - wallT * 2
-  const maxLiquidH = h - spoutH - wallT
+  const maxLiquidH = h - spoutH - wallT - rimH
 
   const liquidH = maxLiquidH * Math.min(1, Math.max(0, fillLevel))
   const pptH = maxLiquidH * Math.min(1, Math.max(0, precipitateLevel))
+  const liquidY = h - wallT - liquidH
 
-  // 烧杯主体路径
+  // 烧杯主体路径（倒液嘴+直筒+圆弧厚底）
   const bodyPath = `
     M 0 ${spoutH}
     L ${-spoutW} 0
-    L ${spoutW * 0.5} 0
+    L ${spoutW * 0.4} 0
     L ${w} 0
-    L ${w} ${h - wallT * 2}
-    Q ${w} ${h} ${w - wallT * 2} ${h}
-    L ${wallT * 2} ${h}
-    Q 0 ${h} 0 ${h - wallT * 2}
+    L ${w} ${h - wallT * 2.5}
+    Q ${w} ${h} ${w - wallT * 2.5} ${h}
+    L ${wallT * 2.5} ${h}
+    Q 0 ${h} 0 ${h - wallT * 2.5}
     Z
   `
 
   return (
     <g transform={`translate(${x}, ${y})`}>
-      {/* 烧杯玻璃主体背景 */}
+      {/* 1. 烧杯玻璃主体背景 */}
       <path
         d={bodyPath}
-        fill={withAlpha(SCENE_COLORS.container.beaker, 0.4)}
+        fill={withAlpha(SCENE_COLORS.container.beaker, 0.35)}
         stroke={SCENE_COLORS.container.beakerBorder}
         strokeWidth={STROKE.objectLine}
         strokeLinejoin="round"
       />
 
-      {/* 溶液填充 */}
+      {/* 2. 上沿加厚翻边卷唇 (Beaded Rim) */}
+      <line
+        x1={-spoutW}
+        y1={0}
+        x2={w + 1}
+        y2={0}
+        stroke={SCENE_COLORS.container.beakerBorder}
+        strokeWidth={STROKE.objectLine + 0.5}
+        strokeLinecap="round"
+      />
+
+      {/* 3. 溶液填充与表面张力凹液面 (Meniscus curve) */}
       {fillLevel > 0 && (
-        <rect
-          x={wallT}
-          y={h - wallT - liquidH}
-          width={innerW}
-          height={liquidH}
-          fill={fillColor}
-          opacity={0.8}
-          rx={1}
-        />
+        <g clipPath={`url(#beaker-clip-${x}-${y})`}>
+          <rect
+            x={wallT}
+            y={liquidY}
+            width={innerW}
+            height={liquidH}
+            fill={fillColor}
+            opacity={0.82}
+          />
+          {/* 凹液面弧线 */}
+          <path
+            d={`M ${wallT} ${liquidY} Q ${w * 0.5} ${liquidY + 2.5} ${w - wallT} ${liquidY}`}
+            fill="none"
+            stroke={fillColor}
+            strokeWidth={STROKE.reference}
+            opacity={0.9}
+          />
+        </g>
       )}
 
-      {/* 沉淀物填充 */}
+      {/* 4. 底部沉淀物填充与颗粒质感 */}
       {precipitateLevel > 0 && (
-        <rect
-          x={wallT}
-          y={h - wallT - pptH}
-          width={innerW}
-          height={pptH}
-          fill={precipitateColor}
-          opacity={0.9}
-          rx={1}
-        />
+        <g clipPath={`url(#beaker-clip-${x}-${y})`}>
+          <rect
+            x={wallT}
+            y={h - wallT - pptH}
+            width={innerW}
+            height={pptH}
+            fill={precipitateColor}
+            opacity={0.92}
+          />
+          {/* 沉淀表面微颗粒纹理 */}
+          {!isTiny && (
+            <g fill={withAlpha(SCENE_COLORS.labels.coefficient, 0.25)}>
+              <circle cx={w * 0.3} cy={h - wallT - pptH * 0.6} r={1.5} />
+              <circle cx={w * 0.5} cy={h - wallT - pptH * 0.3} r={2} />
+              <circle cx={w * 0.7} cy={h - wallT - pptH * 0.7} r={1.5} />
+              <circle cx={w * 0.4} cy={h - wallT - pptH * 0.2} r={1.2} />
+              <circle cx={w * 0.65} cy={h - wallT - pptH * 0.4} r={1.8} />
+            </g>
+          )}
+        </g>
       )}
 
-      {/* 刻度线（非微缩模式） */}
+      {/* 5. 玻璃高光反光弧线 (右侧纵向高光弧 + 底部反光) */}
       {!isTiny && (
-        <g opacity={0.7}>
+        <g opacity={0.65}>
+          {/* 右侧内壁纵向高光 */}
+          <line
+            x1={w - wallT - 2}
+            y1={spoutH + 4}
+            x2={w - wallT - 2}
+            y2={h - wallT * 3}
+            stroke={SCENE_COLORS.materials.glassHighlight}
+            strokeWidth={STROKE.objectThin}
+            strokeLinecap="round"
+          />
+          {/* 底部加厚弧线反光 */}
+          <path
+            d={`M ${wallT * 3} ${h - wallT * 1.5} Q ${w * 0.5} ${h - wallT * 0.5} ${w - wallT * 3} ${h - wallT * 1.5}`}
+            fill="none"
+            stroke={SCENE_COLORS.materials.glassHighlight}
+            strokeWidth={1}
+            opacity={0.5}
+          />
+        </g>
+      )}
+
+      {/* 剪裁模版 */}
+      <defs>
+        <clipPath id={`beaker-clip-${x}-${y}`}>
+          <path d={bodyPath} />
+        </clipPath>
+      </defs>
+
+      {/* 6. 刻度线（非微缩模式） */}
+      {!isTiny && (
+        <g opacity={0.75}>
           {[0.25, 0.5, 0.75].map((ratio, idx) => {
             const lineY = h - wallT - maxLiquidH * ratio
             const isMajor = idx === 1
             const tickLength = isMajor ? w * 0.22 : w * 0.14
             return (
-              <line
-                key={ratio}
-                x1={wallT}
-                y1={lineY}
-                x2={wallT + tickLength}
-                y2={lineY}
-                stroke={SCENE_COLORS.container.beakerBorder}
-                strokeWidth={STROKE.reference}
-              />
+              <g key={ratio}>
+                <line
+                  x1={wallT}
+                  y1={lineY}
+                  x2={wallT + tickLength}
+                  y2={lineY}
+                  stroke={SCENE_COLORS.container.beakerBorder}
+                  strokeWidth={STROKE.reference}
+                />
+              </g>
             )
           })}
         </g>
       )}
 
-      {/* 烧杯标签文本 */}
+      {/* 7. 烧杯标签文本 */}
       {label && !isTiny && (
         <text
           x={w * 0.5}
@@ -150,7 +215,8 @@ export function BeakerApparatus({
           textAnchor="middle"
           fontSize={font(FONT.small)}
           fill={SCENE_COLORS.labels.coefficient}
-          opacity={0.6}
+          opacity={0.65}
+          fontWeight="500"
         >
           {label}
         </text>

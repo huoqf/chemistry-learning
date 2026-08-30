@@ -85,7 +85,7 @@ export function GasJarApparatus({
 
   return (
     <g transform={inverted ? `translate(${x + w}, ${y + h}) rotate(180)` : `translate(${x}, ${y})`}>
-      {/* 瓶口边缘 Lip */}
+      {/* 1. 瓶口磨砂加厚平整边缘 Lip */}
       <rect
         x={lipLeft}
         y={4}
@@ -96,20 +96,42 @@ export function GasJarApparatus({
         stroke={SCENE_COLORS.container.gasJarBorder}
         strokeWidth={STROKE.reference}
       />
+      <line
+        x1={lipLeft}
+        y1={4}
+        x2={lipRight}
+        y2={4}
+        stroke={SCENE_COLORS.container.gasJarBorder}
+        strokeWidth={STROKE.objectLine}
+      />
 
-      {/* 集气瓶瓶身 */}
+      {/* 2. 集气瓶瓶身 */}
       <rect
         x={0}
         y={bodyTopY}
         width={w}
         height={bodyH}
         rx={Math.max(2, w * 0.04)}
-        fill={withAlpha(SCENE_COLORS.container.gasJar, 0.4)}
+        fill={withAlpha(SCENE_COLORS.container.gasJar, 0.35)}
         stroke={SCENE_COLORS.container.gasJarBorder}
         strokeWidth={STROKE.objectLine}
       />
 
-      {/* 填充层：干瓶排空气法收集气体 (isGasCollection) 时整瓶充盈；洗气/溶液时画底部液块 */}
+      {/* 3. 玻璃高光反光弧线 (右侧纵向反光) */}
+      {!isTiny && (
+        <line
+          x1={w - wallT - 2}
+          y1={bodyTopY + 4}
+          x2={w - wallT - 2}
+          y2={h - wallT - 4}
+          stroke={SCENE_COLORS.materials.glassHighlight}
+          strokeWidth={STROKE.objectThin}
+          strokeLinecap="round"
+          opacity={0.65}
+        />
+      )}
+
+      {/* 4. 填充层：干瓶排空气法收集气体 (isGasCollection) 时整瓶充盈；洗气/溶液时画底部液块 */}
       {isGasCollection ? (
         fillLevel > 0 && (
           <rect
@@ -124,29 +146,51 @@ export function GasJarApparatus({
         )
       ) : (
         fillLevel > 0 && (
-          <rect
-            x={wallT}
-            y={h - wallT - liquidH}
-            width={innerW}
-            height={liquidH}
-            fill={fillColor}
-            opacity={0.8}
-            rx={1}
-          />
+          <g>
+            <rect
+              x={wallT}
+              y={h - wallT - liquidH}
+              width={innerW}
+              height={liquidH}
+              fill={fillColor}
+              opacity={0.82}
+              rx={1}
+            />
+            {/* 液面凹液面 */}
+            <path
+              d={`M ${wallT} ${h - wallT - liquidH} Q ${w * 0.5} ${h - wallT - liquidH + 2.5} ${w - wallT} ${h - wallT - liquidH}`}
+              fill="none"
+              stroke={fillColor}
+              strokeWidth={STROKE.reference}
+              opacity={0.9}
+            />
+          </g>
         )
       )}
 
-      {/* 毛玻璃盖片 */}
+      {/* 5. 毛玻璃盖片 (磨砂质感) */}
       {hasCover && (
-        <line
-          x1={lipLeft - 4}
-          y1={3}
-          x2={lipRight + 4}
-          y2={3}
-          stroke={SCENE_COLORS.materials.glassBorder}
-          strokeWidth={STROKE.objectLine}
-          strokeLinecap="round"
-        />
+        <g id="gasjar-frosted-cover">
+          <line
+            x1={lipLeft - 4}
+            y1={3}
+            x2={lipRight + 4}
+            y2={3}
+            stroke={SCENE_COLORS.materials.glassBorder}
+            strokeWidth={STROKE.objectLine + 1}
+            strokeLinecap="round"
+          />
+          <line
+            x1={lipLeft - 3}
+            y1={2}
+            x2={lipRight + 3}
+            y2={2}
+            stroke={SCENE_COLORS.materials.glassHighlight}
+            strokeWidth={1}
+            strokeDasharray="2 2"
+            opacity={0.8}
+          />
+        </g>
       )}
 
       {/* 洗气/集气瓶双玻璃导管 (高保真无缝带管壁粗管: 贯穿橡皮塞由 y=-15 直达瓶内深处) */}

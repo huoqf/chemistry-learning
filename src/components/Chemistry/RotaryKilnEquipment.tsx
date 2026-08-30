@@ -54,22 +54,32 @@ export function RotaryKilnEquipment({
   const cy = h * 0.45
 
   return (
-    <g transform={`translate(${x}, ${y})`}>
-      {/* 底部支撑滚轮 Base Supports */}
-      <circle
-        cx={cx - kilnLen * 0.3}
-        cy={cy + kilnRadius + 10}
-        r={Math.max(6, h * 0.1)}
-        fill={SCENE_COLORS.materials.metalBorder}
-      />
-      <circle
-        cx={cx + kilnLen * 0.3}
-        cy={cy + kilnRadius + 10}
-        r={Math.max(6, h * 0.1)}
-        fill={SCENE_COLORS.materials.metalBorder}
-      />
+    <g transform={`translate(${x}, ${y})`} id="rotary-kiln">
+      {/* 1. 底部混凝土支墩与支撑托轮 (Riding Rollers with Pier) */}
+      <g id="kiln-supports">
+        {/* 左托轮墩与双轮 */}
+        <rect x={cx - kilnLen * 0.3 - 10} y={cy + kilnRadius + 14} width={20} height={h - (cy + kilnRadius + 14)} fill={SCENE_COLORS.materials.iron} rx={1} />
+        <circle
+          cx={cx - kilnLen * 0.3}
+          cy={cy + kilnRadius + 10}
+          r={Math.max(6, h * 0.1)}
+          fill={SCENE_COLORS.materials.metal}
+          stroke={SCENE_COLORS.materials.metalBorder}
+          strokeWidth={1.5}
+        />
+        {/* 右托轮墩与双轮 */}
+        <rect x={cx + kilnLen * 0.3 - 10} y={cy + kilnRadius + 14} width={20} height={h - (cy + kilnRadius + 14)} fill={SCENE_COLORS.materials.iron} rx={1} />
+        <circle
+          cx={cx + kilnLen * 0.3}
+          cy={cy + kilnRadius + 10}
+          r={Math.max(6, h * 0.1)}
+          fill={SCENE_COLORS.materials.metal}
+          stroke={SCENE_COLORS.materials.metalBorder}
+          strokeWidth={1.5}
+        />
+      </g>
 
-      {/* 倾斜筒身 group (倾角 -4°) */}
+      {/* 2. 倾斜筒身 group (倾角 -4°) */}
       <g transform={`rotate(-4, ${cx}, ${cy})`}>
         {/* 筒身主体 */}
         <rect
@@ -77,35 +87,68 @@ export function RotaryKilnEquipment({
           y={cy - kilnRadius}
           width={kilnLen}
           height={kilnRadius * 2}
-          rx={3}
+          rx={4}
           fill={SCENE_COLORS.industrialEquipment.roastingFurnace}
           stroke={SCENE_COLORS.materials.metalBorder}
           strokeWidth={STROKE.objectLine}
         />
+        {/* 筒身上方金属反光光带 */}
+        <line
+          x1={cx - kilnLen * 0.48}
+          y1={cy - kilnRadius + 4}
+          x2={cx + kilnLen * 0.48}
+          y2={cy - kilnRadius + 4}
+          stroke={SCENE_COLORS.materials.metalSheen}
+          strokeWidth={1.5}
+          opacity={0.6}
+        />
 
-        {/* 筒身旋转大齿轮/轮带 (运行指示) */}
+        {/* 筒身传动大齿圈与轮带 (Tyres & Girth Gear) */}
         {!isTiny && (
           <g>
+            {/* 左轮带 */}
             <rect
-              x={cx - kilnLen * 0.1}
-              y={cy - kilnRadius - 3}
-              width={kilnLen * 0.2}
-              height={kilnRadius * 2 + 6}
-              rx={2}
+              x={cx - kilnLen * 0.32}
+              y={cy - kilnRadius - 2.5}
+              width={10}
+              height={kilnRadius * 2 + 5}
+              rx={1}
               fill={SCENE_COLORS.materials.iron}
               stroke={SCENE_COLORS.materials.metalBorder}
-              strokeWidth={STROKE.reference}
+              strokeWidth={1}
+            />
+            {/* 中央大齿圈 */}
+            <rect
+              x={cx - 6}
+              y={cy - kilnRadius - 3.5}
+              width={12}
+              height={kilnRadius * 2 + 7}
+              rx={1}
+              fill={SCENE_COLORS.materials.metalBorder}
+              stroke={SCENE_COLORS.materials.metalSheen}
+              strokeWidth={0.8}
+            />
+            {/* 右轮带 */}
+            <rect
+              x={cx + kilnLen * 0.28}
+              y={cy - kilnRadius - 2.5}
+              width={10}
+              height={kilnRadius * 2 + 5}
+              rx={1}
+              fill={SCENE_COLORS.materials.iron}
+              stroke={SCENE_COLORS.materials.metalBorder}
+              strokeWidth={1}
             />
           </g>
         )}
 
-        {/* 左端进料罩 */}
+        {/* 3. 左端进料窑尾罩 (Feed Hood) */}
         <path
           d={`
-            M ${cx - kilnLen * 0.5 - 12} ${cy - kilnRadius - 8}
+            M ${cx - kilnLen * 0.5 - 14} ${cy - kilnRadius - 10}
             L ${cx - kilnLen * 0.5} ${cy - kilnRadius}
             L ${cx - kilnLen * 0.5} ${cy + kilnRadius}
-            L ${cx - kilnLen * 0.5 - 12} ${cy + kilnRadius + 8}
+            L ${cx - kilnLen * 0.5 - 14} ${cy + kilnRadius + 10}
             Z
           `}
           fill={SCENE_COLORS.materials.metal}
@@ -113,13 +156,13 @@ export function RotaryKilnEquipment({
           strokeWidth={STROKE.objectThin}
         />
 
-        {/* 右端出料/热风罩 */}
+        {/* 4. 右端出料窑头罩 (Discharge Hood & Burner) */}
         <path
           d={`
-            M ${cx + kilnLen * 0.5 + 12} ${cy - kilnRadius - 8}
+            M ${cx + kilnLen * 0.5 + 14} ${cy - kilnRadius - 10}
             L ${cx + kilnLen * 0.5} ${cy - kilnRadius}
             L ${cx + kilnLen * 0.5} ${cy + kilnRadius}
-            L ${cx + kilnLen * 0.5 + 12} ${cy + kilnRadius + 8}
+            L ${cx + kilnLen * 0.5 + 14} ${cy + kilnRadius + 10}
             Z
           `}
           fill={SCENE_COLORS.materials.metal}
@@ -128,7 +171,7 @@ export function RotaryKilnEquipment({
         />
       </g>
 
-      {/* 标题 */}
+      {/* 5. 标题 */}
       {title && !isTiny && (
         <text
           x={cx}
