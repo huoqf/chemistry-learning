@@ -1,34 +1,6 @@
 import { SCENE_COLORS, withAlpha, STROKE } from '@/theme'
 import type { FontScaler } from '@/theme'
 
-export interface SeparatoryFunnelPorts {
-  /** 分液漏斗上加料口 */
-  topNeckPort: { x: number; y: number }
-  /** 分液漏斗下端斜切嘴最下端 (流出口) */
-  bottomTipPort: { x: number; y: number }
-  /** 45° 斜切尖嘴外侧长边触点 (用于 100% 物理紧贴烧杯内壁) */
-  tipContactPort: { x: number; y: number }
-  /** 铁架台铁圈卡位点 (漏斗颈部) */
-  ringSupportPoint: { x: number; y: number }
-}
-
-/**
- * 静态计算分液漏斗组件的关键连接锚点 (Design Space)
- */
-export function getSeparatoryFunnelPorts(
-  x: number,
-  y: number,
-  width = 80,
-  height = 180
-): SeparatoryFunnelPorts {
-  return {
-    topNeckPort: { x: x + width * 0.5, y: y },
-    bottomTipPort: { x: x + width * 0.5 + 4, y: y + height },
-    tipContactPort: { x: x + width * 0.5 + 4, y: y + height },
-    ringSupportPoint: { x: x + width * 0.5, y: y + height * 0.35 },
-  }
-}
-
 export interface SeparatoryFunnelApparatusProps {
   /** 器材左上角 x（设计坐标） */
   x: number

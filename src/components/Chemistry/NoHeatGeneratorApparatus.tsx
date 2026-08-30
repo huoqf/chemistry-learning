@@ -21,40 +21,6 @@ const RIGHT_HOLE_REL_X = FLASK_NECK_LEFT_REL + FLASK_NECK_W * 0.7  // ~51
 const FUNNEL_W = 80
 const FUNNEL_H = 120
 
-export interface NoHeatGeneratorPorts {
-  /** 双孔塞右孔垂直引出的气体导出端口（连接下游导管） */
-  outletPort: { x: number; y: number }
-  /** 分液漏斗顶口 */
-  funnelTopPort: { x: number; y: number }
-}
-
-/**
- * 静态计算固液不加热发生装置复合组件的关键锚点 (Design Space)
- *
- * 坐标约定：
- *   x = 装置水平中心
- *   y = 桌面基准线（baseY），锥形瓶底部落于此处
- */
-export function getNoHeatGeneratorPorts(
-  x: number,
-  y: number
-): NoHeatGeneratorPorts {
-  // 锥形瓶左上角：左上角 x = x - FLASK_W/2, y_top = y - FLASK_H
-  const flaskLeft = x - FLASK_W / 2
-  const flaskTopY = y - FLASK_H
-
-  // 出气管端口：双孔塞右孔顶面处 (rightHoleX, stopperTopY)
-  const rightHoleX = flaskLeft + RIGHT_HOLE_REL_X
-  const stopperTopY = flaskTopY + STOPPER_TOP_REL_Y
-  const funnelLeft = x - FLASK_W / 2 - (FUNNEL_W - FLASK_NECK_W) / 2
-  const funnelTopY = stopperTopY - FUNNEL_H
-
-  return {
-    outletPort: { x: rightHoleX, y: stopperTopY },
-    funnelTopPort: { x: funnelLeft + FUNNEL_W * 0.5, y: funnelTopY },
-  }
-}
-
 export interface NoHeatGeneratorApparatusProps {
   /** 发生装置水平中心 x (Design Space) */
   x: number

@@ -146,8 +146,11 @@ export function getRedoxExamPoints(params: Record<string, number>) {
   }
 
   if (reaction === 3) {
-    text: '【复杂氧化还原配平法则】先用化合价升降守恒配平氧化剂 (KMnO₄) 与还原剂 (H₂O₂)，再用电荷守恒/介质配平 H₂SO₄，最后原子守恒配平 H₂O。'
     return [
+      {
+        text: '【复杂氧化还原配平法则】先用化合价升降守恒配平氧化剂 (KMnO₄) 与还原剂 (H₂O₂)，再用电荷守恒/介质配平 H₂SO₄，最后原子守恒配平 H₂O。',
+        importance: 'gaokao' as const,
+      },
       {
         text: '【复杂电子守恒计算】KMnO₄ 作用为强氧化剂 (Mn⁺⁷ → Mn²⁺ 降 5)，H₂O₂ 为还原剂 (O⁻¹ → O⁰ 升 1)。2 mol KMnO₄ 与 5 mol H₂O₂ 刚好完全反应，转移 10 mol 电子。',
         importance: 'gaokao' as const,

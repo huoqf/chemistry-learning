@@ -20,7 +20,7 @@ export const KatexText: React.FC<KatexTextProps> = ({ text, className = '' }) =>
       return <span className={className}>{text}</span>
     }
 
-    const parts = text.split(/(\$[^\$]+\$)/g)
+    const parts = text.split(/(\$[^$]+\$)/g)
 
     return (
       <span className={className}>

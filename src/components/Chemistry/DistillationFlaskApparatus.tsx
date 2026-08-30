@@ -1,40 +1,6 @@
 import { SCENE_COLORS, withAlpha, STROKE } from '@/theme'
 import type { FontScaler } from '@/theme'
 
-export interface DistillationFlaskPorts {
-  /** 烧瓶颈部橡皮塞/温度计插入口 (顶部中心) */
-  topNeckPort: { x: number; y: number; direction?: 'up' | 'down' | 'left' | 'right' }
-  /** 侧边支管口出口 (对准冷凝管进气口) */
-  sideArmPort: { x: number; y: number; direction?: 'up' | 'down' | 'left' | 'right' }
-  /** 瓶颈铁夹夹持点 */
-  clampPoint: { x: number; y: number }
-  /** 烧瓶底部中心 */
-  bottomPort: { x: number; y: number; direction?: 'up' | 'down' | 'left' | 'right' }
-}
-
-/**
- * 静态计算具支蒸馏烧瓶的关键连接锚点 (Design Space)
- */
-export function getDistillationFlaskPorts(
-  x: number,
-  y: number,
-  width = 90,
-  height = 140
-): DistillationFlaskPorts {
-  const neckH = height * 0.4
-  const sideTubeY = neckH * 0.35
-  const sideTubeW = width * 0.35
-  const neckLeft = (width - width * 0.28) / 2
-  const neckRight = neckLeft + width * 0.28
-
-  return {
-    topNeckPort: { x: x + width * 0.5, y: y, direction: 'up' },
-    sideArmPort: { x: x + neckRight + sideTubeW, y: y + sideTubeY + 9, direction: 'right' },
-    clampPoint: { x: x + width * 0.5, y: y + neckH * 0.5 },
-    bottomPort: { x: x + width * 0.5, y: y + height, direction: 'down' },
-  }
-}
-
 export interface DistillationFlaskApparatusProps {
   /** 器材左上角 x（设计坐标） */
   x: number

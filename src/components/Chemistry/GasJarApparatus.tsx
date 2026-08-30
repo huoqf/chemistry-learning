@@ -1,22 +1,6 @@
 import { SCENE_COLORS, withAlpha, STROKE, FONT } from '@/theme'
 import type { FontScaler } from '@/theme'
 
-export interface GasJarPorts {
-  /** 瓶口左侧导管顶部端口 */
-  topStopperLeft: { x: number; y: number; direction?: 'up' }
-  /** 瓶口右侧导管顶部端口 */
-  topStopperRight: { x: number; y: number; direction?: 'up' }
-}
-
-export function getGasJarPorts(x: number, y: number, width = 70): GasJarPorts {
-  const lipW = width * 0.7
-  const lipLeft = (width - lipW) / 2
-  return {
-    topStopperLeft: { x: x + lipLeft + lipW * 0.3, y: y + 4, direction: 'up' },
-    topStopperRight: { x: x + lipLeft + lipW * 0.7, y: y + 4, direction: 'up' },
-  }
-}
-
 export interface GasJarApparatusProps {
   /** 器材左上角 x（设计坐标） */
   x: number

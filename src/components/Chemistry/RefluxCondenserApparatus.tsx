@@ -1,37 +1,6 @@
 import { SCENE_COLORS, STROKE, FONT, withAlpha } from '@/theme'
 import type { FontScaler } from '@/theme'
 
-export interface RefluxCondenserPorts {
-  /** 下部连接反应瓶口 (蒸气进入) */
-  bottomNeckPort: { x: number; y: number }
-  /** 上部开口/安全通气口 */
-  topNeckPort: { x: number; y: number }
-  /** 下部冷却水进水口 (下进) */
-  waterInletPort: { x: number; y: number }
-  /** 上部冷却水出水口 (上出) */
-  waterOutletPort: { x: number; y: number }
-  /** 铁架台夹持点 */
-  clampPoint: { x: number; y: number }
-}
-
-/**
- * 静态计算球形回流冷凝管组件的关键连接锚点 (Design Space)
- */
-export function getRefluxCondenserPorts(
-  x: number,
-  y: number,
-  width = 50,
-  height = 180
-): RefluxCondenserPorts {
-  return {
-    bottomNeckPort: { x: x + width * 0.5, y: y + height },
-    topNeckPort: { x: x + width * 0.5, y: y },
-    waterInletPort: { x: x + width, y: y + height - 30 },
-    waterOutletPort: { x: x + width, y: y + 30 },
-    clampPoint: { x: x + width * 0.5, y: y + height * 0.5 },
-  }
-}
-
 export interface RefluxCondenserApparatusProps {
   /** 器材左上角 x */
   x: number

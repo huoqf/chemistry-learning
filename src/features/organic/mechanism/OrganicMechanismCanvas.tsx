@@ -9,7 +9,6 @@ import { getModelQuizData } from '@/data/gaokaoQuizData'
 import { getKnowledgeNode } from '@/data/knowledgeTree'
 import { getGaokaoModel } from '@/data/gaokaoModels'
 import { MECHANISM_DETAILS } from './constants'
-import type { OrganicMechanismCanvasProps } from './types'
 import { scenes } from './scenes'
 
 const ORGANIC_MECHANISM_CONTROLS: ControlMeta[] = [
@@ -61,7 +60,7 @@ const ORGANIC_MECHANISM_CONTROLS: ControlMeta[] = [
   },
 ]
 
-export function OrganicMechanismCanvas({}: OrganicMechanismCanvasProps) {
+export function OrganicMechanismCanvas() {
   const [params, setParamsState] = useState<Record<string, number>>({
     viewMode: 0,
     mechanism: 0,

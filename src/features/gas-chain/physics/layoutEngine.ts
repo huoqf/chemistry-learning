@@ -10,16 +10,16 @@
  */
 
 import type { PhysicalChainSolveResult, TubingRouteSegment, ApparatusLayout } from './types'
-import { getGasWashingBottlePorts } from '@/components/Chemistry/GasWashingBottleApparatus'
-import { getDryingTubePorts } from '@/components/Chemistry/DryingTubeApparatus'
-import { getGasJarPorts } from '@/components/Chemistry/GasJarApparatus'
-import { getAntiSiphonFunnelPorts } from '@/components/Chemistry/AntiSiphonFunnelApparatus'
-import { getSolidHeatingGeneratorPorts } from '@/components/Chemistry/SolidHeatingGeneratorApparatus'
-import { getLiquidHeatingGeneratorPorts } from '@/components/Chemistry/LiquidHeatingGeneratorApparatus'
-import { getNoHeatGeneratorPorts } from '@/components/Chemistry/NoHeatGeneratorApparatus'
-import { getKippApparatusPorts } from '@/components/Chemistry/KippApparatus'
-import { getWaterDisplacementPorts } from '@/components/Chemistry/WaterDisplacementCollectionApparatus'
-import { getSafetyBottlePorts } from '@/components/Chemistry/SafetyBottleApparatus'
+import { getGasWashingBottlePorts } from '@/components/Chemistry/apparatusPorts'
+import { getDryingTubePorts } from '@/components/Chemistry/apparatusPorts'
+import { getGasJarPorts } from '@/components/Chemistry/apparatusPorts'
+import { getAntiSiphonFunnelPorts } from '@/components/Chemistry/apparatusPorts'
+import { getSolidHeatingGeneratorPorts } from '@/components/Chemistry/apparatusPorts'
+import { getLiquidHeatingGeneratorPorts } from '@/components/Chemistry/apparatusPorts'
+import { getNoHeatGeneratorPorts } from '@/components/Chemistry/apparatusPorts'
+import { getKippApparatusPorts } from '@/components/Chemistry/apparatusPorts'
+import { getWaterDisplacementPorts } from '@/components/Chemistry/apparatusPorts'
+import { getSafetyBottlePorts } from '@/components/Chemistry/apparatusPorts'
 
 export interface LayoutEngineInput {
   generator: string

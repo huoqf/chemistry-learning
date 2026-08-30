@@ -1,28 +1,6 @@
 import { SCENE_COLORS, STROKE, FONT } from '@/theme'
 import type { FontScaler } from '@/theme'
 
-export interface CruciblePorts {
-  /** 坩埚开口顶部中心 */
-  topPort: { x: number; y: number }
-  /** 坩埚底部中心 (接触泥三角) */
-  bottomPort: { x: number; y: number }
-}
-
-/**
- * 静态计算瓷坩埚组件的关键连接锚点 (Design Space)
- */
-export function getCruciblePorts(
-  x: number,
-  y: number,
-  width = 60,
-  height = 50
-): CruciblePorts {
-  return {
-    topPort: { x: x + width * 0.5, y: y },
-    bottomPort: { x: x + width * 0.5, y: y + height },
-  }
-}
-
 export interface CrucibleApparatusProps {
   /** 器材左上角 x */
   x: number

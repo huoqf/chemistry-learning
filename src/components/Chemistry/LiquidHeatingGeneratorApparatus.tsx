@@ -1,42 +1,12 @@
 import React from 'react'
 import { SCENE_COLORS, CHEMISTRY_COLORS, withAlpha, STROKE } from '@/theme'
 import type { FontScaler } from '@/theme'
-import { DistillationFlaskApparatus, getDistillationFlaskPorts } from './DistillationFlaskApparatus'
+import { DistillationFlaskApparatus } from './DistillationFlaskApparatus'
+import { getDistillationFlaskPorts } from './apparatusPorts'
 import { AlcoholLampApparatus } from './AlcoholLampApparatus'
 import { SeparatoryFunnelApparatus } from './SeparatoryFunnelApparatus'
 import { ThermometerApparatus } from './ThermometerApparatus'
 import { IronSupportApparatus } from './IronSupportApparatus'
-
-export interface LiquidHeatingGeneratorPorts {
-  /** 蒸馏烧瓶支管口 (气体导出端点) */
-  sideArmPort: { x: number; y: number }
-  /** 顶部橡皮塞瓶口 */
-  topNeckPort: { x: number; y: number }
-}
-
-/**
- * 静态计算蒸馏烧瓶固液加热复合装置的关键锚点 (Design Space)
- */
-export function getLiquidHeatingGeneratorPorts(
-  x: number,
-  y: number
-): LiquidHeatingGeneratorPorts {
-  const GAUZE_Y = y - 86
-  const FLASK_W = 90
-  const FLASK_H = 140
-  const FLASK_NECK_H = FLASK_H * 0.4
-  const FLASK_BULB_R = FLASK_W * 0.42
-  const FLASK_HALF_NECK = (FLASK_W * 0.28) / 2
-  const FLASK_CENTER_DY = Math.sqrt(FLASK_BULB_R ** 2 - FLASK_HALF_NECK ** 2)
-  const FLASK_VISUAL_H = FLASK_NECK_H + FLASK_CENTER_DY + FLASK_BULB_R
-  const flaskX = x - FLASK_W / 2
-  const flaskY = GAUZE_Y - FLASK_VISUAL_H  // 圆弧最底端 = 石棉网顶面
-  const flaskPorts = getDistillationFlaskPorts(flaskX, flaskY, FLASK_W, FLASK_H)
-  return {
-    sideArmPort: flaskPorts.sideArmPort,
-    topNeckPort: flaskPorts.topNeckPort,
-  }
-}
 
 export interface LiquidHeatingGeneratorApparatusProps {
   /** 基准中心坐标 x (Design Space) */

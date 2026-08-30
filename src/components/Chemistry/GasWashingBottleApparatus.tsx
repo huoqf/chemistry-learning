@@ -1,37 +1,5 @@
 import { SCENE_COLORS, STROKE, withAlpha } from '@/theme'
 
-export interface GasWashingBottlePorts {
-  /** 长进气管入口 (洗气瓶左上方) */
-  inletPort: { x: number; y: number; direction?: 'up' | 'down' | 'left' | 'right' }
-  /** 短出气管出口 (洗气瓶右上方) */
-  outletPort: { x: number; y: number; direction?: 'up' | 'down' | 'left' | 'right' }
-  /** 橡皮塞顶部中心 */
-  topNeckPort: { x: number; y: number; direction?: 'up' | 'down' | 'left' | 'right' }
-  /** 洗气瓶底部中心 */
-  bottomPort: { x: number; y: number; direction?: 'up' | 'down' | 'left' | 'right' }
-}
-
-/**
- * 静态计算洗气瓶组件的关键连接锚点 (Design Space)
- */
-export function getGasWashingBottlePorts(
-  x: number,
-  y: number,
-  width = 90,
-  height = 140,
-  reversed = false
-): GasWashingBottlePorts {
-  const leftX = x + width * 0.3
-  const rightX = x + width * 0.7
-  // 玻璃导出端口在橡皮塞上方 12px 处 (y - 12)
-  return {
-    inletPort: { x: reversed ? rightX : leftX, y: y - 12, direction: 'up' },
-    outletPort: { x: reversed ? leftX : rightX, y: y - 12, direction: 'up' },
-    topNeckPort: { x: x + width * 0.5, y: y + 12, direction: 'up' },
-    bottomPort: { x: x + width * 0.5, y: y + height, direction: 'down' },
-  }
-}
-
 export interface GasWashingBottleApparatusProps {
   /** 器材左上角 x */
   x: number

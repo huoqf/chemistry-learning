@@ -1,28 +1,6 @@
 import { SCENE_COLORS, STROKE, FONT, withAlpha } from '@/theme'
 import type { FontScaler } from '@/theme'
 
-export interface AntiSiphonFunnelPorts {
-  /** 倒置漏斗顶部连接导管口 */
-  topConnectPort: { x: number; y: number; direction?: 'up' }
-  /** 倒置漏斗大口底部接触面 */
-  bottomPort: { x: number; y: number; direction?: 'down' }
-}
-
-/**
- * 静态计算防倒吸倒置漏斗组件的关键连接锚点 (Design Space)
- */
-export function getAntiSiphonFunnelPorts(
-  x: number,
-  y: number,
-  width = 80,
-  height = 100
-): AntiSiphonFunnelPorts {
-  return {
-    topConnectPort: { x: x + width * 0.5, y: y - 20, direction: 'up' },
-    bottomPort: { x: x + width * 0.5, y: y + height, direction: 'down' },
-  }
-}
-
 export interface AntiSiphonFunnelApparatusProps {
   /** 器材左上角 x */
   x: number

@@ -1,28 +1,6 @@
 import { SCENE_COLORS, STROKE, FONT, CHEMISTRY_COLORS, withAlpha } from '@/theme'
 import type { FontScaler } from '@/theme'
 
-export interface GasBurettePorts {
-  /** 气体进入口 (量气管顶部) */
-  gasInletPort: { x: number; y: number }
-  /** 水准瓶顶部加液口 */
-  levelBottleTopPort: { x: number; y: number }
-}
-
-/**
- * 静态计算量气管组件的关键连接锚点 (Design Space)
- */
-export function getGasBurettePorts(
-  x: number,
-  y: number,
-  width = 110,
-  _height = 220
-): GasBurettePorts {
-  return {
-    gasInletPort: { x: x + 20, y: y - 10 },
-    levelBottleTopPort: { x: x + width - 20, y: y + 20 },
-  }
-}
-
 export interface GasBuretteApparatusProps {
   /** 器材左上角 x */
   x: number

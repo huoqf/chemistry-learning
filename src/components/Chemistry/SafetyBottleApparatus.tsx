@@ -1,30 +1,6 @@
 import { SCENE_COLORS, STROKE, withAlpha } from '@/theme'
 import type { FontScaler } from '@/theme'
 
-export interface SafetyBottlePorts {
-  /** 进气管顶端（左侧管，不伸入液面） */
-  inletPort: { x: number; y: number; direction?: 'up' }
-  /** 出气管顶端（右侧管，不伸入液面） */
-  outletPort: { x: number; y: number; direction?: 'up' }
-}
-
-/**
- * 静态计算安全瓶关键连接锚点（Design Space）
- * 安全瓶 = 广口集气瓶形 + 双孔橡皮塞 + 两管均不伸入液面
- */
-export function getSafetyBottlePorts(
-  x: number,
-  y: number,
-  width = 80,
-): SafetyBottlePorts {
-  const lipW = width * 0.7
-  const lipLeft = (width - lipW) / 2
-  return {
-    inletPort:  { x: x + lipLeft + lipW * 0.3, y: y - 14, direction: 'up' },
-    outletPort: { x: x + lipLeft + lipW * 0.7, y: y - 14, direction: 'up' },
-  }
-}
-
 export interface SafetyBottleApparatusProps {
   /** 器材左上角 x */
   x: number

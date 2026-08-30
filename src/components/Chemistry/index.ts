@@ -45,8 +45,8 @@ export type { VolumetricFlaskApparatusProps } from './VolumetricFlaskApparatus'
 export { TestTubeApparatus } from './TestTubeApparatus'
 export type { TestTubeApparatusProps } from './TestTubeApparatus'
 
-export { GasJarApparatus, getGasJarPorts } from './GasJarApparatus'
-export type { GasJarApparatusProps, GasJarPorts } from './GasJarApparatus'
+export { GasJarApparatus } from './GasJarApparatus'
+export type { GasJarApparatusProps } from './GasJarApparatus'
 
 export { AlcoholLampApparatus } from './AlcoholLampApparatus'
 export type { AlcoholLampApparatusProps } from './AlcoholLampApparatus'
@@ -54,8 +54,8 @@ export type { AlcoholLampApparatusProps } from './AlcoholLampApparatus'
 export { SeparatoryFunnelApparatus } from './SeparatoryFunnelApparatus'
 export type { SeparatoryFunnelApparatusProps } from './SeparatoryFunnelApparatus'
 
-export { SolidHeatingGeneratorApparatus, getSolidHeatingGeneratorPorts } from './SolidHeatingGeneratorApparatus'
-export type { SolidHeatingGeneratorApparatusProps, SolidHeatingGeneratorPorts } from './SolidHeatingGeneratorApparatus'
+export { SolidHeatingGeneratorApparatus } from './SolidHeatingGeneratorApparatus'
+export type { SolidHeatingGeneratorApparatusProps } from './SolidHeatingGeneratorApparatus'
 
 // ── 装置支撑与连接类组件 ──
 export { IronSupportApparatus } from './IronSupportApparatus'
@@ -73,21 +73,21 @@ export type { WaterBathApparatusProps } from './WaterBathApparatus'
 export { GlassTubingConnectionApparatus } from './GlassTubingConnectionApparatus'
 export type { GlassTubingConnectionApparatusProps } from './GlassTubingConnectionApparatus'
 
-export { LiquidHeatingGeneratorApparatus, getLiquidHeatingGeneratorPorts } from './LiquidHeatingGeneratorApparatus'
-export type { LiquidHeatingGeneratorApparatusProps, LiquidHeatingGeneratorPorts } from './LiquidHeatingGeneratorApparatus'
+export { LiquidHeatingGeneratorApparatus } from './LiquidHeatingGeneratorApparatus'
+export type { LiquidHeatingGeneratorApparatusProps } from './LiquidHeatingGeneratorApparatus'
 
-export { NoHeatGeneratorApparatus, getNoHeatGeneratorPorts } from './NoHeatGeneratorApparatus'
-export type { NoHeatGeneratorApparatusProps, NoHeatGeneratorPorts } from './NoHeatGeneratorApparatus'
+export { NoHeatGeneratorApparatus } from './NoHeatGeneratorApparatus'
+export type { NoHeatGeneratorApparatusProps } from './NoHeatGeneratorApparatus'
 
-export { KippApparatus, getKippApparatusPorts } from './KippApparatus'
-export type { KippApparatusProps, KippApparatusPorts } from './KippApparatus'
+export { KippApparatus } from './KippApparatus'
+export type { KippApparatusProps } from './KippApparatus'
 
 export { EvaporatingDishApparatus } from './EvaporatingDishApparatus'
 export type { EvaporatingDishApparatusProps } from './EvaporatingDishApparatus'
 
 // ── 干燥冷凝与提纯分离类组件 ──
-export { DryingTubeApparatus, getDryingTubePorts } from './DryingTubeApparatus'
-export type { DryingTubeApparatusProps, DryingTubePorts } from './DryingTubeApparatus'
+export { DryingTubeApparatus } from './DryingTubeApparatus'
+export type { DryingTubeApparatusProps } from './DryingTubeApparatus'
 
 
 export { CondenserApparatus } from './CondenserApparatus'
@@ -191,46 +191,72 @@ export { ReagentStepCanvas } from './ReagentStepCanvas'
 export { GaokaoToolPlaceholderCanvas } from './GaokaoToolPlaceholderCanvas'
 
 // ── 补全高考及教学 5 大核心器材与 Ports 锚点导出 ──
-export { GasWashingBottleApparatus, getGasWashingBottlePorts } from './GasWashingBottleApparatus'
-export type { GasWashingBottleApparatusProps, GasWashingBottlePorts } from './GasWashingBottleApparatus'
+export { GasWashingBottleApparatus } from './GasWashingBottleApparatus'
+export type { GasWashingBottleApparatusProps } from './GasWashingBottleApparatus'
 
-export { AntiSiphonFunnelApparatus, getAntiSiphonFunnelPorts } from './AntiSiphonFunnelApparatus'
-export type { AntiSiphonFunnelApparatusProps, AntiSiphonFunnelPorts } from './AntiSiphonFunnelApparatus'
+export { AntiSiphonFunnelApparatus } from './AntiSiphonFunnelApparatus'
+export type { AntiSiphonFunnelApparatusProps } from './AntiSiphonFunnelApparatus'
 
-export { CrucibleApparatus, getCruciblePorts } from './CrucibleApparatus'
-export type { CrucibleApparatusProps, CruciblePorts } from './CrucibleApparatus'
+export { CrucibleApparatus } from './CrucibleApparatus'
+export type { CrucibleApparatusProps } from './CrucibleApparatus'
 
-export { GasBuretteApparatus, getGasBurettePorts } from './GasBuretteApparatus'
-export type { GasBuretteApparatusProps, GasBurettePorts } from './GasBuretteApparatus'
+export { GasBuretteApparatus } from './GasBuretteApparatus'
+export type { GasBuretteApparatusProps } from './GasBuretteApparatus'
 
-export { RefluxCondenserApparatus, getRefluxCondenserPorts } from './RefluxCondenserApparatus'
-export type { RefluxCondenserApparatusProps, RefluxCondenserPorts } from './RefluxCondenserApparatus'
-
-// 器材锚点 (Ports) 导出
-export { getGlassTubingPorts } from './GlassTubingConnectionApparatus'
-export type { GlassTubingPorts } from './GlassTubingConnectionApparatus'
-
-export { getDistillationFlaskPorts } from './DistillationFlaskApparatus'
-export type { DistillationFlaskPorts } from './DistillationFlaskApparatus'
-
-export { getIronSupportPorts } from './IronSupportApparatus'
-export type { IronSupportPorts } from './IronSupportApparatus'
-
-export { getBurettePorts } from './BuretteApparatus'
-export type { BurettePorts } from './BuretteApparatus'
-
-export { getSeparatoryFunnelPorts } from './SeparatoryFunnelApparatus'
-export type { SeparatoryFunnelPorts } from './SeparatoryFunnelApparatus'
-
-export { getBeakerPorts } from './BeakerApparatus'
-export type { BeakerPorts } from './BeakerApparatus'
+export { RefluxCondenserApparatus } from './RefluxCondenserApparatus'
+export type { RefluxCondenserApparatusProps } from './RefluxCondenserApparatus'
 
 export { SeparatoryFunnelSetup } from './SeparatoryFunnelSetup'
 export type { SeparatoryFunnelSetupProps, SeparatoryFunnelSetupState } from './SeparatoryFunnelSetup'
 
 // ── 气体制备/净化/收集专用组件 ──
-export { SafetyBottleApparatus, getSafetyBottlePorts } from './SafetyBottleApparatus'
-export type { SafetyBottleApparatusProps, SafetyBottlePorts } from './SafetyBottleApparatus'
+export { SafetyBottleApparatus } from './SafetyBottleApparatus'
+export type { SafetyBottleApparatusProps } from './SafetyBottleApparatus'
 
-export { WaterDisplacementCollectionApparatus, getWaterDisplacementPorts } from './WaterDisplacementCollectionApparatus'
-export type { WaterDisplacementCollectionApparatusProps, WaterDisplacementPorts } from './WaterDisplacementCollectionApparatus'
+export { WaterDisplacementCollectionApparatus } from './WaterDisplacementCollectionApparatus'
+export type { WaterDisplacementCollectionApparatusProps } from './WaterDisplacementCollectionApparatus'
+
+// ── 器材锚点 (Ports) 计算工具与类型（集中自 ./apparatusPorts）──
+export {
+  getKippApparatusPorts,
+  getIronSupportPorts,
+  getWaterDisplacementPorts,
+  getRefluxCondenserPorts,
+  getSolidHeatingGeneratorPorts,
+  getSeparatoryFunnelPorts,
+  getSafetyBottlePorts,
+  getGlassTubingPorts,
+  getNoHeatGeneratorPorts,
+  getGasWashingBottlePorts,
+  getGasBurettePorts,
+  getGasJarPorts,
+  getCruciblePorts,
+  getAntiSiphonFunnelPorts,
+  getBeakerPorts,
+  getBurettePorts,
+  getDryingTubePorts,
+  getDistillationFlaskPorts,
+  getLiquidHeatingGeneratorPorts,
+} from './apparatusPorts'
+
+export type {
+  KippApparatusPorts,
+  IronSupportPorts,
+  WaterDisplacementPorts,
+  RefluxCondenserPorts,
+  SolidHeatingGeneratorPorts,
+  SeparatoryFunnelPorts,
+  SafetyBottlePorts,
+  GlassTubingPorts,
+  NoHeatGeneratorPorts,
+  GasWashingBottlePorts,
+  GasBurettePorts,
+  GasJarPorts,
+  CruciblePorts,
+  AntiSiphonFunnelPorts,
+  BeakerPorts,
+  BurettePorts,
+  DryingTubePorts,
+  DistillationFlaskPorts,
+  LiquidHeatingGeneratorPorts,
+} from './apparatusPorts'

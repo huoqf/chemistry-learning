@@ -14,34 +14,6 @@
 import { SCENE_COLORS, withAlpha, STROKE, FONT } from '@/theme'
 import type { FontScaler } from '@/theme'
 
-export interface KippApparatusPorts {
-  /** 侧管活塞右端橡皮套管接扣出口 (对外导管连接唯一真实锚点) */
-  outletPort: { x: number; y: number }
-  /** 上部球形漏斗加酸口中心 */
-  topFunnelPort: { x: number; y: number }
-}
-
-/**
- * 静态计算启普发生器组件的关键连接锚点 (Design Space)
- */
-export function getKippApparatusPorts(
-  x: number,
-  y: number,
-  width = 90
-): KippApparatusPorts {
-  const w = width
-  const cx = w * 0.5
-  const midSphereR = 34
-  const midSphereY = 120
-  const hoseJointX = cx + midSphereR + 24
-  const hoseJointY = midSphereY - 10
-
-  return {
-    outletPort: { x: x + hoseJointX + 8, y: y + hoseJointY },
-    topFunnelPort: { x: x + cx, y: y + 2 },
-  }
-}
-
 export interface KippApparatusProps {
   /** 器材左上角 x（设计坐标） */
   x: number

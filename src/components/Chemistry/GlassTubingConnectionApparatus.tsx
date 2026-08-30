@@ -1,28 +1,6 @@
 import { SCENE_COLORS, FONT, withAlpha } from '@/theme'
 import type { FontScaler } from '@/theme'
 
-export interface GlassTubingPorts {
-  /** 导管起点坐标 (Design Space 绝对坐标) */
-  startPort: { x: number; y: number }
-  /** 导管终点坐标 (Design Space 绝对坐标) */
-  endPort: { x: number; y: number }
-}
-
-/**
- * 静态计算玻璃导管组件的关键连接锚点 (Design Space)
- */
-export function getGlassTubingPorts(
-  x: number,
-  y: number,
-  endX = 100,
-  endY = 0
-): GlassTubingPorts {
-  return {
-    startPort: { x, y },
-    endPort: { x: x + endX, y: y + endY },
-  }
-}
-
 export interface GlassTubingConnectionApparatusProps {
   /** 器材起点 x（设计坐标） */
   x: number

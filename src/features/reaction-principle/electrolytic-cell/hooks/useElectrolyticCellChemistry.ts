@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 export interface UseElectrolyticCellChemistryParams {
   cellType: number // 0: CuCl2, 1: CuSO4, 2: NaCl(氯碱), 3: Cu精炼, 4: Al2O3熔融
@@ -52,7 +52,7 @@ export function useElectrolyticCellChemistry({
   const F = 96485
 
   // 计算单一时间点下各种量
-  const computeStateAtTime = (t: number) => {
+  const computeStateAtTime = useCallback((t: number) => {
     const ne = parseFloat(((current * t * 50) / F).toFixed(4))
     let anodeDeltaM = 0
     let cathodeDeltaM = 0
@@ -123,7 +123,7 @@ export function useElectrolyticCellChemistry({
       cMain,
       pH,
     }
-  }
+  }, [cellType, anodeMaterial, current])
 
   // 1. 全量预计算 0~MAX_TIME 的完整历史点 (AGENTS.md 铁律 8)
   const fullMassHistory = useMemo(() => {
@@ -140,7 +140,7 @@ export function useElectrolyticCellChemistry({
       })
     }
     return list;
-  }, [cellType, anodeMaterial, current])
+  }, [computeStateAtTime])
 
   const fullIonHistory = useMemo(() => {
     const list: IonPoint[] = []
@@ -155,7 +155,7 @@ export function useElectrolyticCellChemistry({
       })
     }
     return list;
-  }, [cellType, anodeMaterial, current])
+  }, [computeStateAtTime])
 
   // 2. 根据当前时间 reveal
   const massHistory = useMemo(

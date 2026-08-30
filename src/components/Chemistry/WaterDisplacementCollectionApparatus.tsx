@@ -3,34 +3,6 @@ import type { FontScaler } from '@/theme'
 import { GasJarApparatus } from './GasJarApparatus'
 import { BubbleEmitter } from './BubbleEmitter'
 
-export interface WaterDisplacementPorts {
-  /** 进气管顶端（从左侧弯管进入水槽，进气端） */
-  inletPort: { x: number; y: number; direction?: 'up' }
-  /** 出气管顶端（从倒扣集气瓶右侧短管导出，接尾气处理） */
-  outletPort: { x: number; y: number; direction?: 'up' } | null
-}
-
-/**
- * 静态计算排水集气装置关键端口（Design Space 绝对坐标）
- * @param x 装置左上角 x（对应水槽左边界）
- * @param y 装置左上角 y（对应进气管露出水槽上方的顶端）
- * @param width 装置总宽度（默认 150）
- * @param hasTailGas 是否有后续尾气处理装置（决定 outletPort 是否为 null）
- */
-export function getWaterDisplacementPorts(
-  x: number,
-  y: number,
-  _width = 150,
-  _hasTailGas = false,
-): WaterDisplacementPorts {
-  return {
-    // 进气管：左侧弯管顶端（进气导管从上方进入）
-    inletPort: { x: x + 25, y: y + 10, direction: 'up' },
-    // 排水集气为单向闭合收集，水封顶置气室，绝对无出气管，outletPort 恒定为 null
-    outletPort: null,
-  }
-}
-
 export interface WaterDisplacementCollectionApparatusProps {
   /** 装置左上角 x */
   x: number

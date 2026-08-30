@@ -118,19 +118,19 @@ function generateAromatic3DModel(isomer: IsomerNode): Isomer3DModel {
     // 邻甲酚: C0 接 OH, C1 接 CH3 (邻位 60°)
     ringOccupied[0] = true
     ringOccupied[1] = true
-    addBranchGroup(ringCPositions[0], (0 * Math.PI) / 3, 'OH', 'sub-oh', atoms, bonds)
+    addBranchGroup(ringCPositions[0], 0, 'OH', 'sub-oh', atoms, bonds)
     addBranchGroup(ringCPositions[1], (1 * Math.PI) / 3, 'CH3', 'sub-ch3', atoms, bonds)
   } else if (isMeta) {
     // 间甲酚: C0 接 OH, C2 接 CH3 (间位 120°)
     ringOccupied[0] = true
     ringOccupied[2] = true
-    addBranchGroup(ringCPositions[0], (0 * Math.PI) / 3, 'OH', 'sub-oh', atoms, bonds)
+    addBranchGroup(ringCPositions[0], 0, 'OH', 'sub-oh', atoms, bonds)
     addBranchGroup(ringCPositions[2], (2 * Math.PI) / 3, 'CH3', 'sub-ch3', atoms, bonds)
   } else if (isPara) {
     // 对甲酚: C0 接 OH, C3 接 CH3 (对位 180°)
     ringOccupied[0] = true
     ringOccupied[3] = true
-    addBranchGroup(ringCPositions[0], (0 * Math.PI) / 3, 'OH', 'sub-oh', atoms, bonds)
+    addBranchGroup(ringCPositions[0], 0, 'OH', 'sub-oh', atoms, bonds)
     addBranchGroup(ringCPositions[3], (3 * Math.PI) / 3, 'CH3', 'sub-ch3', atoms, bonds)
   } else if (isBenzylAlcohol) {
     // 苯甲醇: C0 接 CH2, CH2 再接 OH

@@ -2,34 +2,6 @@ import { SCENE_COLORS, withAlpha, STROKE } from '@/theme'
 import type { FontScaler } from '@/theme'
 import { AlcoholLampApparatus } from './AlcoholLampApparatus'
 import { IronSupportApparatus } from './IronSupportApparatus'
-import { applyRotate } from '@/utils/svgTransform'
-
-export interface SolidHeatingGeneratorPorts {
-  /** 单孔橡皮塞出的出气导管端点 (Design Space) — 经 rotate(6°, pivot) 数学精确计算 */
-  outletPort: { x: number; y: number; direction?: 'right' | 'up' }
-  /** 铁夹夹持中心 (Design Space) */
-  clampPort: { x: number; y: number }
-}
-
-/**
- * 静态计算固固加热发生装置组件的关键连接端点 (Design Space)
- *
- * 【端口计算原则】
- * 管口坐标使用 applyRotate() 数学精确计算 SVG rotate(6, 105, -114) 变换后位置，
- * 而非手工估算。这样端口坐标与渲染位置保证 100% 一致，连接导管不会产生额外拐弯。
- */
-export function getSolidHeatingGeneratorPorts(
-  x: number,
-  y: number
-): SolidHeatingGeneratorPorts {
-  // 试管导管塞：旋转轴 (105, -166.37)，旋转 6° 倾斜
-  // dx = 166 - 105 = 61 -> new_y = 61 * sin(6°) - 166.37 = 6.37 - 166.37 = -160.00
-  const tip = applyRotate({ x: 166, y: -166.37 }, 6, 105, -166.37)
-  return {
-    outletPort: { x: x + tip.x, y: y + tip.y, direction: 'right' },
-    clampPort: { x: x + 105, y: y - 166.37 },
-  }
-}
 
 export interface SolidHeatingGeneratorApparatusProps {
   /** 发生装置基准左侧坐标 x (设计坐标) */

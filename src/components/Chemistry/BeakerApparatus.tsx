@@ -1,35 +1,6 @@
 import { SCENE_COLORS, withAlpha, STROKE, FONT } from '@/theme'
 import type { FontScaler } from '@/theme'
 
-export interface BeakerPorts {
-  /** 烧杯左侧内壁坐标 (高考靠壁放液对齐点) */
-  innerWallLeft: { x: number; y: number }
-  /** 烧杯右侧内壁坐标 */
-  innerWallRight: { x: number; y: number }
-  /** 烧杯口左上边沿 */
-  mouthLeft: { x: number; y: number }
-  /** 烧杯底部中心 */
-  bottomPort: { x: number; y: number }
-}
-
-/**
- * 静态计算烧杯组件的关键连接锚点 (Design Space)
- */
-export function getBeakerPorts(
-  x: number,
-  y: number,
-  width = 80,
-  height = 100
-): BeakerPorts {
-  const wallT = Math.max(2, width * 0.04)
-  return {
-    innerWallLeft: { x: x + wallT, y: y + 10 },
-    innerWallRight: { x: x + width - wallT, y: y + 10 },
-    mouthLeft: { x: x + width * 0.3, y: y - 10 },
-    bottomPort: { x: x + width * 0.5, y: y + height },
-  }
-}
-
 export interface BeakerApparatusProps {
   /** 器材左上角 x（设计坐标） */
   x: number
