@@ -15,7 +15,7 @@ export interface GaokaoModelNode {
 }
 
 /**
- * 16 大高考专属交互动画工具元数据表
+ * 18 大高考专属交互动画工具元数据表
  */
 export const gaokaoModels: GaokaoModelNode[] = [
   // ── A. 5 大记忆强化交互工具 ──
