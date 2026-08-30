@@ -4,14 +4,16 @@ import { getModelQuizData } from '../gaokaoQuizData'
 import { getKnowledgeNode } from '../knowledgeTree'
 
 describe('Gaokao Models & Quiz Data 整合审计测试', () => {
-  it('恰好包含 16 个高考专属交互工具 (3 大记忆矩阵 + 8 大解题母题 + 2 大实验链 + 3 专项工具)', () => {
-    // 精确断言总数，防止遗漏/重夏注册
-    expect(gaokaoModels.length).toBe(16)
+  it('恰好包含 18 个高考专属交互工具 (5 大记忆矩阵 + 9 大解题母题 + 4 大实验与专题工具)', () => {
+    // 精确断言总数，防止遗漏/重复注册
+    expect(gaokaoModels.length).toBe(18)
 
     const modelIds = gaokaoModels.map(m => m.id)
 
-    // ── A. 3 大记忆矩阵 (memory-matrix) ──
+    // ── A. 5 大记忆矩阵 (memory-matrix) ──
     expect(modelIds).toContain('model-valence-matrix')
+    expect(modelIds).toContain('model-ion-matrix')
+    expect(modelIds).toContain('model-organic-matrix')
     expect(modelIds).toContain('model-reagent-step')
     expect(modelIds).toContain('model-flash-cards')
 

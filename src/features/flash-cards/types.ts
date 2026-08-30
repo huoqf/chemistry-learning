@@ -5,6 +5,7 @@ export type FlashCardCategory =
   | 'equilibrium-color'
   | 'inorganic-facts'
   | 'organic-experiment'
+  | 'experiment-templates'
 
 export interface FlashCard {
   id: string

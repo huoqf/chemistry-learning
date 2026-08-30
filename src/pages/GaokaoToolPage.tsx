@@ -19,6 +19,8 @@ import { ElectrochemicalTwinCanvas } from '@/features/electrochemical-twin/Elect
 import { GasChainCanvas } from '@/features/gas-chain'
 import { Crystal3DSplitCanvas } from '@/features/crystal-3d-split'
 import { VseprHybrid3DCanvas } from '@/features/vsepr-hybrid-3d'
+import { IonMatrixCanvas } from '@/features/inorganic-ion-matrix/IonMatrixCanvas'
+import { OrganicFunctionalMatrixCanvas } from '@/features/organic-functional-matrix/OrganicFunctionalMatrixCanvas'
 
 export default function GaokaoToolPage() {
   const { id } = useParams<{ id: string }>()
@@ -89,6 +91,12 @@ export default function GaokaoToolPage() {
 
     case 'model-vsepr-hybrid-3d':
       return <VseprHybrid3DCanvas />
+
+    case 'model-ion-matrix':
+      return <IonMatrixCanvas />
+
+    case 'model-organic-matrix':
+      return <OrganicFunctionalMatrixCanvas />
 
     default:
       return <GaokaoToolPlaceholderCanvas modelId={model.id} />

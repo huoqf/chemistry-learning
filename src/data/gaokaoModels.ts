@@ -18,7 +18,7 @@ export interface GaokaoModelNode {
  * 16 大高考专属交互动画工具元数据表
  */
 export const gaokaoModels: GaokaoModelNode[] = [
-  // ── A. 3 大记忆强化交互工具 ──
+  // ── A. 5 大记忆强化交互工具 ──
   {
     id: 'model-valence-matrix',
     category: 'memory-matrix',
@@ -37,9 +37,43 @@ export const gaokaoModels: GaokaoModelNode[] = [
     ],
   },
   {
+    id: 'model-ion-matrix',
+    category: 'memory-matrix',
+    title: '专题二：无机离子特征检验与共存排斥记忆矩阵',
+    subtitle: '16大离子检验与四大互斥排查',
+    description: '收录高考 16 大核心阴阳离子特征检验特效试剂、现象与干扰排除，支持多离子共存智能冲突检测引擎。',
+    toolRoute: '/gaokao-tool/model-ion-matrix',
+    iconName: 'FlaskConical',
+    badgeText: '离子检验',
+    badgeColor: 'bg-blue-100 text-blue-800 border-blue-200',
+    relatedKnowledgeIds: ['iron', 'aluminum', 'copper', 'sulfur'],
+    examPointSummary: [
+      'Fe³⁺/Fe²⁺/Al³⁺/Cu²⁺/NH₄⁺/SO₄²⁻/Cl⁻/I⁻ 特征检验与标准答题句式',
+      '沉淀、气体、弱电解质、氧化还原、剧烈双水解四大共存互斥规则',
+      '溶液颜色限制与介质酸碱性隐含条件排查',
+    ],
+  },
+  {
+    id: 'model-organic-matrix',
+    category: 'memory-matrix',
+    title: '专题三：有机官能团定性特征与定量转化反应矩阵',
+    subtitle: '10大官能团定性定量转化图谱',
+    description: '结构化展示 10 大高考核心官能团特异性鉴别试剂与现象，提供与 Na、NaOH、NaHCO₃、Br₂、H₂ 反应消耗摩尔比即时计算器。',
+    toolRoute: '/gaokao-tool/model-organic-matrix',
+    iconName: 'Dna',
+    badgeText: '官能团定量',
+    badgeColor: 'bg-pink-100 text-pink-800 border-pink-200',
+    relatedKnowledgeIds: ['carboxylic-acid-ester', 'ethylene', 'organic-synthesis'],
+    examPointSummary: [
+      '酚羟基 vs 羧基与 Na/NaOH/NaHCO₃ 反应的定性与定量差异 (阿司匹林母题)',
+      '1 mol 酚酯水解消耗 2 mol NaOH 极值陷阱',
+      '碳碳双键/三键/醛基加成与氧化消耗 Br₂/H₂ 的摩尔比推断',
+    ],
+  },
+  {
     id: 'model-reagent-step',
     category: 'memory-matrix',
-    title: '专题二：试剂滴加与沉淀变色演练工具',
+    title: '专题四：试剂滴加与沉淀变色演练工具',
     subtitle: '沉淀生成/溶解与颜色演变演练',
     description: '交互式演示滴加 NaOH 时 Fe(OH)₂ 白色沉淀在空气中迅速变为灰绿色、最终变为红褐色 Fe(OH)₃ 的过程，以及 Al(OH)₃ 两性溶解演练。',
     toolRoute: '/gaokao-tool/model-reagent-step',
@@ -56,18 +90,18 @@ export const gaokaoModels: GaokaoModelNode[] = [
   {
     id: 'model-flash-cards',
     category: 'memory-matrix',
-    title: '专题三：高考易错事实盲盒对比卡片',
-    subtitle: '漂白性/钝化/常识对比探究',
-    description: '针对 SO₂ vs Cl₂ 漂白性差异 (加热是否恢复)、浓硝酸/浓硫酸对 Fe/Al 的钝化现象等易错点，提供对比验证与盲盒翻牌探究。',
+    title: '专题五：高考易错事实盲盒与实验规范答题卡',
+    subtitle: '漂白性/钝化/实验规范模板对比探究',
+    description: '针对 SO₂ vs Cl₂ 漂白性差异、钝化本质、沉淀洗涤与洗净检验、滴定终点判定等 21 大盲盒提供对比探究与标准规范答题记忆。',
     toolRoute: '/gaokao-tool/model-flash-cards',
     iconName: 'GitCompare',
     badgeText: '易错盲盒',
     badgeColor: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-    relatedKnowledgeIds: ['sulfur', 'nitrogen'],
+    relatedKnowledgeIds: ['sulfur', 'nitrogen', 'separation-purification', 'titration'],
     examPointSummary: [
+      '沉淀洗涤、洗净检验、气密性检验、滴定终点判定 6 大标准答题规范',
       'SO₂ (化合结合)、Cl₂ (强氧化性)、活性炭 (物理吸附) 漂白机制对比',
-      '常温下浓硫酸/浓硝酸对 Fe/Al 钝化的物理本质',
-      '高考化学无机常识与实验易错选项拆解',
+      '常温下浓硫酸/浓硝酸对 Fe/Al 钝化的物理化学本质',
     ],
   },
 
