@@ -7,20 +7,31 @@ const ANIMATION_PAGES = [
   { id: 'anim-vsepr', title: 'VSEPR 模型' },
   { id: 'anim-unit-cell-calculation', title: '晶胞结构与密度计算' },
   { id: 'anim-chirality', title: '手性分子与立体异构' },
+  { id: 'anim-isomerism', title: '同分异构体分类与三维构型' },
   { id: 'anim-primary-cell', title: '原电池工作原理' },
   { id: 'anim-electrolytic-cell', title: '电解池工作原理' },
   { id: 'anim-electrochemical-application', title: '电化学综合应用' },
-  { id: 'anim-extraction-distillation', title: '萩取分液与蒸馏实验' },
+  { id: 'anim-extraction-distillation', title: '萃取分液与蒸馏实验' },
   { id: 'anim-redox-electron-transfer', title: '电子转移与化合价' },
 ]
 
 const GAOKAO_TOOL_ROUTES = [
   'model-valence-matrix',
   'model-reagent-step',
+  'model-flash-cards',
+  'model-titration-balance',
+  'model-electrochemical-twin',
+  'model-crystal-3d-split',
+  'model-reaction-principle-nexus',
+  'model-vsepr-hybrid-3d',
   'model-gas-chain',
   'model-industrial-flow',
-  'model-electrochemical-twin',
+  'model-organic-mechanism',
   'model-hess-law',
+  'model-element-periodic-property',
+  'model-avogadro-constant',
+  'model-titration-error-purity',
+  'model-organic-retrosynthesis',
 ]
 
 test.describe('高中化学学习系统 - 页面基础渲染检查', () => {

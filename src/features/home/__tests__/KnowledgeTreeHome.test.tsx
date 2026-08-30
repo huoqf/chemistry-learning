@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import '@testing-library/jest-dom'
 
@@ -73,44 +73,59 @@ describe('KnowledgeTreeHome 高考化学主页知识地图组件测试', () => {
   const renderWithRouter = (component: React.ReactNode) =>
     render(<MemoryRouter>{component}</MemoryRouter>)
 
-  it('成功渲染核心标题与统计看板', () => {
+  it('成功渲染核心标题与统计看板', async () => {
     renderWithRouter(<KnowledgeTreeHome />)
-    expect(screen.getByText('高考知识地图实验室')).toBeInTheDocument()
-    expect(screen.getByText('已开放实验')).toBeInTheDocument()
-    expect(screen.getByText('高考总考点')).toBeInTheDocument()
-    expect(screen.getByText('学科大板块')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText('高考知识地图实验室')).toBeInTheDocument()
+      expect(screen.getByText('已开放实验')).toBeInTheDocument()
+      expect(screen.getByText('高考总考点')).toBeInTheDocument()
+      expect(screen.getByText('学科大板块')).toBeInTheDocument()
+    })
   })
 
-  it('成功渲染高中化学 5 大核心板块', () => {
+  it('成功渲染高中化学 5 大核心板块', async () => {
     renderWithRouter(<KnowledgeTreeHome />)
-    expect(screen.getByText('无机化学与元素化合物')).toBeInTheDocument()
-    expect(screen.getByText('化学反应原理与电化学')).toBeInTheDocument()
-    expect(screen.getByText('物质结构与晶体性质')).toBeInTheDocument()
-    expect(screen.getByText('有机化学基础与合成')).toBeInTheDocument()
-    expect(screen.getByText('化学实验与定量分析')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText('无机化学与元素化合物')).toBeInTheDocument()
+      expect(screen.getByText('化学反应原理与电化学')).toBeInTheDocument()
+      expect(screen.getByText('物质结构与晶体性质')).toBeInTheDocument()
+      expect(screen.getByText('有机化学基础与合成')).toBeInTheDocument()
+      expect(screen.getByText('化学实验与定量分析')).toBeInTheDocument()
+    })
   })
 
-  it('正常展示已激活节点与规划中节点', () => {
+  it('正常展示已激活节点与规划中节点', async () => {
     renderWithRouter(<KnowledgeTreeHome />)
-    expect(screen.getByText('实验室已开放')).toBeInTheDocument()
-    const plannedLabels = screen.getAllByText('规划中')
-    expect(plannedLabels.length).toBeGreaterThanOrEqual(1)
+    await waitFor(() => {
+      expect(screen.getByText('实验室已开放')).toBeInTheDocument()
+      const plannedLabels = screen.getAllByText('规划中')
+      expect(plannedLabels.length).toBeGreaterThanOrEqual(1)
+    })
   })
 
-  it('正常展示考点名称', () => {
+  it('正常展示考点名称', async () => {
     renderWithRouter(<KnowledgeTreeHome />)
-    expect(screen.getByText('物质的量')).toBeInTheDocument()
-    expect(screen.getByText('化学反应速率')).toBeInTheDocument()
-    expect(screen.getByText('原子结构')).toBeInTheDocument()
-    expect(screen.getByText('甲烷与烷烃')).toBeInTheDocument()
-    expect(screen.getByText('酸碱中和滴定')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText('物质的量')).toBeInTheDocument()
+      expect(screen.getByText('化学反应速率')).toBeInTheDocument()
+      expect(screen.getByText('原子结构')).toBeInTheDocument()
+      expect(screen.getByText('甲烷与烷烃')).toBeInTheDocument()
+      expect(screen.getByText('酸碱中和滴定')).toBeInTheDocument()
+    })
   })
 
   it('支持切换至高考高频解题母题与记忆矩阵视图', async () => {
-    const { fireEvent } = await import('@testing-library/react')
+    const { fireEvent, act } = await import('@testing-library/react')
     renderWithRouter(<KnowledgeTreeHome />)
+    await waitFor(() => {
+      expect(screen.getByText('🎯 视角 B：高考高频解题母题与记忆矩阵')).toBeInTheDocument()
+    })
     const gaokaoTab = screen.getByText('🎯 视角 B：高考高频解题母题与记忆矩阵')
-    fireEvent.click(gaokaoTab)
-    expect(screen.getByText('高考高频解题母题与记忆强化矩阵')).toBeInTheDocument()
+    act(() => {
+      fireEvent.click(gaokaoTab)
+    })
+    await waitFor(() => {
+      expect(screen.getByText('高考高频解题母题与记忆强化矩阵')).toBeInTheDocument()
+    })
   })
 })
