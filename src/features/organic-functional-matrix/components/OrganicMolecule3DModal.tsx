@@ -295,6 +295,11 @@ export const OrganicMolecule3DModal: React.FC<OrganicMolecule3DModalProps> = ({
                   {selectedAtom.hybridization && (
                     <div>杂化类型：<strong className="text-slate-900">{selectedAtom.hybridization}</strong></div>
                   )}
+                  {selectedAtom.isChiral && (
+                    <div className="text-amber-600 font-extrabold flex items-center gap-1">
+                      <span>⭐ 高考核心【手性碳原子 *C】（连接 4 个不同基团）</span>
+                    </div>
+                  )}
                   {selectedAtom.isFunctionalGroup && (
                     <div className="text-rose-600 font-semibold">• 核心活性官能团反应位点</div>
                   )}

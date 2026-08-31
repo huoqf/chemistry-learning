@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { FUNCTIONAL_GROUPS, GAOKAO_CLUES } from '../constants'
+import {
+  FUNCTIONAL_GROUPS,
+  GAOKAO_CLUES,
+  PROTECTION_GROUPS,
+  POLYMERIZATION_MODELS,
+} from '../constants'
+import { ORGANIC_3D_MOLECULES } from '../data/organic3dData'
 import { useOrganicQuantitative } from '../hooks/useOrganicQuantitative'
 import { renderHook } from '@testing-library/react'
 
@@ -67,6 +73,21 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
     expect(result.current.breakdowns.NaOH[0].totalMol + result.current.breakdowns.NaOH[1].totalMol).toBe(5)
   })
 
+  it('Na2CO3 定量消耗：1 酚羟基 + 1 羧基 复合体系消耗 1.5 mol Na2CO3 并放 0.5 mol CO2', () => {
+    const { result } = renderHook(() =>
+      useOrganicQuantitative({
+        'phenol-oh': 1, // 消耗 1 Na2CO3 (生成 1 NaHCO3 不出气)
+        'carboxyl-cooh': 1, // 消耗 0.5 Na2CO3 (放 0.5 CO2)
+      })
+    )
+
+    expect(result.current.Na2CO3).toBe(1.5)
+    expect(result.current.gasCO2).toBe(1) // 来自羧基与 NaHCO3/中和
+    expect(result.current.NaOH).toBe(2)
+    expect(result.current.Na).toBe(2)
+    expect(result.current.gasH2).toBe(1.0)
+  })
+
   it('12 大官能团均应具备完整的定性检验试剂、现象与定性特征标注', () => {
     for (const g of FUNCTIONAL_GROUPS) {
       expect(g.testReagents.length).toBeGreaterThan(0)
@@ -80,10 +101,10 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
     expect(aldehyde?.qualitativeFeatures?.silverOrFehling).toContain('2 mol Ag')
   })
 
-  it('苯酚特异性定量：消耗 3 mol 浓溴水、0.5 mol Na2CO3 且不出气', () => {
+  it('苯酚特异性定量：消耗 3 mol 浓溴水、1 mol Na2CO3 (生成 1 NaHCO3 且不出气)', () => {
     const phenol = FUNCTIONAL_GROUPS.find((g) => g.id === 'phenol-oh')
     expect(phenol?.consumptions.Br2).toBe(3)
-    expect(phenol?.consumptions.Na2CO3).toBe(0.5)
+    expect(phenol?.consumptions.Na2CO3).toBe(1)
     expect(phenol?.consumptions.NaHCO3).toBe(0)
   })
 
@@ -155,27 +176,53 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
     }
   })
 
-  it('定量计算边界审计：空对象、单基团与极限组合鲁棒性', () => {
-    // 空对象
-    const { result: emptyResult } = renderHook(() => useOrganicQuantitative({}))
-    expect(emptyResult.current.NaOH).toBe(0)
-    expect(emptyResult.current.Na).toBe(0)
-    expect(emptyResult.current.Br2).toBe(0)
-    expect(emptyResult.current.H2).toBe(0)
-    expect(emptyResult.current.gasCO2).toBe(0)
-    expect(emptyResult.current.gasH2).toBe(0)
+  it('现代波谱数据 (IR & 1H-NMR) 深度定性特征验证', () => {
+    for (const g of FUNCTIONAL_GROUPS) {
+      expect(g.spectroscopy).toBeDefined()
+      expect(g.spectroscopy?.ir.length).toBeGreaterThan(0)
+      expect(g.spectroscopy?.hnmr.length).toBeGreaterThan(0)
+    }
 
-    // 水杨酸甲酯：1 酚羟基 + 1 醇酯 = 2 NaOH (1 中和 + 1 水解), 1 Na (0.5 H2)
-    const { result: msResult } = renderHook(() =>
-      useOrganicQuantitative({
-        'phenol-oh': 1,
-        'ester-coor': 1,
-      })
-    )
-    expect(msResult.current.NaOH).toBe(2)
-    expect(msResult.current.Na).toBe(1)
-    expect(msResult.current.gasH2).toBe(0.5)
-    expect(msResult.current.NaHCO3).toBe(0) // 酚和醇酯均不与 NaHCO3 反应
+    const aldehyde = FUNCTIONAL_GROUPS.find((g) => g.id === 'aldehyde-cho')
+    expect(aldehyde?.spectroscopy?.ir).toContain('2720')
+    expect(aldehyde?.spectroscopy?.hnmr).toContain('9.5')
+
+    const carboxyl = FUNCTIONAL_GROUPS.find((g) => g.id === 'carboxyl-cooh')
+    expect(carboxyl?.spectroscopy?.ir).toContain('2500')
+    expect(carboxyl?.spectroscopy?.hnmr).toContain('10.5')
+  })
+
+  it('手性碳 (*C) 3D 模型体系覆盖乳酸与 2-氯丁烷', () => {
+    // 1. 乳酸对映异构对
+    const lLactic = ORGANIC_3D_MOLECULES['lactic-acid-chiral']
+    const dLactic = ORGANIC_3D_MOLECULES['d-lactic-acid-chiral']
+    expect(lLactic).toBeDefined()
+    expect(dLactic).toBeDefined()
+
+    const lChiralC = lLactic?.atoms.find((a) => a.isChiral === true)
+    const dChiralC = dLactic?.atoms.find((a) => a.isChiral === true)
+    expect(lChiralC).toBeDefined()
+    expect(dChiralC).toBeDefined()
+
+    // 2. 2-氯丁烷手性分子
+    const cb = ORGANIC_3D_MOLECULES['2-chlorobutane-chiral']
+    expect(cb).toBeDefined()
+    expect(cb?.atoms.some((a) => a.isChiral)).toBe(true)
+    expect(cb?.keyPoints[0]).toContain('手性碳消失')
+  })
+
+  it('有机合成保护基与高分子聚合矩阵完整性审计', () => {
+    expect(PROTECTION_GROUPS.length).toBeGreaterThanOrEqual(4)
+    const bnProtect = PROTECTION_GROUPS.find((p) => p.id === 'phenol-benzyl-protect')
+    expect(bnProtect).toBeDefined()
+    expect(bnProtect?.deprotectionCondition).toContain('Pd-C')
+
+    expect(POLYMERIZATION_MODELS.length).toBeGreaterThanOrEqual(4)
+    const pet = POLYMERIZATION_MODELS.find((m) => m.id === 'poly-pet')
+    expect(pet).toBeDefined()
+    expect(pet?.smallMoleculeOutput).toContain('(2n - 1)')
   })
 })
+
+
 

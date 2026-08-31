@@ -30,7 +30,36 @@ export interface FunctionalGroupItem {
     gasOutput?: string // 反应产生气体 (如 "0.5 H₂" 或 "1 CO₂" 或 "无")
     reactionTypes?: string[] // 主要反应类型 (如 ["加成", "加氢还原", "氧化"])
   }
+  spectroscopy?: {
+    ir: string // 红外光谱特征吸收峰（键振动波数区间）
+    hnmr: string // 1H-NMR 核磁共振氢谱化学位移及特征
+  }
   notes: string // 高考易错注意事项
+}
+
+export interface ProtectionGroupItem {
+  id: string
+  name: string
+  targetGroup: string // 保护对象，如 "酚羟基 (-OH)"
+  protectionReagent: string // 保护试剂，如 "BnBr / K2CO3"
+  protectionEquation: string // 引入保护基反应方程式
+  deprotectionCondition: string // 脱保护条件，如 "H2 / Pd-C 催化氢解"
+  deprotectionEquation: string // 脱除反应方程式
+  examSignificance: string // 高考合成大题中的核心考法与意义
+}
+
+export interface PolymerizationMatrixItem {
+  id: string
+  polymerName: string // 高分子名称，如 "聚对苯二甲酸乙二醇酯 (PET)"
+  category: 'condensation' | 'addition' // 缩聚 / 加聚
+  monomers: {
+    name: string
+    formula: string
+    groups: string[]
+  }[]
+  reactionEquation: string
+  smallMoleculeOutput: string // 脱去小分子规律 (如 "(2n-1) mol H2O")
+  examPoints: string // 高考易错点与端基分析
 }
 
 export interface MoleculeBuilderState {
@@ -89,5 +118,6 @@ export interface PresetMoleculeDetail {
   keyEquations: string[]
   examTraps: string
 }
+
 
 

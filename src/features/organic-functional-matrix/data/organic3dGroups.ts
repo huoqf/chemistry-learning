@@ -645,4 +645,126 @@ export const FUNCTIONAL_GROUP_3D_MOLECULES: Record<string, Organic3DMolecule> = 
       { id: 'n-hn2', start: [1.2, -0.4, 0], end: [1.3, -1.35, -0.3], order: 1 },
     ],
   },
+
+  // 13. 手性碳经典母题：L-乳酸 (2-羟基丙酸)
+  'lactic-acid-chiral': {
+    id: 'lactic-acid-chiral',
+    name: 'L-乳酸 (2-羟基丙酸, *C 手性分子)',
+    formula: 'CH_3-*CH(OH)-COOH',
+    categoryName: '手性碳 / 对映立体异构',
+    relatedGroupId: 'carboxyl-cooh',
+    description: '中央 2 号碳原子连接了 4 个完全不同的基团（-H, -OH, -CH₃, -COOH），为标准【手性碳原子 (*C)】，具有旋光性与对映异构体。',
+    spatialContrastNote:
+      '【手性碳判别铁律】：只要饱和 sp³ 碳上连接 4 个各不相同的基团，该碳即为手性碳 (*C)。L-乳酸与 D-乳酸如左手与右手般呈镜像对称但不能重合！',
+    variants: [
+      { id: 'lactic-acid-chiral', label: 'L-(+)-乳酸', formula: 'L-CH₃*CH(OH)COOH', differenceHint: '左手对映体 (旋光活性)', targetMoleculeId: 'lactic-acid-chiral' },
+      { id: 'd-lactic-acid-chiral', label: 'D-(-)-乳酸', formula: 'D-CH₃*CH(OH)COOH', differenceHint: '右手对映体 (镜像异构)', targetMoleculeId: 'd-lactic-acid-chiral' },
+    ],
+    geometryFeatures: {
+      hybridization: '手性碳与甲基碳为 sp³ 四面体，羧基碳为 sp² 平面',
+      coplanarInfo: '手性碳中心使分子四面体非共面，无对称面/对称中心',
+      reactionSite: '羧基中和 (耗 1 NaOH) + 醇羟基置换 (耗 1 Na) + 羟基酸脱水缩聚',
+    },
+    keyPoints: [
+      '高考高频手性碳标记：2号碳连接 -H, -OH, -CH₃, -COOH 4 个不同基团',
+      '¹H-NMR 显示 4 组吸收峰，面积比为 1:1:1:3',
+      '两分子乳酸加热可脱水生成六元环状交酯，或缩聚生成聚乳酸 (PLA)',
+    ],
+    atoms: [
+      { id: 'c_chiral', symbol: 'C', elementName: '手性碳原子 (*C)', position: [0, 0, 0], color: ATOM_COLORS.C, radius: 0.38, hybridization: 'sp³', isChiral: true, isFunctionalGroup: true },
+      { id: 'c_cooh', symbol: 'C', elementName: '羧基碳 (sp²)', position: [1.3, 0.4, 0], color: ATOM_COLORS.C, radius: 0.35, hybridization: 'sp²', isFunctionalGroup: true },
+      { id: 'o_carbonyl', symbol: 'O', elementName: '羰基氧', position: [1.8, 1.5, 0], color: ATOM_COLORS.O, radius: 0.33, isFunctionalGroup: true },
+      { id: 'o_cooh', symbol: 'O', elementName: '羧羟基氧', position: [2.1, -0.65, 0], color: ATOM_COLORS.O, radius: 0.32, isFunctionalGroup: true },
+      { id: 'h_cooh', symbol: 'H', elementName: '羧基氢', position: [2.9, -0.4, 0], color: ATOM_COLORS.H, radius: 0.22, isFunctionalGroup: true },
+      { id: 'o_oh', symbol: 'O', elementName: '醇羟基氧', position: [-0.4, 1.25, 0.4], color: ATOM_COLORS.O, radius: 0.33, isFunctionalGroup: true },
+      { id: 'h_oh', symbol: 'H', elementName: '醇羟基氢', position: [-0.1, 1.9, -0.1], color: ATOM_COLORS.H, radius: 0.22, isFunctionalGroup: true },
+      { id: 'c_me', symbol: 'C', elementName: '甲基碳', position: [-1.2, -0.8, -0.3], color: ATOM_COLORS.C, radius: 0.34, hybridization: 'sp³' },
+      { id: 'h_chiral', symbol: 'H', elementName: '手性中心氢', position: [0.2, -0.5, 0.85], color: ATOM_COLORS.H, radius: 0.22 },
+    ],
+    bonds: [
+      { id: 'c_chiral-c_cooh', start: [0, 0, 0], end: [1.3, 0.4, 0], order: 1 },
+      ...createMultiBonds([1.3, 0.4, 0], [1.8, 1.5, 0], 2, 'lac-cooh-c=o'),
+      { id: 'c_cooh-o_cooh', start: [1.3, 0.4, 0], end: [2.1, -0.65, 0], order: 1 },
+      { id: 'o_cooh-h_cooh', start: [2.1, -0.65, 0], end: [2.9, -0.4, 0], order: 1 },
+      { id: 'c_chiral-o_oh', start: [0, 0, 0], end: [-0.4, 1.25, 0.4], order: 1 },
+      { id: 'o_oh-h_oh', start: [-0.4, 1.25, 0.4], end: [-0.1, 1.9, -0.1], order: 1 },
+      { id: 'c_chiral-c_me', start: [0, 0, 0], end: [-1.2, -0.8, -0.3], order: 1 },
+      { id: 'c_chiral-h_chiral', start: [0, 0, 0], end: [0.2, -0.5, 0.85], order: 1 },
+    ],
+  },
+
+  // 13-B. D-乳酸 (镜像异构)
+  'd-lactic-acid-chiral': {
+    id: 'd-lactic-acid-chiral',
+    name: 'D-乳酸 (D-Lactic acid, 镜像对映体)',
+    formula: 'D-CH_3-*CH(OH)-COOH',
+    categoryName: '手性对映体 / 镜像立体',
+    relatedGroupId: 'carboxyl-cooh',
+    description: 'L-乳酸的镜像对称异构体。空间中羟基与氢原子的朝向互换，旋光方向相反。',
+    geometryFeatures: {
+      hybridization: '手性碳为 sp³ 四面体',
+      coplanarInfo: '与 L-乳酸互为非重合镜像对映体',
+      reactionSite: '与非手性试剂反应速率完全相同，仅旋光性相反',
+    },
+    keyPoints: [
+      '对映异构体物理性质（熔沸点、密度）相同，但旋光方向相反',
+      '在生物体内通常只有一种手性对映体具备生物酶催化活性',
+    ],
+    atoms: [
+      { id: 'c_chiral', symbol: 'C', elementName: '手性碳原子 (*C)', position: [0, 0, 0], color: ATOM_COLORS.C, radius: 0.38, hybridization: 'sp³', isChiral: true, isFunctionalGroup: true },
+      { id: 'c_cooh', symbol: 'C', elementName: '羧基碳 (sp²)', position: [1.3, 0.4, 0], color: ATOM_COLORS.C, radius: 0.35, hybridization: 'sp²', isFunctionalGroup: true },
+      { id: 'o_carbonyl', symbol: 'O', elementName: '羰基氧', position: [1.8, 1.5, 0], color: ATOM_COLORS.O, radius: 0.33, isFunctionalGroup: true },
+      { id: 'o_cooh', symbol: 'O', elementName: '羧羟基氧', position: [2.1, -0.65, 0], color: ATOM_COLORS.O, radius: 0.32, isFunctionalGroup: true },
+      { id: 'h_cooh', symbol: 'H', elementName: '羧基氢', position: [2.9, -0.4, 0], color: ATOM_COLORS.H, radius: 0.22, isFunctionalGroup: true },
+      { id: 'o_oh', symbol: 'O', elementName: '醇羟基氧 (镜像翻转)', position: [-0.4, 1.25, -0.4], color: ATOM_COLORS.O, radius: 0.33, isFunctionalGroup: true },
+      { id: 'h_oh', symbol: 'H', elementName: '醇羟基氢', position: [-0.1, 1.9, 0.1], color: ATOM_COLORS.H, radius: 0.22, isFunctionalGroup: true },
+      { id: 'c_me', symbol: 'C', elementName: '甲基碳', position: [-1.2, -0.8, 0.3], color: ATOM_COLORS.C, radius: 0.34, hybridization: 'sp³' },
+      { id: 'h_chiral', symbol: 'H', elementName: '手性中心氢', position: [0.2, -0.5, -0.85], color: ATOM_COLORS.H, radius: 0.22 },
+    ],
+    bonds: [
+      { id: 'c_chiral-c_cooh', start: [0, 0, 0], end: [1.3, 0.4, 0], order: 1 },
+      ...createMultiBonds([1.3, 0.4, 0], [1.8, 1.5, 0], 2, 'd-lac-cooh-c=o'),
+      { id: 'c_cooh-o_cooh', start: [1.3, 0.4, 0], end: [2.1, -0.65, 0], order: 1 },
+      { id: 'o_cooh-h_cooh', start: [2.1, -0.65, 0], end: [2.9, -0.4, 0], order: 1 },
+      { id: 'c_chiral-o_oh', start: [0, 0, 0], end: [-0.4, 1.25, -0.4], order: 1 },
+      { id: 'o_oh-h_oh', start: [-0.4, 1.25, -0.4], end: [-0.1, 1.9, 0.1], order: 1 },
+      { id: 'c_chiral-c_me', start: [0, 0, 0], end: [-1.2, -0.8, 0.3], order: 1 },
+      { id: 'c_chiral-h_chiral', start: [0, 0, 0], end: [0.2, -0.5, -0.85], order: 1 },
+    ],
+  },
+
+  // 14. 2-氯丁烷 (手性卤代烃)
+  '2-chlorobutane-chiral': {
+    id: '2-chlorobutane-chiral',
+    name: '2-氯丁烷 (CH₃-*CH(Cl)-CH₂CH₃)',
+    formula: 'CH_3-*CH(Cl)-CH_2CH_3',
+    categoryName: '手性卤代烃 / 消去与水解',
+    relatedGroupId: 'halo-alkane-x',
+    description: '2 号碳连接 -H, -Cl, -CH₃, -CH₂CH₃ 4 个不同基团，具有手性。在 NaOH 醇溶液加热下消去主要生成 2-丁烯（顺/反异构体）。',
+    geometryFeatures: {
+      hybridization: '4 个碳原子均为 sp³ 杂化',
+      coplanarInfo: '最多 3 个碳原子在同一平面上',
+      reactionSite: '手性 C-Cl 键水解生成手性 2-丁醇；消去生成 2-丁烯 (失去手性)',
+    },
+    keyPoints: [
+      '高考手性消失考点：2-氯丁烷发生消去反应生成 2-丁烯后，手性碳消失！',
+      '水解生成 2-丁醇（保持手性碳）',
+    ],
+    atoms: [
+      { id: 'c_chiral', symbol: 'C', elementName: '手性碳 (*C)', position: [0, 0, 0], color: ATOM_COLORS.C, radius: 0.38, hybridization: 'sp³', isChiral: true, isFunctionalGroup: true },
+      { id: 'c1', symbol: 'C', elementName: '1号甲基碳', position: [-1.3, -0.5, 0], color: ATOM_COLORS.C, radius: 0.34, hybridization: 'sp³' },
+      { id: 'cl', symbol: 'Cl', elementName: '氯原子', position: [0.2, 1.5, 0.2], color: ATOM_COLORS.Cl, radius: 0.42, isFunctionalGroup: true },
+      { id: 'c3', symbol: 'C', elementName: '3号亚甲基碳', position: [1.1, -0.7, 0.4], color: ATOM_COLORS.C, radius: 0.35, hybridization: 'sp³' },
+      { id: 'c4', symbol: 'C', elementName: '4号甲基碳', position: [2.3, 0.1, -0.1], color: ATOM_COLORS.C, radius: 0.34, hybridization: 'sp³' },
+      { id: 'h_chiral', symbol: 'H', elementName: '手性氢', position: [-0.1, 0.2, -1.0], color: ATOM_COLORS.H, radius: 0.22 },
+    ],
+    bonds: [
+      { id: 'c_chiral-c1', start: [0, 0, 0], end: [-1.3, -0.5, 0], order: 1 },
+      { id: 'c_chiral-cl', start: [0, 0, 0], end: [0.2, 1.5, 0.2], order: 1 },
+      { id: 'c_chiral-c3', start: [0, 0, 0], end: [1.1, -0.7, 0.4], order: 1 },
+      { id: 'c3-c4', start: [1.1, -0.7, 0.4], end: [2.3, 0.1, -0.1], order: 1 },
+      { id: 'c_chiral-h_chiral', start: [0, 0, 0], end: [-0.1, 0.2, -1.0], order: 1 },
+    ],
+  },
 }
+

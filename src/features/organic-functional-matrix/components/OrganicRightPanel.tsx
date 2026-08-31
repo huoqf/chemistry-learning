@@ -167,6 +167,15 @@ export const OrganicRightPanel: React.FC<OrganicRightPanelProps> = ({
             </div>
           </div>
 
+          {/* 现代波谱定性分析 */}
+          {activeSelectedGroup.spectroscopy && (
+            <div className="space-y-1 bg-blue-50/60 p-2 rounded-lg border border-blue-100 text-[11px]">
+              <div className="font-bold text-blue-950">现代波谱特征 (高考前沿)：</div>
+              <div className="text-slate-700">• <strong>IR</strong>：{activeSelectedGroup.spectroscopy.ir}</div>
+              <div className="text-slate-700">• <strong>¹H-NMR</strong>：{activeSelectedGroup.spectroscopy.hnmr}</div>
+            </div>
+          )}
+
           {/* 规范组件：单基团代表方程式 */}
           <FormulaSection formulas={singleGroupFormulas} />
 

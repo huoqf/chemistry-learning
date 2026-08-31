@@ -9,6 +9,7 @@ export interface Atom3DData {
   radius: number
   hybridization?: string
   isFunctionalGroup?: boolean
+  isChiral?: boolean
 }
 
 export interface Bond3DData {
