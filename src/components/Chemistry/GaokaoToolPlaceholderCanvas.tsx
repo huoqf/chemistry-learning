@@ -34,7 +34,7 @@ export const GaokaoToolPlaceholderCanvas: React.FC<GaokaoToolPlaceholderCanvasPr
       <div className="w-full h-screen flex flex-col items-center justify-center gap-4 bg-slate-50">
         <h2 className="text-xl font-bold text-slate-800">未找到该高考提分工具</h2>
         <button
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/?view=gaokao')}
           className="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-lg"
         >
           返回高考母题索引

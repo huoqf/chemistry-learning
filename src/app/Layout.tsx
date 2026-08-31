@@ -1,6 +1,7 @@
 import { Outlet, useLocation, Link } from 'react-router-dom';
 import { FlaskConical } from 'lucide-react';
 import { getAnimationConfig } from '@/data/animationRegistry';
+import { getGaokaoModel } from '@/data/gaokaoModels';
 
 const PATH_TO_LABEL: Record<string, string> = {};
 
@@ -17,11 +18,18 @@ function getAnimationLabel(id: string): string {
 export default function Layout() {
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const isGaokaoHome = isHome && location.search.includes('view=gaokao');
+  const isTreeHome = isHome && !location.search.includes('view=gaokao');
 
   // 从 URL 解析动画 ID（/animation/:id）
   const animMatch = location.pathname.match(/^\/animation\/(.+)$/);
   const animId = animMatch ? animMatch[1] : null;
   const animLabel = animId ? getAnimationLabel(animId) : null;
+
+  // 从 URL 解析高考母题 ID（/gaokao-tool/:id）
+  const gaokaoMatch = location.pathname.match(/^\/gaokao-tool\/(.+)$/);
+  const gaokaoId = gaokaoMatch ? gaokaoMatch[1] : null;
+  const gaokaoModel = gaokaoId ? getGaokaoModel(gaokaoId) : null;
 
   return (
     <div className="h-screen bg-neutral-50 flex flex-col overflow-hidden">
@@ -43,18 +51,39 @@ export default function Layout() {
               <span className="text-neutral-600 font-semibold">{animLabel}</span>
             </div>
           )}
+
+          {gaokaoModel && (
+            <div className="flex items-center gap-2 text-sm text-neutral-400 font-medium">
+              <span className="text-neutral-300">/</span>
+              <Link to="/?view=gaokao" className="text-neutral-500 hover:text-amber-700 transition-colors font-medium">
+                高考提分母题
+              </Link>
+              <span className="text-neutral-300">/</span>
+              <span className="text-neutral-700 font-semibold">{gaokaoModel.title}</span>
+            </div>
+          )}
         </div>
 
         <nav className="flex items-center gap-6">
           <Link
             to="/"
             className={`text-sm font-semibold py-4 px-1 border-b-2 transition-colors ${
-              isHome
+              isTreeHome
                 ? 'text-primary-600 border-primary-500'
                 : 'text-neutral-400 border-transparent hover:text-neutral-600 hover:border-neutral-300'
             }`}
           >
             知识地图
+          </Link>
+          <Link
+            to="/?view=gaokao"
+            className={`text-sm font-semibold py-4 px-1 border-b-2 transition-colors ${
+              isGaokaoHome || Boolean(gaokaoModel)
+                ? 'text-amber-600 border-amber-500'
+                : 'text-neutral-400 border-transparent hover:text-neutral-600 hover:border-neutral-300'
+            }`}
+          >
+            高考提分母题
           </Link>
         </nav>
       </header>

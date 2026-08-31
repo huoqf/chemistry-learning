@@ -78,7 +78,7 @@ export const GaokaoToolHeader: React.FC<GaokaoToolHeaderProps> = ({
       {/* 左侧返回与标题区 */}
       <div className="flex items-center gap-3">
         <button
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/?view=gaokao')}
           className="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors flex items-center gap-1.5 text-xs font-semibold"
           title="返回高考母题索引"
         >

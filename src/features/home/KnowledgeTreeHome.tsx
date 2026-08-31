@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import {
   Lock,
   ArrowRight,
@@ -27,9 +27,19 @@ const getNodeRoute = (node: KnowledgeNode): string | null => {
 
 export function KnowledgeTreeHome() {
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const viewMode = searchParams.get('view') === 'gaokao' ? 'gaokao' : 'tree'
+
+  const setViewMode = useCallback((mode: 'tree' | 'gaokao') => {
+    if (mode === 'gaokao') {
+      setSearchParams({ view: 'gaokao' })
+    } else {
+      setSearchParams({})
+    }
+  }, [setSearchParams])
+
   const { masteredKnowledge, setTotalCounts } = useProgressStore()
   const [, setRegistryReady] = useState(false)
-  const [viewMode, setViewMode] = useState<'tree' | 'gaokao'>('tree')
 
   // 视角切换：互斥单选，注入 radiogroup 语义（保留 Banner 视觉与不同选中色）
   const viewKeys = ['tree', 'gaokao'] as const

@@ -33,10 +33,10 @@ export default function GaokaoToolPage() {
       <div className="w-full h-screen flex flex-col items-center justify-center gap-4 bg-slate-50">
         <h2 className="text-xl font-bold text-slate-800">未找到该高考提分工具</h2>
         <button
-          onClick={() => navigate('/')}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          onClick={() => navigate('/?view=gaokao')}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs font-bold"
         >
-          返回首页
+          返回高考母题索引
         </button>
       </div>
     )
