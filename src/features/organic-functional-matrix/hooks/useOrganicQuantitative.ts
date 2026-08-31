@@ -132,7 +132,12 @@ export function useOrganicQuantitative(
           count,
           molPerGroup: group.consumptions.H2,
           totalMol: mol,
-          reason: groupId === 'aldehyde-cho' ? '醛基加氢还原为醇' : '碳碳不饱和键催化加氢',
+          reason:
+            groupId === 'aldehyde-cho'
+              ? '醛基加氢还原为伯醇'
+              : groupId === 'ketone-co'
+                ? '酮羰基加氢还原为仲醇'
+                : '碳碳不饱和键催化加氢',
         })
       }
 

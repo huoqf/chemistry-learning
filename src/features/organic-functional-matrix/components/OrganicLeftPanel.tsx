@@ -251,7 +251,7 @@ export const OrganicLeftPanel: React.FC<OrganicLeftPanelProps> = ({
 
             {/* 含氧官能团 */}
             <div className="space-y-1.5">
-              <div className="text-[11px] font-bold text-slate-500">含氧官能团 (酸/醇/酚/醛/酯)</div>
+              <div className="text-[11px] font-bold text-slate-500">含氧官能团 (酸/醇/酚/醛/酮/酯)</div>
               <div className="space-y-1.5">{oxygenGroups.map(renderGroupItem)}</div>
             </div>
 
@@ -263,7 +263,7 @@ export const OrganicLeftPanel: React.FC<OrganicLeftPanelProps> = ({
 
             {/* 含氮衍生物 */}
             <div className="space-y-1.5">
-              <div className="text-[11px] font-bold text-slate-500">含氮衍生物 (肽键/酰胺键)</div>
+              <div className="text-[11px] font-bold text-slate-500">含氮衍生物 (氨基/肽键/酰胺键)</div>
               <div className="space-y-1.5">{nitrogenGroups.map(renderGroupItem)}</div>
             </div>
           </div>
@@ -277,7 +277,7 @@ export const OrganicLeftPanel: React.FC<OrganicLeftPanelProps> = ({
             <div className="p-2.5 bg-indigo-50/70 rounded-lg border border-indigo-200/80 space-y-1">
               <span className="font-bold text-indigo-950 text-[11.5px]">中屏已展开全景大表</span>
               <p className="text-[10.5px] leading-relaxed text-indigo-900">
-                中屏已全屏呈现 10 大官能团与核心试剂定量反应矩阵及三大秒杀口诀。点击下方任一基团，可在中屏大表与右屏同步高亮锁定。
+                中屏已全屏呈现 12 大官能团与核心试剂定量反应矩阵及三大秒杀口诀。点击下方任一基团，可在中屏大表与右屏同步高亮锁定。
               </p>
             </div>
 

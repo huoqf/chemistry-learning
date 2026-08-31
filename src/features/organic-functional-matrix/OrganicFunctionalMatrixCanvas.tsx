@@ -60,6 +60,15 @@ export const OrganicFunctionalMatrixCanvas: React.FC = () => {
     setGroupCounts({})
   }, [])
 
+  const handleAddGroupToCustom = useCallback((id: string) => {
+    setGroupCounts((prev) => ({
+      ...prev,
+      [id]: (prev[id] || 0) + 1,
+    }))
+    setSelectedGroupId(id)
+    setPanelMode('custom')
+  }, [])
+
   return (
     <div className="w-full h-screen flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden select-none">
       {/* 1. 统一顶栏 */}
@@ -91,6 +100,7 @@ export const OrganicFunctionalMatrixCanvas: React.FC = () => {
                   <OrganicFullMatrixView
                     selectedGroupId={selectedGroupId}
                     onSelectGroup={setSelectedGroupId}
+                    onAddGroupToCustom={handleAddGroupToCustom}
                   />
                 ) : (
                   <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>

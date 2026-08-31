@@ -18,6 +18,12 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
       Br2: 1, // 1:1 加成
       H2: 1, // 1:1 加氢还原
     },
+    qualitativeFeatures: {
+      silverOrFehling: '不反应',
+      kmno4: '紫红色褪去 (氧化断键)',
+      gasOutput: '无气体',
+      reactionTypes: ['加成反应', '加氢还原', '氧化反应'],
+    },
     notes: '与 Br₂ 是 1:1 加成；与酸性 KMnO₄ 反应时，末端 =CH₂ 氧化为 CO₂，=CHR 氧化为 -COOH，=CR₂ 氧化为酮。',
   },
   {
@@ -36,6 +42,12 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
       Na2CO3: 0,
       Br2: 2, // 1:2 加成
       H2: 2, // 1:2 加氢还原
+    },
+    qualitativeFeatures: {
+      silverOrFehling: '末端炔可形成炔银沉淀',
+      kmno4: '紫红色褪去 (氧化断键)',
+      gasOutput: '无气体',
+      reactionTypes: ['加成反应', '加氢还原', '氧化反应'],
     },
     notes: '1 mol 碳碳三键可与 2 mol Br₂ 或 2 mol H₂ 发生完全加成反应。',
   },
@@ -56,6 +68,12 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
       Br2: 0,
       H2: 0,
     },
+    qualitativeFeatures: {
+      silverOrFehling: '不反应',
+      kmno4: '伯醇/仲醇氧化褪色',
+      gasOutput: '放 0.5 mol H₂',
+      reactionTypes: ['置换反应', '催化氧化', '酯化反应', '消去/取代'],
+    },
     notes: '高考必考陷阱：醇羟基只与 Na 反应（产生 H₂），绝对不与 NaOH、Na₂CO₃、NaHCO₃ 反应！',
   },
   {
@@ -74,6 +92,12 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
       Na2CO3: 0.5, // 1 mol 酚-OH 消耗 0.5 mol Na2CO3 (转化为 NaHCO3，不产生 CO2)
       Br2: 3, // 苯酚与浓溴水邻对位 3 处发生取代反应 (消耗 3 mol Br2)
       H2: 0, // 酚羟基本身不加氢，苯环加 3 mol H2
+    },
+    qualitativeFeatures: {
+      silverOrFehling: '不反应',
+      kmno4: '易被空气/KMnO₄ 氧化显粉红/棕色',
+      gasOutput: '与 Na 放 0.5 H₂；与 Na₂CO₃ 不出气',
+      reactionTypes: ['弱酸中和', '邻对位取代 (耗3Br₂)', '显色反应'],
     },
     notes: '酸性：R-COOH > H₂CO₃ > C₆H₅OH > HCO₃⁻ > R-OH。因此酚羟基与 NaOH、Na₂CO₃ 反应，但不与 NaHCO₃ 反应且不释放 CO₂ 气体！',
   },
@@ -94,6 +118,12 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
       Br2: 1, // 醛基被溴水氧化 (1 mol -CHO 消耗 1 mol Br2: R-CHO + Br2 + H2O -> R-COOH + 2HBr)
       H2: 1, // 1 mol -CHO 加氢还原为醇 (消耗 1 mol H2)
     },
+    qualitativeFeatures: {
+      silverOrFehling: '生成 2 mol Ag / 1 mol Cu₂O',
+      kmno4: '紫红色迅速褪色 (氧化为羧基)',
+      gasOutput: '无气体',
+      reactionTypes: ['银镜反应', '斐林反应', '溴水氧化', '加氢还原'],
+    },
     notes: '1 mol 醛基还原产生 2 mol Ag (甲醛 HCHO 相当于含 2 个醛基，1 mol HCHO 产生 4 mol Ag)；1 mol 醛基消耗 2 mol Cu(OH)₂ 产生 1 mol Cu₂O 沉淀。',
   },
   {
@@ -112,6 +142,12 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
       Na2CO3: 0.5, // 1 mol -COOH 消耗 0.5 mol Na2CO3 产生 0.5 mol CO2 (或 2R-COOH + Na2CO3 -> 2R-COONa + CO2 + H2O)
       Br2: 0,
       H2: 0, // 羧基中的羰基受羟基共轭影响极其稳定，通常催化加氢不发生还原
+    },
+    qualitativeFeatures: {
+      silverOrFehling: '甲酸 HCOOH 可银镜 (含醛基)',
+      kmno4: '一般不反应 (甲酸除外)',
+      gasOutput: '遇 Na 放 0.5 H₂；遇 NaHCO₃ 放 1 CO₂',
+      reactionTypes: ['酸碱中和', '脱水酯化', '放气反应'],
     },
     notes: '高考快速鉴别羧基与其他弱酸性基团的黄金试剂：NaHCO₃ 溶液（仅 -COOH 能产生 CO₂ 气体，酚羟基不反应）。',
   },
@@ -132,6 +168,12 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
       Br2: 0,
       H2: 0,
     },
+    qualitativeFeatures: {
+      silverOrFehling: '甲酸酯 HCOOR 可银镜',
+      kmno4: '不反应',
+      gasOutput: '无气体',
+      reactionTypes: ['碱性水解 (耗1NaOH)', '酸性水解 (可逆)'],
+    },
     notes: '普通醇酯水解消耗 1 mol NaOH；生成 1 mol 羧酸盐与 1 mol 醇。',
   },
   {
@@ -150,6 +192,12 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
       Na2CO3: 0,
       Br2: 0,
       H2: 0,
+    },
+    qualitativeFeatures: {
+      silverOrFehling: '甲酸酚酯可银镜',
+      kmno4: '水解前不反应，水解后产物酚可氧化',
+      gasOutput: '无气体',
+      reactionTypes: ['双重消耗碱性水解 (耗2NaOH)'],
     },
     notes: '高考特级陷阱：酚酯水解生成羧酸与酚，两者均具备酸性，因此 1 mol 酚酯必须消耗 2 mol NaOH！',
   },
@@ -170,6 +218,12 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
       Br2: 0,
       H2: 0,
     },
+    qualitativeFeatures: {
+      silverOrFehling: '水解酸化后加 AgNO₃ 出 AgX 沉淀',
+      kmno4: '不反应',
+      gasOutput: '无气体',
+      reactionTypes: ['水溶液水解 (耗1NaOH)', '醇溶液消去'],
+    },
     notes: '水解反应条件：NaOH 水溶液、加热；消去反应条件：NaOH 醇溶液、加热。检验卤素前必须先加稀 HNO₃ 酸化！',
   },
   {
@@ -189,7 +243,63 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
       Br2: 0,
       H2: 0,
     },
+    qualitativeFeatures: {
+      silverOrFehling: '双缩脲反应显紫玫瑰色',
+      kmno4: '不反应',
+      gasOutput: '无气体',
+      reactionTypes: ['碱性水解 (耗1NaOH)', '酸性水解 (耗1HCl)'],
+    },
     notes: '蛋白质遇强酸、强碱、重金属盐、加热发生变性（不可逆）；遇饱和轻金属盐发生盐析（可逆）。',
+  },
+  {
+    id: 'ketone-co',
+    name: '酮羰基 (>C=O)',
+    formula: '>C=O',
+    structureSvg: '-C(=O)-',
+    category: 'oxygen-containing',
+    testReagents: ['催化加氢 (H₂ / Ni, 加热)'],
+    testPhenomenon: '与 H₂ 催化加氢生成仲醇；完全不与银氨/新制Cu(OH)₂反应',
+    testEquation: 'R-CO-R\' + H_2 \\xrightarrow{Ni, \\Delta} R-CH(OH)-R\'',
+    consumptions: {
+      Na: 0,
+      NaOH: 0,
+      NaHCO3: 0,
+      Na2CO3: 0,
+      Br2: 0,
+      H2: 1, // 1 mol 酮羰基催化加氢消耗 1 mol H2
+    },
+    qualitativeFeatures: {
+      silverOrFehling: '不发生银镜/斐林反应 (关键鉴别)',
+      kmno4: '通常不被酸性 KMnO₄ 氧化',
+      gasOutput: '无气体',
+      reactionTypes: ['加氢还原为仲醇 (耗1H₂)'],
+    },
+    notes: '高考经典对比：酮羰基能加氢还原（耗 1 H₂），但无还原性（不能银镜/斐林反应）；而羧基与酯基中的羰基受共轭稳定通常不与 H₂ 加成！',
+  },
+  {
+    id: 'amino-nh2',
+    name: '氨基 (-NH₂)',
+    formula: '-NH_2',
+    structureSvg: '-NH_2',
+    category: 'nitrogen-containing',
+    testReagents: ['稀盐酸 / 湿润红色石蕊试纸', '亚硝酸 (重氮化)'],
+    testPhenomenon: '与无机酸成盐，水溶液使湿润红色石蕊试纸变蓝',
+    testEquation: 'R-NH_2 + HCl \\rightarrow R-NH_3^+Cl^-',
+    consumptions: {
+      Na: 0,
+      NaOH: 0, // 氨基呈碱性，不与 NaOH 反应！
+      NaHCO3: 0,
+      Na2CO3: 0,
+      Br2: 0,
+      H2: 0,
+    },
+    qualitativeFeatures: {
+      silverOrFehling: '不反应',
+      kmno4: '易被强氧化剂氧化',
+      gasOutput: '无气体',
+      reactionTypes: ['弱碱成盐 (耗1HCl)', '酰胺化脱水'],
+    },
+    notes: '氨基酸两性原理：氨基具有碱性（与强酸 1:1 成盐），羧基具有酸性（与强碱 1:1 中和）。',
   },
 ]
 
@@ -211,6 +321,24 @@ export const PRESET_MOLECULES: PresetMoleculeDetail[] = [
     ],
     examTraps:
       '易错点：① 水解前加入 FeCl₃ 不显紫色（酚羟基被乙酰化保护）；② 碱性水解后必须先加酸酸化，再滴入 FeCl₃ 才会显特异紫色；③ 与 NaHCO₃ 反应仅放出 1 mol CO₂。',
+  },
+  {
+    id: 'formic-phenyl-ester',
+    title: '甲酸苯酯母题',
+    chemicalName: '甲酸苯酯 (HCOO-C₆H₅)',
+    subtitle: '甲酸酯 + 酚酯 ➔ 银镜 + 耗 2 NaOH',
+    structureFormula: 'HCOO-C₆H₅',
+    counts: { 'phenol-ester': 1, 'aldehyde-cho': 1 },
+    focusGroupId: 'phenol-ester',
+    breakdownSummary: '发生银镜反应出 2 Ag；水解消耗 2 mol NaOH（生成甲酸钠 + 苯酚钠）',
+    examAnalysis:
+      '新高考超高频双重特性母题：分子中含有甲酸酯基（表现醛基性质，发生银镜反应出 2 mol Ag），同时属于酚酯，水解生成 1 mol 甲酸钠与 1 mol 苯酚钠，共消耗 2 mol NaOH；水解后的甲酸钠依然能发生银镜反应！',
+    keyEquations: [
+      'HCOO-C_6H_5 + 2[Ag(NH_3)_2]OH \\xrightarrow{\\Delta} NH_4O-COO-C_6H_5 + 2Ag\\downarrow + 3NH_3 + H_2O',
+      'HCOO-C_6H_5 + 2NaOH \\xrightarrow{\\Delta} HCOONa + C_6H_5ONa + H_2O',
+    ],
+    examTraps:
+      '高考特级推断题眼：“1 mol 酯水解消耗 2 mol NaOH，且水解产物均能发生银镜反应” ➔ 必为甲酸酚酯类异构体！',
   },
   {
     id: 'ester-vs-phenol-ester',
@@ -328,9 +456,16 @@ export const GAOKAO_CLUES: GaokaoClueItem[] = [
   {
     id: 'clue-silver-mirror',
     clueText: '与银氨溶液水浴加热出现光亮银镜 / 遇新制 Cu(OH)₂ 加热出砖红沉淀',
-    deductionTarget: '分子中含【醛基 -CHO】',
+    deductionTarget: '分子中含【醛基 -CHO 或甲酸酯基】',
     matchedGroupId: 'aldehyde-cho',
     principle: '1 mol -CHO 发生银镜反应生成 2 mol Ag，或与 2 mol Cu(OH)₂ 反应生成 1 mol Cu₂O 沉淀。',
+  },
+  {
+    id: 'clue-ketone-vs-aldehyde',
+    clueText: '能与 H₂ 加成还原为醇，但完全不能发生银镜反应，不被溴水氧化',
+    deductionTarget: '分子中含【酮羰基 >C=O】',
+    matchedGroupId: 'ketone-co',
+    principle: '酮羰基可加氢还原为仲醇（耗 1 H₂），但无还原性，不发生银镜/斐林反应，与醛基鉴别极高频。',
   },
   {
     id: 'clue-na-only',
@@ -345,6 +480,13 @@ export const GAOKAO_CLUES: GaokaoClueItem[] = [
     deductionTarget: '分子中含【碳碳双键 C=C】或【碳碳三键 C≡C】',
     matchedGroupId: 'alkene-c=c',
     principle: '不饱和键发生加成反应使溴水褪色，或被酸性高锰酸钾强氧化剂氧化而褪色。',
+  },
+  {
+    id: 'clue-amino-base',
+    clueText: '能与稀盐酸成盐，具有弱碱性，能与羧基发生缩合脱水',
+    deductionTarget: '分子中含【氨基 -NH₂】',
+    matchedGroupId: 'amino-nh2',
+    principle: '氨基氮原子具有孤对电子，呈弱碱性，可与强酸 1:1 成盐；与羧酸发生酰胺化缩合生成肽键。',
   },
 ]
 

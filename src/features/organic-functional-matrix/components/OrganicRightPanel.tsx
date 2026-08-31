@@ -41,15 +41,20 @@ export const OrganicRightPanel: React.FC<OrganicRightPanelProps> = ({
       .map(([id]) => id)
   }, [groupCounts])
 
-  // 3. 严格过滤：仅筛选与当前分子/母题实际包含基团相关的高考题眼（彻底杜绝不相干题眼干扰）
+  // 3. 筛选与当前分子或当前选中基团相关的高考题眼
   const relevantClues = useMemo(() => {
-    if (presentGroupIds.length === 0) return []
-    return GAOKAO_CLUES.filter((clue) =>
-      presentGroupIds.includes(clue.matchedGroupId)
-    )
-  }, [presentGroupIds])
+    if (presentGroupIds.length > 0) {
+      return GAOKAO_CLUES.filter((clue) =>
+        presentGroupIds.includes(clue.matchedGroupId)
+      )
+    }
+    if (selectedGroup) {
+      return GAOKAO_CLUES.filter((clue) => clue.matchedGroupId === selectedGroup.id)
+    }
+    return []
+  }, [presentGroupIds, selectedGroup])
 
-  // 4. 聚焦官能团：仅当选中的官能团属于当前分子时才展示深度精讲，避免显示无关基团
+  // 4. 聚焦官能团：如果在组装分子模式下有分子，优先显示分子内选中的基团；在全景大表下直接展示选中的基团
   const activeSelectedGroup = useMemo(() => {
     if (!selectedGroup) return null
     if (presentGroupIds.length > 0 && !presentGroupIds.includes(selectedGroup.id)) {
@@ -214,10 +219,10 @@ export const OrganicRightPanel: React.FC<OrganicRightPanelProps> = ({
         </div>
       )}
 
-      {/* 如果没有选任何基团 */}
-      {presentGroupIds.length === 0 && (
+      {/* 如果既没有母题也没有选中任何基团 */}
+      {!activePreset && !activeSelectedGroup && relevantClues.length === 0 && (
         <div className="p-6 text-center text-slate-400 text-xs bg-slate-50 rounded-xl border border-dashed border-slate-200">
-          请在左侧选择经典母题或添加官能团，右屏将实时同步考点与真题题眼。
+          请在左侧选择经典母题或在全景大表中点击官能团，右屏将实时同步考点精讲与真题题眼。
         </div>
       )}
     </div>

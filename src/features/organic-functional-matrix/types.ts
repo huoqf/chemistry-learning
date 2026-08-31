@@ -24,6 +24,12 @@ export interface FunctionalGroupItem {
     Br2: number // 1 mol 消耗 Br2 的 mol 数 (加成或取代)
     H2: number // 1 mol 消耗 H2 的 mol 数 (加氢还原)
   }
+  qualitativeFeatures?: {
+    silverOrFehling?: string // 银镜或新制氢氧化铜反应 (如 "生成 2 Ag / 1 Cu₂O" 或 "无")
+    kmno4?: string // 高锰酸钾反应特征 (如 "紫红色褪色" 或 "不反应")
+    gasOutput?: string // 反应产生气体 (如 "0.5 H₂" 或 "1 CO₂" 或 "无")
+    reactionTypes?: string[] // 主要反应类型 (如 ["加成", "加氢还原", "氧化"])
+  }
   notes: string // 高考易错注意事项
 }
 
