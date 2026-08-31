@@ -9,7 +9,13 @@ import {
   Sparkles,
   Beaker,
   AlertTriangle,
+  Box,
 } from 'lucide-react'
+import {
+  get3DModelForGroup,
+  type Organic3DMolecule,
+} from '../data/organic3dData'
+import { OrganicMolecule3DModal } from './OrganicMolecule3DModal'
 
 interface OrganicFullMatrixViewProps {
   selectedGroupId: string
@@ -30,6 +36,7 @@ export const OrganicFullMatrixView: React.FC<OrganicFullMatrixViewProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [expandedGroupId, setExpandedGroupId] = useState<string | null>(selectedGroupId || null)
   const [showFormulaCards, setShowFormulaCards] = useState<boolean>(true)
+  const [preview3DMolecule, setPreview3DMolecule] = useState<Organic3DMolecule | null>(null)
 
   // 综合过滤
   const filteredGroups = useMemo(() => {
@@ -368,6 +375,18 @@ export const OrganicFullMatrixView: React.FC<OrganicFullMatrixViewProps> = ({
                           <span className="font-mono font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 px-1.5 py-0.2 rounded text-[11px]">
                             {g.structureSvg}
                           </span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              const m = get3DModelForGroup(g.id)
+                              if (m) setPreview3DMolecule(m)
+                            }}
+                            className="inline-flex items-center gap-1 text-[10.5px] font-bold text-indigo-600 hover:text-indigo-900 bg-indigo-50/80 hover:bg-indigo-100 border border-indigo-200 px-1.5 py-0.5 rounded cursor-pointer transition-colors shadow-2xs"
+                            title="原地查看该官能团代表分子的 3D 空间球棍模型"
+                          >
+                            <Box className="w-3 h-3 text-indigo-500" />
+                            <span>3D</span>
+                          </button>
                         </div>
                       </td>
 
@@ -497,7 +516,7 @@ export const OrganicFullMatrixView: React.FC<OrganicFullMatrixViewProps> = ({
                       <tr className="bg-gradient-to-r from-indigo-50/60 via-white to-indigo-50/30">
                         <td colSpan={9} className="p-4 border-b border-indigo-100">
                           <div className="p-3.5 bg-white rounded-xl border border-indigo-200/90 shadow-2xs space-y-3">
-                            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                            <div className="flex items-center justify-between pb-2 border-b border-slate-100 flex-wrap gap-2">
                               <div className="flex items-center gap-2.5">
                                 <span className="font-bold text-slate-900 text-sm md:text-base">
                                   {g.name} 深度考点与典型反应机理
@@ -507,14 +526,28 @@ export const OrganicFullMatrixView: React.FC<OrganicFullMatrixViewProps> = ({
                                 </span>
                               </div>
 
-                              {onAddGroupToCustom && (
+                              <div className="flex items-center gap-2">
                                 <button
-                                  onClick={() => onAddGroupToCustom(g.id)}
-                                  className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3 py-1 rounded-lg transition-colors cursor-pointer shadow-2xs"
+                                  onClick={() => {
+                                    const m = get3DModelForGroup(g.id)
+                                    if (m) setPreview3DMolecule(m)
+                                  }}
+                                  className="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-3 py-1 rounded-lg border border-indigo-200 transition-colors cursor-pointer shadow-2xs flex items-center gap-1.5"
+                                  title="原地查看 3D 空间球棍模型"
                                 >
-                                  加入自由组装分子
+                                  <Box className="w-3.5 h-3.5 text-indigo-600" />
+                                  <span>查看 3D 球棍模型</span>
                                 </button>
-                              )}
+
+                                {onAddGroupToCustom && (
+                                  <button
+                                    onClick={() => onAddGroupToCustom(g.id)}
+                                    className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3 py-1 rounded-lg transition-colors cursor-pointer shadow-2xs"
+                                  >
+                                    加入自由组装分子
+                                  </button>
+                                )}
+                              </div>
                             </div>
 
                             {/* 代表性化学方程式 */}
@@ -580,6 +613,12 @@ export const OrganicFullMatrixView: React.FC<OrganicFullMatrixViewProps> = ({
           </table>
         </div>
       </div>
+
+      {/* 原地 3D 空间球棍模型浮层模态窗 */}
+      <OrganicMolecule3DModal
+        molecule={preview3DMolecule}
+        onClose={() => setPreview3DMolecule(null)}
+      />
     </div>
   )
 }

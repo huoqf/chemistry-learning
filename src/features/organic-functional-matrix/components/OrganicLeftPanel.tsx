@@ -1,7 +1,13 @@
-import React, { useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import { LeftPanel, LeftPanelSection, SegmentedControl } from '@/components/UI'
 import { FUNCTIONAL_GROUPS, PRESET_MOLECULES } from '../constants'
-import { Plus, Minus, RotateCcw, Check } from 'lucide-react'
+import { Plus, Minus, RotateCcw, Check, Box } from 'lucide-react'
+import {
+  ORGANIC_3D_MOLECULES,
+  get3DModelForGroup,
+  type Organic3DMolecule,
+} from '../data/organic3dData'
+import { OrganicMolecule3DModal } from './OrganicMolecule3DModal'
 
 interface OrganicLeftPanelProps {
   panelMode: 'preset' | 'custom' | 'matrix'
@@ -24,6 +30,7 @@ export const OrganicLeftPanel: React.FC<OrganicLeftPanelProps> = ({
   onApplyPreset,
   onResetCounts,
 }) => {
+  const [preview3DMolecule, setPreview3DMolecule] = useState<Organic3DMolecule | null>(null)
   const totalAddedGroups = Object.values(groupCounts).reduce((acc, v) => acc + v, 0)
 
   // 识别当前匹配的预设母题
@@ -77,12 +84,26 @@ export const OrganicLeftPanel: React.FC<OrganicLeftPanelProps> = ({
               : 'border-slate-200 bg-white hover:border-slate-300'
         }`}
       >
-        {/* 第一行：名字与结构式 */}
+        {/* 第一行：名字与结构式 + 3D 按钮 */}
         <div className="flex items-center justify-between gap-1">
           <span className="font-bold text-slate-800 text-[11.5px]">{group.name}</span>
-          <span className="font-mono text-indigo-700 bg-indigo-50 border border-indigo-100 px-1.5 py-0.2 rounded text-[10px] shrink-0 font-bold">
-            {group.structureSvg}
-          </span>
+          <div className="flex items-center gap-1 shrink-0">
+            <span className="font-mono text-indigo-700 bg-indigo-50 border border-indigo-100 px-1.5 py-0.2 rounded text-[10px] font-bold">
+              {group.structureSvg}
+            </span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                const m = get3DModelForGroup(group.id)
+                if (m) setPreview3DMolecule(m)
+              }}
+              className="text-[10px] text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-1.5 py-0.5 rounded font-bold transition-colors cursor-pointer flex items-center gap-0.5"
+              title="查看该基团代表物 3D 空间球棍模型"
+            >
+              <Box className="w-2.5 h-2.5" />
+              <span>3D</span>
+            </button>
+          </div>
         </div>
 
         {/* 第二行：数量调节器 */}
@@ -145,27 +166,53 @@ export const OrganicLeftPanel: React.FC<OrganicLeftPanelProps> = ({
             <div className="space-y-1.5">
               {PRESET_MOLECULES.map((preset) => {
                 const isActive = activePresetId === preset.id
+                const has3D = Boolean(ORGANIC_3D_MOLECULES[preset.id])
                 return (
-                  <button
+                  <div
                     key={preset.id}
-                    onClick={() => onApplyPreset(preset.counts, preset.focusGroupId)}
-                    className={`w-full p-2.5 rounded-lg border text-left transition-all cursor-pointer flex items-center justify-between ${
+                    className={`w-full p-2.5 rounded-lg border text-left transition-all flex items-center justify-between ${
                       isActive
                         ? 'border-indigo-600 bg-indigo-50/90 shadow-xs ring-1 ring-indigo-400'
                         : 'border-slate-200 bg-white hover:border-indigo-200 hover:bg-slate-50'
                     }`}
                   >
-                    <div className="font-bold text-xs text-slate-900">
+                    <button
+                      onClick={() => onApplyPreset(preset.counts, preset.focusGroupId)}
+                      className="font-bold text-xs text-slate-900 flex-1 text-left cursor-pointer"
+                    >
                       {preset.title}
+                    </button>
+
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {has3D && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            const m = ORGANIC_3D_MOLECULES[preset.id]
+                            if (m) setPreview3DMolecule(m)
+                          }}
+                          className="text-[10px] font-bold text-indigo-600 hover:text-indigo-900 bg-indigo-100/70 hover:bg-indigo-200 border border-indigo-200 px-1.5 py-0.5 rounded cursor-pointer transition-colors shadow-2xs flex items-center gap-0.5"
+                          title="原地查看该母题分子的 3D 空间球棍模型"
+                        >
+                          <Box className="w-2.5 h-2.5" />
+                          <span>3D</span>
+                        </button>
+                      )}
+
+                      <button
+                        onClick={() => onApplyPreset(preset.counts, preset.focusGroupId)}
+                        className="cursor-pointer"
+                      >
+                        {isActive ? (
+                          <span className="w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0">
+                            <Check className="w-2.5 h-2.5" />
+                          </span>
+                        ) : (
+                          <span className="text-[10px] text-indigo-600 font-medium shrink-0">载入</span>
+                        )}
+                      </button>
                     </div>
-                    {isActive ? (
-                      <span className="w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0">
-                        <Check className="w-2.5 h-2.5" />
-                      </span>
-                    ) : (
-                      <span className="text-[10px] text-indigo-600 font-medium shrink-0">载入</span>
-                    )}
-                  </button>
+                  </div>
                 )
               })}
             </div>
@@ -308,6 +355,12 @@ export const OrganicLeftPanel: React.FC<OrganicLeftPanelProps> = ({
           </div>
         </LeftPanelSection>
       )}
+
+      {/* 原地 3D 空间球棍模型浮层模态窗 */}
+      <OrganicMolecule3DModal
+        molecule={preview3DMolecule}
+        onClose={() => setPreview3DMolecule(null)}
+      />
     </LeftPanel>
   )
 }
