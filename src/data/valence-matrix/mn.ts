@@ -5,8 +5,9 @@ export const MN_CONFIG: ElementValenceConfig = {
   id: 'Mn',
   name: '锰元素 (Mn)',
   symbol: 'Mn',
-  isCoreGaokao: false,
-  badgeText: '高考工业流程强氧化剂延伸',
+  isCoreGaokao: true,
+  elementCategory: 'transition-metal',
+  badgeText: '新高考高频氧化还原·高锰酸钾滴定与软锰矿浸出',
   atomColor: ATOM_COLORS.Mn,
   valences: [0, 2, 4, 6, 7],
   categories: ['单质', '氧化物', '氢氧化物/含氧酸', '盐'],
@@ -100,7 +101,7 @@ export const MN_CONFIG: ElementValenceConfig = {
     },
   ],
   examTips: [
-    '酸性 KMnO₄ 滴定 Fe²⁺ / 草酸 H₂C₂O₄ 时不需要额外加指示剂，终点现象为"滴入最后半滴 KMnO₄，溶液由无色变为浅紫红色且 30s 内不褪色"。',
-    '工业制备 KMnO₄ 的关键工序：粉碎软锰矿(MnO₂) 与 KOH 熔融氧化生成墨绿色 K₂MnO₄，再电解或通入 CO₂ 歧化转化为 KMnO₄。',
+    '【酸性高锰酸钾滴定终点规范描述】：酸性 KMnO₄ 滴定 Fe²⁺ / 草酸 H₂C₂O₄ 时自身作指示剂（无需外加指示剂），终点标准踩分描述：“滴入最后半滴酸性 KMnO₄ 标准溶液后，溶液由无色变为浅紫红色，且半分钟（30s）内不褪色”。',
+    '【工业制备高锰酸钾两步转化法】：① 软锰矿 (MnO₂) 与 KOH、KClO₃ 固体熔融共热氧化生成墨绿色锰酸钾 K₂MnO₄；② 浸出后通入 CO₂ 酸化歧化生成 KMnO₄ 和 MnO₂（3MnO₄²⁻ + 4H⁺ = 2MnO₄⁻ + MnO₂↓ + 2H₂O）。',
   ],
 }

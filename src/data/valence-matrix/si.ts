@@ -6,7 +6,8 @@ export const SI_CONFIG: ElementValenceConfig = {
   name: '硅元素 (Si)',
   symbol: 'Si',
   isCoreGaokao: true,
-  badgeText: '高考半导体与无机非金属材料',
+  elementCategory: 'non-metal',
+  badgeText: '高考半导体与无机非金属材料·二氧化硅结构',
   atomColor: ATOM_COLORS.Si,
   valences: [-4, 0, 4],
   categories: ['氢化物/酸', '单质', '氧化物', '氢氧化物/含氧酸', '盐'],
@@ -79,8 +80,8 @@ export const SI_CONFIG: ElementValenceConfig = {
     },
   ],
   examTips: [
-    '高纯单晶硅用于电子芯片与太阳能电池板；光导纤维的成分为 SiO₂。',
-    '盛放 NaOH 溶液的试剂瓶不能用磨口玻璃塞，因为 NaOH 会与玻璃中的 SiO₂ 反应生成具粘性的 Na₂SiO₃。',
-    '硅酸 H₂SiO₃ 的酸性比碳酸弱，向 Na₂SiO₃ 溶液中通入 CO₂ 能产生白色胶状沉淀。',
+    '【高纯硅与二氧化硅材料用途区别】：高纯单晶硅用于半导体芯片与光伏太阳能电池板；光导纤维的核心成分为二氧化硅 (SiO₂)。',
+    '【强碱试剂瓶橡胶塞规范】：盛放 NaOH 等强碱溶液的玻璃试剂瓶严禁使用磨口玻璃塞，必须用橡胶塞，原因是 NaOH 会与玻璃中的 SiO₂ 反应生成具粘性的硅酸钠 Na₂SiO₃ 使瓶塞无法打开。',
+    '【非金属性强弱实验证明】：利用强酸制弱酸原理证明碳非金属性强于硅：向 Na₂SiO₃ 溶液中通入 CO₂ 产生白色胶状沉淀（Na₂SiO₃ + CO₂ + H₂O = H₂SiO₃↓ + Na₂CO₃）。',
   ],
 }

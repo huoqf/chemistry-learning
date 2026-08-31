@@ -6,7 +6,8 @@ export const C_CONFIG: ElementValenceConfig = {
   name: '碳元素 (C)',
   symbol: 'C',
   isCoreGaokao: true,
-  badgeText: '高考碳循环与温室效应',
+  elementCategory: 'non-metal',
+  badgeText: '高考碳循环与温室效应·碳酸氢盐转化',
   atomColor: ATOM_COLORS.C,
   valences: [-4, 0, 2, 4],
   categories: ['氢化物/酸', '单质', '氧化物', '氢氧化物/含氧酸', '盐'],
@@ -90,7 +91,7 @@ export const C_CONFIG: ElementValenceConfig = {
     },
   ],
   examTips: [
-    'CO 与 CO₂ 的鉴别：通入澄清石灰水，变浑浊的为 CO₂；或者点燃，能在空气中燃烧产生蓝色火焰的为 CO。',
-    'CO₂ 使澄清石灰水变浑浊是鉴别 CO₂ 的常用方法，但过量 CO₂ 会使浑浊再次变澄清。',
+    '【CO 与 CO₂ 鉴别与除杂踩分点】：鉴别：通入澄清石灰水，变浑浊的为 CO₂；或者点燃，能在空气中燃烧产生蓝色火焰的为 CO。除杂：CO(CO₂) 通过饱和澄清石灰水或 NaOH 溶液；CO₂(CO) 通过灼热 CuO 粉末。',
+    '【碳酸盐与碳酸氢盐转化鉴别】：向 Na₂CO₃ 溶液中逐滴滴加稀盐酸，开始无气泡（转化为 NaHCO₃），后产生气泡；向 NaHCO₃ 溶液滴加稀盐酸立即剧烈产生气泡。',
   ],
 }

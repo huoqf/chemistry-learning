@@ -6,7 +6,8 @@ export const N_CONFIG: ElementValenceConfig = {
   name: '氮元素 (N)',
   symbol: 'N',
   isCoreGaokao: true,
-  badgeText: '高考连续氧化与硝酸工业',
+  elementCategory: 'non-metal',
+  badgeText: '高考连续氧化与硝酸工业·喷泉实验',
   atomColor: ATOM_COLORS.N,
   valences: [-3, 0, 1, 2, 3, 4, 5],
   categories: ['氢化物/酸', '单质', '氧化物', '氢氧化物/含氧酸', '盐'],
@@ -112,8 +113,8 @@ export const N_CONFIG: ElementValenceConfig = {
     },
   ],
   examTips: [
-    '浓硝酸与 Cu 反应生成红棕色 NO₂；稀硝酸与 Cu 反应生成无色 NO 气体。',
-    'NO 不溶于水只能用排水法收集；NO₂ 易与水反应只能用向上排空气法收集。',
-    '工业合成氨为放热可逆反应：N₂ + 3H₂ ⇌ 2NH₃ ΔH < 0，采用 400-500℃、铁触媒与高压条件。',
+    '【浓稀硝酸与金属铜反应规律】：浓硝酸与 Cu 反应剧烈生成红棕色 NO₂ 气体：Cu + 4HNO₃(浓) = Cu(NO₃)₂ + 2NO₂↑ + 2H₂O；稀硝酸与 Cu 反应生成无色 NO 气体：3Cu + 8HNO₃(稀) = 3Cu(NO₃)₂ + 2NO↑ + 4H₂O。',
+    '【NO 与 NO₂ 收集方法限制】：NO 极易被空气中 O₂ 氧化为 NO₂，且不溶于水，只能用“排水法”收集；NO₂ 易与水发生歧化反应，且密度大于空气，只能用“向上排空气法”收集。',
+    '【工业合成氨热力学与动力学平衡】：工业合成氨反应 N₂ + 3H₂ ⇌ 2NH₃ ΔH < 0，选择 400~500℃ 高温是综合考虑铁触媒催化剂最高活性与化学反应速率的工程最优解。',
   ],
 }

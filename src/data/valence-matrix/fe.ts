@@ -6,7 +6,8 @@ export const FE_CONFIG: ElementValenceConfig = {
   name: '铁元素 (Fe)',
   symbol: 'Fe',
   isCoreGaokao: true,
-  badgeText: '高考必考变价金属',
+  elementCategory: 'transition-metal',
+  badgeText: '高考必考变价金属·铁三角转化与检验',
   atomColor: ATOM_COLORS.Fe,
   valences: [0, 2, 3, 6],
   categories: ['单质', '氧化物', '氢氧化物/含氧酸', '盐'],
@@ -48,7 +49,7 @@ export const FE_CONFIG: ElementValenceConfig = {
       isReductant: true,
     },
     {
-      substance: 'FeSO₄',
+      substance: 'FeSO₄ / FeCl₂',
       valence: 2,
       category: '盐',
       colorText: '浅绿色溶液',
@@ -164,8 +165,8 @@ export const FE_CONFIG: ElementValenceConfig = {
     },
   ],
   examTips: [
-    'Fe³⁺ 的特征检验：取少量溶液滴加 KSCN 变血红色；或滴加 NaOH 生成红褐色沉淀。',
-    'Fe²⁺ 的特征检验：滴加 KSCN 无明显现象，再滴加新制氯水/H₂O₂ 显血红色。',
-    'Fe(OH)₂ 制备关键：使用新制煮沸去氧的 FeSO₄ 溶液与 NaOH 溶液，胶头滴管伸入液面以下。',
+    '【Fe³⁺ 特征检验规范答题】：取少量溶液滴加 KSCN 溶液，溶液立即变为“血红色”；或滴加 NaOH 溶液生成“红褐色沉淀”。',
+    '【Fe²⁺ 排除 Fe³⁺ 干扰检验规范】：取少量待测液先滴加 KSCN 溶液“无明显现象/无变化”，再滴加新制氯水（或 H₂O₂）后“溶液变为血红色”。顺序颠倒判定 0 分！',
+    '【Fe(OH)₂ 制备防氧化规范三要素】：① FeSO₄ 溶液配制加还原铁粉防氧化；② 蒸馏水加热煮沸赶走溶解的氧气；③ 胶头滴管必须“伸入 NaOH 液面以下”缓慢挤出试剂，并可在液面上覆盖一层苯或植物油隔绝空气。',
   ],
 }

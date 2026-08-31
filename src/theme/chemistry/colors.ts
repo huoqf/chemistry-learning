@@ -158,6 +158,9 @@ export const ATOM_COLORS = {
   K:  '#7C3AED', // 钾 (深紫)
   Ca: '#64748B', // 钙 (灰)
   Ti: '#EC4899', // 钛 (玫红)
+  V:  '#8B5CF6', // 钒 (紫蓝)
+  Co: '#F43F5E', // 钴 (粉红/桃红)
+  Ni: '#10B981', // 镍 (翡翠绿)
   Cr: '#059669', // 铬 (铬绿)
   Mn: '#EC4899', // 锰 (粉紫)
   Fe: '#B45309', // 铁 (棕)
@@ -169,6 +172,15 @@ export const ATOM_COLORS = {
   Ag: '#CBD5E1', // 银 (亮银)
   Ba: '#475569', // 钡 (深灰)
   Pb: '#475569', // 铅 (铅灰)
+  Ga: '#94A3B8', // 镓 (浅银)
+  Ge: '#64748B', // 锗 (灰)
+  As: '#D97706', // 砷 (棕黄)
+  Se: '#EA580C', // 硒 (红棕)
+  Sn: '#CBD5E1', // 锡 (银白)
+  Sb: '#7C3AED', // 锑 (深紫)
+  Bi: '#E11D48', // 铋 (粉红)
+  W:  '#475569', // 钨 (深钢灰)
+  Mo: '#0284C7', // 钼 (天蓝)
 } as const
 
 export type AtomColorKey = keyof typeof ATOM_COLORS

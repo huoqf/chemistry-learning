@@ -6,7 +6,8 @@ export const CL_CONFIG: ElementValenceConfig = {
   name: '氯元素 (Cl)',
   symbol: 'Cl',
   isCoreGaokao: true,
-  badgeText: '高考卤素与漂白含氧酸',
+  elementCategory: 'non-metal',
+  badgeText: '高考卤素与氯碱工业·漂白性含氧酸',
   atomColor: ATOM_COLORS.Cl,
   valences: [-1, 0, 1, 3, 5, 7],
   categories: ['氢化物/酸', '单质', '氢氧化物/含氧酸', '盐'],
@@ -91,8 +92,8 @@ export const CL_CONFIG: ElementValenceConfig = {
     },
   ],
   examTips: [
-    'Cl₂ 的实验室制法：浓盐酸与 MnO₂ 加热，用饱和食盐水除去 HCl，浓硫酸干燥。',
-    '漂白粉的有效成分为 Ca(ClO)₂，在空气中吸收 CO₂ 和 H₂O 生成 HClO 变质失效。',
-    '酸性强弱比较：HClO₄ > H₂SO₄ > HNO₃ > H₂CO₃ > HClO > H₂SiO₃。',
+    '【实验室制氯气净化与尾气吸收流程】：浓盐酸与 MnO₂ 加热制备 Cl₂：① 饱和食盐水（除去 HCl 杂质并降低 Cl₂ 溶解度）；② 浓硫酸（干燥水蒸气）；③ NaOH 溶液（尾气吸收防止污染，严禁用澄清石灰水因为溶解度太小）。',
+    '【漂白粉有效成分与失效分析】：漂白粉的有效成分为 Ca(ClO)₂，长期露置空气吸收 CO₂ 和水生成 HClO，光照分解为 HCl 和 O₂ 彻底失效。',
+    '【含氧酸酸性与氧化性强弱对比】：酸性强弱：HClO₄ > H₂SO₄ > HNO₃ > H₂CO₃ > HClO > H₂SiO₃；而氧化性强弱恰好相反：HClO > HClO₂ > HClO₃ > HClO₄（低价含氧酸氧化性更强）。',
   ],
 }

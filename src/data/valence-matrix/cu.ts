@@ -6,7 +6,8 @@ export const CU_CONFIG: ElementValenceConfig = {
   name: '铜元素 (Cu)',
   symbol: 'Cu',
   isCoreGaokao: true,
-  badgeText: '高考重金属与络合变色',
+  elementCategory: 'transition-metal',
+  badgeText: '高考重金属与络合显色·工业电解精炼',
   atomColor: ATOM_COLORS.Cu,
   valences: [0, 1, 2],
   categories: ['单质', '氧化物', '氢氧化物/含氧酸', '盐'],
@@ -100,8 +101,8 @@ export const CU_CONFIG: ElementValenceConfig = {
     },
   ],
   examTips: [
-    'Cu²⁺ 离子在水溶液中呈蓝色，与浓盐酸作用生成绿色的 [CuCl₄]²⁻ 络离子。',
-    '无水 CuSO₄ 白色粉末遇水变为蓝色的 CuSO₄·5H₂O，常用于检验有机物中是否含有微量水。',
-    'Cu₂O 在稀硫酸中发生歧化反应生成 Cu 与 Cu²⁺，是检验氧化亚铜与黑氧化铜混合物的常用方法。',
+    '【Cu²⁺ 离子颜色与配位转化】：水合铜离子 [Cu(H₂O)₄]²⁺ 显天蓝色，加入浓盐酸转化为黄绿色的 [CuCl₄]²⁻ 络离子；加入过量氨水转化为深蓝色的 [Cu(NH₃)₄]²⁺ 络离子。',
+    '【无水 CuSO₄ 检验微量水】：无水 CuSO₄ 白色粉末吸水变为蓝色的胆矾 CuSO₄·5H₂O，常用于检验有机溶剂或气体中是否含有微量水（严禁用于除去大量水）。',
+    '【Cu₂O 与 CuO 硫酸鉴别歧化反应】：向砖红色粉末中加入稀硫酸，若产生“蓝色溶液并有紫红色固体沉淀析出”，则证明含 Cu₂O（Cu₂O + 2H⁺ = Cu↓ + Cu²⁺ + H₂O 歧化反应）。',
   ],
 }

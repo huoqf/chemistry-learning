@@ -119,12 +119,11 @@ export function ValenceMatrixCanvas({
   const modelNode = getGaokaoModel('model-valence-matrix')
   const quizData = getModelQuizData('model-valence-matrix')
 
-  // 获取交叉点的物质节点
-  const getItem = (valence: number, cat: ValenceCategory): ValenceSubstanceNode | undefined => {
+  // 获取交叉点的所有物质节点 (支持同一价态类别多物质并存)
+  const getItems = (valence: number, cat: ValenceCategory): ValenceSubstanceNode[] => {
     if (customItems) {
-      const found = customItems.find(i => i.valence === valence && i.category === cat)
-      if (!found) return undefined
-      return {
+      const foundList = customItems.filter(i => i.valence === valence && i.category === cat)
+      return foundList.map(found => ({
         substance: found.substance,
         valence: found.valence,
         category: found.category as ValenceCategory,
@@ -133,9 +132,9 @@ export function ValenceMatrixCanvas({
         rgbColor: found.rgbColor || colors.neutral[300],
         testReaction: found.testReaction,
         equation: found.equation,
-      }
+      }))
     }
-    return currentConfig.items.find(i => i.valence === valence && i.category === cat)
+    return currentConfig.items.filter(i => i.valence === valence && i.category === cat)
   }
 
   // 点击元素 Tab 切换
@@ -164,6 +163,20 @@ export function ValenceMatrixCanvas({
     )
   }, [selectedSubstance, currentConfig])
 
+  // 元素分类列表
+  const nonMetalElements = useMemo(
+    () => Object.values(VALENCE_MATRIX_DATA).filter(e => e.elementCategory === 'non-metal'),
+    []
+  )
+  const mainGroupMetalElements = useMemo(
+    () => Object.values(VALENCE_MATRIX_DATA).filter(e => e.elementCategory === 'main-group-metal'),
+    []
+  )
+  const transitionMetalElements = useMemo(
+    () => Object.values(VALENCE_MATRIX_DATA).filter(e => e.elementCategory === 'transition-metal'),
+    []
+  )
+
   // ───────────────────────────────────────────────────────────────────────────
   // 左屏 Panel 内容 (左侧控制器)
   // ───────────────────────────────────────────────────────────────────────────
@@ -174,54 +187,88 @@ export function ValenceMatrixCanvas({
         title={
           <span className="flex items-center gap-1.5 font-bold text-slate-800">
             <Atom className="w-4 h-4 text-indigo-600" />
-            无机元素矩阵切换
+            新高考 40 元素全周期矩阵
           </span>
         }
-        subtitle="高考必考 9 大元素 + 2 大工业延伸"
+        subtitle="主族非金属(14) · 主族金属(14) · 过渡/工业金属(12)"
       >
-        <div className="flex flex-col gap-2 pt-1">
-          <div className="text-[11px] font-bold text-slate-600">高考核心 9 大元素:</div>
-          <div className="grid grid-cols-3 gap-1.5">
-            {Object.values(VALENCE_MATRIX_DATA)
-              .filter(e => e.isCoreGaokao)
-              .map(cfg => {
+        <div className="flex flex-col gap-2.5 pt-1">
+          {/* A. 主族非金属 */}
+          <div className="flex flex-col gap-1">
+            <div className="text-[11px] font-bold text-indigo-700 flex items-center justify-between">
+              <span>主族典型非金属 (14种):</span>
+              <span className="text-[10px] text-slate-400 font-normal">H~I 全周期</span>
+            </div>
+            <div className="grid grid-cols-3 gap-1">
+              {nonMetalElements.map(cfg => {
                 const isActive = selectedSymbol === cfg.id
                 return (
                   <button
                     key={cfg.id}
                     onClick={() => handleSymbolChange(cfg.id)}
-                    className={`py-1 rounded text-xs font-bold border transition-all ${
+                    className={`py-1 px-1.5 rounded text-xs font-bold border transition-all text-center ${
                       isActive
                         ? 'bg-indigo-600 text-white border-indigo-700 shadow-sm scale-105'
                         : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-indigo-50'
                     }`}
                   >
-                    {cfg.symbol}
+                    {cfg.symbol} {cfg.name.split(' ')[0]}
                   </button>
                 )
               })}
+            </div>
           </div>
 
-          <div className="text-[11px] font-bold text-amber-700 pt-1">工业流程延伸元素:</div>
-          <div className="grid grid-cols-2 gap-1.5">
-            {Object.values(VALENCE_MATRIX_DATA)
-              .filter(e => !e.isCoreGaokao)
-              .map(cfg => {
+          {/* B. 主族典型金属 */}
+          <div className="flex flex-col gap-1 pt-1 border-t border-slate-100">
+            <div className="text-[11px] font-bold text-emerald-700 flex items-center justify-between">
+              <span>主族金属与两性金属 (14种):</span>
+              <span className="text-[10px] text-slate-400 font-normal">Li~Bi 全周期</span>
+            </div>
+            <div className="grid grid-cols-2 gap-1">
+              {mainGroupMetalElements.map(cfg => {
                 const isActive = selectedSymbol === cfg.id
                 return (
                   <button
                     key={cfg.id}
                     onClick={() => handleSymbolChange(cfg.id)}
-                    className={`py-1 rounded text-xs font-bold border transition-all ${
+                    className={`py-1 px-1.5 rounded text-xs font-bold border transition-all text-center ${
                       isActive
-                        ? 'bg-amber-600 text-white border-amber-700 shadow-sm scale-105'
-                        : 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100'
+                        ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm scale-105'
+                        : 'bg-emerald-50/60 text-emerald-900 border-emerald-200 hover:bg-emerald-100'
                     }`}
                   >
-                    {cfg.symbol}
+                    {cfg.symbol} {cfg.name.split(' ')[0]}
                   </button>
                 )
               })}
+            </div>
+          </div>
+
+          {/* C. 过渡与工业流程金属 */}
+          <div className="flex flex-col gap-1 pt-1 border-t border-slate-100">
+            <div className="text-[11px] font-bold text-amber-800 flex items-center justify-between">
+              <span>过渡与工业流程金属 (12种):</span>
+              <span className="text-[10px] text-slate-400 font-normal">Ti~W 全覆盖</span>
+            </div>
+            <div className="grid grid-cols-3 gap-1">
+              {transitionMetalElements.map(cfg => {
+                const isActive = selectedSymbol === cfg.id
+                return (
+                  <button
+                    key={cfg.id}
+                    onClick={() => handleSymbolChange(cfg.id)}
+                    className={`py-1 px-1.5 rounded text-xs font-bold border transition-all text-center ${
+                      isActive
+                        ? 'bg-amber-600 text-white border-amber-700 shadow-sm scale-105'
+                        : 'bg-amber-50/60 text-amber-900 border-amber-200 hover:bg-amber-100'
+                    }`}
+                  >
+                    {cfg.symbol} {cfg.name.split(' ')[0]}
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </div>
       </LeftPanelSection>
@@ -368,39 +415,51 @@ export function ValenceMatrixCanvas({
                       {cat}
                     </td>
                     {activeValences.map(v => {
-                      const node = getItem(v, cat)
-                      const isSelected = selectedSubstance?.substance === node?.substance
+                      const nodes = getItems(v, cat)
+                      const hasNodes = nodes.length > 0
                       return (
                         <td
                           key={v}
-                          onClick={() => node && setSelectedSubstance(node)}
-                          className={`p-2 border border-slate-200 text-center transition-all cursor-pointer relative ${
-                            node
-                              ? isSelected
-                                ? 'bg-indigo-100/80 border-indigo-400 shadow-inner ring-2 ring-indigo-400 ring-offset-1'
-                                : 'bg-white hover:bg-indigo-50/60'
-                              : 'bg-slate-100/30'
+                          className={`p-1.5 border border-slate-200 text-center transition-all align-middle ${
+                            hasNodes ? 'bg-white' : 'bg-slate-100/30'
                           }`}
                         >
-                          {node ? (
-                            <div className="flex flex-col items-center gap-1 py-1">
-                              <ChemicalFormula formula={node.substance} className="font-bold text-sm text-slate-900" />
-                              <span className={`text-[10px] px-1.5 py-0.5 rounded border ${node.colorStyle}`}>
-                                {node.colorText}
-                              </span>
+                          {hasNodes ? (
+                            <div className="flex flex-col items-center justify-center gap-1.5 py-0.5">
+                              {nodes.map(node => {
+                                const isSelected = selectedSubstance?.substance === node.substance
+                                return (
+                                  <div
+                                    key={node.substance}
+                                    onClick={() => setSelectedSubstance(node)}
+                                    className={`w-full max-w-[130px] p-1.5 rounded-lg border transition-all cursor-pointer flex flex-col items-center gap-1 ${
+                                      isSelected
+                                        ? 'bg-indigo-100/90 border-indigo-500 shadow-sm ring-2 ring-indigo-400 ring-offset-1 scale-[1.02]'
+                                        : 'bg-slate-50/70 border-slate-200/80 hover:bg-indigo-50/50 hover:border-indigo-200'
+                                    }`}
+                                  >
+                                    <ChemicalFormula formula={node.substance} className="font-bold text-xs text-slate-900" />
+                                    <span className={`text-[9px] px-1 py-0.2 rounded border font-medium truncate max-w-[110px] ${node.colorStyle}`}>
+                                      {node.colorText}
+                                    </span>
 
-                              <div className="flex items-center gap-1 mt-0.5">
-                                {node.isOxidant && (
-                                  <span className="text-[9px] px-1 bg-red-100 text-red-800 rounded font-bold">
-                                    氧化性
-                                  </span>
-                                )}
-                                {node.isReductant && (
-                                  <span className="text-[9px] px-1 bg-blue-100 text-blue-800 rounded font-bold">
-                                    还原性
-                                  </span>
-                                )}
-                              </div>
+                                    {(node.isOxidant || node.isReductant) && (
+                                      <div className="flex items-center gap-0.5 mt-0.2">
+                                        {node.isOxidant && (
+                                          <span className="text-[8px] px-0.8 py-0.2 bg-red-100 text-red-800 rounded font-bold">
+                                            氧化性
+                                          </span>
+                                        )}
+                                        {node.isReductant && (
+                                          <span className="text-[8px] px-0.8 py-0.2 bg-blue-100 text-blue-800 rounded font-bold">
+                                            还原性
+                                          </span>
+                                        )}
+                                      </div>
+                                    )}
+                                  </div>
+                                )
+                              })}
                             </div>
                           ) : (
                             <span className="text-slate-300 text-xs font-mono">—</span>

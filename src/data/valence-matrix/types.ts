@@ -29,11 +29,14 @@ export interface ValenceTransformation {
   type: 'oxidation' | 'reduction' | 'disproportionation' | 'comproportionation' | 'other'
 }
 
+export type ElementGroupCategory = 'non-metal' | 'main-group-metal' | 'transition-metal'
+
 export interface ElementValenceConfig {
   id: string
   name: string
   symbol: string
   isCoreGaokao: boolean
+  elementCategory?: ElementGroupCategory
   badgeText: string
   atomColor: string
   valences: number[]

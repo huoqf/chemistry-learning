@@ -5,8 +5,9 @@ export const CR_CONFIG: ElementValenceConfig = {
   id: 'Cr',
   name: '铬元素 (Cr)',
   symbol: 'Cr',
-  isCoreGaokao: false,
-  badgeText: '高考废渣浸出与介质变色延伸',
+  isCoreGaokao: true,
+  elementCategory: 'transition-metal',
+  badgeText: '新高考高频变色平衡·重铬酸根与铬酸根互变',
   atomColor: ATOM_COLORS.Cr,
   valences: [0, 3, 6],
   categories: ['单质', '氧化物', '氢氧化物/含氧酸', '盐'],
@@ -111,7 +112,7 @@ export const CR_CONFIG: ElementValenceConfig = {
     },
   ],
   examTips: [
-    'Cr(VI) 离子酸碱平衡：2CrO₄²⁻(黄色) + 2H⁺ ⇌ Cr₂O₇²⁻(橙红) + H₂O。加酸平衡正向移动显橙红，加碱平衡逆向移动显黄色。',
-    '工业含铬废水处理：将有毒的 Cr(VI) (Cr₂O₇²⁻) 用 FeSO₄ 或 SO₂ 还原为低毒的 Cr³⁺，再加石灰调 pH 产生 Cr(OH)₃ 沉淀除去。',
+    '【铬酸根与重铬酸根介质平衡与颜色转变】：2CrO₄²⁻(黄色) + 2H⁺ ⇌ Cr₂O₇²⁻(橙红色) + H₂O。加酸增大 c(H⁺) 平衡右移溶液显橙红色；加碱消耗 H⁺ 平衡左移溶液显黄色（属于非氧化还原平衡）。',
+    '【工业含铬电镀废水无害化沉淀流程】：① 加酸酸化后投入 FeSO₄（或通入 SO₂），将剧毒 Cr(VI) 还原为低毒的 Cr³⁺（Cr₂O₇²⁻ + 6Fe²⁺ + 14H⁺ = 2Cr³⁺ + 6Fe³⁺ + 7H₂O）；② 加入石灰乳调节 pH 至 7~8 沉淀析出 Cr(OH)₃ 绿色沉淀实现固化达标排放。',
   ],
 }

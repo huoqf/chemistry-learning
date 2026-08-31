@@ -6,7 +6,8 @@ export const AL_CONFIG: ElementValenceConfig = {
   name: '铝元素 (Al)',
   symbol: 'Al',
   isCoreGaokao: true,
-  badgeText: '高考两性性质与滴定曲线',
+  elementCategory: 'main-group-metal',
+  badgeText: '高考两性性质与铝三角滴加沉淀',
   atomColor: ATOM_COLORS.Al,
   valences: [0, 3],
   categories: ['单质', '氧化物', '氢氧化物/含氧酸', '盐'],
@@ -107,8 +108,8 @@ export const AL_CONFIG: ElementValenceConfig = {
     },
   ],
   examTips: [
-    'Al³⁺ 滴加 NaOH 溶液生成沉淀量与 NaOH 物质的量之比为 1:3 达到最大，1:4 时沉淀完全溶解。',
-    'Al(OH)₃ 既能溶于强酸又能溶于强碱，但不能溶于氨水和碳酸。',
-    '明矾 KAl(SO₄)₂·12H₂O 溶于水，Al³⁺ 水解生成 Al(OH)₃ 胶体，具有吸附悬浮杂质的净水功能。',
+    '【铝三角与沉淀滴加图像踩分点】：Al³⁺ 溶液中滴加 NaOH，n(Al³⁺):n(OH⁻)=1:3 时白色沉淀量达到最大值，继续滴加至 1:4 时沉淀完全溶解生成 [Al(OH)₄]⁻。',
+    '【两性氢氧化物的弱酸弱碱不溶性】：Al(OH)₃ 仅溶于强酸和强碱，严禁误认为其溶于弱酸（如碳酸）或弱碱（如氨水）。向偏铝酸盐通入过量 CO₂ 产物为 Al(OH)₃ 和 HCO₃⁻（非 CO₃²⁻）。',
+    '【明矾净水原理与胶体吸附】：明矾 KAl(SO₄)₂·12H₂O 溶于水，Al³⁺ 水解生成 Al(OH)₃ 胶体：Al³⁺ + 3H₂O ⇌ Al(OH)₃(胶体) + 3H⁺，胶体表面积大具有强吸附性以净水。',
   ],
 }
