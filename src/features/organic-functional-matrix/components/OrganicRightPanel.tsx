@@ -1,152 +1,229 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import type { FunctionalGroupItem, TotalConsumptionResult } from '../types'
-import { BookOpen, AlertTriangle, Calculator, FileSpreadsheet } from 'lucide-react'
+import { GAOKAO_CLUES, PRESET_MOLECULES } from '../constants'
+import {
+  FormulaSection,
+  GaokaoSection,
+  WarningSection,
+} from '@/components/UI'
 
 interface OrganicRightPanelProps {
+  groupCounts: Record<string, number>
   selectedGroup?: FunctionalGroupItem
   consumption: TotalConsumptionResult
+  onSelectGroup?: (id: string) => void
 }
 
 export const OrganicRightPanel: React.FC<OrganicRightPanelProps> = ({
+  groupCounts,
   selectedGroup,
-  consumption,
+  onSelectGroup,
 }) => {
+  // 1. 识别当前匹配的母题预设
+  const activePreset = useMemo(() => {
+    for (const preset of PRESET_MOLECULES) {
+      const presetEntries = Object.entries(preset.counts)
+      const currentNonZero = Object.entries(groupCounts).filter(([, count]) => count > 0)
+      if (presetEntries.length !== currentNonZero.length) continue
+
+      const isMatch = presetEntries.every(
+        ([id, count]) => (groupCounts[id] || 0) === count
+      )
+      if (isMatch) return preset
+    }
+    return null
+  }, [groupCounts])
+
+  // 2. 当前分子中实际存在的官能团 ID 列表 (例如阿司匹林为 ['phenol-ester', 'carboxyl-cooh'])
+  const presentGroupIds = useMemo(() => {
+    return Object.entries(groupCounts)
+      .filter(([, count]) => count > 0)
+      .map(([id]) => id)
+  }, [groupCounts])
+
+  // 3. 严格过滤：仅筛选与当前分子/母题实际包含基团相关的高考题眼（彻底杜绝不相干题眼干扰）
+  const relevantClues = useMemo(() => {
+    if (presentGroupIds.length === 0) return []
+    return GAOKAO_CLUES.filter((clue) =>
+      presentGroupIds.includes(clue.matchedGroupId)
+    )
+  }, [presentGroupIds])
+
+  // 4. 聚焦官能团：仅当选中的官能团属于当前分子时才展示深度精讲，避免显示无关基团
+  const activeSelectedGroup = useMemo(() => {
+    if (!selectedGroup) return null
+    if (presentGroupIds.length > 0 && !presentGroupIds.includes(selectedGroup.id)) {
+      return null
+    }
+    return selectedGroup
+  }, [selectedGroup, presentGroupIds])
+
+  // 构造母题对应的标准公式列表
+  const presetFormulas = useMemo(() => {
+    if (!activePreset) return []
+    return activePreset.keyEquations.map((eq, idx) => ({
+      name: idx === 0 ? '水解反应机理方程式' : '特征中和/转化方程式',
+      latex: eq,
+      level: 'core' as const,
+    }))
+  }, [activePreset])
+
+  // 构造母题对应的高考要点
+  const presetGaokaoPoints = useMemo(() => {
+    if (!activePreset) return []
+    return [
+      { text: activePreset.examAnalysis, importance: 'gaokao' as const },
+    ]
+  }, [activePreset])
+
+  // 构造母题对应的易错警示
+  const presetWarnings = useMemo(() => {
+    if (!activePreset) return []
+    return [
+      { text: activePreset.examTraps, level: 'warning' as const },
+    ]
+  }, [activePreset])
+
+  // 构造单官能团对应的标准公式
+  const singleGroupFormulas = useMemo(() => {
+    if (!activeSelectedGroup) return []
+    return [
+      {
+        name: `${activeSelectedGroup.name} 特征反应方程式`,
+        latex: activeSelectedGroup.testEquation,
+        level: 'important' as const,
+      },
+    ]
+  }, [activeSelectedGroup])
+
+  // 构造单官能团对应的易错警示
+  const singleGroupWarnings = useMemo(() => {
+    if (!activeSelectedGroup) return []
+    return [
+      { text: activeSelectedGroup.notes, level: 'info' as const },
+    ]
+  }, [activeSelectedGroup])
+
   return (
-    <div className="w-full h-full p-4 bg-white overflow-y-auto space-y-4 text-slate-800">
-      {/* 选中官能团详解 */}
-      {selectedGroup && (
-        <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-bold text-slate-900">{selectedGroup.name}</span>
-            <span className="text-xs px-2 py-0.5 rounded font-mono font-bold bg-indigo-100 text-indigo-800">
-              {selectedGroup.formula}
+    <div className="w-full h-full p-3 bg-white overflow-y-auto space-y-3 text-slate-800">
+      {/* 1. 当前母题深度剖析卡片 (如果选了母题) */}
+      {activePreset && (
+        <div className="p-3 bg-slate-50/90 rounded-xl border border-slate-200 space-y-3 text-xs">
+          {/* 标题栏 */}
+          <div className="flex items-start justify-between gap-1 pb-2 border-b border-slate-200">
+            <div>
+              <div className="font-bold text-slate-900 text-sm">
+                {activePreset.title}
+              </div>
+              <div className="text-[11px] text-slate-500 font-medium mt-0.5">
+                {activePreset.chemicalName}
+              </div>
+            </div>
+            <span className="text-[11px] font-mono font-bold text-indigo-700 bg-white border border-indigo-200 px-2 py-0.5 rounded shadow-2xs shrink-0">
+              {activePreset.structureFormula}
             </span>
           </div>
 
-          <div className="text-xs space-y-1.5 pt-1">
-            <div className="text-slate-600">
-              <strong className="text-slate-800">代表反应方程式：</strong>
-              <div className="p-2 bg-white rounded border border-slate-200 text-xs font-mono text-indigo-700 mt-1 overflow-x-auto">
-                {selectedGroup.testEquation}
-              </div>
-            </div>
+          {/* 定量规律概括 */}
+          <div className="p-2 bg-indigo-50/70 rounded-lg border border-indigo-200/70 text-[11.5px] font-bold text-indigo-950">
+            定量规律：{activePreset.breakdownSummary}
+          </div>
 
-            <div className="p-2 bg-amber-50 rounded border border-amber-200 text-amber-900">
-              <div className="flex items-center gap-1 font-bold mb-0.5">
-                <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
-                <span>高考必考易错红线</span>
-              </div>
-              <p className="text-[11px] leading-relaxed">{selectedGroup.notes}</p>
+          {/* 规范组件：高考要点 */}
+          <GaokaoSection points={presetGaokaoPoints} />
+
+          {/* 规范组件：核心公式 */}
+          <FormulaSection formulas={presetFormulas} />
+
+          {/* 规范组件：易错警示 */}
+          <WarningSection warnings={presetWarnings} />
+        </div>
+      )}
+
+      {/* 2. 当前聚焦官能团深度精讲 (仅展示当前分子中实际存在的基团) */}
+      {activeSelectedGroup && (
+        <div className="p-3 bg-indigo-50/40 rounded-xl border border-indigo-200/80 space-y-2.5 text-xs">
+          <div className="flex items-center justify-between pb-1.5 border-b border-indigo-100">
+            <div className="font-bold text-indigo-950">
+              聚焦官能团：{activeSelectedGroup.name}
             </div>
+            <span className="font-mono font-bold text-indigo-700 bg-white border border-indigo-200 px-1.5 py-0.5 rounded text-[10.5px]">
+              {activeSelectedGroup.formula}
+            </span>
+          </div>
+
+          {/* 特征鉴别与实验现象 */}
+          <div className="space-y-1 bg-white p-2 rounded-lg border border-slate-200/80">
+            <div className="text-[11px] text-slate-700">
+              <strong>鉴别试剂</strong>：{activeSelectedGroup.testReagents.join(' / ')}
+            </div>
+            <div className="text-[11px] text-emerald-800 font-semibold">
+              <strong>特征现象</strong>：{activeSelectedGroup.testPhenomenon}
+            </div>
+          </div>
+
+          {/* 规范组件：单基团代表方程式 */}
+          <FormulaSection formulas={singleGroupFormulas} />
+
+          {/* 规范组件：单基团易错要点 */}
+          <WarningSection warnings={singleGroupWarnings} />
+        </div>
+      )}
+
+      {/* 3. 该母题/分子对应的高考推断题眼 (只呈现相干题眼) */}
+      {relevantClues.length > 0 && (
+        <div className="p-3 bg-slate-50/90 rounded-xl border border-slate-200 space-y-2 text-xs">
+          <div className="flex items-center justify-between font-bold text-slate-900 pb-1 border-b border-slate-200">
+            <span>本分子关联的高考推断题眼</span>
+            <span className="text-[10px] text-indigo-600 bg-white px-1.5 py-0.5 rounded border border-indigo-200 font-normal">
+              点击题眼聚焦基团
+            </span>
+          </div>
+
+          <div className="space-y-1.5 pt-1">
+            {relevantClues.map((clue) => {
+              const isMatched = activeSelectedGroup?.id === clue.matchedGroupId
+              return (
+                <div
+                  key={clue.id}
+                  onClick={() => onSelectGroup?.(clue.matchedGroupId)}
+                  className={`p-2.5 rounded-lg border transition-all cursor-pointer ${
+                    isMatched
+                      ? 'border-indigo-600 bg-indigo-50/70 shadow-xs ring-1 ring-indigo-400'
+                      : 'border-slate-200/80 bg-white hover:border-indigo-300'
+                  }`}
+                >
+                  <div className="font-semibold text-slate-800 text-[11.5px] leading-snug">
+                    {clue.clueText}
+                  </div>
+
+                  <div className="flex items-center gap-1.5 my-1 pl-1">
+                    <span className="text-[10px] text-slate-400 font-medium shrink-0">推断结论:</span>
+                    <span className="text-[11px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 px-1.5 py-0.2 rounded leading-tight">
+                      {clue.deductionTarget}
+                    </span>
+                  </div>
+
+                  <div className="text-[10px] text-slate-500 leading-relaxed pl-1">
+                    判定依据：{clue.principle}
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
       )}
 
-      {/* 目标分子消耗统计明细 */}
-      <div className="p-3 bg-indigo-50/50 rounded-xl border border-indigo-100 space-y-2 text-xs">
-        <div className="flex items-center gap-1.5 font-bold text-indigo-900">
-          <Calculator className="w-4 h-4 text-indigo-600" />
-          <span>目标组合分子定量反应统计 (1 mol)</span>
+      {/* 如果没有选任何基团 */}
+      {presentGroupIds.length === 0 && (
+        <div className="p-6 text-center text-slate-400 text-xs bg-slate-50 rounded-xl border border-dashed border-slate-200">
+          请在左侧选择经典母题或添加官能团，右屏将实时同步考点与真题题眼。
         </div>
-        <div className="grid grid-cols-2 gap-1.5">
-          <div className="p-1.5 bg-white rounded border border-indigo-100 flex justify-between">
-            <span className="text-slate-500">消耗 Na:</span>
-            <span className="font-bold text-blue-600">{consumption.Na} mol</span>
-          </div>
-          <div className="p-1.5 bg-white rounded border border-indigo-100 flex justify-between">
-            <span className="text-slate-500">消耗 NaOH:</span>
-            <span className="font-bold text-pink-600">{consumption.NaOH} mol</span>
-          </div>
-          <div className="p-1.5 bg-white rounded border border-indigo-100 flex justify-between">
-            <span className="text-slate-500">消耗 NaHCO₃:</span>
-            <span className="font-bold text-purple-600">{consumption.NaHCO3} mol</span>
-          </div>
-          <div className="p-1.5 bg-white rounded border border-indigo-100 flex justify-between">
-            <span className="text-slate-500">消耗 Na₂CO₃:</span>
-            <span className="font-bold text-indigo-600">{consumption.Na2CO3} mol</span>
-          </div>
-          <div className="p-1.5 bg-white rounded border border-indigo-100 flex justify-between">
-            <span className="text-slate-500">消耗 Br₂:</span>
-            <span className="font-bold text-orange-600">{consumption.Br2} mol</span>
-          </div>
-          <div className="p-1.5 bg-white rounded border border-indigo-100 flex justify-between">
-            <span className="text-slate-500">消耗 H₂:</span>
-            <span className="font-bold text-emerald-600">{consumption.H2} mol</span>
-          </div>
-        </div>
-      </div>
-
-      {/* 高考有机定量核心速查表 */}
-      <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2 text-xs">
-        <div className="flex items-center gap-1.5 font-bold text-slate-800">
-          <FileSpreadsheet className="w-4 h-4 text-slate-600" />
-          <span>高考 1mol 常见基团定量反应摩尔比速查</span>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-[11px] border-collapse">
-            <thead>
-              <tr className="border-b border-slate-200 text-slate-500">
-                <th className="py-1">官能团</th>
-                <th className="py-1">Na</th>
-                <th className="py-1">NaOH</th>
-                <th className="py-1">NaHCO₃</th>
-                <th className="py-1">Br₂</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 text-slate-700">
-              <tr>
-                <td className="py-1 font-semibold">醇 -OH</td>
-                <td className="py-1 text-blue-600 font-bold">1</td>
-                <td className="py-1 text-slate-300">0</td>
-                <td className="py-1 text-slate-300">0</td>
-                <td className="py-1 text-slate-300">0</td>
-              </tr>
-              <tr>
-                <td className="py-1 font-semibold">酚 -OH</td>
-                <td className="py-1 text-blue-600 font-bold">1</td>
-                <td className="py-1 text-pink-600 font-bold">1</td>
-                <td className="py-1 text-slate-300">0</td>
-                <td className="py-1 text-orange-600 font-bold">3(浓)</td>
-              </tr>
-              <tr>
-                <td className="py-1 font-semibold">羧基 -COOH</td>
-                <td className="py-1 text-blue-600 font-bold">1</td>
-                <td className="py-1 text-pink-600 font-bold">1</td>
-                <td className="py-1 text-purple-600 font-bold">1</td>
-                <td className="py-1 text-slate-300">0</td>
-              </tr>
-              <tr>
-                <td className="py-1 font-semibold">普通酯 -COOR</td>
-                <td className="py-1 text-slate-300">0</td>
-                <td className="py-1 text-pink-600 font-bold">1</td>
-                <td className="py-1 text-slate-300">0</td>
-                <td className="py-1 text-slate-300">0</td>
-              </tr>
-              <tr>
-                <td className="py-1 font-semibold text-rose-700">酚酯 -COO-Ar</td>
-                <td className="py-1 text-slate-300">0</td>
-                <td className="py-1 text-rose-700 font-extrabold">2 (必考)</td>
-                <td className="py-1 text-slate-300">0</td>
-                <td className="py-1 text-slate-300">0</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* 酸性强弱顺口溜 */}
-      <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 space-y-1">
-        <div className="flex items-center gap-1.5 font-bold">
-          <BookOpen className="w-4 h-4 text-amber-600" />
-          <span>酸性相对强弱顺序（高考推断金科玉律）</span>
-        </div>
-        <p className="font-mono font-bold text-amber-800 text-[11px]">
-          R-COOH &gt; H₂CO₃ &gt; C₆H₅OH &gt; HCO₃⁻ &gt; R-OH &gt; H₂O
-        </p>
-        <p className="text-[10px] text-amber-700">
-          * 根据“强酸制弱酸”：向苯酚钠溶液中通入 CO₂（无论过量或少量）均只能生成 NaHCO₃ 和苯酚，绝不生成 Na₂CO₃！
-        </p>
-      </div>
+      )}
     </div>
   )
 }
+
+
+
+

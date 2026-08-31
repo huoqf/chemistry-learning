@@ -12,6 +12,7 @@ import { FUNCTIONAL_GROUPS } from './constants'
 import { useOrganicQuantitative } from './hooks/useOrganicQuantitative'
 import { OrganicLeftPanel } from './components/OrganicLeftPanel'
 import { OrganicMatrixScene } from './components/OrganicMatrixScene'
+import { OrganicFullMatrixView } from './components/OrganicFullMatrixView'
 import { OrganicRightPanel } from './components/OrganicRightPanel'
 
 export const OrganicFunctionalMatrixCanvas: React.FC = () => {
@@ -20,6 +21,9 @@ export const OrganicFunctionalMatrixCanvas: React.FC = () => {
 
   // 视角模式 (0: 矩阵探究 | 1: 规范踩分 | 2: 真题研析)
   const [viewMode, setViewMode] = useState<number>(0)
+
+  // 左屏模式 ('preset': 经典母题 | 'custom': 自由组装 | 'matrix': 全景大表)
+  const [panelMode, setPanelMode] = useState<'preset' | 'custom' | 'matrix'>('preset')
 
   // 状态：选中的官能团与各官能团数量
   const [selectedGroupId, setSelectedGroupId] = useState<string>('carboxyl-cooh')
@@ -45,8 +49,11 @@ export const OrganicFunctionalMatrixCanvas: React.FC = () => {
     })
   }, [])
 
-  const handleApplyPreset = useCallback((presetCounts: Record<string, number>) => {
+  const handleApplyPreset = useCallback((presetCounts: Record<string, number>, focusGroupId?: string) => {
     setGroupCounts(presetCounts)
+    if (focusGroupId) {
+      setSelectedGroupId(focusGroupId)
+    }
   }, [])
 
   const handleResetCounts = useCallback(() => {
@@ -67,6 +74,8 @@ export const OrganicFunctionalMatrixCanvas: React.FC = () => {
         <ThreePanel
           left={
             <OrganicLeftPanel
+              panelMode={panelMode}
+              onPanelModeChange={setPanelMode}
               selectedGroupId={selectedGroupId}
               groupCounts={groupCounts}
               onSelectGroup={setSelectedGroupId}
@@ -78,14 +87,21 @@ export const OrganicFunctionalMatrixCanvas: React.FC = () => {
           center={
             <div className="w-full h-full flex flex-col overflow-hidden bg-slate-50">
               {viewMode === 0 && (
-                <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
-                  <OrganicMatrixScene
-                    selectedGroup={selectedGroup}
-                    groupCounts={groupCounts}
-                    consumption={consumption}
-                    font={canvasSize.font}
+                panelMode === 'matrix' ? (
+                  <OrganicFullMatrixView
+                    selectedGroupId={selectedGroupId}
+                    onSelectGroup={setSelectedGroupId}
                   />
-                </AnimationSvgCanvas>
+                ) : (
+                  <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
+                    <OrganicMatrixScene
+                      selectedGroup={selectedGroup}
+                      groupCounts={groupCounts}
+                      consumption={consumption}
+                      font={canvasSize.font}
+                    />
+                  </AnimationSvgCanvas>
+                )
               )}
 
               {viewMode === 1 && quizData && (
@@ -103,8 +119,10 @@ export const OrganicFunctionalMatrixCanvas: React.FC = () => {
           }
           right={
             <OrganicRightPanel
+              groupCounts={groupCounts}
               selectedGroup={selectedGroup}
               consumption={consumption}
+              onSelectGroup={setSelectedGroupId}
             />
           }
         />

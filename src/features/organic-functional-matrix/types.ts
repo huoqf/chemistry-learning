@@ -31,6 +31,16 @@ export interface MoleculeBuilderState {
   groups: Record<string, number> // 官能团 ID -> 数量
 }
 
+export interface ReagentBreakdownItem {
+  groupId: string
+  groupName: string
+  groupFormula: string
+  count: number
+  molPerGroup: number
+  totalMol: number
+  reason: string
+}
+
 export interface TotalConsumptionResult {
   Na: number
   NaOH: number
@@ -40,4 +50,38 @@ export interface TotalConsumptionResult {
   H2: number
   gasH2: number // 产生的 H2 摩尔数
   gasCO2: number // 产生的 CO2 摩尔数
+  precipitateAg: number // 银镜产生的 Ag 摩尔数
+  precipitateCu2O: number // 砖红沉淀 Cu2O 摩尔数
+  breakdowns: {
+    Na: ReagentBreakdownItem[]
+    NaOH: ReagentBreakdownItem[]
+    NaHCO3: ReagentBreakdownItem[]
+    Na2CO3: ReagentBreakdownItem[]
+    Br2: ReagentBreakdownItem[]
+    H2: ReagentBreakdownItem[]
+  }
 }
+
+export interface GaokaoClueItem {
+  id: string
+  clueText: string
+  deductionTarget: string
+  matchedGroupId: string
+  principle: string
+}
+
+export interface PresetMoleculeDetail {
+  id: string
+  title: string
+  chemicalName: string
+  subtitle: string
+  structureFormula: string
+  counts: Record<string, number>
+  focusGroupId: string
+  examAnalysis: string
+  breakdownSummary: string
+  keyEquations: string[]
+  examTraps: string
+}
+
+
