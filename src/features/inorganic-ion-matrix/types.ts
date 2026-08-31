@@ -1,5 +1,20 @@
 export type IonType = 'cation' | 'anion'
 
+export interface ReagentOption {
+  id: string
+  name: string
+  isOptimal: boolean
+  tag: 'optimal' | 'trap' | 'ineffective' // 最佳特效 | 高考陷阱 | 无效干扰
+  feedback: string // 为什么选对/为什么是陷阱
+  phenomenon: string
+  equation?: string
+  resultColor?: string
+  precipitate?: boolean
+  precipitateColor?: string
+  hasGas?: boolean
+  litmusChange?: boolean
+}
+
 export interface IonItem {
   id: string
   name: string
@@ -14,6 +29,7 @@ export interface IonItem {
   interference: string // 干扰离子及排除方法
   standardProcedure: string // 高考标准检验答题句式
   examImportance: 'high' | 'ultra'
+  reagentOptions: ReagentOption[]
 }
 
 export type ConflictType = 'precipitate' | 'gas' | 'weak-electrolyte' | 'redox' | 'double-hydrolysis'

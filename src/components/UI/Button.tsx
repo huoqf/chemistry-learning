@@ -2,7 +2,7 @@ import React from 'react'
 import { Loader2 } from 'lucide-react'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger'
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline'
   size?: 'sm' | 'md' | 'lg'
   loading?: boolean
 }
@@ -22,7 +22,7 @@ export const Button: React.FC<ButtonProps> = ({
     'active:scale-[0.97]',
   ]
 
-  const variantStyles = {
+  const variantStyles: Record<string, string[]> = {
     primary: [
       'bg-primary-600 text-white',
       'hover:bg-primary-700',
@@ -34,6 +34,12 @@ export const Button: React.FC<ButtonProps> = ({
       'hover:bg-primary-50 hover:border-primary-400',
       'active:bg-primary-100',
       'disabled:border-neutral-200 disabled:text-neutral-400 disabled:cursor-not-allowed',
+    ],
+    outline: [
+      'bg-white text-slate-700 border border-slate-300',
+      'hover:bg-slate-50 hover:border-slate-400',
+      'active:bg-slate-100',
+      'disabled:border-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed',
     ],
     ghost: [
       'bg-transparent text-neutral-700',
@@ -63,7 +69,7 @@ export const Button: React.FC<ButtonProps> = ({
       aria-busy={loading}
       className={[
         ...baseStyles,
-        ...variantStyles[variant],
+        ...(variantStyles[variant] || variantStyles.primary),
         sizeStyles[size],
         isDisabled && 'opacity-40 cursor-not-allowed',
         className,

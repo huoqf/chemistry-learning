@@ -1,167 +1,271 @@
-import { LeftPanel, LeftPanelSection, Button } from '@/components/UI'
+import React from 'react'
+import { LeftPanel, LeftPanelSection, Button, SegmentedControl } from '@/components/UI'
 import { ION_DATA } from '../constants'
-import { FlaskConical, Sparkles, CheckSquare, Square, RotateCcw, Droplets } from 'lucide-react'
+import { RotateCcw, Droplets, FlaskConical, CheckCircle2, Circle } from 'lucide-react'
 
 interface IonLeftPanelProps {
   inquiryMode: 'single-test' | 'coexistence-check'
   selectedIonId: string
+  selectedReagentId?: string
   coexistenceSelectedIons: string[]
-  isReactionActive: boolean
+  dropCount: number
   onSelectMode: (mode: 'single-test' | 'coexistence-check') => void
   onSelectIon: (id: string) => void
+  onSelectReagent?: (reagentId: string) => void
   onToggleCoexistenceIon: (id: string) => void
-  onToggleReaction: () => void
+  onDropReagent: () => void
+  onResetReaction: () => void
   onResetCoexistence: () => void
 }
 
 export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
   inquiryMode,
   selectedIonId,
+  selectedReagentId,
   coexistenceSelectedIons,
-  isReactionActive,
+  dropCount,
   onSelectMode,
   onSelectIon,
+  onSelectReagent,
   onToggleCoexistenceIon,
-  onToggleReaction,
+  onDropReagent,
+  onResetReaction,
   onResetCoexistence,
 }) => {
   const cations = ION_DATA.filter((i) => i.type === 'cation')
   const anions = ION_DATA.filter((i) => i.type === 'anion')
+  const currentIon = ION_DATA.find((i) => i.id === selectedIonId)
 
   return (
     <LeftPanel>
-      <LeftPanelSection title="探究模式切换">
-        <div className="grid grid-cols-2 gap-2">
-          <Button
-            variant={inquiryMode === 'single-test' ? 'primary' : 'secondary'}
-            size="sm"
-            onClick={() => onSelectMode('single-test')}
-          >
-            <FlaskConical className="w-3.5 h-3.5 mr-1" />
-            特征离子检验
-          </Button>
-          <Button
-            variant={inquiryMode === 'coexistence-check' ? 'primary' : 'secondary'}
-            size="sm"
-            onClick={() => onSelectMode('coexistence-check')}
-          >
-            <Sparkles className="w-3.5 h-3.5 mr-1" />
-            离子共存排斥
-          </Button>
-        </div>
+      {/* 顶部模式切换 */}
+      <LeftPanelSection title="探究模式">
+        <SegmentedControl
+          value={inquiryMode}
+          onChange={(val) => onSelectMode(val as 'single-test' | 'coexistence-check')}
+          options={[
+            { label: '特征离子检验', value: 'single-test' },
+            { label: '离子共存排斥', value: 'coexistence-check' },
+          ]}
+        />
       </LeftPanelSection>
 
       {inquiryMode === 'single-test' ? (
         <>
-          <LeftPanelSection title="高频阳离子检验 (选择探究)">
-            <div className="grid grid-cols-2 gap-1.5">
-              {cations.map((ion) => (
-                <button
-                  key={ion.id}
-                  onClick={() => onSelectIon(ion.id)}
-                  className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold text-left transition-all ${
-                    selectedIonId === ion.id
-                      ? 'bg-blue-600 text-white shadow-sm'
-                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                  }`}
-                >
-                  {ion.name}
-                </button>
-              ))}
+          {/* ① 待测溶液样品选择 (4×2 紧凑芯片图谱，冷暖严格分区) */}
+          <LeftPanelSection
+            title="① 选择待测样品"
+          >
+            <div className="space-y-1.5">
+              {/* 阳离子待测区 (冷蓝微阶) */}
+              <div className="p-1.5 rounded-xl bg-blue-50/60 border border-blue-200/80">
+                <div className="flex items-center justify-between mb-1 px-0.5">
+                  <span className="text-[10px] font-bold text-blue-900 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
+                    阳离子待测区
+                  </span>
+                  <span className="text-[9px] text-blue-600/80 font-medium">8 种核心</span>
+                </div>
+                <div className="grid grid-cols-4 gap-1">
+                  {cations.map((ion) => {
+                    const isSelected = selectedIonId === ion.id
+                    return (
+                      <button
+                        key={ion.id}
+                        type="button"
+                        onClick={() => onSelectIon(ion.id)}
+                        className={`h-7 rounded-lg text-xs font-bold transition-all flex items-center justify-center relative border cursor-pointer ${
+                          isSelected
+                            ? 'bg-blue-600 text-white border-blue-700 shadow-sm ring-2 ring-blue-300'
+                            : 'bg-white hover:bg-blue-100/70 text-slate-800 border-slate-200/80'
+                        }`}
+                        title={`${ion.name} (${ion.colorInSolution})`}
+                      >
+                        <span>{ion.id}</span>
+                        {/* 离子原液颜色微标 */}
+                        <span
+                          className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full border border-slate-300"
+                          style={{ backgroundColor: ion.colorRgb }}
+                        />
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* 阴离子待测区 (暖橙微阶) */}
+              <div className="p-1.5 rounded-xl bg-amber-50/60 border border-amber-200/80">
+                <div className="flex items-center justify-between mb-1 px-0.5">
+                  <span className="text-[10px] font-bold text-amber-900 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-600" />
+                    阴离子待测区
+                  </span>
+                  <span className="text-[9px] text-amber-700/80 font-medium">8 种核心</span>
+                </div>
+                <div className="grid grid-cols-4 gap-1">
+                  {anions.map((ion) => {
+                    const isSelected = selectedIonId === ion.id
+                    return (
+                      <button
+                        key={ion.id}
+                        type="button"
+                        onClick={() => onSelectIon(ion.id)}
+                        className={`h-7 rounded-lg text-xs font-bold transition-all flex items-center justify-center relative border cursor-pointer ${
+                          isSelected
+                            ? 'bg-amber-600 text-white border-amber-700 shadow-sm ring-2 ring-amber-300'
+                            : 'bg-white hover:bg-amber-100/70 text-slate-800 border-slate-200/80'
+                        }`}
+                        title={`${ion.name} (${ion.colorInSolution})`}
+                      >
+                        <span>{ion.id}</span>
+                        {/* 离子原液颜色微标 */}
+                        <span
+                          className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full border border-slate-300"
+                          style={{ backgroundColor: ion.colorRgb }}
+                        />
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
             </div>
           </LeftPanelSection>
 
-          <LeftPanelSection title="高频阴离子检验 (选择探究)">
-            <div className="grid grid-cols-2 gap-1.5">
-              {anions.map((ion) => (
-                <button
-                  key={ion.id}
-                  onClick={() => onSelectIon(ion.id)}
-                  className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold text-left transition-all ${
-                    selectedIonId === ion.id
-                      ? 'bg-amber-600 text-white shadow-sm'
-                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                  }`}
-                >
-                  {ion.name}
-                </button>
-              ))}
-            </div>
-          </LeftPanelSection>
-
-          <LeftPanelSection title="实验动作交互">
-            <Button
-              variant={isReactionActive ? 'secondary' : 'primary'}
-              size="sm"
-              onClick={onToggleReaction}
-              className="w-full"
+          {/* ② 滴管试剂选择 (横向单选胶囊条形态，与上方芯片严格区分) */}
+          {currentIon && currentIon.reagentOptions && (
+            <LeftPanelSection
+              title="② 选择滴管试剂"
             >
-              <Droplets className="w-4 h-4 mr-1.5" />
-              {isReactionActive ? '重置并重新检验' : '滴加特效试剂检验'}
-            </Button>
+              <div className="space-y-1">
+                {currentIon.reagentOptions.map((reagent) => {
+                  const effectiveReagentId =
+                    currentIon.reagentOptions.find((r) => r.id === selectedReagentId)?.id ||
+                    currentIon.reagentOptions[0]?.id
+                  const isSelected = effectiveReagentId === reagent.id
+                  return (
+                    <button
+                      key={reagent.id}
+                      type="button"
+                      onClick={() => onSelectReagent && onSelectReagent(reagent.id)}
+                      className={`w-full px-2 py-1.5 rounded-lg text-xs text-left flex items-center justify-between border transition-all cursor-pointer ${
+                        isSelected
+                          ? 'bg-slate-900 border-slate-900 text-white font-bold shadow-sm'
+                          : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300'
+                      }`}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        {isSelected ? (
+                          <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
+                        ) : (
+                          <Circle className="w-3.5 h-3.5 text-slate-300" />
+                        )}
+                        <FlaskConical className={`w-3.5 h-3.5 ${isSelected ? 'text-amber-300' : 'text-slate-400'}`} />
+                        <span>{reagent.name}</span>
+                      </div>
+                      {isSelected && (
+                        <span className="text-[9px] px-1 py-0.5 rounded bg-blue-500 text-white font-medium">
+                          装入
+                        </span>
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+            </LeftPanelSection>
+          )}
+
+          {/* ③ 实验触发主动作 (支持连续滴加/分步探究) */}
+          <LeftPanelSection title="③ 实验操作 (连续滴加)">
+            <div className="space-y-2">
+              <Button
+                variant={dropCount === 2 ? 'secondary' : 'primary'}
+                size="sm"
+                onClick={onDropReagent}
+                className="w-full shadow-sm font-bold flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <Droplets className="w-4 h-4 text-blue-400" />
+                {dropCount === 0
+                  ? '💧 滴加少量试剂 (第1滴)'
+                  : dropCount === 1
+                  ? '💧 继续滴加至过量 (第2滴)'
+                  : '✓ 反应已达过量终点'}
+              </Button>
+
+              {dropCount > 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onResetReaction}
+                  className="w-full text-slate-600 hover:bg-slate-100 cursor-pointer"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 mr-1" />
+                  清空试管重置
+                </Button>
+              )}
+            </div>
           </LeftPanelSection>
         </>
       ) : (
         <>
-          <LeftPanelSection title="勾选待检测溶液中的离子 (多选)">
-            <div className="text-xs text-slate-500 mb-2">已选 {coexistenceSelectedIons.length} 种离子进行共存判定：</div>
-            <div className="flex flex-col gap-1 max-h-64 overflow-y-auto pr-1">
-              <div className="text-[11px] font-bold text-slate-400 mt-1 mb-0.5">阳离子：</div>
-              <div className="grid grid-cols-2 gap-1">
-                {cations.map((ion) => {
-                  const isChecked = coexistenceSelectedIons.includes(ion.id)
-                  return (
-                    <button
-                      key={ion.id}
-                      onClick={() => onToggleCoexistenceIon(ion.id)}
-                      className={`px-2 py-1 rounded text-xs flex items-center justify-between border ${
-                        isChecked
-                          ? 'bg-blue-50 border-blue-300 text-blue-800 font-semibold'
-                          : 'bg-slate-50 border-slate-200 text-slate-600'
-                      }`}
-                    >
-                      <span>{ion.id}</span>
-                      {isChecked ? (
-                        <CheckSquare className="w-3.5 h-3.5 text-blue-600" />
-                      ) : (
-                        <Square className="w-3.5 h-3.5 text-slate-300" />
-                      )}
-                    </button>
-                  )
-                })}
-              </div>
-
-              <div className="text-[11px] font-bold text-slate-400 mt-2 mb-0.5">阴离子：</div>
-              <div className="grid grid-cols-2 gap-1">
-                {anions.map((ion) => {
-                  const isChecked = coexistenceSelectedIons.includes(ion.id)
-                  return (
-                    <button
-                      key={ion.id}
-                      onClick={() => onToggleCoexistenceIon(ion.id)}
-                      className={`px-2 py-1 rounded text-xs flex items-center justify-between border ${
-                        isChecked
-                          ? 'bg-amber-50 border-amber-300 text-amber-800 font-semibold'
-                          : 'bg-slate-50 border-slate-200 text-slate-600'
-                      }`}
-                    >
-                      <span>{ion.id}</span>
-                      {isChecked ? (
-                        <CheckSquare className="w-3.5 h-3.5 text-amber-600" />
-                      ) : (
-                        <Square className="w-3.5 h-3.5 text-slate-300" />
-                      )}
-                    </button>
-                  )
-                })}
-              </div>
+          {/* 共存排斥模式：4列紧凑网格多选 */}
+          <LeftPanelSection
+            title="阳离子多选"
+            subtitle="勾选混入烧杯的阳离子"
+          >
+            <div className="grid grid-cols-4 gap-1">
+              {cations.map((ion) => {
+                const isChecked = coexistenceSelectedIons.includes(ion.id)
+                return (
+                  <button
+                    key={ion.id}
+                    type="button"
+                    onClick={() => onToggleCoexistenceIon(ion.id)}
+                    className={`h-8 rounded-lg text-xs font-semibold flex items-center justify-center border transition-all cursor-pointer ${
+                      isChecked
+                        ? 'bg-blue-600 text-white border-blue-700 font-bold shadow-sm'
+                        : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    <span>{ion.id}</span>
+                  </button>
+                )
+              })}
             </div>
           </LeftPanelSection>
 
-          <LeftPanelSection title="探究操作">
-            <Button variant="secondary" size="sm" onClick={onResetCoexistence} className="w-full">
-              <RotateCcw className="w-3.5 h-3.5 mr-1" />
-              清空所选离子
+          <LeftPanelSection
+            title="阴离子多选"
+            subtitle="勾选混入烧杯的阴离子"
+          >
+            <div className="grid grid-cols-4 gap-1">
+              {anions.map((ion) => {
+                const isChecked = coexistenceSelectedIons.includes(ion.id)
+                return (
+                  <button
+                    key={ion.id}
+                    type="button"
+                    onClick={() => onToggleCoexistenceIon(ion.id)}
+                    className={`h-8 rounded-lg text-xs font-semibold flex items-center justify-center border transition-all cursor-pointer ${
+                      isChecked
+                        ? 'bg-amber-600 text-white border-amber-700 font-bold shadow-sm'
+                        : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    <span>{ion.id}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </LeftPanelSection>
+
+          <LeftPanelSection title="体系重置">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onResetCoexistence}
+              className="w-full cursor-pointer"
+            >
+              清空烧杯离子
             </Button>
           </LeftPanelSection>
         </>

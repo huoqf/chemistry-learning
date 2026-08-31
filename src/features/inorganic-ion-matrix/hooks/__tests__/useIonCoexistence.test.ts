@@ -27,4 +27,26 @@ describe('useIonCoexistence', () => {
     expect(result.current.canCoexist).toBe(true)
     expect(result.current.conflicts.length).toBe(0)
   })
+
+  it('should detect multiple compound conflicts in complex multi-ion mixtures', () => {
+    // 混合 Fe3+, I-, Ba2+, SO42- 体系：同时发生 Fe3+/I- 氧化还原 与 Ba2+/SO42- 沉淀
+    const { result } = renderHook(() =>
+      useIonCoexistence(['Fe3+', 'I-', 'Ba2+', 'SO42-'])
+    )
+    expect(result.current.canCoexist).toBe(false)
+    expect(result.current.conflicts.length).toBe(2)
+    const types = result.current.conflicts.map((c) => c.type)
+    expect(types).toContain('redox')
+    expect(types).toContain('precipitate')
+  })
+
+  it('should allow multi-ion benign mixtures to coexist stably', () => {
+    // 经典可大量共存体系：Mg2+, Na+/NH4+, Cl-, SO42- (无 Ba2+/Ag+ 沉淀，无氧化还原互斥)
+    const { result } = renderHook(() =>
+      useIonCoexistence(['Mg2+', 'NH4+', 'Cl-', 'Br-'])
+    )
+    expect(result.current.canCoexist).toBe(true)
+    expect(result.current.conflicts.length).toBe(0)
+    expect(result.current.selectedIonObjects.length).toBe(4)
+  })
 })

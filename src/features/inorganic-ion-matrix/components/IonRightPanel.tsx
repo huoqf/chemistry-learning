@@ -1,10 +1,13 @@
 import React from 'react'
-import type { IonItem, CoexistenceConflict } from '../types'
-import { AlertCircle, CheckCircle2, ShieldAlert, BookOpen, Sparkles } from 'lucide-react'
+import type { IonItem, CoexistenceConflict, ReagentOption } from '../types'
+import { AlertCircle, CheckCircle2, ShieldAlert, Sparkles, HelpCircle, BookOpen } from 'lucide-react'
+import { KatexFormula } from '@/components/UI'
 
 interface IonRightPanelProps {
   inquiryMode: 'single-test' | 'coexistence-check'
   selectedIon?: IonItem
+  selectedReagent?: ReagentOption
+  dropCount: number
   conflicts: CoexistenceConflict[]
   coexistenceIons: IonItem[]
 }
@@ -12,34 +15,87 @@ interface IonRightPanelProps {
 export const IonRightPanel: React.FC<IonRightPanelProps> = ({
   inquiryMode,
   selectedIon,
+  selectedReagent,
+  dropCount,
   conflicts,
   coexistenceIons,
 }) => {
   return (
-    <div className="w-full h-full p-4 bg-white overflow-y-auto space-y-4 text-slate-800">
+    <div className="p-4 space-y-4 text-slate-800">
       {inquiryMode === 'single-test' && selectedIon && (
         <>
+          {/* 当前选定试剂的探究反馈与避坑剖析 */}
+          {selectedReagent && (
+            <div
+              className={`p-3 rounded-xl border ${
+                selectedReagent.tag === 'optimal'
+                  ? 'bg-emerald-50 border-emerald-200 text-emerald-950'
+                  : selectedReagent.tag === 'trap'
+                  ? 'bg-amber-50 border-amber-300 text-amber-950'
+                  : 'bg-slate-50 border-slate-200 text-slate-700'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-1.5 font-bold text-xs">
+                  {selectedReagent.tag === 'optimal' ? (
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  ) : selectedReagent.tag === 'trap' ? (
+                    <ShieldAlert className="w-4 h-4 text-amber-600" />
+                  ) : (
+                    <HelpCircle className="w-4 h-4 text-slate-400" />
+                  )}
+                  <span>
+                    当前试剂：{selectedReagent.name} {dropCount > 0 && `(已滴加 ${dropCount} 阶段)`}
+                  </span>
+                </div>
+                <span
+                  className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
+                    selectedReagent.tag === 'optimal'
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : selectedReagent.tag === 'trap'
+                      ? 'bg-amber-200 text-amber-900'
+                      : 'bg-slate-200 text-slate-700'
+                  }`}
+                >
+                  {selectedReagent.tag === 'optimal'
+                    ? '高考最佳首选'
+                    : selectedReagent.tag === 'trap'
+                    ? '高考经典陷阱'
+                    : '无关干扰试剂'}
+                </span>
+              </div>
+              <div className="text-xs leading-relaxed font-medium">
+                {selectedReagent.feedback}
+              </div>
+            </div>
+          )}
+
           {/* 离子档案卡片 */}
           <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-bold text-slate-900">{selectedIon.name}</span>
+              <span className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                <span>{selectedIon.name}</span>
+                <span className="text-xs text-slate-500 font-mono">
+                  <KatexFormula formula={selectedIon.formula} mode="inline" />
+                </span>
+              </span>
               <span className="text-xs px-2 py-0.5 rounded-full font-bold bg-blue-100 text-blue-800">
                 {selectedIon.examImportance === 'ultra' ? '高考高频必考' : '常见考查'}
               </span>
             </div>
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div className="bg-white p-2 rounded border border-slate-100">
-                <span className="text-slate-500 block">溶液颜色</span>
+                <span className="text-slate-500 block">溶液原液外观</span>
                 <span className="font-semibold text-slate-700">{selectedIon.colorInSolution}</span>
               </div>
               <div className="bg-white p-2 rounded border border-slate-100">
-                <span className="text-slate-500 block">特效试剂</span>
+                <span className="text-slate-500 block">标配首选试剂</span>
                 <span className="font-semibold text-blue-700">{selectedIon.testReagent}</span>
               </div>
             </div>
           </div>
 
-          {/* 实验现象与方程式 */}
+          {/* 实验现象与方程式 (KaTeX 科学排版) */}
           <div className="p-3 bg-blue-50/50 rounded-xl border border-blue-100 space-y-2">
             <div className="flex items-center gap-1.5 text-xs font-bold text-blue-900">
               <Sparkles className="w-4 h-4 text-blue-600" />
@@ -48,8 +104,8 @@ export const IonRightPanel: React.FC<IonRightPanelProps> = ({
             <div className="text-xs text-slate-700 leading-relaxed font-medium">
               {selectedIon.testPhenomenon}
             </div>
-            <div className="p-2 bg-white rounded border border-blue-200 text-xs font-mono text-blue-800 overflow-x-auto">
-              {selectedIon.testEquation}
+            <div className="p-2.5 bg-white rounded-lg border border-blue-200 text-xs text-blue-900 overflow-x-auto shadow-xs">
+              <KatexFormula formula={selectedIon.testEquation} mode="block" />
             </div>
           </div>
 
@@ -104,27 +160,25 @@ export const IonRightPanel: React.FC<IonRightPanelProps> = ({
             </div>
           </div>
 
-          {/* 冲突明细列表 */}
+          {/* 冲突明细列表 (KaTeX 科学排版) */}
           {conflicts.length > 0 && (
             <div className="space-y-2">
               <div className="text-xs font-bold text-slate-700">互斥反应与机理解析：</div>
               {conflicts.map((c, idx) => (
                 <div
                   key={c.id || idx}
-                  className="p-2.5 bg-slate-50 rounded-lg border border-slate-200 text-xs space-y-1"
+                  className="p-3 bg-white rounded-xl border border-rose-200 space-y-1.5 text-xs shadow-xs"
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-rose-700">
+                  <div className="flex items-center justify-between text-rose-800 font-bold">
+                    <span>{idx + 1}. 【{c.typeLabel}】</span>
+                    <span className="text-[10px] bg-rose-100 px-1.5 py-0.5 rounded text-rose-700">
                       {c.ionA} 与 {c.ionB}
                     </span>
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800">
-                      {c.typeLabel}
-                    </span>
                   </div>
-                  <div className="font-mono text-slate-700 bg-white p-1.5 rounded border border-slate-100">
-                    {c.equation}
+                  <div className="p-2 bg-rose-50/70 rounded border border-rose-100 text-xs text-rose-950 overflow-x-auto">
+                    <KatexFormula formula={c.equation} mode="block" />
                   </div>
-                  <div className="text-slate-600">{c.reason}</div>
+                  <div className="text-slate-600 text-[11px] leading-relaxed">{c.reason}</div>
                 </div>
               ))}
             </div>
