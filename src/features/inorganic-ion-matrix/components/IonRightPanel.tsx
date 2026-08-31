@@ -1,15 +1,25 @@
 import React from 'react'
-import type { IonItem, CoexistenceConflict, ReagentOption } from '../types'
-import { AlertCircle, CheckCircle2, ShieldAlert, Sparkles, HelpCircle, BookOpen } from 'lucide-react'
+import type { IonItem, CoexistenceConflict, ReagentOption, InquiryMode } from '../types'
+import {
+  AlertCircle,
+  CheckCircle2,
+  ShieldAlert,
+  Sparkles,
+  HelpCircle,
+  BookOpen,
+  AlertTriangle,
+  Lightbulb,
+} from 'lucide-react'
 import { KatexFormula } from '@/components/UI'
 
 interface IonRightPanelProps {
-  inquiryMode: 'single-test' | 'coexistence-check'
+  inquiryMode: InquiryMode
   selectedIon?: IonItem
   selectedReagent?: ReagentOption
   dropCount: number
   conflicts: CoexistenceConflict[]
   coexistenceIons: IonItem[]
+  selectedPair?: { cationId: string; anionId: string } | null
 }
 
 export const IonRightPanel: React.FC<IonRightPanelProps> = ({
@@ -19,6 +29,7 @@ export const IonRightPanel: React.FC<IonRightPanelProps> = ({
   dropCount,
   conflicts,
   coexistenceIons,
+  selectedPair,
 }) => {
   return (
     <div className="p-4 space-y-4 text-slate-800">
@@ -95,7 +106,7 @@ export const IonRightPanel: React.FC<IonRightPanelProps> = ({
             </div>
           </div>
 
-          {/* 实验现象与方程式 (KaTeX 科学排版) */}
+          {/* 实验现象与方程式 */}
           <div className="p-3 bg-blue-50/50 rounded-xl border border-blue-100 space-y-2">
             <div className="flex items-center gap-1.5 text-xs font-bold text-blue-900">
               <Sparkles className="w-4 h-4 text-blue-600" />
@@ -160,7 +171,7 @@ export const IonRightPanel: React.FC<IonRightPanelProps> = ({
             </div>
           </div>
 
-          {/* 冲突明细列表 (KaTeX 科学排版) */}
+          {/* 冲突明细列表 */}
           {conflicts.length > 0 && (
             <div className="space-y-2">
               <div className="text-xs font-bold text-slate-700">互斥反应与机理解析：</div>
@@ -170,7 +181,9 @@ export const IonRightPanel: React.FC<IonRightPanelProps> = ({
                   className="p-3 bg-white rounded-xl border border-rose-200 space-y-1.5 text-xs shadow-xs"
                 >
                   <div className="flex items-center justify-between text-rose-800 font-bold">
-                    <span>{idx + 1}. 【{c.typeLabel}】</span>
+                    <span>
+                      {idx + 1}. 【{c.typeLabel}】
+                    </span>
                     <span className="text-[10px] bg-rose-100 px-1.5 py-0.5 rounded text-rose-700">
                       {c.ionA} 与 {c.ionB}
                     </span>
@@ -191,11 +204,97 @@ export const IonRightPanel: React.FC<IonRightPanelProps> = ({
               <span>高考离子共存四大互斥铁律口诀</span>
             </div>
             <ul className="list-disc list-inside space-y-1 text-slate-700">
-              <li><strong>看颜色</strong>：无色溶液中不能含有 Cu²⁺(蓝), Fe³⁺(黄), Fe²⁺(浅绿), MnO₄⁻(紫)</li>
-              <li><strong>看介质(酸碱性)</strong>：强酸性溶液不能含 CO₃²⁻/HCO₃⁻/S²⁻/SO₃²⁻/OH⁻ 等</li>
-              <li><strong>看氧化还原</strong>：Fe³⁺/NO₃⁻(H⁺)/ClO⁻ 与 S²⁻/I⁻/SO₃²⁻/Fe²⁺ 不能共存</li>
-              <li><strong>看彻底双水解</strong>：Al³⁺/Fe³⁺ 与 CO₃²⁻/HCO₃⁻/S²⁻/AlO₂⁻ 不能大量共存</li>
+              <li>
+                <strong>看颜色</strong>：无色溶液中不能含有 Cu²⁺(蓝), Fe³⁺(黄), Fe²⁺(浅绿), MnO₄⁻(紫)
+              </li>
+              <li>
+                <strong>看介质(酸碱性)</strong>：强酸性溶液不能含 CO₃²⁻/HCO₃⁻/S²⁻/SO₃²⁻/OH⁻ 等
+              </li>
+              <li>
+                <strong>看氧化还原</strong>：Fe³⁺/NO₃⁻(H⁺)/ClO⁻ 与 S²⁻/I⁻/SO₃²⁻/Fe²⁺ 不能共存
+              </li>
+              <li>
+                <strong>看彻底双水解</strong>：Al³⁺/Fe³⁺ 与 CO₃²⁻/HCO₃⁻/S²⁻/AlO₂⁻ 不能大量共存
+              </li>
             </ul>
+          </div>
+        </>
+      )}
+
+      {inquiryMode === 'coexistence-matrix' && (
+        <>
+          {/* 当前选定离子对提示 */}
+          {selectedPair && (
+            <div className="p-3 bg-blue-50/60 rounded-xl border border-blue-200 text-xs flex items-center justify-between">
+              <span className="font-bold text-blue-950">
+                当前大表聚焦：{selectedPair.cationId} 与 {selectedPair.anionId}
+              </span>
+              <span className="text-[10px] text-blue-700 font-semibold">点击大表切换</span>
+            </div>
+          )}
+
+          {/* 全景大表模式下的右侧解题指南 */}
+          <div className="p-3.5 bg-blue-50 rounded-xl border border-blue-200 space-y-2">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-blue-950">
+              <Lightbulb className="w-4 h-4 text-blue-600" />
+              <span>高考离子共存审题“四步秒杀法”</span>
+            </div>
+            <div className="space-y-1.5 text-xs text-slate-700">
+              <div className="p-2 bg-white rounded-lg border border-blue-100">
+                <span className="font-bold text-blue-800">第 1 步【看限制条件】：</span>
+                <p className="text-[11px] text-slate-600 mt-0.5">
+                  抓“无色透明”、“酸性/碱性”、“水电离出 c(H⁺)=10⁻¹³”、“通入某种气体”等前置约束。
+                </p>
+              </div>
+              <div className="p-2 bg-white rounded-lg border border-blue-100">
+                <span className="font-bold text-blue-800">第 2 步【排查酸碱冲突】：</span>
+                <p className="text-[11px] text-slate-600 mt-0.5">
+                  弱酸根（CO₃²⁻/S²⁻/SO₃²⁻/AlO₂⁻）见酸必互斥；多元弱酸酸式根（HCO₃⁻/HSO₃⁻）酸碱皆排斥。
+                </p>
+              </div>
+              <div className="p-2 bg-white rounded-lg border border-blue-100">
+                <span className="font-bold text-blue-800">第 3 步【排查氧化还原】：</span>
+                <p className="text-[11px] text-slate-600 mt-0.5">
+                  牢记 NO₃⁻(H⁺) 和 ClO⁻ 的强氧化性，必氧化 Fe²⁺/I⁻/SO₃²⁻/S²⁻。
+                </p>
+              </div>
+              <div className="p-2 bg-white rounded-lg border border-blue-100">
+                <span className="font-bold text-blue-800">第 4 步【排查剧烈双水解与沉淀】：</span>
+                <p className="text-[11px] text-slate-600 mt-0.5">
+                  Al³⁺/Fe³⁺ 遇 HCO₃⁻/CO₃²⁻ 必生成沉淀与气体；Ba²⁺ 遇 SO₄²⁻ 必生成难溶白色沉淀。
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* 高频题干暗语破译 */}
+          <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 space-y-2">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900">
+              <AlertTriangle className="w-4 h-4 text-amber-600" />
+              <span>题干高频“暗语”破译字典</span>
+            </div>
+            <div className="space-y-1.5 text-xs">
+              <div className="bg-white p-2 rounded border border-amber-100">
+                <span className="font-bold text-amber-900">“pH=1 的溶液”</span>
+                <p className="text-[11px] text-slate-600">
+                  说明含大量 H⁺，排除 OH⁻、弱酸根及弱酸酸式根。
+                </p>
+              </div>
+              <div className="bg-white p-2 rounded border border-amber-100">
+                <span className="font-bold text-amber-900">
+                  “由水电离的 c(H⁺) = 10⁻¹³ mol/L”
+                </span>
+                <p className="text-[11px] text-slate-600">
+                  水电离受抑制，溶液可能为强酸性（含 H⁺）或强碱性（含 OH⁻），所选离子需在酸碱两种情况下均能大量共存。
+                </p>
+              </div>
+              <div className="bg-white p-2 rounded border border-amber-100">
+                <span className="font-bold text-amber-900">“加入铝粉产生 H₂ 的溶液”</span>
+                <p className="text-[11px] text-slate-600">
+                  可能为非氧化性强酸溶液，也可能为强碱溶液；若为酸性溶液则不能含 NO₃⁻（否则生成 NO 不放 H₂）。
+                </p>
+              </div>
+            </div>
           </div>
         </>
       )}

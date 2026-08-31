@@ -9,10 +9,12 @@ import { useAnimationViewport } from '@/hooks'
 import { CANVAS_PRESETS } from '@/theme'
 import { getModelQuizData } from '@/data/quiz'
 import { ION_DATA } from './constants'
+import type { InquiryMode } from './types'
 import { useIonCoexistence } from './hooks/useIonCoexistence'
 import { IonLeftPanel } from './components/IonLeftPanel'
 import { IonMatrixScene } from './components/IonMatrixScene'
 import { IonRightPanel } from './components/IonRightPanel'
+import { IonCoexistenceMatrixView } from './components/IonCoexistenceMatrixView'
 
 export const IonMatrixCanvas: React.FC = () => {
   const modelId = 'model-ion-matrix'
@@ -21,8 +23,8 @@ export const IonMatrixCanvas: React.FC = () => {
   // 视角模式 (0: 矩阵探究 | 1: 规范踩分 | 2: 真题研析)
   const [viewMode, setViewMode] = useState<number>(0)
 
-  // 探究状态
-  const [inquiryMode, setInquiryMode] = useState<'single-test' | 'coexistence-check'>('single-test')
+  // 探究状态：支持 3 档模式
+  const [inquiryMode, setInquiryMode] = useState<InquiryMode>('single-test')
   const [selectedIonId, setSelectedIonId] = useState<string>('Fe3+')
   const [selectedReagentId, setSelectedReagentId] = useState<string>('fe3-kscn')
   const [dropCount, setDropCount] = useState<number>(0) // 0: 初始待测样, 1: 滴加少量, 2: 继续滴加至过量
@@ -31,6 +33,13 @@ export const IonMatrixCanvas: React.FC = () => {
     'I-',
     'Cl-',
   ])
+  const [selectedMatrixPair, setSelectedMatrixPair] = useState<{
+    cationId: string
+    anionId: string
+  }>({
+    cationId: 'Al3+',
+    anionId: 'HCO3-',
+  })
 
   // 画布自适应
   const { containerRef, canvasSize, vp } = useAnimationViewport({
@@ -76,6 +85,20 @@ export const IonMatrixCanvas: React.FC = () => {
     setDropCount(0)
   }, [])
 
+  const handleSelectMatrixPair = useCallback((cationId: string, anionId: string) => {
+    setSelectedMatrixPair({ cationId, anionId })
+  }, [])
+
+  const handleNavigateToBeaker = useCallback((cationId: string, anionId: string) => {
+    // 映射到离子清单
+    setCoexistenceSelectedIons([cationId, anionId])
+    setInquiryMode('coexistence-check')
+  }, [])
+
+  const handleLoadPresetPair = useCallback((cationId: string, anionId: string) => {
+    setSelectedMatrixPair({ cationId, anionId })
+  }, [])
+
   return (
     <div className="w-full h-screen flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden select-none">
       {/* 1. 统一顶栏 */}
@@ -102,24 +125,33 @@ export const IonMatrixCanvas: React.FC = () => {
               onDropReagent={handleDropReagent}
               onResetReaction={handleResetReaction}
               onResetCoexistence={handleResetCoexistence}
+              onLoadPresetPair={handleLoadPresetPair}
             />
           }
           center={
             <div className="w-full h-full flex flex-col overflow-hidden bg-slate-50">
               {viewMode === 0 && (
-                <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
-                  <IonMatrixScene
-                    mode={inquiryMode}
-                    selectedIon={selectedIon}
-                    selectedReagent={selectedReagent}
-                    dropCount={dropCount}
-                    coexistenceIons={coexistenceResult.selectedIonObjects}
-                    conflicts={coexistenceResult.conflicts}
-                    font={canvasSize.font}
-                    onDropReagent={handleDropReagent}
-                    onResetReaction={handleResetReaction}
+                inquiryMode === 'coexistence-matrix' ? (
+                  <IonCoexistenceMatrixView
+                    selectedPair={selectedMatrixPair}
+                    onSelectPair={handleSelectMatrixPair}
+                    onNavigateToBeaker={handleNavigateToBeaker}
                   />
-                </AnimationSvgCanvas>
+                ) : (
+                  <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
+                    <IonMatrixScene
+                      mode={inquiryMode}
+                      selectedIon={selectedIon}
+                      selectedReagent={selectedReagent}
+                      dropCount={dropCount}
+                      coexistenceIons={coexistenceResult.selectedIonObjects}
+                      conflicts={coexistenceResult.conflicts}
+                      font={canvasSize.font}
+                      onDropReagent={handleDropReagent}
+                      onResetReaction={handleResetReaction}
+                    />
+                  </AnimationSvgCanvas>
+                )
               )}
 
               {viewMode === 1 && quizData && (
@@ -143,6 +175,7 @@ export const IonMatrixCanvas: React.FC = () => {
               dropCount={dropCount}
               conflicts={coexistenceResult.conflicts}
               coexistenceIons={coexistenceResult.selectedIonObjects}
+              selectedPair={selectedMatrixPair}
             />
           }
         />

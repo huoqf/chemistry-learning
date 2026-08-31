@@ -44,9 +44,32 @@ export interface CoexistenceConflict {
   equation: string
 }
 
+export type InquiryMode = 'single-test' | 'coexistence-check' | 'coexistence-matrix'
+
+export type MatrixConflictCategory =
+  | 'none' // 稳定共存
+  | 'precipitate' // 生成难溶沉淀
+  | 'redox' // 氧化还原互斥
+  | 'double-hydrolysis' // 彻底双水解
+  | 'gas-weak-acid' // 生成气体或弱酸/弱碱
+  | 'acid-medium-trap' // 酸性介质诱发互斥陷阱
+
+export interface IonPairCell {
+  cationId: string
+  anionId: string
+  status: 'coexist' | 'conflict'
+  category: MatrixConflictCategory
+  badgeLabel: string // 简短徽章标签，如 "沉淀"、"双水解"、"氧化"、"气+沉"、"共存"
+  productSummary?: string // 产物简写，如 "BaSO₄↓"、"Al(OH)₃↓+CO₂↑"、"I₂"
+  equation?: string // 离子方程式
+  phenomenon: string // 反应宏观特征现象
+  reason: string // 反应机理与原因
+  examTrap?: string // 高考命题陷阱或设问切入点
+}
+
 export interface IonMatrixState {
   viewMode: number // 0: 矩阵/探究, 1: 规范踩分, 2: 真题研析
-  inquiryMode: 'single-test' | 'coexistence-check'
+  inquiryMode: InquiryMode
   selectedIonId: string // 单离子检验选中的离子
   coexistenceSelectedIons: string[] // 共存探究选中的离子列表
   isReactionActive: boolean // 是否触发反应动画

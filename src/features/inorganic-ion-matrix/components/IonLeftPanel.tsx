@@ -1,21 +1,27 @@
 import React from 'react'
 import { LeftPanel, LeftPanelSection, Button, SegmentedControl } from '@/components/UI'
 import { ION_DATA } from '../constants'
-import { RotateCcw, Droplets, FlaskConical, CheckCircle2, Circle } from 'lucide-react'
+import type { InquiryMode } from '../types'
+import {
+  RotateCcw,
+  Droplets,
+  Sparkles,
+} from 'lucide-react'
 
 interface IonLeftPanelProps {
-  inquiryMode: 'single-test' | 'coexistence-check'
+  inquiryMode: InquiryMode
   selectedIonId: string
   selectedReagentId?: string
   coexistenceSelectedIons: string[]
   dropCount: number
-  onSelectMode: (mode: 'single-test' | 'coexistence-check') => void
+  onSelectMode: (mode: InquiryMode) => void
   onSelectIon: (id: string) => void
   onSelectReagent?: (reagentId: string) => void
   onToggleCoexistenceIon: (id: string) => void
   onDropReagent: () => void
   onResetReaction: () => void
   onResetCoexistence: () => void
+  onLoadPresetPair?: (cationId: string, anionId: string) => void
 }
 
 export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
@@ -31,6 +37,7 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
   onDropReagent,
   onResetReaction,
   onResetCoexistence,
+  onLoadPresetPair,
 }) => {
   const cations = ION_DATA.filter((i) => i.type === 'cation')
   const anions = ION_DATA.filter((i) => i.type === 'anion')
@@ -38,24 +45,23 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
 
   return (
     <LeftPanel>
-      {/* 顶部模式切换 */}
+      {/* 顶部模式切换：3 档 */}
       <LeftPanelSection title="探究模式">
         <SegmentedControl
           value={inquiryMode}
-          onChange={(val) => onSelectMode(val as 'single-test' | 'coexistence-check')}
+          onChange={(val) => onSelectMode(val as InquiryMode)}
           options={[
-            { label: '特征离子检验', value: 'single-test' },
-            { label: '离子共存排斥', value: 'coexistence-check' },
+            { label: '特征检验', value: 'single-test' },
+            { label: '烧杯模拟', value: 'coexistence-check' },
+            { label: '全景大表', value: 'coexistence-matrix' },
           ]}
         />
       </LeftPanelSection>
 
-      {inquiryMode === 'single-test' ? (
+      {inquiryMode === 'single-test' && (
         <>
           {/* ① 待测溶液样品选择 (4×2 紧凑芯片图谱，冷暖严格分区) */}
-          <LeftPanelSection
-            title="① 选择待测样品"
-          >
+          <LeftPanelSection title="① 选择待测样品">
             <div className="space-y-1.5">
               {/* 阳离子待测区 (冷蓝微阶) */}
               <div className="p-1.5 rounded-xl bg-blue-50/60 border border-blue-200/80">
@@ -100,7 +106,7 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
                     <span className="w-1.5 h-1.5 rounded-full bg-amber-600" />
                     阴离子待测区
                   </span>
-                  <span className="text-[9px] text-amber-700/80 font-medium">8 种核心</span>
+                  <span className="text-[9px] text-amber-600/80 font-medium">8 种核心</span>
                 </div>
                 <div className="grid grid-cols-4 gap-1">
                   {anions.map((ion) => {
@@ -118,7 +124,6 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
                         title={`${ion.name} (${ion.colorInSolution})`}
                       >
                         <span>{ion.id}</span>
-                        {/* 离子原液颜色微标 */}
                         <span
                           className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full border border-slate-300"
                           style={{ backgroundColor: ion.colorRgb }}
@@ -131,42 +136,41 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
             </div>
           </LeftPanelSection>
 
-          {/* ② 滴管试剂选择 (横向单选胶囊条形态，与上方芯片严格区分) */}
-          {currentIon && currentIon.reagentOptions && (
-            <LeftPanelSection
-              title="② 选择滴管试剂"
-            >
-              <div className="space-y-1">
+          {/* ② 检验试剂选择 */}
+          {currentIon && currentIon.reagentOptions.length > 0 && (
+            <LeftPanelSection title="② 选择鉴别试剂">
+              <div className="space-y-1.5">
                 {currentIon.reagentOptions.map((reagent) => {
-                  const effectiveReagentId =
-                    currentIon.reagentOptions.find((r) => r.id === selectedReagentId)?.id ||
-                    currentIon.reagentOptions[0]?.id
-                  const isSelected = effectiveReagentId === reagent.id
+                  const isSelected = selectedReagentId === reagent.id
                   return (
                     <button
                       key={reagent.id}
                       type="button"
-                      onClick={() => onSelectReagent && onSelectReagent(reagent.id)}
-                      className={`w-full px-2 py-1.5 rounded-lg text-xs text-left flex items-center justify-between border transition-all cursor-pointer ${
+                      onClick={() => onSelectReagent?.(reagent.id)}
+                      className={`w-full p-2 rounded-xl text-left border transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-slate-900 border-slate-900 text-white font-bold shadow-sm'
-                          : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300'
+                          ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-200'
+                          : 'bg-white border-slate-200 hover:bg-slate-50'
                       }`}
                     >
-                      <div className="flex items-center gap-1.5">
-                        {isSelected ? (
-                          <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
-                        ) : (
-                          <Circle className="w-3.5 h-3.5 text-slate-300" />
-                        )}
-                        <FlaskConical className={`w-3.5 h-3.5 ${isSelected ? 'text-amber-300' : 'text-slate-400'}`} />
-                        <span>{reagent.name}</span>
-                      </div>
-                      {isSelected && (
-                        <span className="text-[9px] px-1 py-0.5 rounded bg-blue-500 text-white font-medium">
-                          装入
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-900">{reagent.name}</span>
+                        <span
+                          className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
+                            reagent.tag === 'optimal'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : reagent.tag === 'trap'
+                              ? 'bg-amber-100 text-amber-800'
+                              : 'bg-slate-100 text-slate-600'
+                          }`}
+                        >
+                          {reagent.tag === 'optimal'
+                            ? '标准试剂'
+                            : reagent.tag === 'trap'
+                            ? '陷阱试剂'
+                            : '干扰试剂'}
                         </span>
-                      )}
+                      </div>
                     </button>
                   )
                 })}
@@ -185,10 +189,10 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
               >
                 <Droplets className="w-4 h-4 text-blue-400" />
                 {dropCount === 0
-                  ? '💧 滴加少量试剂 (第1滴)'
+                  ? '滴加少量试剂 (第1滴)'
                   : dropCount === 1
-                  ? '💧 继续滴加至过量 (第2滴)'
-                  : '✓ 反应已达过量终点'}
+                  ? '继续滴加至过量 (第2滴)'
+                  : '✓ 反应已达终点'}
               </Button>
 
               {dropCount > 0 && (
@@ -205,13 +209,12 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
             </div>
           </LeftPanelSection>
         </>
-      ) : (
+      )}
+
+      {inquiryMode === 'coexistence-check' && (
         <>
           {/* 共存排斥模式：4列紧凑网格多选 */}
-          <LeftPanelSection
-            title="阳离子多选"
-            subtitle="勾选混入烧杯的阳离子"
-          >
+          <LeftPanelSection title="阳离子多选" subtitle="勾选混入烧杯的阳离子">
             <div className="grid grid-cols-4 gap-1">
               {cations.map((ion) => {
                 const isChecked = coexistenceSelectedIons.includes(ion.id)
@@ -233,10 +236,7 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
             </div>
           </LeftPanelSection>
 
-          <LeftPanelSection
-            title="阴离子多选"
-            subtitle="勾选混入烧杯的阴离子"
-          >
+          <LeftPanelSection title="阴离子多选" subtitle="勾选混入烧杯的阴离子">
             <div className="grid grid-cols-4 gap-1">
               {anions.map((ion) => {
                 const isChecked = coexistenceSelectedIons.includes(ion.id)
@@ -267,6 +267,82 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
             >
               清空烧杯离子
             </Button>
+          </LeftPanelSection>
+        </>
+      )}
+
+      {inquiryMode === 'coexistence-matrix' && (
+        <>
+          {/* 全景大表模式：高频母题组合快速定位 */}
+          <LeftPanelSection title="高考高频互斥母题">
+            <div className="space-y-1.5">
+              {[
+                {
+                  title: '泡沫灭火器彻底双水解',
+                  pair: ['Al3+', 'HCO3-'],
+                  tag: '双水解',
+                  tagColor: 'bg-rose-100 text-rose-800',
+                },
+                {
+                  title: '酸性硝酸根氧化亚铁',
+                  pair: ['Fe2+', 'NO3-'],
+                  tag: '酸性氧化',
+                  tagColor: 'bg-orange-100 text-orange-800',
+                },
+                {
+                  title: '铁离子氧化碘离子',
+                  pair: ['Fe3+', 'I-'],
+                  tag: '氧化还原',
+                  tagColor: 'bg-purple-100 text-purple-800',
+                },
+                {
+                  title: '硫酸钡特征沉淀',
+                  pair: ['Ba2+', 'SO42-'],
+                  tag: '难溶沉淀',
+                  tagColor: 'bg-blue-100 text-blue-800',
+                },
+                {
+                  title: '次氯酸根氧化亚铁',
+                  pair: ['Fe2+', 'ClO-'],
+                  tag: '强氧化',
+                  tagColor: 'bg-purple-100 text-purple-800',
+                },
+                {
+                  title: '弱碱挥发逸氨',
+                  pair: ['NH4+', 'OH-'],
+                  tag: '气体弱碱',
+                  tagColor: 'bg-amber-100 text-amber-800',
+                },
+              ].map((item) => (
+                <button
+                  key={item.title}
+                  type="button"
+                  onClick={() => onLoadPresetPair?.(item.pair[0], item.pair[1])}
+                  className="w-full p-2 rounded-xl bg-white border border-slate-200 hover:bg-blue-50/60 hover:border-blue-300 transition-all text-left flex items-center justify-between cursor-pointer"
+                >
+                  <div>
+                    <div className="text-xs font-bold text-slate-900">{item.title}</div>
+                    <div className="text-[10px] text-slate-500 font-mono">
+                      {item.pair[0]} + {item.pair[1]}
+                    </div>
+                  </div>
+                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${item.tagColor}`}>
+                    {item.tag}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </LeftPanelSection>
+
+          <LeftPanelSection title="大表使用指引">
+            <div className="p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/70 space-y-1 text-[11px] text-blue-900 leading-relaxed">
+              <div className="font-bold flex items-center gap-1">
+                <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                全景检索建议：
+              </div>
+              <p>• 点击上方机制标签可快速筛选同类互斥反应。</p>
+              <p>• 点击大表内任意单元格，底部即时展示离子反应方程式与避坑指南。</p>
+            </div>
           </LeftPanelSection>
         </>
       )}
