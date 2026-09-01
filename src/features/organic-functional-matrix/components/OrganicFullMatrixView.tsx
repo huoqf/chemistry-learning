@@ -686,10 +686,12 @@ export const OrganicFullMatrixView: React.FC<OrganicFullMatrixViewProps> = ({
       {mainTab === 'protection-polymer' && <OrganicProtectionPolymerView />}
 
       {/* 原地 3D 空间球棍模型浮层模态窗 */}
-      <OrganicMolecule3DModal
-        molecule={preview3DMolecule}
-        onClose={() => setPreview3DMolecule(null)}
-      />
+      {preview3DMolecule && (
+        <OrganicMolecule3DModal
+          molecule={preview3DMolecule}
+          onClose={() => setPreview3DMolecule(null)}
+        />
+      )}
     </div>
   )
 }

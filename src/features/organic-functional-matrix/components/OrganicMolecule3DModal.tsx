@@ -52,11 +52,15 @@ export const OrganicMolecule3DModal: React.FC<OrganicMolecule3DModalProps> = ({
   })
   const [selectedAtom, setSelectedAtom] = useState<Atom3DData | null>(null)
 
-  // 当传入的 molecule 改变时，同步重置当前查看的分子
+  // 当传入的 molecule 改变时，同步重置当前查看的分子与选中原子
   useEffect(() => {
     if (molecule) {
       setActiveMoleculeId(molecule.id)
       setSelectedAtom(null)
+    } else {
+      setActiveMoleculeId(null)
+      setSelectedAtom(null)
+      setContainerSize({ width: 0, height: 0 })
     }
   }, [molecule])
 
@@ -65,18 +69,27 @@ export const OrganicMolecule3DModal: React.FC<OrganicMolecule3DModalProps> = ({
     return ORGANIC_3D_MOLECULES[activeMoleculeId] || molecule
   }, [activeMoleculeId, molecule])
 
-  // 监听容器大小以防 Three.js 0 尺寸报错
+  // 监听容器大小以防 Three.js 0 尺寸报错，挂载时立即获取尺寸
   useEffect(() => {
-    if (!containerRef.current) return
+    const el = containerRef.current
+    if (!el) return
+
+    const rect = el.getBoundingClientRect()
+    if (rect.width > 0 && rect.height > 0) {
+      setContainerSize({ width: Math.round(rect.width), height: Math.round(rect.height) })
+    }
+
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const { width, height } = entry.contentRect
-        setContainerSize({ width: Math.round(width), height: Math.round(height) })
+        if (width > 0 && height > 0) {
+          setContainerSize({ width: Math.round(width), height: Math.round(height) })
+        }
       }
     })
-    observer.observe(containerRef.current)
+    observer.observe(el)
     return () => observer.disconnect()
-  }, [activeMolecule])
+  }, [activeMolecule?.id, Boolean(molecule)])
 
   // 键盘 Esc 关闭
   useEffect(() => {
@@ -199,6 +212,7 @@ export const OrganicMolecule3DModal: React.FC<OrganicMolecule3DModalProps> = ({
               <WebGLFallback />
             ) : isReady ? (
               <Canvas
+                key={activeMolecule.id}
                 camera={{ position: [0, 0, 6.5], fov: 42 }}
                 style={{ width: '100%', height: '100%' }}
               >
