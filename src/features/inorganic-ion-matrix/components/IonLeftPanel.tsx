@@ -60,17 +60,19 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
 
       {inquiryMode === 'single-test' && (
         <>
-          {/* ① 待测溶液样品选择 (4×2 紧凑芯片图谱，冷暖严格分区) */}
+          {/* ① 待测溶液样品选择 (冷暖严格分区，14 阳 + 18 阴全集芯片图谱) */}
           <LeftPanelSection title="① 选择待测样品">
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               {/* 阳离子待测区 (冷蓝微阶) */}
-              <div className="p-1.5 rounded-xl bg-blue-50/60 border border-blue-200/80">
-                <div className="flex items-center justify-between mb-1 px-0.5">
-                  <span className="text-[10px] font-bold text-blue-900 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
+              <div className="p-2 rounded-xl bg-blue-50/60 border border-blue-200/80">
+                <div className="flex items-center justify-between mb-1.5 px-0.5">
+                  <span className="text-[11px] font-bold text-blue-950 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-blue-600" />
                     阳离子待测区
                   </span>
-                  <span className="text-[9px] text-blue-600/80 font-medium">8 种核心</span>
+                  <span className="text-[10px] text-blue-700 font-semibold px-1.5 py-0.2 bg-blue-100/80 rounded-full">
+                    {cations.length} 种全集
+                  </span>
                 </div>
                 <div className="grid grid-cols-4 gap-1">
                   {cations.map((ion) => {
@@ -80,7 +82,7 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
                         key={ion.id}
                         type="button"
                         onClick={() => onSelectIon(ion.id)}
-                        className={`h-7 rounded-lg text-xs font-bold transition-all flex items-center justify-center relative border cursor-pointer ${
+                        className={`h-7 rounded-lg text-[11px] font-bold transition-all flex items-center justify-center relative border cursor-pointer ${
                           isSelected
                             ? 'bg-blue-600 text-white border-blue-700 shadow-sm ring-2 ring-blue-300'
                             : 'bg-white hover:bg-blue-100/70 text-slate-800 border-slate-200/80'
@@ -90,7 +92,7 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
                         <span>{ion.id}</span>
                         {/* 离子原液颜色微标 */}
                         <span
-                          className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full border border-slate-300"
+                          className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full border border-slate-300 shadow-2xs"
                           style={{ backgroundColor: ion.colorRgb }}
                         />
                       </button>
@@ -100,13 +102,15 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
               </div>
 
               {/* 阴离子待测区 (暖橙微阶) */}
-              <div className="p-1.5 rounded-xl bg-amber-50/60 border border-amber-200/80">
-                <div className="flex items-center justify-between mb-1 px-0.5">
-                  <span className="text-[10px] font-bold text-amber-900 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-600" />
+              <div className="p-2 rounded-xl bg-amber-50/60 border border-amber-200/80">
+                <div className="flex items-center justify-between mb-1.5 px-0.5">
+                  <span className="text-[11px] font-bold text-amber-950 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-amber-600" />
                     阴离子待测区
                   </span>
-                  <span className="text-[9px] text-amber-600/80 font-medium">8 种核心</span>
+                  <span className="text-[10px] text-amber-700 font-semibold px-1.5 py-0.2 bg-amber-100/80 rounded-full">
+                    {anions.length} 种全集
+                  </span>
                 </div>
                 <div className="grid grid-cols-4 gap-1">
                   {anions.map((ion) => {
@@ -116,16 +120,16 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
                         key={ion.id}
                         type="button"
                         onClick={() => onSelectIon(ion.id)}
-                        className={`h-7 rounded-lg text-xs font-bold transition-all flex items-center justify-center relative border cursor-pointer ${
+                        className={`h-7 rounded-lg text-[11px] font-bold transition-all flex items-center justify-center relative border cursor-pointer ${
                           isSelected
                             ? 'bg-amber-600 text-white border-amber-700 shadow-sm ring-2 ring-amber-300'
                             : 'bg-white hover:bg-amber-100/70 text-slate-800 border-slate-200/80'
                         }`}
                         title={`${ion.name} (${ion.colorInSolution})`}
                       >
-                        <span>{ion.id}</span>
+                        <span className="truncate px-0.5">{ion.id}</span>
                         <span
-                          className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full border border-slate-300"
+                          className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full border border-slate-300 shadow-2xs"
                           style={{ backgroundColor: ion.colorRgb }}
                         />
                       </button>
@@ -147,7 +151,7 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
                       key={reagent.id}
                       type="button"
                       onClick={() => onSelectReagent?.(reagent.id)}
-                      className={`w-full p-2 rounded-xl text-left border transition-all cursor-pointer ${
+                      className={`w-full p-2.5 rounded-xl text-left border transition-all cursor-pointer ${
                         isSelected
                           ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-200'
                           : 'bg-white border-slate-200 hover:bg-slate-50'
@@ -189,9 +193,9 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
               >
                 <Droplets className="w-4 h-4 text-blue-400" />
                 {dropCount === 0
-                  ? '滴加少量试剂 (第1滴)'
+                  ? '滴加少量试剂 (第1阶段)'
                   : dropCount === 1
-                  ? '继续滴加至过量 (第2滴)'
+                  ? '继续滴加至过量 (第2阶段)'
                   : '✓ 反应已达终点'}
               </Button>
 
@@ -214,7 +218,7 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
       {inquiryMode === 'coexistence-check' && (
         <>
           {/* 共存排斥模式：4列紧凑网格多选 */}
-          <LeftPanelSection title="阳离子多选" subtitle="勾选混入烧杯的阳离子">
+          <LeftPanelSection title="阳离子多选" subtitle={`勾选混入烧杯的阳离子 (共 ${cations.length} 种)`}>
             <div className="grid grid-cols-4 gap-1">
               {cations.map((ion) => {
                 const isChecked = coexistenceSelectedIons.includes(ion.id)
@@ -236,7 +240,7 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
             </div>
           </LeftPanelSection>
 
-          <LeftPanelSection title="阴离子多选" subtitle="勾选混入烧杯的阴离子">
+          <LeftPanelSection title="阴离子多选" subtitle={`勾选混入烧杯的阴离子 (共 ${anions.length} 种)`}>
             <div className="grid grid-cols-4 gap-1">
               {anions.map((ion) => {
                 const isChecked = coexistenceSelectedIons.includes(ion.id)
@@ -300,6 +304,18 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
                   pair: ['Ba2+', 'SO42-'],
                   tag: '难溶沉淀',
                   tagColor: 'bg-blue-100 text-blue-800',
+                },
+                {
+                  title: '硫代硫酸根酸性歧化',
+                  pair: ['H+', 'S2O32-'],
+                  tag: '歧化产气沉',
+                  tagColor: 'bg-amber-100 text-amber-800',
+                },
+                {
+                  title: '高锰酸根强氧化亚铁',
+                  pair: ['Fe2+', 'MnO4-'],
+                  tag: '强氧化褪色',
+                  tagColor: 'bg-purple-100 text-purple-800',
                 },
                 {
                   title: '次氯酸根氧化亚铁',

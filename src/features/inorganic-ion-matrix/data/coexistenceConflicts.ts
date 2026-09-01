@@ -1,123 +1,26 @@
-import type { CoexistenceConflict } from '../types'
+import type { CoexistenceConflict, ConflictType } from '../types'
+import { CONFLICT_MAP } from './coexistenceConflictMap'
 
-export const COEXISTENCE_CONFLICTS: CoexistenceConflict[] = [
-  // 1. 生成沉淀 (Precipitates)
-  {
-    id: 'c-ba-so4',
-    ionA: 'Ba2+',
-    ionB: 'SO42-',
-    type: 'precipitate',
-    typeLabel: '生成不溶性硫酸盐沉淀',
-    reason: 'Ba²⁺ 与 SO₄²⁻ 极易结合生成难溶于水和强酸的白色 BaSO₄ 沉淀 (Ksp = 1.1 × 10⁻¹⁰)',
-    equation: 'Ba^{2+} + SO_4^{2-} = BaSO_4\\downarrow',
-  },
-  {
-    id: 'c-ag-cl',
-    ionA: 'Ag+',
-    ionB: 'Cl-',
-    type: 'precipitate',
-    typeLabel: '生成难溶氯化物沉淀',
-    reason: 'Ag⁺ 与 Cl⁻ 结合生成不溶于稀硝酸的白色 AgCl 沉淀 (Ksp = 1.8 × 10⁻¹⁰)',
-    equation: 'Ag^+ + Cl^- = AgCl\\downarrow',
-  },
-  {
-    id: 'c-ag-so4',
-    ionA: 'Ag+',
-    ionB: 'SO42-',
-    type: 'precipitate',
-    typeLabel: '生成微溶沉淀',
-    reason: 'Ag⁺ 与 SO₄²⁻ 结合生成微溶的 Ag₂SO₄，高浓度时产生沉淀',
-    equation: '2Ag^+ + SO_4^{2-} = Ag_2SO_4\\downarrow',
-  },
-  {
-    id: 'c-fe3-oh',
-    ionA: 'Fe3+',
-    ionB: 'CO32-',
-    type: 'double-hydrolysis',
-    typeLabel: '剧烈双水解生成沉淀与气体',
-    reason: 'Fe³⁺ 水解显强酸性，CO₃²⁻ 水解显强碱性，两者混合互相促进水解彻底，生成 Fe(OH)₃ 沉淀和 CO₂ 气体',
-    equation: '2Fe^{3+} + 3CO_3^{2-} + 3H_2O = 2Fe(OH)_3\\downarrow + 3CO_2\\uparrow',
-  },
-  {
-    id: 'c-al3-co3',
-    ionA: 'Al3+',
-    ionB: 'CO32-',
-    type: 'double-hydrolysis',
-    typeLabel: '剧烈双水解生成沉淀与气体',
-    reason: 'Al³⁺ 与 CO₃²⁻ (或 HCO₃⁻) 发生彻底双水解反应，生成白色 Al(OH)₃ 沉淀与 CO₂ 气体，不能大量共存',
-    equation: '2Al^{3+} + 3CO_3^{2-} + 3H_2O = 2Al(OH)_3\\downarrow + 3CO_2\\uparrow',
-  },
-  {
-    id: 'c-al3-hco3',
-    ionA: 'Al3+',
-    ionB: 'HCO3-',
-    type: 'double-hydrolysis',
-    typeLabel: '剧烈双水解生成沉淀与气体 (泡沫灭火器原理)',
-    reason: 'Al³⁺ 与 HCO₃⁻ 彻底双水解，生成 Al(OH)₃ 沉淀和 CO₂ 气体',
-    equation: 'Al^{3+} + 3HCO_3^- = Al(OH)_3\\downarrow + 3CO_2\\uparrow',
-  },
-  {
-    id: 'c-al3-s2',
-    ionA: 'Al3+',
-    ionB: 'S2-',
-    type: 'double-hydrolysis',
-    typeLabel: '彻底双水解生成沉淀与臭鸡蛋气体',
-    reason: 'Al³⁺ 与 S²⁻ 在水溶液中无法生成 Al₂S₃，而是彻底双水解生成 Al(OH)₃ 沉淀和 H₂S 气体',
-    equation: '2Al^{3+} + 3S^{2-} + 6H_2O = 2Al(OH)_3\\downarrow + 3H_2S\\uparrow',
-  },
-  // 2. 氧化还原互斥 (Redox)
-  {
-    id: 'c-fe3-i',
-    ionA: 'Fe3+',
-    ionB: 'I-',
-    type: 'redox',
-    typeLabel: '氧化还原互斥反应',
-    reason: 'Fe³⁺ 具有较强氧化性，I⁻ 具有强还原性，两者发生自发氧化还原生成 Fe²⁺ 和 I₂ 单质',
-    equation: '2Fe^{3+} + 2I^- = 2Fe^{2+} + I_2',
-  },
-  {
-    id: 'c-fe3-s2',
-    ionA: 'Fe3+',
-    ionB: 'S2-',
-    type: 'redox',
-    typeLabel: '氧化还原互斥反应',
-    reason: 'Fe³⁺ 氧化 S²⁻ 生成单质 S 黄色沉淀和 Fe²⁺ (过量 S²⁻ 生成 FeS 黑色沉淀)',
-    equation: '2Fe^{3+} + S^{2-} = 2Fe^{2+} + S\\downarrow',
-  },
-  {
-    id: 'c-fe3-so3',
-    ionA: 'Fe3+',
-    ionB: 'SO32-',
-    type: 'redox',
-    typeLabel: '氧化还原互斥反应',
-    reason: 'Fe³⁺ 能将强还原性的 SO₃²⁻ 氧化为 SO₄²⁻，自身被还原为 Fe²⁺',
-    equation: '2Fe^{3+} + SO_3^{2-} + H_2O = 2Fe^{2+} + SO_4^{2-} + 2H^+',
-  },
-  {
-    id: 'c-cu2-s2',
-    ionA: 'Cu2+',
-    ionB: 'S2-',
-    type: 'precipitate',
-    typeLabel: '生成极难溶沉淀',
-    reason: 'Cu²⁺ 与 S²⁻ 结合生成极难溶的黑色 CuS 沉淀 (Ksp = 6.3 × 10⁻³⁶，不溶于非氧化性强酸)',
-    equation: 'Cu^{2+} + S^{2-} = CuS\\downarrow',
-  },
-  {
-    id: 'c-fe2-no3',
-    ionA: 'Fe2+',
-    ionB: 'NO3-',
-    type: 'redox',
-    typeLabel: '酸性条件下氧化还原互斥',
-    reason: '在中性溶液中可共存，但在酸性溶液 (含 H⁺) 中，NO₃⁻ 具有强氧化性，迅速将 Fe²⁺ 氧化为 Fe³⁺',
-    equation: '3Fe^{2+} + NO_3^- + 4H^+ = 3Fe^{3+} + NO\\uparrow + 2H_2O',
-  },
-  {
-    id: 'c-nh4-co3-base',
-    ionA: 'NH4+',
-    ionB: 'OH-',
-    type: 'weak-electrolyte',
-    typeLabel: '生成弱电解质或挥发性气体',
-    reason: 'NH₄⁺ 与 OH⁻ 结合生成弱电解质一水合氨 NH₃·H₂O，加热逸出 NH₃ 气体',
-    equation: 'NH_4^+ + OH^- \\rightleftharpoons NH_3\\cdot H_2O \\xrightarrow{\\Delta} NH_3\\uparrow + H_2O',
-  },
-]
+/** 将矩阵冲突分类映射到共存冲突大类 */
+function mapCategoryToConflictType(category: string): ConflictType {
+  if (category === 'precipitate') return 'precipitate'
+  if (category === 'redox' || category === 'acid-medium-trap') return 'redox'
+  if (category === 'double-hydrolysis') return 'double-hydrolysis'
+  if (category === 'gas-weak-acid') return 'gas'
+  return 'weak-electrolyte'
+}
+
+/** 由 CONFLICT_MAP 动态生成全量高考共存互斥规则条目 */
+export const COEXISTENCE_CONFLICTS: CoexistenceConflict[] = Object.entries(CONFLICT_MAP).map(
+  ([key, item]) => {
+    return {
+      id: `conflict-${key.replace(':', '-')}`,
+      ionA: item.cationId,
+      ionB: item.anionId,
+      type: mapCategoryToConflictType(item.category),
+      typeLabel: item.badgeLabel,
+      reason: item.reason,
+      equation: item.equation || '',
+    }
+  }
+)

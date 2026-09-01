@@ -2,23 +2,57 @@ import { describe, it, expect } from 'vitest'
 import { ION_DATA, COEXISTENCE_CONFLICTS } from '../constants'
 
 describe('无机离子特征检验与共存排斥矩阵数据审计', () => {
-  it('应包含 16 种新高考核心阴阳离子 (8 阳离子 + 8 阴离子)', () => {
-    expect(ION_DATA.length).toBe(16)
+  it('应包含 32 种新高考核心阴阳离子全集 (14 阳离子 + 18 阴离子)', () => {
+    expect(ION_DATA.length).toBe(32)
 
     const cations = ION_DATA.filter((i) => i.type === 'cation')
     const anions = ION_DATA.filter((i) => i.type === 'anion')
 
-    expect(cations.length).toBe(8)
-    expect(anions.length).toBe(8)
+    expect(cations.length).toBe(14)
+    expect(anions.length).toBe(18)
 
     const cationIds = cations.map((i) => i.id)
     expect(cationIds).toEqual(
-      expect.arrayContaining(['Fe3+', 'Fe2+', 'Cu2+', 'Al3+', 'NH4+', 'Ba2+', 'Ag+', 'Mg2+'])
+      expect.arrayContaining([
+        'Fe3+',
+        'Fe2+',
+        'Cu2+',
+        'Al3+',
+        'NH4+',
+        'Ba2+',
+        'Ag+',
+        'Mg2+',
+        'H+',
+        'Na+',
+        'K+',
+        'Ca2+',
+        'Zn2+',
+        'Mn2+',
+      ])
     )
 
     const anionIds = anions.map((i) => i.id)
     expect(anionIds).toEqual(
-      expect.arrayContaining(['SO42-', 'Cl-', 'Br-', 'I-', 'CO32-', 'SO32-', 'S2-', 'NO3-'])
+      expect.arrayContaining([
+        'SO42-',
+        'Cl-',
+        'Br-',
+        'I-',
+        'CO32-',
+        'SO32-',
+        'S2-',
+        'NO3-',
+        'OH-',
+        'HCO3-',
+        'AlO2-',
+        'ClO-',
+        'MnO4-',
+        'SiO32-',
+        'S2O32-',
+        'CH3COO-',
+        'F-',
+        'NO2-',
+      ])
     )
   })
 
@@ -39,12 +73,12 @@ describe('无机离子特征检验与共存排斥矩阵数据审计', () => {
     })
   })
 
-  it('共存互斥规则库必须覆盖生成沉淀、氧化还原、剧烈双水解等 5 大维度', () => {
+  it('共存互斥规则库必须覆盖生成沉淀、氧化还原、剧烈双水解、气体等 5 大维度', () => {
     const types = COEXISTENCE_CONFLICTS.map((c) => c.type)
     expect(types).toContain('precipitate')
     expect(types).toContain('redox')
     expect(types).toContain('double-hydrolysis')
-    expect(types).toContain('weak-electrolyte')
+    expect(types).toContain('gas')
 
     // 经典互斥测试
     const alCo3 = COEXISTENCE_CONFLICTS.find(
@@ -61,7 +95,7 @@ describe('无机离子特征检验与共存排斥矩阵数据审计', () => {
     expect(fe3I?.type).toBe('redox')
   })
 
-  it('分步连续滴加必须符合高中化学相变状态转移 (Al3+ / Mg2+ / Fe2+ / SO42-)', async () => {
+  it('分步连续滴加必须符合高中化学相变状态转移 (Al3+ / Mg2+ / Fe2+ / SO42- / MnO4- / S2O32-)', async () => {
     const { computeStepChemistry } = await import('../components/IonMatrixScene')
 
     // 1. Al3+ 两性氢氧化物：少量沉淀 -> 过量完全溶解
@@ -96,5 +130,14 @@ describe('无机离子特征检验与共存排斥矩阵数据审计', () => {
 
     const so4Step2 = computeStepChemistry('SO42-', 'so4-hcl-bacl2', 2, 'rgba(248, 250, 252, 0.6)')
     expect(so4Step2.hasPrecipitate).toBe(true) // 滴加 BaCl2 出现白色沉淀
+
+    // 5. MnO4- 强氧化性紫红褪色
+    const mno4Step2 = computeStepChemistry('MnO4-', 'mno4-feso4-acid', 2, 'rgba(168, 85, 247, 0.9)')
+    expect(mno4Step2.fillColor).not.toContain('168, 85, 247') // 紫红褪去
+
+    // 6. S2O32- 酸性自身歧化
+    const s2o3Step2 = computeStepChemistry('S2O32-', 's2o3-h2so4', 2, 'rgba(248, 250, 252, 0.6)')
+    expect(s2o3Step2.hasPrecipitate).toBe(true)
+    expect(s2o3Step2.hasGas).toBe(true)
   })
 })

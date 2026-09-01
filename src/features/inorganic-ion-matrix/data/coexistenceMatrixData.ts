@@ -9,33 +9,44 @@ export interface MatrixIonItem {
   colorNote?: string
 }
 
+/** 高中化学 14 种核心阳离子矩阵维度 */
 export const MATRIX_CATIONS: MatrixIonItem[] = [
   { id: 'H+', name: '氢离子', formula: 'H^+', charge: 1, colorNote: '酸性介质' },
-  { id: 'Na+/K+', name: '钠/钾离子', formula: 'Na^+/K^+', charge: 1, colorNote: '无色/全共存' },
+  { id: 'Na+', name: '钠离子', formula: 'Na^+', charge: 1, colorNote: '黄色焰色/全共存' },
+  { id: 'K+', name: '钾离子', formula: 'K^+', charge: 1, colorNote: '紫色焰色/全共存' },
   { id: 'NH4+', name: '铵根离子', formula: 'NH_4^+', charge: 1, colorNote: '弱碱阳离子' },
   { id: 'Mg2+', name: '镁离子', formula: 'Mg^{2+}', charge: 2, colorNote: '无色' },
-  { id: 'Ca2+', name: '钙离子', formula: 'Ca^{2+}', charge: 2, colorNote: '微溶陷阱' },
-  { id: 'Ba2+', name: '钡离子', formula: 'Ba^{2+}', charge: 2, colorNote: '硫酸根特效' },
-  { id: 'Al3+', name: '铝离子', formula: 'Al^{3+}', charge: 3, colorNote: '两性/双水解' },
+  { id: 'Ca2+', name: '钙离子', formula: 'Ca^{2+}', charge: 2, colorNote: '微溶陷阱/砖红' },
+  { id: 'Ba2+', name: '钡离子', formula: 'Ba^{2+}', charge: 2, colorNote: '硫酸根特效/黄绿' },
+  { id: 'Al3+', name: '铝离子', formula: 'Al^{3+}', charge: 3, colorNote: '两性/剧烈双水解' },
+  { id: 'Zn2+', name: '锌离子', formula: 'Zn^{2+}', charge: 2, colorNote: '两性金属离子' },
   { id: 'Fe2+', name: '亚铁离子', formula: 'Fe^{2+}', charge: 2, colorNote: '浅绿/强还原' },
   { id: 'Fe3+', name: '铁离子', formula: 'Fe^{3+}', charge: 3, colorNote: '棕黄/强氧化' },
   { id: 'Cu2+', name: '铜离子', formula: 'Cu^{2+}', charge: 2, colorNote: '蓝色' },
-  { id: 'Ag+', name: '银离子', formula: 'Ag^+', charge: 1, colorNote: '卤素特效' },
+  { id: 'Ag+', name: '银离子', formula: 'Ag^+', charge: 1, colorNote: '卤素特效沉淀' },
+  { id: 'Mn2+', name: '锰离子', formula: 'Mn^{2+}', charge: 2, colorNote: '肉粉色/易氧化' },
 ]
 
+/** 高中化学 18 种核心阴离子矩阵维度 */
 export const MATRIX_ANIONS: MatrixIonItem[] = [
   { id: 'OH-', name: '氢氧根', formula: 'OH^-', charge: -1, colorNote: '碱性介质' },
-  { id: 'Cl-', name: '氯离子', formula: 'Cl^-', charge: -1, colorNote: '无色' },
-  { id: 'Br-', name: '溴离子', formula: 'Br^-', charge: -1, colorNote: '无色' },
-  { id: 'I-', name: '碘离子', formula: 'I^-', charge: -1, colorNote: '无色/强还原' },
-  { id: 'SO42-', name: '硫酸根', formula: 'SO_4^{2-}', charge: -2, colorNote: '无色' },
-  { id: 'SO32-', name: '亚硫酸根', formula: 'SO_3^{2-}', charge: -2, colorNote: '强还原/易氧化' },
-  { id: 'S2-', name: '硫离子', formula: 'S^{2-}', charge: -2, colorNote: '强还原/沉淀多' },
+  { id: 'Cl-', name: '氯离子', formula: 'Cl^-', charge: -1, colorNote: '白沉淀' },
+  { id: 'Br-', name: '溴离子', formula: 'Br^-', charge: -1, colorNote: '淡黄沉淀/橙红' },
+  { id: 'I-', name: '碘离子', formula: 'I^-', charge: -1, colorNote: '黄色沉淀/强还原' },
+  { id: 'F-', name: '氟离子', formula: 'F^-', charge: -1, colorNote: 'CaF₂难溶/AgF易溶' },
+  { id: 'SO42-', name: '硫酸根', formula: 'SO_4^{2-}', charge: -2, colorNote: '硫酸钡白沉淀' },
+  { id: 'SO32-', name: '亚硫酸根', formula: 'SO_3^{2-}', charge: -2, colorNote: '强还原/SO₂气体' },
+  { id: 'S2O32-', name: '硫代硫酸根', formula: 'S_2O_3^{2-}', charge: -2, colorNote: '酸性歧化S+SO₂' },
+  { id: 'S2-', name: '硫离子', formula: 'S^{2-}', charge: -2, colorNote: '强还原/难溶硫化物' },
   { id: 'CO32-', name: '碳酸根', formula: 'CO_3^{2-}', charge: -2, colorNote: '弱酸根/双水解' },
-  { id: 'HCO3-', name: '碳酸氢根', formula: 'HCO_3^-', charge: -1, colorNote: '两性酸式根' },
+  { id: 'HCO3-', name: '碳酸氢根', formula: 'HCO_3^-', charge: -1, colorNote: '两性酸式根/泡沫' },
+  { id: 'SiO32-', name: '硅酸根', formula: 'SiO_3^{2-}', charge: -2, colorNote: '硅酸胶体沉淀' },
   { id: 'NO3-', name: '硝酸根', formula: 'NO_3^-', charge: -1, colorNote: '酸性强氧化' },
+  { id: 'NO2-', name: '亚硝酸根', formula: 'NO_2^-', charge: -1, colorNote: '酸性氧化与歧化' },
   { id: 'AlO2-', name: '偏铝酸根', formula: 'AlO_2^-', charge: -1, colorNote: '强碱性/双水解' },
-  { id: 'ClO-', name: '次氯酸根', formula: 'ClO^-', charge: -1, colorNote: '强氧化性' },
+  { id: 'ClO-', name: '次氯酸根', formula: 'ClO^-', charge: -1, colorNote: '强氧化/漂白性' },
+  { id: 'MnO4-', name: '高锰酸根', formula: 'MnO_4^-', charge: -1, colorNote: '深紫红/强氧化' },
+  { id: 'CH3COO-', name: '醋酸根', formula: 'CH_3COO^-', charge: -1, colorNote: '弱电解质醋酸' },
 ]
 
 // 互斥分类配色与说明
@@ -125,8 +136,8 @@ export const COEXISTENCE_RULE_CARDS: CoexistenceRuleCard[] = [
     title: '① 介质酸碱性与隐含条件 (一票否决)',
     tag: '酸碱介质',
     rule: '审题先看介质：pH=1/甲基橙红（酸性）或 pH=13/酚酞红（碱性）或由水电离的 c(H⁺)=10⁻¹³（酸或碱）。',
-    tip: 'HCO₃⁻/HSO₃⁻ 遇酸放出气体、遇碱生成沉淀，酸碱介质均不能大量共存！',
-    examples: ['H⁺ 与 OH⁻/CO₃²⁻/HCO₃⁻/AlO₂⁻/S²⁻/ClO⁻ 排斥', 'OH⁻ 与 H⁺/NH₄⁺/Mg²⁺/Fe³⁺/Cu²⁺/Al³⁺/HCO₃⁻ 排斥'],
+    tip: 'HCO₃⁻/HSO₃⁻/HS⁻ 遇酸放出气体、遇碱生成沉淀，酸碱介质均不能大量共存！',
+    examples: ['H⁺ 与 OH⁻/CO₃²⁻/HCO₃⁻/AlO₂⁻/SiO₃²⁻/S²⁻/ClO⁻/S₂O₃²⁻ 排斥', 'OH⁻ 与 H⁺/NH₄⁺/Mg²⁺/Fe³⁺/Cu²⁺/Al³⁺/Zn²⁺/HCO₃⁻ 排斥'],
   },
   {
     id: 'rule-redox-trap',
@@ -134,15 +145,15 @@ export const COEXISTENCE_RULE_CARDS: CoexistenceRuleCard[] = [
     tag: '氧化还原',
     rule: '强氧化性离子遇到强还原性离子必发生氧化还原互斥。尤其注意“酸性条件诱发氧化性”。',
     tip: 'NO₃⁻ 在中性/碱性下可与 Fe²⁺/I⁻ 共存，但在酸性（含 H⁺）下具有相当于硝酸的强氧化性，必互斥！',
-    examples: ['Fe³⁺ 与 I⁻ / S²⁻ / SO₃²⁻ 自发氧化还原', 'NO₃⁻(H⁺) 或 ClO⁻ 氧化 Fe²⁺ / SO₃²⁻ / I⁻ / S²⁻'],
+    examples: ['Fe³⁺ 与 I⁻ / S²⁻ / SO₃²⁻ / S₂O₃²⁻ 自发氧化还原', 'NO₃⁻(H⁺) 或 ClO⁻ 氧化 Fe²⁺ / SO₃²⁻ / I⁻ / S²⁻', 'MnO₄⁻ 强氧化 Fe²⁺ / SO₃²⁻ / I⁻ / C₂O₄²⁻'],
   },
   {
     id: 'rule-double-hydrolysis',
     title: '③ 彻底双水解“气+沉”组合',
     tag: '彻底双水解',
-    rule: '弱酸阴离子（如 CO₃²⁻、HCO₃⁻、S²⁻、HS⁻、SO₃²⁻、AlO₂⁻）遇弱碱阳离子（Al³⁺、Fe³⁺）互相促进水解进行到底。',
+    rule: '弱酸阴离子（如 CO₃²⁻、HCO₃⁻、S²⁻、HS⁻、SO₃²⁻、AlO₂⁻、SiO₃²⁻）遇弱碱阳离子（Al³⁺、Fe³⁺）互相促进水解进行到底。',
     tip: '泡沫灭火器原理：Al³⁺ + 3HCO₃⁻ = Al(OH)₃↓ + 3CO₂↑，高考出题频率最高！',
-    examples: ['Al³⁺ 与 HCO₃⁻ / CO₃²⁻ / S²⁻ / AlO₂⁻', 'Fe³⁺ 与 HCO₃⁻ / CO₃²⁻ / AlO₂⁻'],
+    examples: ['Al³⁺ 与 HCO₃⁻ / CO₃²⁻ / S²⁻ / AlO₂⁻ / SiO₃²⁻', 'Fe³⁺ 与 HCO₃⁻ / CO₃²⁻ / AlO₂⁻ / SiO₃²⁻'],
   },
   {
     id: 'rule-color-condition',
@@ -150,6 +161,6 @@ export const COEXISTENCE_RULE_CARDS: CoexistenceRuleCard[] = [
     tag: '颜色排除',
     rule: '题目要求“无色溶液”时，哪怕离子之间完全不发生反应，有色离子也必须一票否决排除！',
     tip: '“透明”不等于“无色”，硫酸铜溶液是透明的但显蓝色！',
-    examples: ['Fe³⁺ (棕黄)', 'Fe²⁺ (浅绿)', 'Cu²⁺ (蓝色)', 'MnO₄⁻ (紫红)'],
+    examples: ['Fe³⁺ (棕黄)', 'Fe²⁺ (浅绿)', 'Cu²⁺ (蓝色)', 'MnO₄⁻ (深紫红)'],
   },
 ]
