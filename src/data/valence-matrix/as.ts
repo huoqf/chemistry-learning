@@ -99,8 +99,8 @@ export const AS_CONFIG: ElementValenceConfig = {
       fromSubstance: 'H₃AsO₃ (亚砷酸)',
       toSubstance: 'FeAsO₄ (砷酸铁/工业固砷沉淀)',
       reagent: '双氧水氧化为 As(V) 后加 Fe³⁺ 沉淀',
-      equation: 'H₃AsO₃ + H₂O₂ + Fe³⁺ = FeAsO₄↓ + 2H⁺ + H₂O',
-      electronTransfer: '氧化固砷协同反应',
+      equation: 'H₃AsO₃ + H₂O₂ + Fe³⁺ = FeAsO₄↓ + 3H⁺ + H₂O',
+      electronTransfer: 'As(III) 失去 2e⁻ 升高为 As(V)，协同 Fe³⁺ 析出沉淀',
       type: 'oxidation',
     },
     {

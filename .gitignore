@@ -49,3 +49,6 @@ vite.config.d.ts
 .agents/*
 !.agents/skills/
 !.agents/AGENTS.md
+
+# Scratch
+scratch/

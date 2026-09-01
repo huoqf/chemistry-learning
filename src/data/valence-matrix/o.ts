@@ -112,7 +112,7 @@ export const O_CONFIG: ElementValenceConfig = {
       toSubstance: 'H₂O',
       reagent: 'Fe²⁺ / 稀酸',
       equation: '2Fe²⁺ + H₂O₂ + 2H⁺ = 2Fe³⁺ + 2H₂O',
-      electronTransfer: '-1价 O 还原为 -2价 O，1mol H₂O₂ 接收 2e⁻ (氧化剂)',
+      electronTransfer: '-1价 O 还原为 -2价 O，1mol H₂O₂ 得 2e⁻ (化合价降低，作氧化剂)',
       type: 'reduction',
     },
     {
@@ -121,7 +121,7 @@ export const O_CONFIG: ElementValenceConfig = {
       toSubstance: 'O₂ (氧气)',
       reagent: '酸性 KMnO₄ 溶液',
       equation: '2MnO₄⁻ + 5H₂O₂ + 6H⁺ = 2Mn²⁺ + 5O₂↑ + 8H₂O',
-      electronTransfer: '-1价 O 氧化为 0价 O₂，1mol H₂O₂ 给出 2e⁻ (还原剂)',
+      electronTransfer: '-1价 O 氧化为 0价 O₂，1mol H₂O₂ 失 2e⁻ (化合价升高，作还原剂)',
       type: 'oxidation',
     },
     {

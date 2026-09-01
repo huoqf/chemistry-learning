@@ -76,7 +76,7 @@ export const MG_CONFIG: ElementValenceConfig = {
       toSubstance: 'MgO (氧化镁)',
       reagent: 'CO₂ 点燃 (高温置换)',
       equation: '2Mg + CO₂ =点燃= 2MgO + C',
-      electronTransfer: 'Mg 由 0 升至 +2 价，C 由 +4 降至 0 价',
+      electronTransfer: 'Mg 由 0 价升高至 +2 价失去 2e⁻×2，C 由 +4 价降低至 0 价',
       type: 'oxidation',
     },
     {
@@ -103,7 +103,7 @@ export const MG_CONFIG: ElementValenceConfig = {
       toSubstance: 'Mg (镁条/镁粉)',
       reagent: '熔融电解',
       equation: 'MgCl₂(熔融) =通电= Mg + Cl₂↑',
-      electronTransfer: '阴极 Mg²⁺ + 2e⁻ → Mg，阳极 2Cl⁻ - 2e⁻ → Cl₂',
+      electronTransfer: '阴极 Mg²⁺ 得到 2e⁻ 还原为 Mg，阳极 2Cl⁻ 失去 2e⁻ 氧化为 Cl₂',
       type: 'reduction',
     },
   ],

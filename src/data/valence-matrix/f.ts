@@ -72,7 +72,7 @@ export const F_CONFIG: ElementValenceConfig = {
       toSubstance: 'F₂ (单质氟)',
       reagent: '电解无水氟化氢与氟化氢钾熔融混合物 (Moissan 法)',
       equation: '2HF =电解= H₂↑ + F₂↑',
-      electronTransfer: '阳极 2F⁻ - 2e⁻ → F₂，阴极 2H⁺ + 2e⁻ → H₂',
+      electronTransfer: '阳极 2F⁻ 失去 2e⁻ 氧化为 F₂，阴极 2H⁺ 得到 2e⁻ 还原为 H₂',
       type: 'oxidation',
     },
   ],

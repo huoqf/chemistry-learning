@@ -74,7 +74,7 @@ export const GA_CONFIG: ElementValenceConfig = {
       toSubstance: 'GaN / GaAs (氮化镓/砷化镓)',
       reagent: '高温 NH₃ 还原氮化',
       equation: 'Ga₂O₃ + 2NH₃ =高温= 2GaN + 3H₂O',
-      electronTransfer: '高温固相合成反应',
+      electronTransfer: '非氧化还原高温气相氮化合成反应',
       type: 'other',
     },
   ],

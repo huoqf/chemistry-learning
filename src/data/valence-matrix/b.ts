@@ -9,12 +9,12 @@ export const B_CONFIG: ElementValenceConfig = {
   elementCategory: 'non-metal',
   badgeText: '新高考缺电子原子·硼酸一元弱酸与硼氢化物',
   atomColor: ATOM_COLORS.B,
-  valences: [-3, 0, 3],
+  valences: [0, 3],
   categories: ['氢化物/酸', '单质', '氧化物', '氢氧化物/含氧酸', '盐'],
   items: [
     {
       substance: 'NaBH₄ (硼氢化钠)',
-      valence: -3,
+      valence: 3,
       category: '氢化物/酸',
       colorText: '白色晶体强还原剂',
       colorStyle: 'bg-emerald-50 text-emerald-900 border-emerald-300',
@@ -22,7 +22,6 @@ export const B_CONFIG: ElementValenceConfig = {
       testReaction: '【有机选择性还原剂】选择性将醛、酮羰基还原为醇，不还原酯基和羧基；遇水缓慢水解产生 H₂',
       equation: 'NaBH₄ + 4H₂O = NaBO₂ + 4H₂↑ + NaOH',
       roleDescription: '有机经典还原剂，储氢材料',
-      isReductant: true,
     },
     {
       substance: 'B (单质硼)',

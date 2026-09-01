@@ -97,7 +97,7 @@ export const BA_CONFIG: ElementValenceConfig = {
       toSubstance: 'BaSO₄ (硫酸钡)',
       reagent: 'NaHSO₄ / H₂SO₄ 溶液',
       equation: 'Ba²⁺ + 2OH⁻ + 2H⁺ + SO₄²⁻ = BaSO₄↓ + 2H₂O',
-      electronTransfer: '酸碱中和与沉淀协同双重反应',
+      electronTransfer: '非氧化还原酸碱中和与沉淀协同反应',
       type: 'other',
     },
     {
@@ -106,7 +106,7 @@ export const BA_CONFIG: ElementValenceConfig = {
       toSubstance: 'Ba (金属钡)',
       reagent: '焦炭高温还原制 BaS 后熔融电解 BaCl₂',
       equation: 'BaCl₂(熔融) =通电= Ba + Cl₂↑',
-      electronTransfer: '电解还原，Ba²⁺ + 2e⁻ → Ba',
+      electronTransfer: '电解还原，Ba²⁺ 得到 2e⁻ 还原为 Ba',
       type: 'reduction',
     },
     {
@@ -115,7 +115,7 @@ export const BA_CONFIG: ElementValenceConfig = {
       toSubstance: 'BaSO₄ (硫酸钡)',
       reagent: '过量饱和 Na₂SO₄ 溶液 (沉淀转化)',
       equation: 'BaCO₃(s) + SO₄²⁻(aq) ⇌ BaSO₄(s) + CO₃²⁻(aq)',
-      electronTransfer: '溶度积转化反应 (平衡常数 K = Ksp(BaCO3)/Ksp(BaSO4) ≫ 1)',
+      electronTransfer: '非氧化还原沉淀转化 (平衡常数 K = Ksp(BaCO3)/Ksp(BaSO4) ≈ 24 > 1)',
       type: 'other',
     },
   ],

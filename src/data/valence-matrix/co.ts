@@ -120,7 +120,7 @@ export const CO_CONFIG: ElementValenceConfig = {
       toSubstance: 'CoCl₂ / CoSO₄',
       reagent: '浓盐酸加热',
       equation: 'Co₂O₃ + 6HCl = 2CoCl₂ + Cl₂↑ + 3H₂O',
-      electronTransfer: 'Co(III) 氧化 Cl⁻ 产生黄绿色 Cl₂ 气体',
+      electronTransfer: 'Co(III) 得到 2e⁻ (化合价降低) 还原为 Co²⁺，同时氧化 Cl⁻ 产生黄绿色 Cl₂ 气体',
       type: 'reduction',
     },
   ],

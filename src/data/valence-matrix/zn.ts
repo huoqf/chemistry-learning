@@ -103,7 +103,7 @@ export const ZN_CONFIG: ElementValenceConfig = {
       toSubstance: 'Zn (锌粒/锌粉)',
       reagent: '工业电解硫酸锌溶液',
       equation: '2ZnSO₄ + 2H₂O =通电= 2Zn + 2H₂SO₄ + O₂↑',
-      electronTransfer: '阴极 Zn²⁺ + 2e⁻ → Zn，阳极 2H₂O - 4e⁻ → O₂ + 4H⁺',
+      electronTransfer: '阴极 Zn²⁺ 得到 2e⁻ 还原为 Zn，阳极 2H₂O 失去 4e⁻ 氧化为 O₂ + 4H⁺',
       type: 'reduction',
     },
   ],
