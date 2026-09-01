@@ -64,6 +64,8 @@ export function useOrganicQuantitative(
           reason = '卤代烃水解（生成醇和 NaX）'
         } else if (groupId === 'peptide-amide') {
           reason = '酰胺键碱性水解'
+        } else if (groupId === 'cyano-cn') {
+          reason = '氰基碱性水解生成羧酸盐（释放 NH₃）'
         }
         breakdowns.NaOH.push({
           groupId: group.id,
@@ -125,6 +127,16 @@ export function useOrganicQuantitative(
       if (group.consumptions.H2 > 0) {
         const mol = group.consumptions.H2 * count
         totalH2 += mol
+        let h2Reason = '碳碳不饱和键催化加氢'
+        if (groupId === 'aldehyde-cho') {
+          h2Reason = '醛基加氢还原为伯醇'
+        } else if (groupId === 'ketone-co') {
+          h2Reason = '酮羰基加氢还原为仲醇'
+        } else if (groupId === 'nitro-no2') {
+          h2Reason = '硝基催化还原为氨基（消耗 3 H₂）'
+        } else if (groupId === 'cyano-cn') {
+          h2Reason = '氰基催化加氢还原为伯胺（消耗 2 H₂）'
+        }
         breakdowns.H2.push({
           groupId: group.id,
           groupName: group.name,
@@ -132,12 +144,7 @@ export function useOrganicQuantitative(
           count,
           molPerGroup: group.consumptions.H2,
           totalMol: mol,
-          reason:
-            groupId === 'aldehyde-cho'
-              ? '醛基加氢还原为伯醇'
-              : groupId === 'ketone-co'
-                ? '酮羰基加氢还原为仲醇'
-                : '碳碳不饱和键催化加氢',
+          reason: h2Reason,
         })
       }
 

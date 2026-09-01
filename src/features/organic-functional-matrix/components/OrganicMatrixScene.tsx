@@ -267,7 +267,7 @@ export const OrganicMatrixScene: React.FC<OrganicMatrixSceneProps> = ({
 
             if (consumption.gasH2 > 0) {
               productCards.push({
-                label: '氢气 (H₂) 析出量',
+                label: '与 Na 反应放 H₂',
                 valStr: `${consumption.gasH2} mol`,
                 bg: '#eff6ff',
                 border: '#bfdbfe',
@@ -277,7 +277,7 @@ export const OrganicMatrixScene: React.FC<OrganicMatrixSceneProps> = ({
             }
             if (consumption.gasCO2 > 0) {
               productCards.push({
-                label: '二氧化碳 (CO₂) 放出',
+                label: '与 NaHCO₃ 放 CO₂',
                 valStr: `${consumption.gasCO2} mol`,
                 bg: '#faf5ff',
                 border: '#e9d5ff',

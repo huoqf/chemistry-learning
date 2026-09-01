@@ -2,15 +2,18 @@
  * organic3dData — 3D 分子模型数据库统一入口
  */
 import { FUNCTIONAL_GROUP_3D_MOLECULES } from './organic3dGroups'
+import { ISOMER_3D_MOLECULES } from './organic3dIsomers'
 import { GAOKAO_3D_MOLECULES } from './organic3dGaokao'
 import type { Organic3DMolecule } from './organic3dTypes'
 
 export * from './organic3dTypes'
 export * from './organic3dGroups'
+export * from './organic3dIsomers'
 export * from './organic3dGaokao'
 
 export const ORGANIC_3D_MOLECULES: Record<string, Organic3DMolecule> = {
   ...FUNCTIONAL_GROUP_3D_MOLECULES,
+  ...ISOMER_3D_MOLECULES,
   ...GAOKAO_3D_MOLECULES,
 }
 

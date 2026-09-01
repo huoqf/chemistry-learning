@@ -10,8 +10,8 @@ import { useOrganicQuantitative } from '../hooks/useOrganicQuantitative'
 import { renderHook } from '@testing-library/react'
 
 describe('有机官能团定性特征与定量转化反应矩阵数据与计算审计', () => {
-  it('应包含 12 大新高考高频官能团与核心题眼', () => {
-    expect(FUNCTIONAL_GROUPS.length).toBe(12)
+  it('应包含 14 大新高考高频官能团与核心题眼', () => {
+    expect(FUNCTIONAL_GROUPS.length).toBe(14)
     const ids = FUNCTIONAL_GROUPS.map((g) => g.id)
     expect(ids).toContain('alkene-c=c')
     expect(ids).toContain('alkyne-c#c')
@@ -25,8 +25,10 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
     expect(ids).toContain('halo-halogen')
     expect(ids).toContain('peptide-amide')
     expect(ids).toContain('amino-nh2')
+    expect(ids).toContain('nitro-no2')
+    expect(ids).toContain('cyano-cn')
 
-    expect(GAOKAO_CLUES.length).toBeGreaterThanOrEqual(8)
+    expect(GAOKAO_CLUES.length).toBeGreaterThanOrEqual(10)
   })
 
   it('酚酯水解必须消耗 2 mol NaOH，普通酯水解消耗 1 mol NaOH', () => {
@@ -221,6 +223,73 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
     const pet = POLYMERIZATION_MODELS.find((m) => m.id === 'poly-pet')
     expect(pet).toBeDefined()
     expect(pet?.smallMoleculeOutput).toContain('(2n - 1)')
+  })
+
+  it('含氮官能团扩展：硝基还原消耗 3 H₂，氰基加氢消耗 2 H₂ 且水解消耗 1 NaOH', () => {
+    const { result } = renderHook(() =>
+      useOrganicQuantitative({
+        'nitro-no2': 1, // 消耗 3 H2
+        'cyano-cn': 1, // 消耗 2 H2, 消耗 1 NaOH
+      })
+    )
+
+    expect(result.current.H2).toBe(5)
+    expect(result.current.NaOH).toBe(1)
+    expect(result.current.breakdowns.H2).toHaveLength(2)
+    expect(result.current.breakdowns.NaOH).toHaveLength(1)
+    expect(result.current.breakdowns.H2[0].reason).toContain('硝基')
+    expect(result.current.breakdowns.H2[1].reason).toContain('氰基')
+  })
+
+  it('CI 守门机制：全量 14 大官能团电荷与活泼氢守恒自动化遍历断言', () => {
+    // 遍历所有官能团验证活泼氢与 Na/NaOH 守恒法则：
+    // 1. 若与 Na 反应（产生 H2），则必为醇-OH、酚-OH 或 羧基-COOH，且消耗比为 1:1
+    // 2. 羧基与 NaHCO3 必须 1:1 产生 CO2 且与 NaOH 1:1 中和
+    // 3. 酚羟基消耗 1 NaOH 与 1 Na2CO3，但绝不消耗 NaHCO3
+    for (const g of FUNCTIONAL_GROUPS) {
+      if (g.consumptions.Na > 0) {
+        expect(['alcohol-oh', 'phenol-oh', 'carboxyl-cooh']).toContain(g.id)
+        expect(g.consumptions.Na).toBe(1)
+      }
+      if (g.consumptions.NaHCO3 > 0) {
+        expect(g.id).toBe('carboxyl-cooh')
+        expect(g.consumptions.NaHCO3).toBe(1)
+      }
+      if (g.id === 'phenol-oh') {
+        expect(g.consumptions.NaOH).toBe(1)
+        expect(g.consumptions.Na2CO3).toBe(1)
+        expect(g.consumptions.NaHCO3).toBe(0)
+      }
+    }
+  })
+
+  it('CI 守门机制：极端全量混合物（包含全部 14 种官能团各 1 个）多维定量计算一致性', () => {
+    const allCounts: Record<string, number> = {}
+    FUNCTIONAL_GROUPS.forEach((g) => {
+      allCounts[g.id] = 1
+    })
+
+    const { result } = renderHook(() => useOrganicQuantitative(allCounts))
+
+    // 理论期望：
+    // Na = 醇(1) + 酚(1) + 羧(1) = 3
+    // NaOH = 酚(1) + 羧(1) + 醇酯(1) + 酚酯(2) + 卤代(1) + 酰胺(1) + 氰基(1) = 8
+    // NaHCO3 = 羧(1) = 1
+    // Na2CO3 = 酚(1) + 羧(0.5) = 1.5
+    // Br2 = 双键(1) + 三键(2) + 酚(3) + 醛(1) = 7
+    // H2 = 双键(1) + 三键(2) + 醛(1) + 酮(1) + 硝基(3) + 氰基(2) = 10
+    // gasH2 = 醇(0.5) + 酚(0.5) + 羧(0.5) = 1.5
+    // gasCO2 = 羧(1) = 1.0
+    // precipitateAg = 醛(2) = 2.0
+    expect(result.current.Na).toBe(3)
+    expect(result.current.NaOH).toBe(8)
+    expect(result.current.NaHCO3).toBe(1)
+    expect(result.current.Na2CO3).toBe(1.5)
+    expect(result.current.Br2).toBe(7)
+    expect(result.current.H2).toBe(10)
+    expect(result.current.gasH2).toBe(1.5)
+    expect(result.current.gasCO2).toBe(1.0)
+    expect(result.current.precipitateAg).toBe(2.0)
   })
 })
 

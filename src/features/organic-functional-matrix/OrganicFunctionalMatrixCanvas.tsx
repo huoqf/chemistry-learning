@@ -94,7 +94,7 @@ export const OrganicFunctionalMatrixCanvas: React.FC = () => {
             />
           }
           center={
-            <div className="w-full h-full flex flex-col overflow-hidden bg-slate-50">
+            <div className="w-full h-full flex flex-col overflow-hidden">
               {viewMode === 0 && (
                 panelMode === 'matrix' ? (
                   <OrganicFullMatrixView

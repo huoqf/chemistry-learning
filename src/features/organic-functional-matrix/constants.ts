@@ -355,6 +355,64 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
     },
     notes: '氨基酸两性原理：氨基具有碱性（与强酸 1:1 成盐），羧基具有酸性（与强碱 1:1 中和）。',
   },
+  {
+    id: 'nitro-no2',
+    name: '硝基 (-NO₂)',
+    formula: '-NO_2',
+    structureSvg: '-NO_2',
+    category: 'nitrogen-containing',
+    testReagents: ['还原剂 (Fe / 稀盐酸 或 H₂ / Ni 催化加热)'],
+    testPhenomenon: '还原为芳香伯胺 (苯胺)，产物与漂白粉显特异紫蓝色',
+    testEquation: 'R-NO_2 + 3H_2 \\xrightarrow{Ni, \\Delta} R-NH_2 + 2H_2O',
+    consumptions: {
+      Na: 0,
+      NaOH: 0,
+      NaHCO3: 0,
+      Na2CO3: 0,
+      Br2: 0,
+      H2: 3, // 1 mol 硝基还原为氨基消耗 3 mol H2
+    },
+    qualitativeFeatures: {
+      silverOrFehling: '不反应',
+      kmno4: '不反应 (强吸电子钝化)',
+      gasOutput: '无气体',
+      reactionTypes: ['催化加氢还原 (耗3H₂)', '亲电取代引入', '强吸电子间位定位'],
+    },
+    spectroscopy: {
+      ir: '1500~1560 cm⁻¹ (不对称伸缩振动)；1340~1380 cm⁻¹ (对称伸缩振动特征强吸收峰)',
+      hnmr: '硝基极强吸电子去屏蔽效应，使邻位苯环质子化学位移显著移向极低场 (δ = 8.1~8.3 ppm)',
+    },
+    notes: '高考合成路线王牌前体：硝基是强吸电子间位定位基，通过催化加氢或 Fe/HCl 还原消耗 3 mol H₂ 定向转化为邻对位定位的氨基 (-NH₂)。',
+  },
+  {
+    id: 'cyano-cn',
+    name: '氰基 (-C≡N)',
+    formula: '-C\\equiv N',
+    structureSvg: '-C#N',
+    category: 'nitrogen-containing',
+    testReagents: ['酸性 / 碱性水解试剂 (稀硫酸或 NaOH 溶液加热)', '催化加氢 (H₂ / Ni, 加热)'],
+    testPhenomenon: '加热水解生成羧酸与铵盐（碱性条件释放刺激性 NH₃）；加氢还原为伯胺',
+    testEquation: 'R-CN + 2H_2O + H^+ \\xrightarrow{\\Delta} R-COOH + NH_4^+',
+    consumptions: {
+      Na: 0,
+      NaOH: 1, // 碱性水解 R-CN + NaOH + H2O -> R-COONa + NH3↑ 消耗 1 mol NaOH
+      NaHCO3: 0,
+      Na2CO3: 0,
+      Br2: 0,
+      H2: 2, // 1 mol 氰基加氢还原为伯胺 -CH2NH2 消耗 2 mol H2
+    },
+    qualitativeFeatures: {
+      silverOrFehling: '不反应',
+      kmno4: '通常不被酸性 KMnO₄ 氧化',
+      gasOutput: '碱性水解产生刺激性气味气体 (NH₃)',
+      reactionTypes: ['水解转化羧基', '加氢还原伯胺 (耗2H₂)', '增长碳链亲核取代'],
+    },
+    spectroscopy: {
+      ir: '2220~2260 cm⁻¹ (极特征尖锐 C≡N 伸缩振动峰，无重叠干扰，鉴别氰基的确定性证据)',
+      hnmr: '氰基连结碳上的质子 -CH₂-CN 化学位移处于中低场 δ = 2.3~2.7 ppm',
+    },
+    notes: '新高考增长碳链明星反应：卤代烃与 NaCN 发生亲核取代引入氰基（增加 1 个碳原子），水解一步获得羧基，加氢还原获得伯胺。',
+  },
 ]
 
 export const PROTECTION_GROUPS: ProtectionGroupItem[] = [
@@ -651,5 +709,19 @@ export const GAOKAO_CLUES: GaokaoClueItem[] = [
     deductionTarget: '含有【手性碳原子 *C】的非对称取代结构 (如乳酸或 2-氯丙酸)',
     matchedGroupId: 'carboxyl-cooh',
     principle: '手性碳原子连接 4 个不同基团，分子不存在对称面与对称中心，各质子化学环境均不相同。',
+  },
+  {
+    id: 'clue-nitro-reduction',
+    clueText: '在 Fe/HCl 或催化加氢条件下消耗 3 mol H₂ 生成具有弱碱性的芳香伯胺',
+    deductionTarget: '分子中含【硝基 -NO₂】',
+    matchedGroupId: 'nitro-no2',
+    principle: '硝基经还原剂彻底还原为氨基，消耗 3 mol H₂，生成芳香伯胺可与酸成盐。',
+  },
+  {
+    id: 'clue-cyano-hydrolysis',
+    clueText: '在酸性或碱性加热条件下水解生成羧酸，或红外光谱在 2220~2260 cm⁻¹ 出现极尖锐吸收峰',
+    deductionTarget: '分子中含【氰基 -C≡N】',
+    matchedGroupId: 'cyano-cn',
+    principle: '氰基经强酸/强碱加热完全水解为羧酸与铵盐/氨气，红外光谱具有特征三键伸缩强吸收。',
   },
 ]
