@@ -1,51 +1,8 @@
-import type {
-  RetrosynthesisModelData,
-  ProtectionCheatItem,
-} from '../types'
+import type { RetrosynthesisModelData } from '../types'
 
-export const GAOKAO_PROTECTION_CHEAT_SHEET: ProtectionCheatItem[] = [
-  {
-    targetGroup: '酚羟基 / 醇羟基 (-OH)',
-    reagents: '(CH₃CO)₂O / 吡啶 或 CH₃COCl',
-    protectedForm: '乙酸酯 (-OCOCH₃)',
-    tolerance: '耐酸性氧化剂 (KMnO₄/H⁺)、烷基化亲电试剂',
-    deprotection: '稀 NaOH 溶液 / 稀酸加热水解',
-    examTip: '防止酚羟基自身氧化或发生分子间多重缩合。',
-  },
-  {
-    targetGroup: '酚羟基 (-OH)',
-    reagents: 'PhCH₂Cl / K₂CO₃ (苄氯)',
-    protectedForm: '苄醚 (-OCH₂Ph)',
-    tolerance: '耐强碱、耐还原剂、耐强酸',
-    deprotection: 'H₂ + Pd/C 常温常压催化氢解',
-    examTip: '温和脱保护生成 PhCH₃ (甲苯) 和复原酚羟基。',
-  },
-  {
-    targetGroup: '醛基 / 酮羰基 (-CHO / >C=O)',
-    reagents: 'HO-CH₂CH₂-OH / TsOH (乙二醇)',
-    protectedForm: '1,3-二氧五环 (环状缩醛 / 缩酮)',
-    tolerance: '耐强碱、耐强还原剂 (LiAlH₄/NaBH₄)、耐格氏试剂',
-    deprotection: '稀盐酸 (H₃O⁺) / 加热回流水解',
-    examTip: '【绝不能用碱脱保护】！缩醛在碱中极稳定，只在酸中水解。',
-  },
-  {
-    targetGroup: '碳碳双键 (-CH=CH-)',
-    reagents: 'Br₂ / CCl₄ 溶液 (避光加成)',
-    protectedForm: '邻二溴代烷 (-CHBr-CHBr-)',
-    tolerance: '消除不饱和性，耐酸性 KMnO₄ 强氧化、耐强碱性烷基化',
-    deprotection: '金属 Zn 粉 / 无水乙醇加热 (β-消去)',
-    examTip: '【失分重灾区】：高考路线设计中，千万不能遗漏 Zn/EtOH 脱溴步骤！',
-  },
-  {
-    targetGroup: '氨基 (-NH₂)',
-    reagents: '(CH₃CO)₂O 或 CH₃COCl',
-    protectedForm: '乙酰苯胺 (-NHCOCH₃)',
-    tolerance: '降低氨基氮的亲核性与碱性，耐浓硝酸氧化/定位钝化',
-    deprotection: '酸性 (稀H₂SO₄) 或碱性 (NaOH) 水解',
-    examTip: '苯胺硝化制对硝基苯胺时，必须先将氨基乙酰化保护，防硝酸氧化并控制对位取代。',
-  },
-]
-
+/**
+ * 保护基策略模型一：贝诺酯 (Benorilate) 逆合成与酚羟基保护剖析
+ */
 export const MODEL_ASPIRIN_BENORILATE: RetrosynthesisModelData = {
   id: 'aspirin-benorilate',
   title: '模型一：贝诺酯 (Benorilate) 逆合成与酚羟基保护剖析',
@@ -313,6 +270,9 @@ export const MODEL_ASPIRIN_BENORILATE: RetrosynthesisModelData = {
   ],
 }
 
+/**
+ * 保护基策略模型二：Diels-Alder 环加成与乙二醇羰基缩醛 Protection
+ */
 export const MODEL_DIELS_ALDER_ACETAL: RetrosynthesisModelData = {
   id: 'diels-alder-acetal',
   title: '模型二：Diels-Alder 环加成与乙二醇羰基缩醛 Protection',
@@ -552,6 +512,246 @@ export const MODEL_DIELS_ALDER_ACETAL: RetrosynthesisModelData = {
         { from: 'act', to: 'tm', label: '1. LiAlH₄ 还原 -COOMe 为 -CH₂OH' },
         { from: 'rg', to: 'tm', label: '2. H₃O⁺ 水解脱除缩醛' },
         { from: 'tm', to: 'eg_free', label: '释放乙二醇' },
+      ],
+    },
+  ],
+}
+
+/**
+ * 保护基策略模型三：碳碳双键加溴 Protection 与锌粉脱溴复原
+ */
+export const MODEL_DOUBLE_BOND_PROTECTION: RetrosynthesisModelData = {
+  id: 'double-bond-protection',
+  title: '模型三：碳碳双键加溴 Protection 与锌粉脱溴复原',
+  subtitle: '双键抗氧化/强亲电试剂加成保护与 β-消去脱保护',
+  targetMolecule: '4-甲氧基苯丙烯 (TM)',
+  targetFormula: 'C₁₀H₁₂O',
+  difficulty: '高考冲刺',
+  description:
+    '目标分子中酚羟基需在强碱性条件下与卤代烃反应转化为甲基醚，但原料中含有活泼碳碳双键，若直接反应或氧化修饰易发生副反应。先加溴保护消除双键不饱和性，成醚后再用 Zn 粉脱溴复原。',
+  coreStrategy:
+    '碳碳双键加成 Br₂ 转化为邻二溴代烷保护；在强碱下进行酚羟基成醚烷基化；最后使用金属 Zn 粉在乙醇中发生 β-消去脱除两个溴原子，复原碳碳双键。',
+  protectionKeyPoints: [
+    '碳碳双键极易被酸性 KMnO₄ 氧化或与强亲电/强碱试剂副反应',
+    '加成 Br₂ / CCl₄ 生成邻二溴代物，消除不饱和性',
+    '成醚反应完成后，利用金属 Zn 的还原性在乙醇中脱溴复原双键',
+    '【高考大题规范】：在合成路线答题框中，绝不能漏写最后一步 Zn / EtOH 脱溴！',
+  ],
+  unprotectedCrashDemo: {
+    warningTitle: '🚨 未保护副反应风险（双键发生异构化或氧化断裂）',
+    consequence: '4-烯丙基酚中的双键与苯环非共轭，在高温强碱（NaOH/CH₃I）下双键易发生热力学异构化迁移至共轭位置；若后续涉及酸性高锰酸钾等强氧化剂，双键会被直接氧化切断生成苯甲酸衍生物。',
+    solution: '先加入 Br₂/CCl₄ 消除不饱和性保护双键，碱性甲基化成醚后加入 Zn/EtOH 回流脱溴复原。',
+  },
+  infoReaction: {
+    name: 'Zn 粉脱溴复原双键 (Deprotection)',
+    equation: 'R-CHBr-CH₂Br + Zn ─(EtOH, Δ)→ R-CH=CH₂ + ZnBr₂↓',
+    mechanismDesc: '金属 Zn 作为两电子还原剂，进攻邻二溴代烷发生反式 β-消去，生成烯烃与 ZnBr₂。',
+  },
+  steps: [
+    {
+      stepIndex: 1,
+      title: '第 1 步：碳碳双键加成 Br₂ 保护 (消除不饱和性)',
+      description: '4-烯丙基苯酚与 Br₂/CCl₄ 发生亲电加成，选择性将烯丙基双键转化为邻二溴烷烃。',
+      reactants: [
+        { name: '4-烯丙基苯酚', formula: 'C₉H₁₀O' },
+        { name: '溴单质', formula: 'Br₂' },
+      ],
+      products: [{ name: '二溴代产物', formula: 'C₉H₁₀Br₂O' }],
+      reagents: 'Br₂ / CCl₄ 溶液 / 避光室温',
+      protectionStatus: {
+        isProtected: true,
+        protectedGroup: '碳碳双键 (C=C)',
+        protectingAgent: '溴单质 (Br₂)',
+        reason: '加成消除双键不饱和性，防止后续强碱性烷基化过程中发生异构化或氧化破坏。',
+      },
+      cutBond: null,
+      atomEconomy: 100.0,
+      fgiType: '双键加溴保护 (Protection)',
+      nodes: [
+        {
+          id: 'ph',
+          label: '4-烯丙基苯酚 (原料)',
+          formula: 'C₉H₁₀O',
+          x: 230,
+          y: 110,
+          role: 'precursor',
+          functionalGroups: [
+            { name: '烯丙基双键', formula: '-CH₂-CH=CH₂ (待保护)', color: 'amber', isReacting: true },
+            { name: '酚羟基', formula: '-OH', color: 'blue' },
+          ],
+        },
+        {
+          id: 'br',
+          label: 'Br₂ Protection 试剂',
+          formula: 'Br₂ / CCl₄',
+          x: 610,
+          y: 110,
+          role: 'reagent',
+          badge: '不饱和性消除剂',
+        },
+        {
+          id: 'dib',
+          label: '邻二溴代物 (Protection 态)',
+          formula: 'C₉H₁₀Br₂O',
+          x: 420,
+          y: 330,
+          role: 'protected',
+          badge: '双键已饱和化 🛡',
+          isProtectedGroup: true,
+          functionalGroups: [
+            { name: '邻二溴代烷', formula: '-CHBr-CH₂Br', color: 'emerald', isProtected: true },
+            { name: '酚羟基', formula: '-OH', color: 'blue' },
+          ],
+        },
+      ],
+      connections: [
+        { from: 'ph', to: 'dib', label: '亲电加成 Br₂' },
+        { from: 'br', to: 'dib', label: '消除 C=C 不饱和性', isProtectionShield: true },
+      ],
+    },
+    {
+      stepIndex: 2,
+      title: '第 2 步：强碱下酚羟基甲基化 (威廉姆逊成醚反应)',
+      description: '在 K₂CO₃/NaOH 强碱作用下，酚羟基脱质子进攻碘甲烷 (CH₃I)，生成酚甲基醚。',
+      reactants: [
+        { name: '二溴中间体', formula: 'C₉H₁₀Br₂O' },
+        { name: '碘甲烷 (CH₃I)', formula: 'CH₃I' },
+      ],
+      products: [
+        { name: '二溴代甲基醚', formula: 'C₁₀H₁₂Br₂O' },
+        { name: '碘化物副产物', formula: 'KI' },
+      ],
+      reagents: 'K₂CO₃ / 丙酮 / 50℃ 回流',
+      protectionStatus: {
+        isProtected: true,
+        protectedGroup: 'C=C 仍处于二溴代保护态',
+        reason: '酚羟基完成成醚转化，双键受到二溴保护不受强碱影响。',
+      },
+      cutBond: null,
+      atomEconomy: 70.6,
+      fgiType: '威廉姆逊成醚反应 (Alkylation)',
+      nodes: [
+        {
+          id: 'dib',
+          label: '二溴代酚',
+          formula: 'C₉H₁₀Br₂O',
+          x: 230,
+          y: 110,
+          role: 'intermediate',
+          functionalGroups: [
+            { name: '邻二溴保护态', formula: '-CHBr-CH₂Br', color: 'emerald', isProtected: true },
+            { name: '酚羟基', formula: '-OH', color: 'blue', isReacting: true },
+          ],
+        },
+        {
+          id: 'me',
+          label: 'CH₃I 甲基化试剂',
+          formula: 'CH₃I / K₂CO₃',
+          x: 610,
+          y: 110,
+          role: 'reagent',
+          badge: '甲基供体',
+        },
+        {
+          id: 'eth',
+          label: '二溴甲基醚中间体',
+          formula: 'C₁₀H₁₂Br₂O',
+          x: 420,
+          y: 320,
+          role: 'intermediate',
+          badge: '酚醚已生成',
+          functionalGroups: [
+            { name: '邻二溴保护态', formula: '-CHBr-CH₂Br', color: 'emerald', isProtected: true },
+            { name: '甲氧基', formula: '-OCH₃', color: 'purple' },
+          ],
+        },
+        {
+          id: 'dep',
+          label: '待 Zn 粉脱溴 Deprotection',
+          formula: 'Zn / EtOH',
+          x: 420,
+          y: 490,
+          role: 'intermediate',
+          badge: '等待脱溴复原双键',
+        },
+      ],
+      connections: [
+        { from: 'dib', to: 'eth', label: '酚 -OH 进攻 CH₃I' },
+        { from: 'me', to: 'eth', label: '引入甲基 (-CH₃)' },
+        { from: 'eth', to: 'dep', label: '下一步脱保护' },
+      ],
+    },
+    {
+      stepIndex: 3,
+      title: '第 3 步：锌粉在乙醇中加热脱溴复原碳碳双键',
+      description: '加入金属 Zn 粉在无水乙醇中加热回流，Zn 进攻邻二溴代烷发生 β-消去，复原碳碳双键。',
+      reactants: [
+        { name: '二溴代甲基醚', formula: 'C₁₀H₁₂Br₂O' },
+        { name: '金属 Zn 粉', formula: 'Zn' },
+      ],
+      products: [
+        { name: '4-甲氧基苯丙烯 (TM)', formula: 'C₁₀H₁₂O' },
+        { name: '副产物 溴化锌', formula: 'ZnBr₂' },
+      ],
+      reagents: 'Zn 粉 / CH₃CH₂OH / Δ 回流',
+      protectionStatus: {
+        isProtected: false,
+        deprotectingAgent: 'Zn 粉 / 乙醇 / 加热',
+        reason: '还原性消去脱溴，成功保留酚甲基醚并复原双键。',
+      },
+      cutBond: null,
+      atomEconomy: 39.7,
+      fgiType: 'Zn 粉消去脱保护 (Deprotection)',
+      nodes: [
+        {
+          id: 'eth',
+          label: '二溴代甲基醚',
+          formula: 'C₁₀H₁₂Br₂O',
+          x: 230,
+          y: 110,
+          role: 'intermediate',
+          functionalGroups: [
+            { name: '二溴保护基', formula: '-CHBr-CH₂Br', color: 'emerald', isReacting: true },
+            { name: '甲氧基', formula: '-OCH₃', color: 'purple' },
+          ],
+        },
+        {
+          id: 'zn',
+          label: 'Zn 粉 / EtOH 脱溴试剂',
+          formula: 'Zn',
+          x: 610,
+          y: 110,
+          role: 'reagent',
+          badge: '两电子还原剂',
+        },
+        {
+          id: 'tm',
+          label: '4-甲氧基苯丙烯 (TM)',
+          formula: 'C₁₀H₁₂O',
+          x: 420,
+          y: 320,
+          role: 'TM',
+          isTarget: true,
+          badge: '完好双键 + 酚醚',
+          functionalGroups: [
+            { name: '复原烯烃双键', formula: '-CH₂-CH=CH₂', color: 'amber' },
+            { name: '酚甲基醚', formula: '-OCH₃', color: 'purple' },
+          ],
+        },
+        {
+          id: 'salt',
+          label: '副产物 溴化锌 沉淀',
+          formula: 'ZnBr₂',
+          x: 420,
+          y: 490,
+          role: 'intermediate',
+          badge: '过滤分离',
+        },
+      ],
+      connections: [
+        { from: 'eth', to: 'tm', label: 'Zn 脱溴 β-消去' },
+        { from: 'zn', to: 'tm', label: '生成 ZnBr₂' },
+        { from: 'tm', to: 'salt', label: '固液分离' },
       ],
     },
   ],
