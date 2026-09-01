@@ -151,7 +151,7 @@ export const N_CONFIG: ElementValenceConfig = {
       toSubstance: 'NO',
       reagent: 'O₂ (Pt-Rh 催化剂/加热)',
       equation: '4NH₃ + 5O₂ =催化剂/△= 4NO + 6H₂O',
-      electronTransfer: '失 4 × 5e⁻ (-3 → +2)',
+      electronTransfer: '每个 N 由 -3 价升至 +2 价失 5e⁻，4mol NH₃ 共转移 20mol e⁻',
       type: 'oxidation',
     },
     {

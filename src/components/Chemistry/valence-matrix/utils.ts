@@ -3,20 +3,37 @@ import type { KnowledgeNode } from '@/data/types'
 import { getKnowledgeNode } from '@/data/knowledgeTree'
 
 /**
- * 精确物质匹配函数（按 '/'、'、' 等拆分候选物质，精确匹配避免子串污染）
+ * 精确化学式与别名语义归一化（剥离中文注释，严格保留配合物/原子团括号，角标对齐）
+ */
+export function normalizeChemicalFormula(raw: string): string {
+  if (!raw) return ''
+  return raw
+    .trim()
+    .replace(/\([^\)]*[\u4e00-\u9fa5]+[^\)]*\)/g, '')
+    .replace(/（[^）]*[\u4e00-\u9fa5]+[^）]*）/g, '')
+    .replace(/₀/g, '0').replace(/₁/g, '1').replace(/₂/g, '2')
+    .replace(/₃/g, '3').replace(/₄/g, '4').replace(/₅/g, '5')
+    .replace(/₆/g, '6').replace(/₇/g, '7').replace(/₈/g, '8')
+    .replace(/₉/g, '9').replace(/⁺/g, '+').replace(/⁻/g, '-')
+    .replace(/\s+/g, '')
+}
+
+export function extractSubstanceTokens(str: string): string[] {
+  if (!str) return []
+  return str
+    .split(/[/,，、或|]/)
+    .map(s => normalizeChemicalFormula(s))
+    .filter(Boolean)
+}
+
+/**
+ * 精确化学物质匹配函数（双向 Token 化交集比对，彻底消除带斜杠/别名断联与穿透误匹配）
  */
 export function matchesSubstance(field: string, targetSubstance: string): boolean {
   if (!field || !targetSubstance) return false
-  const targetClean = targetSubstance.trim()
-  const parts = field.split(/[/,，、或|]/).map(p => p.trim())
-  return parts.some(
-    p =>
-      p === targetClean ||
-      p.startsWith(targetClean + '(') ||
-      p.startsWith(targetClean + '（') ||
-      targetClean.startsWith(p + '(') ||
-      targetClean.startsWith(p + '（')
-  )
+  const fieldTokens = new Set(extractSubstanceTokens(field))
+  const targetTokens = extractSubstanceTokens(targetSubstance)
+  return targetTokens.some(t => fieldTokens.has(t))
 }
 
 /**

@@ -76,7 +76,7 @@ export const MN_CONFIG: ElementValenceConfig = {
       category: '盐',
       colorText: '墨绿色锰酸盐溶液',
       colorStyle: 'bg-emerald-800 text-white border-emerald-900',
-      rgbColor: PHENOMENON_COLORS.cr2o72Minus,
+      rgbColor: '#065F46',
       testReaction: '向墨绿色 K₂MnO₄ 溶液中加入稀硫酸，发生歧化反应，溶液迅速转为深紫红色 (KMnO₄) 并析出黑色沉淀 (MnO₂↓)',
       equation: '3MnO₄²⁻ + 4H⁺ = 2MnO₄⁻ + MnO₂↓ + 2H₂O',
       roleDescription: '中间价态歧化盐',
