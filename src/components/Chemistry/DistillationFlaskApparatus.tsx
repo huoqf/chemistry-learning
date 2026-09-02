@@ -124,19 +124,29 @@ export function DistillationFlaskApparatus({
         />
       )}
 
-      {/* 顶部橡皮塞/磨砂塞 */}
+      {/* 顶部橡皮塞 (打孔塞) */}
       {hasStopper && (
-        <polygon
-          points={`
-            ${neckLeft - 2}, -10
-            ${neckRight + 2}, -10
-            ${neckRight}, 2
-            ${neckLeft}, 2
-          `}
-          fill={SCENE_COLORS.materials.rubber}
-          stroke={SCENE_COLORS.materials.metalBorder}
-          strokeWidth={STROKE.reference}
-        />
+        <g id="flask-stopper">
+          <polygon
+            points={`
+              ${neckLeft - 2}, -10
+              ${neckRight + 2}, -10
+              ${neckRight}, 2
+              ${neckLeft}, 2
+            `}
+            fill={SCENE_COLORS.stopper.rubberStopper}
+            stroke={SCENE_COLORS.stopper.rubberStopperBorder}
+            strokeWidth={STROKE.reference}
+          />
+          {/* 单孔塞中心穿孔 */}
+          <circle
+            cx={(neckLeft + neckRight) / 2}
+            cy={-4}
+            r={3}
+            fill="#1E293B"
+            opacity={0.7}
+          />
+        </g>
       )}
 
       {/* 支管口极微引导标注线 */}

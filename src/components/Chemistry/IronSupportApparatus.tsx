@@ -24,6 +24,8 @@ export interface IronSupportApparatusProps {
   ringPos?: number
   /** 铁圈半径 */
   ringRadius?: number
+  /** 底座朝向：'left' 时底座向左展开(立柱靠右，完全避开右侧酒精灯)，默认向右 */
+  baseAlign?: 'left' | 'right'
   /** 字体缩放函数 */
   font?: FontScaler
 }
@@ -47,16 +49,19 @@ export function IronSupportApparatus({
   hasRing = false,
   ringPos = 0.65,
   ringRadius = 35,
+  baseAlign = 'right',
 }: IronSupportApparatusProps) {
   const w = width
   const h = height
 
-  const baseH = 14
-  const baseW = w * 0.9
-  const baseLeft = (w - baseW) / 2
+  const baseH = 10
+  // baseAlign === 'left' 时采用紧凑型 56px 重心平衡底座；默认时为全宽底座
+  const baseW = baseAlign === 'left' ? 56 : (w * 0.9)
+  const baseLeft = baseAlign === 'left' ? (w - baseW) : ((w - baseW) / 2)
 
   const poleW = 6
-  const poleLeft = baseLeft + baseW * 0.2
+  // baseAlign === 'left' 时，立柱位于底座右侧，向左仅展开 44px，完全避开右侧酒精灯与左侧边栏！
+  const poleLeft = baseAlign === 'left' ? (baseLeft + baseW - 12) : (baseLeft + baseW * 0.2)
   const poleCenterX = poleLeft + poleW / 2
 
   // 若提供了 targetClampPoint，智能反推 clampPos
@@ -127,42 +132,44 @@ export function IronSupportApparatus({
             strokeWidth={STROKE.objectLine}
           />
 
-          {/* 橡皮包覆双叉夹爪 (Prong Clamp Jaws) */}
+          {/* 教材标准两爪夹 (Prong Clamp Jaws: 紧扣瓶颈) */}
           <g transform={`translate(${armLength}, 0) rotate(${clampAngle})`}>
-            {/* 上夹爪 (带红色/黑色防滑胶套) */}
+            {/* 上夹爪主体与防滑胶套 (紧贴瓶颈上半弧) */}
             <path
-              d="M -12,-4 C -4,-14 6,-14 12,-10"
+              d="M -6,-2 L 0,-10 L 14,-13"
               fill="none"
               stroke="#334155"
               strokeWidth={3}
               strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
-              d="M 2,-14 C 6,-14 10,-13 12,-10"
+              d="M 2,-10 L 14,-13"
               fill="none"
-              stroke="#991B1B" // 黑色/红色防滑胶套
+              stroke="#7F1D1D" // 暗红褐色防滑胶套
               strokeWidth={4.5}
               strokeLinecap="round"
             />
 
-            {/* 下夹爪 */}
+            {/* 下夹爪主体与防滑胶套 (紧贴瓶颈下半弧) */}
             <path
-              d="M -12,4 C -4,14 6,14 12,10"
+              d="M -6,2 L 0,10 L 14,13"
               fill="none"
               stroke="#334155"
               strokeWidth={3}
               strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
-              d="M 2,14 C 6,14 10,13 12,10"
+              d="M 2,10 L 14,13"
               fill="none"
-              stroke="#991B1B"
+              stroke="#7F1D1D"
               strokeWidth={4.5}
               strokeLinecap="round"
             />
 
-            {/* 夹爪调节螺栓 */}
-            <rect x={-8} y={-4} width={4} height={8} rx={1} fill="#64748B" />
+            {/* 铁夹中轴调节螺母 */}
+            <rect x={-4} y={-5} width={5} height={10} rx={1} fill="#475569" stroke="#1E293B" strokeWidth={0.8} />
           </g>
         </g>
       )}

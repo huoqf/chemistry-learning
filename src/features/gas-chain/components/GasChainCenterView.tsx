@@ -13,8 +13,6 @@ import {
   SolidHeatingGeneratorApparatus,
   LiquidHeatingGeneratorApparatus,
   NoHeatGeneratorApparatus,
-  BeakerApparatus,
-  BubbleEmitter,
   SafetyBottleApparatus,
   WaterDisplacementCollectionApparatus,
 } from '@/components/Chemistry'
@@ -103,27 +101,6 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
   const genLayout = getLayout('generator')
   const collLayout = getLayout('collection')
   const tailLayout = getLayout('tailgas')
-
-  // 当前洗气步骤中的首个洗气试剂（用于颜色等辅助）
-  const washReagent = washingSteps[0]?.reagent ?? 'none'
-
-  // 4. 视觉颜色计算
-  let washSolutionColor = withAlpha(SCENE_COLORS.reagent.solution, 0.15)
-  if (washReagent === 'fuchsin') {
-    washSolutionColor =
-      targetGas === 'SO₂' && flowRate > 0
-        ? withAlpha(SCENE_COLORS.reactionAndGas.dryingTube, 0.2)
-        : withAlpha(PHENOMENON_COLORS.fuchsinRed, 0.6)
-  } else if (washReagent === 'kmno4') {
-    washSolutionColor =
-      (targetGas === 'SO₂' || targetGas === 'C₂H₄') && flowRate > 0
-        ? withAlpha(SCENE_COLORS.materials.glass, 0.2)
-        : withAlpha(PHENOMENON_COLORS.mno4Minus, 0.7)
-  } else if (washReagent === 'sat-nacl') {
-    washSolutionColor = withAlpha(SCENE_COLORS.materials.glass, 0.3)
-  } else if (washReagent === 'naoh') {
-    washSolutionColor = withAlpha(SCENE_COLORS.reagent.solution, 0.2)
-  }
 
   let gasColor = withAlpha(SCENE_COLORS.reagent.solution, 0.1)
   if (targetGas === 'Cl₂') gasColor = withAlpha(PHENOMENON_COLORS.cl2Gas, 0.6)
@@ -286,14 +263,17 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                 const stepNum = i + 2  // 步骤编号：①发生, ②..., 最后收集/尾气
 
                 const reagentLabel = step.reagent === 'sat-nacl' ? '饱和食盐水'
-                  : step.reagent === 'naoh' ? 'NaOH 溶液'
-                    : step.reagent === 'fuchsin' ? '品红溶液'
-                      : step.reagent === 'kmno4' ? '酸性KMnO₄'
-                        : step.reagent === 'conc-h2so4' ? '浓H₂SO₄'
-                          : step.reagent === 'soda-lime' ? '碱石灰'
-                            : step.reagent === 'cacl2' ? 'CaCl₂'
-                              : step.reagent === 'p2o5' ? 'P₂O₅'
-                                : step.reagent
+                  : step.reagent === 'nahco3' ? '饱和NaHCO₃溶液'
+                    : step.reagent === 'nahso3' ? '饱和NaHSO₃溶液'
+                      : step.reagent === 'cuso4' ? '饱和CuSO₄溶液'
+                        : step.reagent === 'naoh' ? 'NaOH 溶液'
+                          : step.reagent === 'fuchsin' ? '品红溶液'
+                            : step.reagent === 'kmno4' ? '酸性KMnO₄'
+                              : step.reagent === 'conc-h2so4' ? '浓H₂SO₄'
+                                : step.reagent === 'soda-lime' ? '碱石灰'
+                                  : step.reagent === 'cacl2' ? 'CaCl₂'
+                                    : step.reagent === 'p2o5' ? 'P₂O₅'
+                                      : step.reagent
 
                 return (
                   <g key={step.id} id={`slot-${i + 1}-wash`}>
@@ -325,7 +305,6 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                         bubbling={flowRate > 0}
                       />
                     ) : (
-                      // 普通洗气瓶（饱和食盐水/NaOH/品红/KMnO4/水）
                       <>
                         <GasWashingBottleApparatus
                           x={stepLayout.x}
@@ -340,22 +319,6 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                           bubbling={flowRate > 0 && !(step.reversed)}
                           reversed={step.reversed ?? false}
                         />
-                        {/* 洗液着色覆盖层 */}
-                        <rect
-                          x={stepLayout.x + 10}
-                          y={stepLayout.y + 75}
-                          width={stepLayout.width - 20}
-                          height={55}
-                          fill={i === 0 ? washSolutionColor : withAlpha(SCENE_COLORS.reagent.solution, 0.2)}
-                          rx={4}
-                        />
-                        {flowRate > 0 && !step.reversed && (
-                          <BubbleEmitter
-                            x={stepLayout.x + stepLayout.width * 0.3}
-                            y={stepLayout.y + 110}
-                            count={8}
-                          />
-                        )}
                         {step.reversed && (
                           <g transform={`translate(${centerX}, ${stepLayout.y - 16})`}>
                             <rect
@@ -441,6 +404,7 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                             : 'long-in-short-out'
                         }
                         gasLabel={targetGas}
+                        hasTailGas={tailGas !== 'none'}
                         font={canvasSize.font}
                       />
                       {/* 仅在显式错用向下排长进短出时挂载警告 */}
@@ -471,7 +435,7 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                     </>
                   )}
 
-                  <g transform={`translate(${slotX[3]}, ${baseY + 28})`}>
+                  <g transform={`translate(${collLayout.x + collLayout.width / 2}, ${baseY + 28})`}>
                     <text
                       x={0}
                       y={0}
@@ -615,32 +579,19 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       )}
                     </>
                   ) : (
-                    <g transform={`translate(${tailLayout.x}, ${tailLayout.y})`}>
-                      <BeakerApparatus
-                        x={0}
-                        y={0}
+                    // naoh-absorber / 其他吸收剖氧化物：使用洗气瓶形式（高考规范 NaOH 溶液吸收尾气标准图示）
+                    // 严禁使用直导管插入吸收液——极易倒吸圆裂，必须用洗气瓶或倒置漏斗
+                    <>
+                      <GasWashingBottleApparatus
+                        x={tailLayout.x}
+                        y={tailLayout.y}
                         width={tailLayout.width}
                         height={tailLayout.height}
-                        fillLevel={0.65}
-                        fillColor={withAlpha(SCENE_COLORS.reagent.solution, 0.25)}
+                        reagentType="base"
+                        bubbling={flowRate > 0}
+                        isTailGas={true}
                       />
-                      {/* 直导管插入溶液 */}
-                      <line
-                        x1={tailLayout.width * 0.5}
-                        y1={-30}
-                        x2={tailLayout.width * 0.5}
-                        y2={65}
-                        stroke={SCENE_COLORS.container.beakerBorder}
-                        strokeWidth={4}
-                      />
-                      {flowRate > 0 && (
-                        <BubbleEmitter
-                          x={tailLayout.width * 0.5}
-                          y={65}
-                          count={5}
-                        />
-                      )}
-                    </g>
+                    </>
                   )}
 
                   {/* 倒吸液体爬升警告 */}
@@ -660,7 +611,7 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                     </g>
                   )}
 
-                  <g transform={`translate(${slotX[4]}, ${baseY + 28})`}>
+                  <g transform={`translate(${tailLayout.x + tailLayout.width / 2}, ${baseY + 28})`}>
                     <text
                       x={0}
                       y={0}

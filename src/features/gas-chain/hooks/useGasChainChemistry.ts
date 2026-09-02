@@ -144,6 +144,12 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       purificationEquation = '\\text{未配置净化洗气瓶 (跳过洗气)}'
     } else if (washReagent === 'sat-nacl') {
       purificationEquation = '\\text{HCl} + \\text{H}_2\\text{O} \\rightarrow \\text{HCl(aq)} \\quad (\\text{饱和 NaCl 吸 HCl 抑 Cl}_2)'
+    } else if (washReagent === 'nahco3') {
+      purificationEquation = '\\text{NaHCO}_3 + \\text{HCl} = \\text{NaCl} + \\text{CO}_2\\uparrow + \\text{H}_2\\text{O} \\quad (\\text{除 HCl 增产 CO}_2)'
+    } else if (washReagent === 'nahso3') {
+      purificationEquation = '\\text{NaHSO}_3 + \\text{HCl} = \\text{NaCl} + \\text{SO}_2\\uparrow + \\text{H}_2\\text{O} \\quad (\\text{除 HCl 抑 SO}_2)'
+    } else if (washReagent === 'cuso4') {
+      purificationEquation = '\\text{CuSO}_4 + \\text{H}_2\\text{S} = \\text{CuS}\\downarrow + \\text{H}_2\\text{SO}_4 \\quad (\\text{除去恶臭剧毒 H}_2\\text{S})'
     } else if (washReagent === 'fuchsin') {
       purificationEquation = '\\text{SO}_2 + \\text{品红} \\rightarrow \\text{无色加合物 (检验 SO}_2 \\text{漂白性)}'
     } else if (washReagent === 'kmno4') {
@@ -196,6 +202,49 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
         title: '高考经典陷阱：除 C₂H₄ 中 SO₂ 杂质严禁使用酸性 KMnO₄！',
         description: '酸性 KMnO₄ 具有强氧化性，会直接切断乙烯的碳碳双键，将乙烯氧化生成 CO₂ 气体，引入新的 CO₂ 杂质！',
         examPoint: '除去 C₂H₄ 中混有的 SO₂/CO₂ 必须且只能使用 NaOH 溶液洗气瓶。',
+      })
+    }
+
+    // CO₂ 净化试剂误用判断
+    if (targetGas === 'CO₂') {
+      if (washReagent === 'naoh') {
+        issues.push({
+          id: 'co2-naoh-wrong',
+          level: 'danger',
+          title: '严重化学错误：NaOH 溶液会完全吸收目标气体 CO₂！',
+          description: 'CO₂ 为酸性氧化物，与 NaOH 剧烈反应 2NaOH + CO₂ = Na₂CO₃ + H₂O，导致目标气体全部被吸收，无气体导出！',
+          examPoint: '除去 CO₂ 中混有的 HCl 酸雾，必须使用饱和 NaHCO₃ 溶液（NaHCO₃ + HCl = NaCl + CO₂↑ + H₂O），严禁使用 NaOH 或 Na₂CO₃ 溶液。',
+        })
+      } else if (washReagent === 'water') {
+        issues.push({
+          id: 'co2-water-warning',
+          level: 'warning',
+          title: '洗气试剂选择不当：CO₂ 在水中溶解度较大导致气体损失！',
+          description: '常温常压下 1 体积水可溶解约 1 体积 CO₂，用水洗气会溶解吸收大量目标气体。应改用饱和 NaHCO₃ 溶液。',
+          examPoint: '除 HCl 杂质用饱和 NaHCO₃ 溶液，既抑制 CO₂ 溶解，又将 HCl 转化为 CO₂。',
+        })
+      }
+    }
+
+    // SO₂ 净化试剂误用判断
+    if (targetGas === 'SO₂' && washReagent === 'naoh') {
+      issues.push({
+        id: 'so2-naoh-wrong',
+        level: 'danger',
+        title: '严重化学错误：NaOH 溶液会完全吸收目标气体 SO₂！',
+        description: 'SO₂ 为酸性氧化物，通入 NaOH 溶液中直接反应生成 Na₂SO₃，目标气体无法导出！',
+        examPoint: '除去 SO₂ 中混有的 SO₃/HCl 酸雾，应选用饱和 NaHSO₃ 溶液洗气，严禁选用 NaOH 溶液。',
+      })
+    }
+
+    // C₂H₂ 净化试剂误用判断
+    if (targetGas === 'C₂H₂' && washReagent === 'naoh') {
+      issues.push({
+        id: 'c2h2-naoh-warning',
+        level: 'warning',
+        title: '除杂试剂选择不当：NaOH 无法彻底沉淀除尽 H₂S，且微溶损失 C₂H₂',
+        description: '电石法制备乙炔中主要有害恶臭杂质为 H₂S 和 PH₃，高考标准除杂试剂为饱和 CuSO₄ 溶液（生成难溶 CuS 黑色沉淀）。',
+        examPoint: '除去 C₂H₂ 中的 H₂S/PH₃ 必须使用饱和 CuSO₄ 溶液：CuSO₄ + H₂S = CuS↓ + H₂SO₄。',
       })
     }
 

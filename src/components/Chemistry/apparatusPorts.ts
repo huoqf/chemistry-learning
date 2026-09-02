@@ -20,8 +20,8 @@ const FUNNEL_W = 80
 const FUNNEL_H = 120
 
 export interface KippApparatusPorts {
-  /** 侧管活塞右端橡皮套管接扣出口 (对外导管连接唯一真实锚点) */
-  outletPort: { x: number; y: number }
+  /** 侧管活塞右端直角向上出气导管出口 (对外导管连接唯一真实锚点，方向向上) */
+  outletPort: { x: number; y: number; direction?: 'up' | 'right' }
   /** 上部球形漏斗加酸口中心 */
   topFunnelPort: { x: number; y: number }
 }
@@ -38,11 +38,12 @@ export function getKippApparatusPorts(
   const cx = w * 0.5
   const midSphereR = 34
   const midSphereY = 120
-  const hoseJointX = cx + midSphereR + 24
-  const hoseJointY = midSphereY - 10
+  // 侧管直角向上引出端点：X = cx + midSphereR - 4 + 40, Y = y + midSphereY - 10 - 50
+  const tubeTipX = cx + midSphereR + 36
+  const tubeTipY = y + midSphereY - 60
 
   return {
-    outletPort: { x: x + hoseJointX + 8, y: y + hoseJointY },
+    outletPort: { x: x + tubeTipX, y: tubeTipY, direction: 'up' },
     topFunnelPort: { x: x + cx, y: y + 2 },
   }
 }
@@ -293,13 +294,14 @@ export function getGasWashingBottlePorts(
   height = 140,
   reversed = false
 ): GasWashingBottlePorts {
-  const leftX = x + width * 0.3
-  const rightX = x + width * 0.7
+  const cx = width * 0.5
+  const leftX = x + cx - 7
+  const rightX = x + cx + 7
   return {
-    inletPort: { x: reversed ? rightX : leftX, y: y - 12, direction: 'up' },
-    outletPort: { x: reversed ? leftX : rightX, y: y - 12, direction: 'up' },
-    topNeckPort: { x: x + width * 0.5, y: y + 12, direction: 'up' },
-    bottomPort: { x: x + width * 0.5, y: y + height, direction: 'down' },
+    inletPort: { x: reversed ? rightX : leftX, y: y + 6, direction: 'up' },
+    outletPort: { x: reversed ? leftX : rightX, y: y + 6, direction: 'up' },
+    topNeckPort: { x: x + cx, y: y + 10, direction: 'up' },
+    bottomPort: { x: x + cx, y: y + height, direction: 'down' },
   }
 }
 
@@ -326,18 +328,17 @@ export function getGasBurettePorts(
 }
 
 export interface GasJarPorts {
-  /** 瓶口左侧导管顶部端口 */
+  /** 瓶口左侧导管顶部端口 (深入塞孔内) */
   topStopperLeft: { x: number; y: number; direction?: 'up' }
-  /** 瓶口右侧导管顶部端口 */
+  /** 瓶口右侧导管顶部端口 (深入塞孔内) */
   topStopperRight: { x: number; y: number; direction?: 'up' }
 }
 
 export function getGasJarPorts(x: number, y: number, width = 70): GasJarPorts {
-  const lipW = width * 0.7
-  const lipLeft = (width - lipW) / 2
+  const cx = width * 0.5
   return {
-    topStopperLeft: { x: x + lipLeft + lipW * 0.3, y: y + 4, direction: 'up' },
-    topStopperRight: { x: x + lipLeft + lipW * 0.7, y: y + 4, direction: 'up' },
+    topStopperLeft: { x: x + cx - 6, y: y + 6, direction: 'up' },
+    topStopperRight: { x: x + cx + 6, y: y + 6, direction: 'up' },
   }
 }
 
@@ -447,8 +448,8 @@ export interface DryingTubePorts {
 export function getDryingTubePorts(
   x: number,
   y: number,
-  width: number = 110,
-  height: number = 60,
+  width: number = 90,
+  height: number = 140,
   variant: 'spherical' | 'U-shape' = 'spherical'
 ): DryingTubePorts {
   if (variant === 'spherical') {
@@ -457,9 +458,11 @@ export function getDryingTubePorts(
       outletPort: { x: x + width, y: y + height * 0.5, direction: 'right' },
     }
   } else {
+    const cx1 = Math.round(width * 0.28)
+    const cx2 = Math.round(width * 0.72)
     return {
-      inletPort: { x: x + width * 0.25, y: y - 15, direction: 'up' },
-      outletPort: { x: x + width * 0.75, y: y - 15, direction: 'up' },
+      inletPort: { x: x + cx1, y: y - 10, direction: 'up' },
+      outletPort: { x: x + cx2, y: y - 10, direction: 'up' },
     }
   }
 }

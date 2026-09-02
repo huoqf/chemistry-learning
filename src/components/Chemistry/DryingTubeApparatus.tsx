@@ -99,12 +99,12 @@ export function DryingTubeApparatus({
           <ellipse cx={w * 0.78} cy={0} rx={3} ry={3.5} fill={SCENE_COLORS.materials.asbestos} />
         </g>
       ) : (
-        /* 2. U型管 (高保真标准高中化学画法：双壁玻璃管、双孔橡皮塞、脱脂棉与干燥颗粒) */
+        /* 2. U型管 (高保真标准高中化学画法：双壁玻璃管、双孔橡皮塞、脱脂棉与干燥颗粒，平稳立于台面) */
         <g id="u-shape-drying-tube">
           {/* 几何常量：左右管中心与外径 */}
           {(() => {
-            const cx1 = w * 0.25
-            const cx2 = w * 0.75
+            const cx1 = Math.round(w * 0.28)
+            const cx2 = Math.round(w * 0.72)
             const tubeR = 12 // 管半径 12px (外径 24px)
             const innerR = 9  // 内壁半径 9px (壁厚 3px)
             const bendCenterY = h - 22
@@ -114,98 +114,104 @@ export function DryingTubeApparatus({
                 {/* U 型管半透明玻璃壁内腔 */}
                 <path
                   d={`
-                    M ${cx1 - tubeR} 0
+                    M ${cx1 - tubeR} 4
                     L ${cx1 - tubeR} ${bendCenterY}
                     A ${tubeR + 10} ${tubeR + 10} 0 0 0 ${cx2 + tubeR} ${bendCenterY}
-                    L ${cx2 + tubeR} 0
-                    L ${cx2 + innerR} 0
+                    L ${cx2 + tubeR} 4
+                    L ${cx2 + innerR} 4
                     L ${cx2 + innerR} ${bendCenterY}
                     A ${innerR} ${innerR} 0 0 1 ${cx1 - innerR} ${bendCenterY}
-                    L ${cx1 - innerR} 0
+                    L ${cx1 - innerR} 4
                     Z
                   `}
-                  fill={withAlpha(SCENE_COLORS.container.gasJar, 0.45)}
+                  fill={withAlpha(SCENE_COLORS.container.gasJar, 0.35)}
                   stroke={SCENE_COLORS.container.beakerBorder}
-                  strokeWidth={STROKE.reference}
+                  strokeWidth={STROKE.objectLine}
                 />
 
                 {/* U型管下半部装填的固体干燥剂 */}
                 <path
                   d={`
-                    M ${cx1 - innerR + 1} ${h * 0.4}
+                    M ${cx1 - innerR + 1} ${h * 0.45}
                     L ${cx1 - innerR + 1} ${bendCenterY}
                     A ${innerR - 1} ${innerR - 1} 0 0 0 ${cx2 + innerR - 1} ${bendCenterY}
-                    L ${cx2 + innerR - 1} ${h * 0.4}
+                    L ${cx2 + innerR - 1} ${h * 0.45}
                     Z
                   `}
                   fill={desiccantColor}
-                  opacity={0.8}
+                  opacity={0.85}
                 />
 
                 {/* 固体干燥剂颗粒散落纹理 (如 CaCl₂ 粒) */}
-                <circle cx={cx1 - 3} cy={h * 0.55} r={2} fill="#FFFFFF" opacity={0.6} />
-                <circle cx={cx1 + 4} cy={h * 0.65} r={2.5} fill="#FFFFFF" opacity={0.5} />
-                <circle cx={cx2 - 4} cy={h * 0.6} r={2} fill="#FFFFFF" opacity={0.6} />
-                <circle cx={cx2 + 3} cy={h * 0.7} r={2.5} fill="#FFFFFF" opacity={0.5} />
-                <circle cx={w * 0.5} cy={bendCenterY + 6} r={3} fill="#FFFFFF" opacity={0.5} />
+                <circle cx={cx1 - 3} cy={h * 0.6} r={2.5} fill="#FFFFFF" opacity={0.6} />
+                <circle cx={cx1 + 4} cy={h * 0.75} r={3} fill="#FFFFFF" opacity={0.5} />
+                <circle cx={cx2 - 4} cy={h * 0.65} r={2.5} fill="#FFFFFF" opacity={0.6} />
+                <circle cx={cx2 + 3} cy={h * 0.8} r={3} fill="#FFFFFF" opacity={0.5} />
+                <circle cx={w * 0.5} cy={bendCenterY + 8} r={3.5} fill="#FFFFFF" opacity={0.5} />
 
                 {/* 脱脂棉 (左右两管内固定固体防吹飞) */}
-                <ellipse cx={cx1} cy={h * 0.38} rx={innerR - 1} ry={4} fill={SCENE_COLORS.materials.asbestos} />
-                <ellipse cx={cx2} cy={h * 0.38} rx={innerR - 1} ry={4} fill={SCENE_COLORS.materials.asbestos} />
+                <ellipse cx={cx1} cy={h * 0.42} rx={innerR - 1} ry={4} fill={SCENE_COLORS.materials.asbestos} />
+                <ellipse cx={cx2} cy={h * 0.42} rx={innerR - 1} ry={4} fill={SCENE_COLORS.materials.asbestos} />
 
-                {/* 左右管口单孔橡胶塞 */}
-                <rect
-                  x={cx1 - tubeR + 1}
-                  y={-8}
-                  width={tubeR * 2 - 2}
-                  height={10}
-                  fill={SCENE_COLORS.materials.rubber}
-                  rx={1}
+                {/* 左右管口单孔橡胶塞 (倒梯形内嵌塞，上顶面在 y=2) */}
+                <polygon
+                  points={`
+                    ${cx1 - tubeR - 1},2
+                    ${cx1 + tubeR + 1},2
+                    ${cx1 + tubeR - 2},16
+                    ${cx1 - tubeR + 2},16
+                  `}
+                  fill={SCENE_COLORS.stopper.rubberStopper}
+                  stroke={SCENE_COLORS.stopper.rubberStopperBorder}
+                  strokeWidth={1}
                 />
-                <rect
-                  x={cx2 - tubeR + 1}
-                  y={-8}
-                  width={tubeR * 2 - 2}
-                  height={10}
-                  fill={SCENE_COLORS.materials.rubber}
-                  rx={1}
+                <polygon
+                  points={`
+                    ${cx2 - tubeR - 1},2
+                    ${cx2 + tubeR + 1},2
+                    ${cx2 + tubeR - 2},16
+                    ${cx2 - tubeR + 2},16
+                  `}
+                  fill={SCENE_COLORS.stopper.rubberStopper}
+                  stroke={SCENE_COLORS.stopper.rubberStopperBorder}
+                  strokeWidth={1}
                 />
 
-                {/* 左穿管 (玻璃外壁 6px / 高光 3px) */}
+                {/* 左短导管 (外壁 6px / 高光 3px，顶端露出到 y=-10) */}
                 <line
                   x1={cx1}
-                  y1={-15}
+                  y1={-10}
                   x2={cx1}
-                  y2={h * 0.32}
+                  y2={24}
                   stroke={SCENE_COLORS.materials.glassBorder}
                   strokeWidth={6}
                   strokeLinecap="square"
                 />
                 <line
                   x1={cx1}
-                  y1={-15}
+                  y1={-10}
                   x2={cx1}
-                  y2={h * 0.32}
+                  y2={24}
                   stroke={withAlpha(SCENE_COLORS.tube.glass, 0.85)}
                   strokeWidth={3}
                   strokeLinecap="square"
                 />
 
-                {/* 右穿管 (玻璃外壁 6px / 高光 3px) */}
+                {/* 右短导管 (外壁 6px / 高光 3px，顶端露出到 y=-10) */}
                 <line
                   x1={cx2}
-                  y1={-15}
+                  y1={-10}
                   x2={cx2}
-                  y2={h * 0.32}
+                  y2={24}
                   stroke={SCENE_COLORS.materials.glassBorder}
                   strokeWidth={6}
                   strokeLinecap="square"
                 />
                 <line
                   x1={cx2}
-                  y1={-15}
+                  y1={-10}
                   x2={cx2}
-                  y2={h * 0.32}
+                  y2={24}
                   stroke={withAlpha(SCENE_COLORS.tube.glass, 0.85)}
                   strokeWidth={3}
                   strokeLinecap="square"

@@ -21,15 +21,18 @@ export type GeneratorType =
 
 // 单个洗气/检验/干燥步骤的试剂类型（统一枚举）
 export type WashStepReagent =
-  | 'sat-nacl'     // 饱和食盐水 (除 HCl)
-  | 'naoh'         // NaOH 溶液 (除 SO2/H2S/Cl2)
-  | 'fuchsin'      // 品红溶液 (检验 SO2 漂白性)
-  | 'kmno4'        // 酸性 KMnO4 溶液 (检验还原性)
-  | 'water'        // 蒸馏水 (吸收/检验)
-  | 'conc-h2so4'   // 浓硫酸洗气瓶 (干燥/酸性)
-  | 'soda-lime'    // 碱石灰干燥管 (球形)
-  | 'cacl2'        // 无水 CaCl2 干燥管 (U型/球形)
-  | 'p2o5'         // P2O5 干燥管
+  | 'sat-nacl'     // 饱和食盐水 (除 HCl，利用同离子效应保留 Cl₂)
+  | 'nahco3'       // 饱和 NaHCO₃ 溶液 (除 HCl，NaHCO₃+HCl→CO₂↑，CO₂制备核心净化试剂)
+  | 'nahso3'       // 饱和 NaHSO₃ 溶液 (除 HCl/SO₃，抑制 SO₂ 溶解，SO₂制备净化)
+  | 'cuso4'        // 饱和 CuSO₄ 溶液 (除 H₂S/PH₃，CuSO₄+H₂S→CuS↓，C₂H₂制备核心净化)
+  | 'naoh'         // NaOH 溶液 (除 SO₂/CO₂/H₂S/Cl₂ 等酸性气体杂质)
+  | 'fuchsin'      // 品红溶液 (检验 SO₂ 漂白性，SO₂使品红褪色)
+  | 'kmno4'        // 酸性 KMnO₄ 溶液 (检验还原性)
+  | 'water'        // 蒸馏水 (将 NO₂ 转化为 NO: 3NO₂+H₂O→2HNO₃+NO)
+  | 'conc-h2so4'   // 浓硫酸洗气瓶 (干燥酸性/中性气体，严禁干燥碱性及强还原性气体)
+  | 'soda-lime'    // 碱石灰干燥管 (球形，干燥 NH₃ 及中性气体，严禁干燥酸性气体)
+  | 'cacl2'        // 无水 CaCl₂ 干燥管 (U型/球形，严禁干燥 NH₃——络合生成 CaCl₂·8NH₃)
+  | 'p2o5'         // P₂O₅ 干燥管 (强酸性，严禁干燥 NH₃)
   | 'naoh-solid'   // NaOH 固体干燥管（碱石灰替代品）
   | 'none'         // 无（占位符）
 

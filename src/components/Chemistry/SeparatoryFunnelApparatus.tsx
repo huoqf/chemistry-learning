@@ -58,10 +58,11 @@ export function SeparatoryFunnelApparatus({
   const neckLeft = (w - neckW) / 2
   const neckRight = neckLeft + neckW
 
-  // 下颈 Stem 长度与球腹高度计算
-  const stemH = stemLength ?? h * 0.33
-  const bulbH = stemLength ? Math.max(40, h - neckH - stemH) : h * 0.55
-  const valveY = neckH + bulbH + Math.min(20, stemH * 0.35)
+  // 下颈 Stem 长度与球腹高度计算：确保活塞下方有充分细长管段穿入塞子
+  const stemH = stemLength ?? Math.max(65, Math.round(h * 0.4))
+  const bulbH = Math.max(45, h - neckH - stemH)
+  // 旋塞活塞紧靠球腹下锥处，为活塞下方留出 50px 以上的修长导管！
+  const valveY = neckH + bulbH + 12
 
   // 管嘴下端 45° 斜切尖嘴 (Beveled Tip) 几何 (长边朝右，紧贴右侧烧杯内壁)
   const stemLeftX = w * 0.5 - 4

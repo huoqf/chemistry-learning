@@ -181,11 +181,11 @@ export const GAS_MATRIX_ITEMS: GasMatrixItem[] = [
     reactionFormula: 'CH_3CH_2OH \\xrightarrow[170^\\circ C]{浓H_2SO_4} CH_2=CH_2\\uparrow + H_2O',
     generatorType: '固液加热 (圆底烧瓶+温度计水银球插入反应液+沸石)',
     reactants: '无水乙醇 + 浓硫酸 (体积比约 1:3)',
-    impurities: ['SO₂ (浓硫酸碳化副反应)', 'CO₂', '乙醚蒸气', '乙醇蒸气'],
+    impurities: ['SO₂ (浓硫酸碳化乙醇副反应)', 'CO₂', '乙醚蒸气 (140°C副产物)', '乙醇蒸气'],
     purifyReagent: 'NaOH 溶液 (洗气瓶，长进短出)',
     purifyPrinciple: 'NaOH 彻底吸收副反应产生的 SO₂ 与 CO₂，防止 SO₂ 还原褪色干扰乙烯检验',
-    dryReagents: ['无水 CaCl₂', '碱石灰', '浓硫酸'],
-    incompatibleDrying: ['高温浓硫酸 (可能发生副反应)'],
+    dryReagents: ['无水 CaCl₂', '碱石灰'],
+    incompatibleDrying: ['浓硫酸 (高温下乙烯被浓硫酸吸收/聚合发生副反应，严禁用于干燥乙烯)', 'P₂O₅ (酸性，不影响乙烯，但高中实验不常用)'],
     collectionMethod: '排水集气法',
     collectionReason: '难溶于水；密度 (M=28) 与空气 (M=29) 极度接近，排空气无法集纯',
     testAndFull: '通入溴的四氯化碳溶液 (加成褪色) 或酸性高锰酸钾溶液 (氧化褪色)',
@@ -208,11 +208,11 @@ export const GAS_MATRIX_ITEMS: GasMatrixItem[] = [
     reactionFormula: 'CaC_2 + 2H_2O \\rightarrow Ca(OH)_2 + C_2H_2\\uparrow',
     generatorType: '固液常温 (分液漏斗+圆底烧瓶/锥形瓶，严禁用启普发生器)',
     reactants: '碳化钙 (电石) + 饱和食盐水',
-    impurities: ['H₂S (恶臭)', 'PH₃ (磷化氢)', '水蒸气'],
-    purifyReagent: '饱和 CuSO₄ 溶液 或 NaOH 溶液',
-    purifyPrinciple: 'CuSO₄ 与杂质反应生成 CuS 黑色沉淀除杂：CuSO₄ + H₂S = CuS↓ + H₂SO₄',
-    dryReagents: ['无水 CaCl₂', '碱石灰', '浓硫酸'],
-    incompatibleDrying: ['无特殊禁忌'],
+    impurities: ['H₂S (电石含硫杂质生成，恶臭剧毒)', 'PH₃ (磷化钙杂质生成，剧毒)', '水蒸气'],
+    purifyReagent: '饱和 CuSO₄ 溶液 (洗气瓶，长进短出)',
+    purifyPrinciple: 'CuSO₄ 与 H₂S 反应生成 CuS 黑色沉淀除去 H₂S/PH₃：CuSO₄ + H₂S = CuS↓ + H₂SO₄；严禁用 NaOH——NaOH 会与弱酸性的 C₂H₂ 反应导致目标气体损失',
+    dryReagents: ['无水 CaCl₂', '碱石灰'],
+    incompatibleDrying: ['浓硫酸 (常温下乙炔可被浓硫酸吸收发生聚合反应，严禁使用)', 'NaOH 溶液 (C₂H₂ 具有弱酸性，NaOH 会将其吸收)'],
     collectionMethod: '排水集气法 或 向上排空气法',
     collectionReason: '微溶于水；密度 (M=26) 略小于空气',
     testAndFull: '通入溴水加成褪色，点燃火焰明亮并伴有浓烈的黑烟',
@@ -329,8 +329,8 @@ export const GAS_MATRIX_ITEMS: GasMatrixItem[] = [
     formula: 'HCl',
     category: 'acid-oxidant',
     categoryLabel: '极易溶/强酸性气体',
-    reactionFormula: 'NaCl(固) + H_2SO_4(浓) \\xrightarrow{\\Delta} NaHSO_4 + HCl\\uparrow',
-    secondaryFormula: '浓盐酸 + 浓硫酸 (滴加脱水快速制备常温)',
+    reactionFormula: 'NaCl(固) + H_2SO_4(浓) \\xrightarrow{微热} NaHSO_4 + HCl\\uparrow',
+    secondaryFormula: '浓盐酸 + 浓硫酸 (滴加脱水快速制备常温) \\quad | \\quad 强热: 2NaCl + H_2SO_4(浓) \\xrightarrow{强热} Na_2SO_4 + 2HCl\\uparrow',
     generatorType: '固液加热 (分液漏斗+圆底烧瓶) / 固液常温',
     reactants: '固体 NaCl + 浓硫酸 / 浓盐酸 + 浓硫酸',
     impurities: ['挥发性浓盐酸酸雾', '水蒸气'],
@@ -437,11 +437,15 @@ export const GAS_PRESET_CONFIGS: Record<string, Partial<GasChainParams>> = {
     targetGas: 'NO',
     generator: 'flask-noheat',
     washingSteps: [
+      // ① 蒸馏水洗气：将混入的少量 NO₂ 转化为 NO：3NO₂ + H₂O = 2HNO₃ + NO
       { id: 's1', device: 'wash-bottle', reagent: 'water', role: 'purify' },
+      // ② 浓硫酸干燥：NO 为中性气体，与浓硫酸不反应
       { id: 's2', device: 'acid-bottle', reagent: 'conc-h2so4', role: 'dry' },
     ],
     collection: 'water-displacement',
-    tailGas: 'naoh-absorber',
+    // NO 为有毒气体，严禁直接排空；排水集气法末端通常连接气球收集外逸气体
+    // 高考考点：NO 不溶于碱液，吸收需先氧化（加O₂）或用酸性高锰酸钾氧化吸收
+    tailGas: 'balloon',
     temp: 25,
     heating: false,
   },
@@ -462,7 +466,10 @@ export const GAS_PRESET_CONFIGS: Record<string, Partial<GasChainParams>> = {
     targetGas: 'C₂H₂',
     generator: 'flask-noheat',
     washingSteps: [
-      { id: 's1', device: 'wash-bottle', reagent: 'naoh', role: 'purify' },
+      // ① 饱和 CuSO₄ 溶液除 H₂S/PH₃：CuSO₄ + H₂S = CuS↓ + H₂SO₄
+      // 严禁用 NaOH：C₂H₂ 具弱酸性，NaOH 会吸收乙炔损失目标气体
+      { id: 's1', device: 'wash-bottle', reagent: 'cuso4', role: 'purify' },
+      // ② 无水 CaCl₂ 干燥（乙炔不与 CaCl₂ 络合，可安全使用）
       { id: 's2', device: 'dry-tube', reagent: 'cacl2', role: 'dry' },
     ],
     collection: 'water-displacement',
@@ -475,7 +482,10 @@ export const GAS_PRESET_CONFIGS: Record<string, Partial<GasChainParams>> = {
     targetGas: 'CO₂',
     generator: 'kipp',
     washingSteps: [
-      { id: 's1', device: 'wash-bottle', reagent: 'water', role: 'purify' },
+      // ① 饱和 NaHCO₃ 溶液除 HCl：NaHCO₃ + HCl = NaCl + CO₂↑ + H₂O
+      // 严禁用水洗：水会大量溶解 CO₂（溶解度1:1）；严禁用 Na₂CO₃：会吸收 CO₂
+      { id: 's1', device: 'wash-bottle', reagent: 'nahco3', role: 'purify' },
+      // ② 浓硫酸干燥：CO₂ 为酸性气体，与浓硫酸不反应，可用于干燥
       { id: 's2', device: 'acid-bottle', reagent: 'conc-h2so4', role: 'dry' },
     ],
     collection: 'upward-air',
@@ -513,9 +523,13 @@ export const GAS_PRESET_CONFIGS: Record<string, Partial<GasChainParams>> = {
     targetGas: 'H₂',
     generator: 'kipp',
     washingSteps: [
+      // 无水 CaCl₂ 干燥（H₂ 为中性气体，与 CaCl₂ 不络合，可安全使用）
+      // 注：用于还原实验时，需干燥后再通入加热装置；收集时也可不干燥直接排水
       { id: 's1', device: 'dry-tube', reagent: 'cacl2', role: 'dry' },
     ],
-    collection: 'downward-air',
+    // 排水集气法：H₂ 难溶于水，收集到的气体更纯净（不混有空气），为高考推荐收集方式
+    // 向下排空气法：收集的 H₂ 含空气，点燃前必须检验纯度，否则会爆炸
+    collection: 'water-displacement',
     tailGas: 'none',
     temp: 25,
     heating: false,

@@ -254,11 +254,13 @@ export const DRYING_AGENT_MATRIX: DryingAgentRule[] = [
     nature: 'acidic',
     natureLabel: '酸性 / 强氧化性液体干燥剂',
     apparatus: '洗气瓶 (长进短出)',
-    suitableGases: ['Cl₂', 'SO₂', 'NO₂', 'NO', 'CO₂', 'CO', 'O₂', 'H₂', 'HCl', 'CH₄', 'C₂H₄'],
+    suitableGases: ['Cl₂', 'SO₂', 'NO₂', 'NO', 'CO₂', 'CO', 'O₂', 'H₂', 'HCl', 'CH₄'],
     forbiddenGases: [
       { gas: 'NH₃', reason: '碱性气体，剧烈酸碱中和 2NH₃ + H₂SO₄ = (NH₄)₂SO₄' },
       { gas: 'H₂S', reason: '强还原性气体，氧化生成单质 S 和 SO₂：H₂S + H₂SO₄(浓) = S↓ + SO₂↑ + 2H₂O' },
       { gas: 'HBr / HI', reason: '还原性气体，被浓硫酸氧化生成 Br₂ / I₂ 和 SO₂' },
+      { gas: 'C₂H₄ (乙烯)', reason: '乙烯在浓硫酸中会发生加成/聚合反应，尤其高温下将乙烯吸收导致目标气体损失' },
+      { gas: 'C₂H₂ (乙炔)', reason: '乙炔在浓硫酸中会发生聚合/吸收反应，严禁用浓硫酸干燥乙炔' },
     ],
     keyPrinciple: '利用浓硫酸强烈吸水性；严禁干燥碱性气体及强还原性气体。',
   },
@@ -390,7 +392,8 @@ export const DRYING_CROSS_MATRIX: CrossMatrixRow[] = [
   {
     gas: 'C₂H₄ / C₂H₂',
     gasCategory: '有机烃类',
-    concH2SO4: { status: 'ok', note: '常温可用' },
+    // 浓硫酸严禁用于干燥 C₂H₄ 和 C₂H₂：烯烃不饱和键与浓硫酸会发生加成/聚合副反应
+    concH2SO4: { status: 'no', note: '烯烃加成/聚合副反应，严禁' },
     sodaLime: { status: 'ok', note: '碱性可用' },
     cacl2: { status: 'ok', note: '中性可用' },
     p2o5: { status: 'ok', note: '酸性可用' },

@@ -143,6 +143,24 @@ export function SolidHeatingGeneratorApparatus({
             opacity={0.9}
           />
 
+          {/* 3.2.1 高考经典必考考点：KMnO₄ 制 O₂ 试管口塞一团疏松棉花 (防粉末堵塞导管) */}
+          {targetGas === 'O₂' && (
+            <g id="cotton-plug">
+              <ellipse
+                cx={131}
+                cy={-166.37}
+                rx={7}
+                ry={9}
+                fill={withAlpha(SCENE_COLORS.materials.asbestos, 0.85)}
+                stroke={SCENE_COLORS.materials.glassBorder}
+                strokeWidth={0.8}
+              />
+              <circle cx={129} cy={-169} r={3} fill="#FFFFFF" opacity={0.7} />
+              <circle cx={133} cy={-164} r={3.5} fill="#FFFFFF" opacity={0.7} />
+              <circle cx={128} cy={-164} r={3} fill="#FFFFFF" opacity={0.7} />
+            </g>
+          )}
+
           {/* 3.3 单孔橡皮塞与水平出气玻璃导管 */}
           <g id="stopper-and-tube">
             <rect

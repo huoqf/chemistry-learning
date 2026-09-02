@@ -37,91 +37,73 @@ export interface LayoutEngineInput {
 }
 
 /**
- * 生成绝对坐标的平滑贝塞尔圆角 SVG Path
- * 智能识别 start/end 端口朝向 (direction: 'right' | 'up' | 'down' | 'left')
- * 彻底消除无脑向上冲高造成的额外拐弯与重叠错位
+ * 生成符合高中化学教材规范的绝对坐标标准玻璃导管 SVG Path
+ *
+ * 高考教材标准规范：
+ * 1. 消除任何斜线或波浪曲线：除 90° 弯头倒角处带小半径圆角（radius=5px）外，其余各段必须 100% 为水平直线或垂直直线！
+ * 2. 全系统唯一的水平主走线高度 customTopY（默认为 MAIN_TUBE_Y = baseY - 175），所有跨器材横向导管平铺在同一高度！
+ * 3. 终点精确停在器材暴露在外的端口上（y=end.y），绝不越俎代庖深入瓶内与瓶体自带导管打架重叠！
  */
 function createAbsoluteSmoothTubingPath(
   start: { x: number; y: number; direction?: 'up' | 'down' | 'left' | 'right' },
   end: { x: number; y: number; direction?: 'up' | 'down' | 'left' | 'right' },
-  tubeType: 'bridge' | 'low-bridge' | 'horizontal-socket',
-  isSideArm = false,
-  customTopY?: number
+  _tubeType: 'bridge' | 'low-bridge' | 'horizontal-socket',
+  _isSideArm = false,
+  customTopY = 305
 ): string {
-  const dx = end.x - start.x
-  const dy = end.y - start.y
-  // 高保真硬质玻璃弯头：90° 标准折角，小圆角半径 5px
   const radius = 5
+  const topY = customTopY
 
-  // 1. 起点朝向为 right (如倾斜试管 L 导出管或具支烧瓶侧管)
-  if (start.direction === 'right' || isSideArm) {
-    if (end.direction === 'left' || tubeType === 'horizontal-socket') {
-      // 导管直插入左侧插口 (如干燥管)
-      const targetY = end.y
-      if (Math.abs(start.y - targetY) < 8) {
+  // 1. 起点朝右 (如蒸馏烧瓶支管口、试管侧管、启普发生器出气管) -> 终点朝上 (进入后级洗气瓶/干燥管/集气瓶)
+  if (start.direction === 'right') {
+    if (end.direction === 'left') {
+      // 侧出直接水平插入左侧平插口 (如水平球形干燥管)
+      if (Math.abs(start.y - end.y) <= 4) {
         return `M ${start.x} ${start.y} L ${end.x} ${end.y}`
       }
-      if (Math.abs(start.y - targetY) < 20) {
-        const midX = (start.x + end.x) / 2
-        return [
-          `M ${start.x} ${start.y}`,
-          `C ${midX} ${start.y} ${midX} ${end.y} ${end.x} ${end.y}`,
-        ].join(' ')
-      }
+      const midX = Math.round((start.x + end.x) / 2)
       return [
         `M ${start.x} ${start.y}`,
-        `L ${start.x + (dx - radius * 2)} ${start.y}`,
-        `Q ${start.x + dx - radius} ${start.y} ${start.x + dx - radius} ${start.y + (dy > 0 ? radius : -radius)}`,
-        `L ${start.x + dx - radius} ${end.y - (dy > 0 ? radius : -radius)}`,
-        `Q ${start.x + dx - radius} ${end.y} ${end.x} ${end.y}`,
-      ].join(' ')
-    }
-
-    // 出口朝右 -> 入口朝上 (进入洗气瓶/干燥瓶/集气瓶/尾气)
-    if (start.y <= end.y + 10) {
-      const cornerY = Math.min(end.y, start.y + radius)
-      return [
-        `M ${start.x} ${start.y}`,
-        `L ${end.x - radius} ${start.y}`,
-        `Q ${end.x} ${start.y} ${end.x} ${cornerY}`,
-        `L ${end.x} ${end.y}`,
-      ].join(' ')
-    } else {
-      const topY = customTopY ?? (Math.min(start.y, end.y) - 20)
-      return [
-        `M ${start.x} ${start.y}`,
-        `L ${start.x + 20} ${start.y}`,
-        `Q ${start.x + 35} ${start.y} ${start.x + 35} ${start.y - radius}`,
-        `L ${start.x + 35} ${topY + radius}`,
-        `Q ${start.x + 35} ${topY} ${start.x + 35 + radius} ${topY}`,
-        `L ${end.x - radius} ${topY}`,
-        `Q ${end.x} ${topY} ${end.x} ${topY + radius}`,
+        `L ${midX - radius} ${start.y}`,
+        `Q ${midX} ${start.y} ${midX} ${start.y + (end.y > start.y ? radius : -radius)}`,
+        `L ${midX} ${end.y + (end.y > start.y ? -radius : radius)}`,
+        `Q ${midX} ${end.y} ${midX + radius} ${end.y}`,
         `L ${end.x} ${end.y}`,
       ].join(' ')
     }
-  }
 
-  // 2. 终点朝向为 left (如球形干燥管左侧平插口)
-  if (end.direction === 'left' || tubeType === 'horizontal-socket') {
-    const targetY = end.y
+    // 教材标准画法：支管口出来直接水平向右直行至 end.x 上方，然后 90° 微圆角垂直向下插入
+    // 若支管口高度与水平主线有微小差距，直接沿支管口高度直线横行到洗气瓶上方垂直折下！
+    const lineY = start.y
     return [
       `M ${start.x} ${start.y}`,
-      `L ${start.x} ${targetY + (start.y < targetY ? -radius : radius)}`,
-      `Q ${start.x} ${targetY} ${start.x + radius} ${targetY}`,
+      `L ${end.x - radius} ${lineY}`,
+      `Q ${end.x} ${lineY} ${end.x} ${lineY + radius}`,
       `L ${end.x} ${end.y}`,
     ].join(' ')
   }
 
-  // 3. 默认: 起点朝上 -> 终点朝上 (经典瓶间跨越桥管)
-  // 统一顶线高度为 customTopY (全链齐平水平线)，确保所有跨越导管顶部横向导管平铺在同一高度
-  const topY = customTopY ?? (Math.min(start.y, end.y) - 25)
-  const dir = dx > 0 ? 1 : -1
+  // 2. 终点朝向为 left (如球形干燥管左侧粗管平插口)
+  if (end.direction === 'left') {
+    return [
+      `M ${start.x} ${start.y}`,
+      `L ${start.x} ${topY + radius}`,
+      `Q ${start.x} ${topY} ${start.x + radius} ${topY}`,
+      `L ${end.x - 20 - radius} ${topY}`,
+      `Q ${end.x - 20} ${topY} ${end.x - 20} ${topY + radius}`,
+      `L ${end.x - 20} ${end.y - radius}`,
+      `Q ${end.x - 20} ${end.y} ${end.x - 20 + radius} ${end.y}`,
+      `L ${end.x} ${end.y}`,
+    ].join(' ')
+  }
 
+  // 3. 标准教材形态：起点朝上 -> 终点朝上 (经典倒 U 形门字跨越桥管)
+  // 两个端口垂直向上引出，在同一高度 topY 绝对水平相通
   return [
     `M ${start.x} ${start.y}`,
     `L ${start.x} ${topY + radius}`,
-    `Q ${start.x} ${topY} ${start.x + dir * radius} ${topY}`,
-    `L ${end.x - dir * radius} ${topY}`,
+    `Q ${start.x} ${topY} ${start.x + radius} ${topY}`,
+    `L ${end.x - radius} ${topY}`,
     `Q ${end.x} ${topY} ${end.x} ${topY + radius}`,
     `L ${end.x} ${end.y}`,
   ].join(' ')
@@ -137,17 +119,27 @@ export function solvePhysicalChainLayout(
   const hasTailGas = tailGas !== 'none'
   const numWashSteps = washingSteps.length
 
-  // ─── 1. 动态自适应 SlotX（基于活跃装置数均分）────────────────────────────
-  // 结构：[发生装置(0)] + [洗气步骤 1..N] + [收集(N+1)] + [尾气(N+2)]
+  // ─── 1. 物理包围盒自适应槽位分布（彻底根除局部拆东墙补西墙）──────────────────
+  // 发生装置为复合体（含左侧铁架台与右侧支管口），中心锁定于 125px：
+  // 左侧铁架台边缘距画框 57px（呼吸感极佳，绝不顶框），右侧支管口延伸至 170px
   const totalSlots = 1 + numWashSteps + (hasCollection ? 1 : 0) + (hasTailGas ? 1 : 0)
-  const startX = 80
-  const endX = 760
-  const stepX = totalSlots > 1 ? (endX - startX) / (totalSlots - 1) : 0
-
-  // 生成每个槽的中心 X 坐标
   const allSlotX: number[] = []
-  for (let i = 0; i < totalSlots; i++) {
-    allSlotX.push(startX + i * stepX)
+
+  if (totalSlots === 1) {
+    allSlotX.push(420)
+  } else {
+    // 发生装置中心
+    allSlotX.push(125)
+
+    // 后续器件均分右侧开阔空间 [270, 750]
+    const restCount = totalSlots - 1
+    const restStart = 270
+    const restEnd = 750
+    const restStep = restCount > 1 ? (restEnd - restStart) / (restCount - 1) : 0
+
+    for (let i = 0; i < restCount; i++) {
+      allSlotX.push(restStart + i * restStep)
+    }
   }
 
   // 槽位索引分配
@@ -233,16 +225,19 @@ export function solvePhysicalChainLayout(
 
     if (step.device === 'dry-tube') {
       const variant = step.reagent === 'cacl2' ? 'U-shape' : 'spherical'
-      const renderX = centerX - DRYER_W / 2
-      const renderY = variant === 'spherical' ? baseY - 190 : baseY - 195
+      const curW = variant === 'U-shape' ? 90 : DRYER_W
+      const curH = variant === 'U-shape' ? 140 : DRYER_H
+      const renderX = centerX - curW / 2
+      // U型管落地平坐于实验台 (baseY - 140)；球形干燥管居中悬挂 (baseY - 190)
+      const renderY = variant === 'U-shape' ? baseY - curH : baseY - 190
       const holderHeight = variant === 'spherical' ? 136 : 85
-      const ports = getDryingTubePorts(renderX, renderY, DRYER_W, DRYER_H, variant)
+      const ports = getDryingTubePorts(renderX, renderY, curW, curH, variant)
       const layout: ApparatusLayout = {
         id: `wash-${i}` as ApparatusLayout['id'],
         x: renderX,
         y: renderY,
-        width: DRYER_W,
-        height: DRYER_H,
+        width: curW,
+        height: curH,
         inletPort: ports.inletPort,
         outletPort: ports.outletPort,
         holderHeight,
@@ -363,8 +358,26 @@ export function solvePhysicalChainLayout(
         inletPort: { x: renderX, y: renderY + 20 },
         outletPort: null,
       }
+    } else if (tailGas === 'naoh-absorber') {
+      // naoh-absorber: 高考规范 NaOH 溶液洗气瓶吸收尾气 (高度 140 贴实验桌面)
+      const WASH_W = 90
+      const WASH_H = 140
+      const renderX = centerX - WASH_W / 2
+      const renderY = baseY - WASH_H
+      // inletPort 精准对齐长进气管塞孔内部 (距中心左侧 7px，深入塞内 Y = renderY + 6，方向朝上)
+      const inletX = centerX - 7
+      const inletY = renderY + 6
+      tailgasLayout = {
+        id: 'tailgas',
+        x: renderX,
+        y: renderY,
+        width: WASH_W,
+        height: WASH_H,
+        inletPort: { x: inletX, y: inletY, direction: 'up' },
+        outletPort: null,
+      }
     } else {
-      // direct-pipe / NaOH 烧杯
+      // direct-pipe / 敞口烧杯直通吸收 (高度 100)
       const renderX = centerX - 45
       const renderY = baseY - 100
       tailgasLayout = {
@@ -373,7 +386,7 @@ export function solvePhysicalChainLayout(
         y: renderY,
         width: 90,
         height: 100,
-        inletPort: { x: centerX, y: renderY + 65 },
+        inletPort: { x: centerX, y: renderY + 6, direction: 'up' },
         outletPort: null,
       }
     }
@@ -392,18 +405,10 @@ export function solvePhysicalChainLayout(
   if (collectionLayout) chain.push({ slotIdx: collSlotIdx, layout: collectionLayout })
   if (tailgasLayout) chain.push({ slotIdx: tailSlotIdx, layout: tailgasLayout })
 
-  // 全链统一瓶口走线基线
-  let minPortY = 999
-  chain.forEach((node) => {
-    if (node.layout.outletPort && node.layout.outletPort.direction !== 'right') {
-      minPortY = Math.min(minPortY, node.layout.outletPort.y)
-    }
-    if (node.layout.inletPort && node.layout.inletPort.direction !== 'left') {
-      minPortY = Math.min(minPortY, node.layout.inletPort.y)
-    }
-  })
-  // 统一水平主主线位于橡皮塞上方 18px 处，所有跨越管在瓶口高度平直顺接，消除拱门折弯
-  const globalTopY = Math.max(minPortY - 18, 320)
+  // 全套装置统一教材级工整水平主导管线标高：
+  // 若发生装置为蒸馏烧瓶，全链统一对齐其支管口高度，实现从支管口到末端所有横梁绝对水平共线！
+  const genOutletY = generatorLayout?.outletPort?.y
+  const globalTopY = (generator === 'flask-heat' && genOutletY) ? genOutletY : (baseY - 152)
 
   for (let i = 0; i < chain.length - 1; i++) {
     const from = chain[i]

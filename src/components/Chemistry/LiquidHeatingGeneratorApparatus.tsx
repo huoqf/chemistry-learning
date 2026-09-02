@@ -6,7 +6,6 @@ import { getDistillationFlaskPorts } from './apparatusPorts'
 import { AlcoholLampApparatus } from './AlcoholLampApparatus'
 import { SeparatoryFunnelApparatus } from './SeparatoryFunnelApparatus'
 import { ThermometerApparatus } from './ThermometerApparatus'
-import { IronSupportApparatus } from './IronSupportApparatus'
 
 export interface LiquidHeatingGeneratorApparatusProps {
   /** 基准中心坐标 x (Design Space) */
@@ -36,81 +35,116 @@ export const LiquidHeatingGeneratorApparatus: React.FC<LiquidHeatingGeneratorApp
   heating = true,
   isEthylene = false,
 }) => {
-  // ── 核心几何常量（全部从桌面 y 向上推算，零魔法数字）──────────────────────
-  // 石棉网：在桌面上方 86px（高考标准，酒精灯外焰顶端相切于此）
-  const GAUZE_Y = y - 86          // 石棉网顶面 y 坐标
-  const GAUZE_H = 6               // 石棉网厚度
+  // ── 核心几何常量（人教版教材标准正交装配一体化）──────────────────────
+  // 1. 铁架台大铸铁底座：平铺桌面 (baseY)，长 135px，厚 10px，统一承托立柱与酒精灯
+  const BASE_H = 10
+  const BASE_Y = y - BASE_H                      // 铸铁底板上表面 Y 坐标
+  const baseLeftX = x - 75
+  const baseWidth = 135                          // 覆盖 [x-75, x+60]，酒精灯坐于其上
 
-  // 酒精灯：底座贴桌面，外焰顶端精准相切于石棉网底面 (GAUZE_Y)
-  // AlcoholLampApparatus 外焰顶端相对高度 = h*(0.45-0.2-0.38) - 6 ≈ -0.13h - 6
-  // 解方程：(y + h) = baseY（底部贴桌面）且 y - 0.13h - 6 = GAUZE_Y
-  // → y = baseY - h，代入得：baseY - h - 0.13h - 6 = GAUZE_Y
-  // → h = (baseY - 6 - GAUZE_Y) / 1.13 = (86 - 6) / 1.13 ≈ 71
-  const LAMP_H = Math.round((y - 6 - GAUZE_Y) / 1.13)  // ≈ 71px
-  const LAMP_W = 70
-  const lampX = x - LAMP_W / 2             // 酒精灯水平居中于烧瓶正下方
-  const lampY = y - LAMP_H                  // 底部 = y = 桌面
+  // 2. 酒精灯：稳平放置于铸铁底座上表面 (BASE_Y)，外焰顶端精准相切石棉网底面
+  const GAUZE_Y = y - 86                         // 石棉网顶面
+  const GAUZE_H = 6                              // 石棉网厚度
+  const LAMP_H = Math.round((BASE_Y - 6 - GAUZE_Y) / 1.13) // 自适应高度
+  const LAMP_W = 68
+  const lampX = x - LAMP_W / 2
+  const lampY = BASE_Y - LAMP_H                  // 灯底精准落在铸铁底座上表面！
 
-  // 蒸馏烧瓶：圆底弧最低点落在石棉网顶面
-  // DistillationFlaskApparatus 路径: 颈部高 neckH=h*0.4, 弦半长 dx=w*0.28/2
-  // 圆心到弦距离 dy = sqrt(bulbR^2 - dx^2)，圆弧最低点相对 flaskY 的偏移 = neckH + dy + bulbR
+  // 3. 蒸馏烧瓶：圆底立于石棉网顶面
   const FLASK_W = 90
   const FLASK_H = 140
-  const FLASK_NECK_H = FLASK_H * 0.4      // = 56
-  const FLASK_BULB_R = FLASK_W * 0.42     // = 37.8
-  const FLASK_HALF_NECK = (FLASK_W * 0.28) / 2 // = 12.6
-  const FLASK_CENTER_DY = Math.sqrt(FLASK_BULB_R ** 2 - FLASK_HALF_NECK ** 2) // ≈ 35.64
-  const FLASK_VISUAL_H = FLASK_NECK_H + FLASK_CENTER_DY + FLASK_BULB_R // 实际渲染最底端 ≈ 129.44
+  const FLASK_NECK_H = FLASK_H * 0.4             // 56
+  const FLASK_BULB_R = FLASK_W * 0.42            // 37.8 (球体左边缘在 x - 37.8)
+  const FLASK_HALF_NECK = (FLASK_W * 0.28) / 2   // 12.6
+  const FLASK_CENTER_DY = Math.sqrt(FLASK_BULB_R ** 2 - FLASK_HALF_NECK ** 2)
+  const FLASK_VISUAL_H = FLASK_NECK_H + FLASK_CENTER_DY + FLASK_BULB_R
   const flaskX = x - FLASK_W / 2
-  const flaskY = GAUZE_Y - FLASK_VISUAL_H  // 圆弧最底端 100% 精准立于石棉网顶面
+  const flaskY = GAUZE_Y - FLASK_VISUAL_H
   const flaskPorts = getDistillationFlaskPorts(flaskX, flaskY, FLASK_W, FLASK_H)
 
-  // 铁架台：宽度 140 使铁夹横臂精准触及瓶颈，底座贴桌面
-  const SUPPORT_W = 140
-  const SUPPORT_H = y - (flaskY - 30)      // 高度从桌面延伸至烧瓶顶上方30px
-  const supportX = x - 90                  // 铁架台左上角（偏左留出烧瓶空间）
-  const supportY = flaskY - 30             // 铁架台顶端（瓶顶上方30px）
+  // 4. 铁架台立柱：中心锁定在 x - 50（位于烧瓶球体左外侧 12.2px，绝对不会刺穿玻璃！）
+  const poleCenterX = x - 50
+  const poleTopY = flaskY - 25
+  const poleHeight = y - poleTopY
 
-  // 铁夹：动态计算 clampPos，使铁夹夹持在瓶颈中部
-  const targetClampAbsY = flaskY + FLASK_NECK_H * 0.5  // 瓶颈 50% 处
-  const clampPos = Math.max(0.05, Math.min(0.9,
-    (targetClampAbsY - supportY - 10) / (SUPPORT_H - 34)
-  ))
+  // 5. 铁夹：横臂从立柱向右平伸 37px，在支管口上方（flaskY + 11）夹紧细颈两侧
+  const clampY = flaskY + 11
+  const armLength = (x - FLASK_HALF_NECK) - poleCenterX // 50 - 12.6 = 37.4px
 
-  // 分液漏斗：下端茎插入烧瓶顶部橡皮塞
-  const FUNNEL_W = 80
-  const FUNNEL_H = 140
+  // 6. 分液漏斗：活塞高出橡皮塞 25px，细长下管深插瓶颈 28px，45° 尖嘴贴壁
+  const FUNNEL_W = 75
+  const FUNNEL_H = 150
   const funnelX = flaskPorts.topNeckPort.x - FUNNEL_W / 2
-  const funnelY = flaskPorts.topNeckPort.y - FUNNEL_H  // 漏斗底端 = 瓶口顶面
+  const funnelY = flaskPorts.topNeckPort.y - FUNNEL_H + 28
 
   return (
     <g id="liquid-heating-generator-group">
-      {/* 1. 铁架台（立杆在烧瓶左侧，底座贴桌面）*/}
-      <IronSupportApparatus
-        x={supportX}
-        y={supportY}
-        width={SUPPORT_W}
-        height={SUPPORT_H}
-        hasClamp={true}
-        clampPos={clampPos}
+      {/* ── 1. 铸铁底座 (平铺桌面，承托全套器材) ── */}
+      <rect
+        x={baseLeftX}
+        y={BASE_Y}
+        width={baseWidth}
+        height={BASE_H}
+        rx={2}
+        fill={SCENE_COLORS.heatingAndSupport.ironSupport}
+        stroke={SCENE_COLORS.materials.iron}
+        strokeWidth={STROKE.objectLine}
+      />
+      {/* 防滑垫片 */}
+      <rect x={baseLeftX + 4} y={y - 2} width={10} height={2} fill="#0F172A" />
+      <rect x={baseLeftX + baseWidth - 14} y={y - 2} width={10} height={2} fill="#0F172A" />
+
+      {/* ── 2. 竖立铁杆 (位于烧瓶球体左外侧，绝不穿模) ── */}
+      <rect
+        x={poleCenterX - 3}
+        y={poleTopY}
+        width={6}
+        height={poleHeight - BASE_H}
+        rx={1}
+        fill={SCENE_COLORS.heatingAndSupport.ironSupport}
+        stroke={SCENE_COLORS.materials.iron}
+        strokeWidth={STROKE.reference}
       />
 
-      {/* 2. 铁架台铁圈横杆（从立柱中心伸出，托住石棉网）*/}
-      {/* 立柱中心 x ≈ supportX + poleLeft + poleW/2 = x-90+32.2+3 ≈ x-54.8 */}
+      {/* ── 3. 铁夹机构 (十字紧固扣 + 水平金属横臂 + 暗红胶套双爪紧扣瓶颈) ── */}
+      <g transform={`translate(${poleCenterX}, ${clampY})`}>
+        {/* 十字紧固扣 (Bosshead) */}
+        <rect x={-6} y={-6} width={12} height={12} rx={2} fill="#334155" stroke="#1E293B" strokeWidth={1} />
+        <circle cx={-8} cy={0} r={2.5} fill="#475569" stroke="#0F172A" strokeWidth={0.8} />
+
+        {/* 水平金属横臂 */}
+        <line x1={0} y1={0} x2={armLength} y2={0} stroke={SCENE_COLORS.heatingAndSupport.ironRing} strokeWidth={STROKE.objectLine} />
+
+        {/* 双爪紧扣瓶颈垂直段 */}
+        <g transform={`translate(${armLength}, 0)`}>
+          {/* 上爪 */}
+          <path d="M -6,-2 L 0,-9 L 13,-12" fill="none" stroke="#334155" strokeWidth={2.5} strokeLinecap="round" />
+          <path d="M 2,-9 L 13,-12" fill="none" stroke="#7F1D1D" strokeWidth={4} strokeLinecap="round" />
+          {/* 下爪 */}
+          <path d="M -6,2 L 0,9 L 13,12" fill="none" stroke="#334155" strokeWidth={2.5} strokeLinecap="round" />
+          <path d="M 2,9 L 13,12" fill="none" stroke="#7F1D1D" strokeWidth={4} strokeLinecap="round" />
+          {/* 紧固螺钉 */}
+          <rect x={-3} y={-4} width={4} height={8} rx={1} fill="#64748B" stroke="#1E293B" strokeWidth={0.8} />
+        </g>
+      </g>
+
+      {/* ── 4. 铁圈与横杆 (从立柱伸出，水平托住石棉网) ── */}
       <line
-        x1={supportX + 35}
+        x1={poleCenterX}
         y1={GAUZE_Y}
-        x2={x + 55}
+        x2={x + 48}
         y2={GAUZE_Y}
         stroke={SCENE_COLORS.materials.iron}
         strokeWidth={3}
       />
+      {/* 铁圈十字紧固扣 */}
+      <rect x={poleCenterX - 5} y={GAUZE_Y - 5} width={10} height={10} rx={1.5} fill="#334155" stroke="#1E293B" strokeWidth={0.8} />
 
-      {/* 3. 石棉网（覆盖烧瓶底部，± 50px） */}
+      {/* ── 5. 石棉网 (覆盖烧瓶底部) ── */}
       <rect
-        x={x - 48}
+        x={x - 46}
         y={GAUZE_Y}
-        width={96}
+        width={92}
         height={GAUZE_H}
         fill={SCENE_COLORS.materials.asbestos}
         rx={1}
@@ -118,12 +152,21 @@ export const LiquidHeatingGeneratorApparatus: React.FC<LiquidHeatingGeneratorApp
         strokeWidth={STROKE.reference}
       />
       <line
-        x1={x - 48}
+        x1={x - 46}
         y1={GAUZE_Y + 3}
-        x2={x + 48}
+        x2={x + 46}
         y2={GAUZE_Y + 3}
         stroke={SCENE_COLORS.labels.chemicalFormula}
         strokeDasharray="2 2"
+      />
+
+      {/* ── 6. 酒精灯 (平稳坐于铸铁底板之上，外焰加热石棉网) ── */}
+      <AlcoholLampApparatus
+        x={lampX}
+        y={lampY}
+        width={LAMP_W}
+        height={LAMP_H}
+        lit={heating}
       />
 
       {/* 4. 蒸馏烧瓶（底部精准落在石棉网顶面）*/}
@@ -136,14 +179,29 @@ export const LiquidHeatingGeneratorApparatus: React.FC<LiquidHeatingGeneratorApp
         fillColor={withAlpha(CHEMISTRY_COLORS.concentration, 0.4)}
       />
 
-      {/* 5. 酒精灯（底座贴桌面，外焰顶端精准相切石棉网底面）*/}
-      <AlcoholLampApparatus
-        x={lampX}
-        y={lampY}
-        width={LAMP_W}
-        height={LAMP_H}
-        lit={heating}
-      />
+      {/* 4.1 高考经典必考考点：烧瓶底部加几粒碎瓷片/沸石 (防止液体暴沸) */}
+      <g id="boiling-stones" opacity={0.85}>
+        <polygon
+          points={`${x - 12},${GAUZE_Y - 3} ${x - 7},${GAUZE_Y - 9} ${x - 3},${GAUZE_Y - 4}`}
+          fill={SCENE_COLORS.materials.asbestos}
+          stroke={SCENE_COLORS.container.beakerBorder}
+          strokeWidth={0.8}
+        />
+        <polygon
+          points={`${x + 2},${GAUZE_Y - 3} ${x + 6},${GAUZE_Y - 8} ${x + 11},${GAUZE_Y - 3}`}
+          fill={SCENE_COLORS.materials.iron}
+          stroke={SCENE_COLORS.container.beakerBorder}
+          strokeWidth={0.8}
+        />
+        <polygon
+          points={`${x - 3},${GAUZE_Y - 5} ${x},${GAUZE_Y - 11} ${x + 4},${GAUZE_Y - 6}`}
+          fill={SCENE_COLORS.stopper.rubberStopper}
+          stroke={SCENE_COLORS.container.beakerBorder}
+          strokeWidth={0.8}
+        />
+      </g>
+
+
 
       {/* 6. 上部：乙烯用温度计 (170°C 水银球完全浸没在反应液中央，距离烧瓶底悬空 10.4px)，常规用分液漏斗 */}
       {isEthylene ? (

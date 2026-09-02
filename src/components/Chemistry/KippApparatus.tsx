@@ -227,9 +227,9 @@ export function KippApparatus({
         </g>
       )}
 
-      {/* ── 9. 中球侧面导气管、磨砂活塞与红褐色橡皮套管接扣 (RubberHoseJoint) ── */}
+      {/* ── 9. 中球侧面导气管、磨砂活塞与直角向上导管 (高考规范结构) ── */}
       <g transform={`translate(${cx + midSphereR - 4}, ${midSphereY - 10})`} id="stopcock-assembly">
-        {/* 玻璃侧管主体 */}
+        {/* 玻璃侧管主体 (由中球引出至活塞) */}
         <line x1={0} y1={0} x2={22} y2={0} stroke={SCENE_COLORS.tube.glass} strokeWidth={4} />
         {/* 磨砂阀门套扣 */}
         <rect x={8} y={-6} width={8} height={12} fill="#CBD5E1" stroke="#64748B" strokeWidth={1} rx={1} />
@@ -242,6 +242,21 @@ export function KippApparatus({
           fill={isOpen ? '#10B981' : '#EF4444'}
           rx={2}
           transform={isOpen ? 'rotate(0 12 0)' : 'rotate(90 12 0)'}
+        />
+        {/* 活塞右侧玻璃出气导管：由水平向右 16px，直角圆角向上延伸至 y=-50，端点向上接全链主线 */}
+        <path
+          d="M 22 0 L 36 0 Q 40 0 40 -4 L 40 -50"
+          fill="none"
+          stroke={SCENE_COLORS.materials.glassBorder}
+          strokeWidth={6}
+          strokeLinecap="square"
+        />
+        <path
+          d="M 22 0 L 36 0 Q 40 0 40 -4 L 40 -50"
+          fill="none"
+          stroke={withAlpha(SCENE_COLORS.tube.glass, 0.85)}
+          strokeWidth={3}
+          strokeLinecap="square"
         />
       </g>
 

@@ -213,4 +213,77 @@ describe('GasChainChemistry — 母题六 气体制备装置链化学核查测�
       expect(result.current.issues.some((i) => i.id === 'no2-water-collect-wrong')).toBe(true)
     })
   })
+
+  // 5. CO₂ / C₂H₂ / SO₂ 核心净化试剂诊断测试
+  describe('CO₂ / C₂H₂ / SO₂ 净化除杂试剂诊断', () => {
+    it('CO₂ 误用 NaOH 溶液洗气触发完全吸收警报', () => {
+      const params: GasChainParams = {
+        viewMode: 0,
+        systemId: 'custom',
+        targetGas: 'CO₂',
+        generator: 'kipp',
+        washingSteps: [{ id: 's1', device: 'wash-bottle', reagent: 'naoh', role: 'purify' }],
+        collection: 'upward-air',
+        tailGas: 'none',
+        flowRate: 50,
+        temp: 25,
+        heating: false,
+      }
+      const { result } = renderHook(() => useGasChainChemistry(params))
+      expect(result.current.hasDangerAlert).toBe(true)
+      expect(result.current.issues.some((i) => i.id === 'co2-naoh-wrong')).toBe(true)
+    })
+
+    it('CO₂ 误用水洗气触发溶解损失警告', () => {
+      const params: GasChainParams = {
+        viewMode: 0,
+        systemId: 'custom',
+        targetGas: 'CO₂',
+        generator: 'kipp',
+        washingSteps: [{ id: 's1', device: 'wash-bottle', reagent: 'water', role: 'purify' }],
+        collection: 'upward-air',
+        tailGas: 'none',
+        flowRate: 50,
+        temp: 25,
+        heating: false,
+      }
+      const { result } = renderHook(() => useGasChainChemistry(params))
+      expect(result.current.issues.some((i) => i.id === 'co2-water-warning')).toBe(true)
+    })
+
+    it('C₂H₂ 误用 NaOH 洗气触发无法沉淀除硫警告', () => {
+      const params: GasChainParams = {
+        viewMode: 0,
+        systemId: 'custom',
+        targetGas: 'C₂H₂',
+        generator: 'flask-noheat',
+        washingSteps: [{ id: 's1', device: 'wash-bottle', reagent: 'naoh', role: 'purify' }],
+        collection: 'water-displacement',
+        tailGas: 'combustion',
+        flowRate: 50,
+        temp: 25,
+        heating: false,
+      }
+      const { result } = renderHook(() => useGasChainChemistry(params))
+      expect(result.current.issues.some((i) => i.id === 'c2h2-naoh-warning')).toBe(true)
+    })
+
+    it('SO₂ 误用 NaOH 洗气触发完全吸收警报', () => {
+      const params: GasChainParams = {
+        viewMode: 0,
+        systemId: 'so2-chain',
+        targetGas: 'SO₂',
+        generator: 'flask-noheat',
+        washingSteps: [{ id: 's1', device: 'wash-bottle', reagent: 'naoh', role: 'purify' }],
+        collection: 'upward-air',
+        tailGas: 'inverted-funnel',
+        flowRate: 50,
+        temp: 25,
+        heating: false,
+      }
+      const { result } = renderHook(() => useGasChainChemistry(params))
+      expect(result.current.hasDangerAlert).toBe(true)
+      expect(result.current.issues.some((i) => i.id === 'so2-naoh-wrong')).toBe(true)
+    })
+  })
 })

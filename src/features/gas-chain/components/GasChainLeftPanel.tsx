@@ -166,9 +166,12 @@ export const GasChainLeftPanel: React.FC<GasChainLeftPanelProps> = ({
                   }}
                   cols={2}
                   options={[
-                    { label: '饱和食盐水', value: 'sat-nacl' },
-                    { label: 'NaOH 溶液', value: 'naoh' },
-                    { label: '品红溶液', value: 'fuchsin' },
+                    { label: '饱和食盐水 (除HCl)', value: 'sat-nacl' },
+                    { label: '饱和 NaHCO₃ (除HCl)', value: 'nahco3' },
+                    { label: '饱和 CuSO₄ (除H₂S)', value: 'cuso4' },
+                    { label: '饱和 NaHSO₃', value: 'nahso3' },
+                    { label: 'NaOH 溶液 (除酸气)', value: 'naoh' },
+                    { label: '品红溶液 (SO₂检验)', value: 'fuchsin' },
                     { label: '酸性 KMnO₄', value: 'kmno4' },
                     { label: '蒸馏水', value: 'water' },
                     { label: '无净化', value: 'none' },
