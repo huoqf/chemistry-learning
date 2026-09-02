@@ -124,7 +124,7 @@ export const CU_CONFIG: ElementValenceConfig = {
       fromSubstance: 'CuSO₄',
       toSubstance: 'Cu₂O',
       reagent: '乙醛 + NaOH (加热)',
-      equation: '2Cu²⁺ + CH₃CHO + 4OH⁻ =△= Cu₂O↓ + CH₃COO⁻ + 3H₂O',
+      equation: '2Cu²⁺ + CH₃CHO + 5OH⁻ =△= Cu₂O↓ + CH₃COO⁻ + 3H₂O',
       electronTransfer: '得 2 × 1e⁻ (化合价 +2 → +1)',
       type: 'reduction',
     },

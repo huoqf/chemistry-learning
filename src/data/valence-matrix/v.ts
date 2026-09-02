@@ -20,7 +20,7 @@ export const V_CONFIG: ElementValenceConfig = {
       colorStyle: 'bg-slate-100 text-slate-800 border-slate-300',
       rgbColor: colors.neutral[300],
       testReaction: '高强度耐磨合金元素（钒钢），用于制造弹簧与装甲钢板',
-      equation: 'V + 4HNO₃(浓) = VO₂⁺ + 4NO₂↑ + 2H₂O',
+      equation: 'V + 6HNO₃(浓) = VO₂⁺ + NO₃⁻ + 5NO₂↑ + 3H₂O',
       roleDescription: '高熔点难熔过渡金属',
       isReductant: true,
     },

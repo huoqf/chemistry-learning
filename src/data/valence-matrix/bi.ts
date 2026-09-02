@@ -54,7 +54,7 @@ export const BI_CONFIG: ElementValenceConfig = {
       colorStyle: 'bg-amber-100 text-amber-950 border-amber-300',
       rgbColor: colors.accent[300],
       testReaction: '【超强氧化剂经典应用】在酸性条件下可将无色 Mn²⁺ 氧化为紫红色的高锰酸根 MnO₄⁻（比 KMnO₄ 氧化性更强！）',
-      equation: '5NaBiO₃ + 2Mn²⁺ + 14H⁺ = 5Bi³⁺ + 2MnO₄⁻ (紫红) + 5Na⁺ + 7H₂O',
+      equation: '5NaBiO₃ + 2Mn²⁺ + 14H⁺ = 5Bi³⁺ + 2MnO₄⁻ + 5Na⁺ + 7H₂O',
       roleDescription: '超强氧化剂，锰离子专属显色检验剂',
       isOxidant: true,
     },

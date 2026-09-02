@@ -20,7 +20,7 @@ export const B_CONFIG: ElementValenceConfig = {
       colorStyle: 'bg-emerald-50 text-emerald-900 border-emerald-300',
       rgbColor: colors.success[200],
       testReaction: '【有机选择性还原剂】选择性将醛、酮羰基还原为醇，不还原酯基和羧基；遇水缓慢水解产生 H₂',
-      equation: 'NaBH₄ + 4H₂O = NaBO₂ + 4H₂↑ + NaOH',
+      equation: 'NaBH₄ + 2H₂O = NaBO₂ + 4H₂↑',
       roleDescription: '有机经典还原剂，储氢材料',
     },
     {

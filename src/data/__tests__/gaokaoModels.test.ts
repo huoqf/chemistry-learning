@@ -17,7 +17,7 @@ describe('Gaokao Models & Quiz Data 整合审计测试', () => {
     expect(modelIds).toContain('model-reagent-step')
     expect(modelIds).toContain('model-flash-cards')
 
-    // ── B. 8 大解题母题 (master-model) ──
+    // ── B. 9 大解题母题 (master-model) ──
     expect(modelIds).toContain('model-titration-balance')
     expect(modelIds).toContain('model-electrochemical-twin')
     expect(modelIds).toContain('model-crystal-3d-split')
@@ -32,7 +32,7 @@ describe('Gaokao Models & Quiz Data 整合审计测试', () => {
     expect(modelIds).toContain('model-gas-chain')
     expect(modelIds).toContain('model-industrial-flow')
 
-    // ── D. 3 大记忆矩阵层实验工具 (memory-matrix / experiment-chain) ──
+    // ── D. 2 大高频专题工具 (avogadro-constant / titration-error-purity) ──
     expect(modelIds).toContain('model-avogadro-constant')
     expect(modelIds).toContain('model-titration-error-purity')
   })

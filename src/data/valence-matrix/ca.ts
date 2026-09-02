@@ -76,8 +76,8 @@ export const CA_CONFIG: ElementValenceConfig = {
       colorText: '单斜晶系白色微溶晶体',
       colorStyle: 'bg-slate-50 text-slate-800 border-slate-300',
       rgbColor: colors.neutral[100],
-      testReaction: '加热至 150℃ 脱水转化为熟石膏 2CaSO₄·H₂O，熟石膏加水调成浆状迅速硬化（医用石膏绷带）',
-      equation: '2(CaSO₄·2H₂O) =150℃= (2CaSO₄·H₂O) + 3H₂O',
+      testReaction: '加热至 150℃ 脱水转化为熟石膏 (CaSO₄)₂·H₂O，熟石膏加水调成浆状迅速硬化（医用石膏绷带）',
+      equation: '2(CaSO₄·2H₂O) =150℃= (CaSO₄)₂·H₂O + 3H₂O',
       roleDescription: '石膏绷带与豆腐凝固剂',
     },
     {
