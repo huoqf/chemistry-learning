@@ -24,7 +24,6 @@ describe('40大元素方程式与化学计量严格审计', () => {
       })
     })
 
-    console.log('格式问题列表:', issues)
     expect(issues).toEqual([])
   })
 })

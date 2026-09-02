@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { VALENCE_MATRIX_DATA } from '../valence-matrix'
+import { matchesSubstance } from '../../components/Chemistry/valence-matrix/utils'
 
 describe('专题一：无机元素价类二维矩阵 深度化学科学性审计', () => {
   it('40 个元素数据完整性与基础化合价定义审查', () => {
@@ -27,9 +28,10 @@ describe('专题一：无机元素价类二维矩阵 深度化学科学性审计
         const hasItem = elem.items.some(item => item.valence === v)
         if (!hasItem) missingValences.push(v)
       })
-      if (missingValences.length > 0) {
-        console.log(`⚠️ 元素 [${elem.symbol}] 声明了化合价 [${missingValences.join(', ')}]，但在 items 中缺失对应物质！`)
-      }
+      expect(
+        missingValences,
+        `元素 [${elem.symbol}] 声明了化合价 [${missingValences.join(', ')}]，但在 items 中缺失对应物质！`
+      ).toEqual([])
     })
   })
 
@@ -88,6 +90,49 @@ describe('专题一：无机元素价类二维矩阵 深度化学科学性审计
         }
       })
     })
+  })
+
+  it('审查转化反应类型（type）与起止物质化合价升降数值的严格逻辑一致性', () => {
+    const inconsistencies: string[] = []
+
+    Object.values(VALENCE_MATRIX_DATA).forEach(elem => {
+      elem.transformations.forEach(trans => {
+        const fromItems = elem.items.filter(i => matchesSubstance(trans.fromSubstance, i.substance))
+        const toItems = elem.items.filter(i => matchesSubstance(trans.toSubstance, i.substance))
+
+        if (fromItems.length === 0 || toItems.length === 0) return
+
+        const fromValence = fromItems[0].valence
+        const toValence = toItems[0].valence
+
+        // 1. 如果声明为单纯 oxidation，价态必不能降低；如果声明为单纯 reduction，价态必不能升高
+        if (trans.type === 'oxidation' && toValence < fromValence) {
+          inconsistencies.push(
+            `[${elem.symbol}] 转化 ${trans.id} 声明为 oxidation，但中心元素价态从 ${fromValence} 降至 ${toValence}`
+          )
+        } else if (trans.type === 'reduction' && toValence > fromValence) {
+          inconsistencies.push(
+            `[${elem.symbol}] 转化 ${trans.id} 声明为 reduction，但中心元素价态从 ${fromValence} 升至 ${toValence}`
+          )
+        } else if (trans.type === 'other' && toValence !== fromValence) {
+          inconsistencies.push(
+            `[${elem.symbol}] 转化 ${trans.id} 声明为 other (非氧化还原)，但中心元素价态从 ${fromValence} 变到 ${toValence} (发生改变)`
+          )
+        } else if (toValence === fromValence) {
+          // 中心元素价态未变时，若标记为 oxidation/reduction，必须是配位/阴离子或辅助还原剂发生氧化还原（并在 electronTransfer 中明确说明）
+          if (trans.type === 'oxidation' || trans.type === 'reduction') {
+            const hasExplicitRedoxNotes = /(升|降|失|得|还原剂|氧化剂|转移)/.test(trans.electronTransfer)
+            if (!hasExplicitRedoxNotes) {
+              inconsistencies.push(
+                `[${elem.symbol}] 转化 ${trans.id} 中心元素价态从 ${fromValence} 到 ${toValence} (未变)，type 声明为 ${trans.type}，但 electronTransfer 未说明伴随氧化还原原因`
+              )
+            }
+          }
+        }
+      })
+    })
+
+    expect(inconsistencies).toEqual([])
   })
 
   it('审查化学反应方程式配平与常见化学事实', () => {

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { VALENCE_MATRIX_DATA } from '../valence-matrix'
 import { modelValenceMatrix } from '../quiz/model-valence-matrix'
+import { matchesSubstance } from '../../components/Chemistry/valence-matrix/utils'
 
 describe('Valence Matrix Data Integrity & Chemical Scientificity (新高考 40 全周期元素体系)', () => {
   it('should contain all 40 inorganic elements covering Gaokao periodic table requirements', () => {
@@ -64,12 +65,12 @@ describe('Valence Matrix Data Integrity & Chemical Scientificity (新高考 40 �
         ).toContain(item.category)
 
         // 2. 字段完整性
-        expect(item.substance.length).toBeGreaterThan(0)
-        expect(item.colorText.length).toBeGreaterThan(0)
-        expect(item.testReaction?.length ?? 0).toBeGreaterThan(0)
-        expect(item.equation?.length ?? 0).toBeGreaterThan(0)
-        expect(item.roleDescription?.length ?? 0).toBeGreaterThan(0)
-        expect(item.rgbColor).toBeTruthy()
+        expect(item.substance, `元素 [${config.id}] 存在空名称物质`).toBeTruthy()
+        expect(item.colorText, `元素 [${config.id}] 物质 [${item.substance}] 缺少 colorText`).toBeTruthy()
+        expect(item.testReaction, `元素 [${config.id}] 物质 [${item.substance}] 缺少 testReaction`).toBeTruthy()
+        expect(item.equation, `元素 [${config.id}] 物质 [${item.substance}] 缺少 equation`).toBeTruthy()
+        expect(item.roleDescription, `元素 [${config.id}] 物质 [${item.substance}] 缺少 roleDescription`).toBeTruthy()
+        expect(item.rgbColor, `元素 [${config.id}] 物质 [${item.substance}] 缺少 rgbColor`).toBeTruthy()
 
         // 3. 氧化还原逻辑校验：最高价不能标注为强还原剂，最低价不能标注为强氧化剂
         if (item.isReductant) {
@@ -91,25 +92,19 @@ describe('Valence Matrix Data Integrity & Chemical Scientificity (新高考 40 �
 
   it('should validate all transformation paths with valid chemical equations and electron transfer notes', () => {
     Object.values(VALENCE_MATRIX_DATA).forEach(config => {
-      const substanceNames = new Set(config.items.map(item => item.substance))
-
       config.transformations.forEach(trans => {
-        // 验证源物质与目标物质存在性
-        const fromExists = Array.from(substanceNames).some(name =>
-          trans.fromSubstance.includes(name) || name.includes(trans.fromSubstance.split(' ')[0])
-        )
-        const toExists = Array.from(substanceNames).some(name =>
-          trans.toSubstance.includes(name) || name.includes(trans.toSubstance.split(' ')[0])
-        )
+        // 使用高精度 matchesSubstance 验证源物质与目标物质存在性
+        const fromExists = config.items.some(item => matchesSubstance(trans.fromSubstance, item.substance))
+        const toExists = config.items.some(item => matchesSubstance(trans.toSubstance, item.substance))
 
         expect(
           fromExists,
-          `[${config.id}] 转化路径起点 [${trans.fromSubstance}] 不在元素物质列表中`
+          `[${config.id}] 转化路径起点 [${trans.fromSubstance}] 未能精准匹配到任何 items 物质`
         ).toBe(true)
 
         expect(
           toExists,
-          `[${config.id}] 转化路径终点 [${trans.toSubstance}] 不在元素物质列表中`
+          `[${config.id}] 转化路径终点 [${trans.toSubstance}] 未能精准匹配到任何 items 物质`
         ).toBe(true)
 
         // 方程式与电子转移

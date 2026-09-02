@@ -245,12 +245,12 @@ describe('方程式配平与化学守恒扫描', () => {
           balanceIssues.push(`${source}: "${eq}" -> 差异: ${diffs.join(', ')}`)
         }
       } catch (err) {
-        // 复杂嵌套无法解析项
+        balanceIssues.push(`${source}: "${eq}" -> 解析异常: ${(err as Error).message}`)
       }
     }
 
     if (balanceIssues.length > 0) {
-      console.error(`发现 ${balanceIssues.length} 条待核实配平项:`)
+      console.error(`发现 ${balanceIssues.length} 条待核实配平/解析项:`)
       balanceIssues.forEach(iss => console.error('  ⚠️', iss))
     }
 
