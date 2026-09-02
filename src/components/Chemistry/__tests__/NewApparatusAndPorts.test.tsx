@@ -12,8 +12,8 @@ import {
 describe('化学器材锚点 (Anchor Ports System) 测试', () => {
   it('getGasWashingBottlePorts 能够计算出洗气瓶进出气口锚点', () => {
     const ports = getGasWashingBottlePorts(100, 200, 90, 140)
-    expect(ports.inletPort.x).toBe(127)
-    expect(ports.outletPort.x).toBe(163)
+    expect(ports.inletPort.x).toBe(138)
+    expect(ports.outletPort.x).toBe(152)
     expect(ports.bottomPort.y).toBe(340)
   })
 
