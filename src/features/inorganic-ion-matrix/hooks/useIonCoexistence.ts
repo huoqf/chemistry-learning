@@ -88,6 +88,31 @@ export function useIonCoexistence(selectedIonIds: string[]): IonCoexistenceResul
       }
     }
 
+    // 3. 强氧化性阴离子与还原性阴离子二元氧化还原排斥 (MnO4-, ClO- 与 I-, S2-, SO32-, S2O32-)
+    const strongOxidantAnions = ['MnO4-', 'ClO-']
+    const reducingAnions = ['I-', 'S2-', 'SO32-', 'S2O32-']
+    strongOxidantAnions.forEach((oxId) => {
+      if (selectedIonIds.includes(oxId)) {
+        reducingAnions.forEach((redId) => {
+          if (selectedIonIds.includes(redId)) {
+            const redoxId = `redox-${oxId}-${redId}`
+            if (!seenConflictIds.has(redoxId)) {
+              seenConflictIds.add(redoxId)
+              activeConflicts.push({
+                id: redoxId,
+                ionA: oxId,
+                ionB: redId,
+                type: 'redox',
+                typeLabel: '氧化还原互斥',
+                reason: `${oxId} 具有强氧化性，与强还原性阴离子 ${redId} 发生自发氧化还原反应，不能大量共存。`,
+                equation: `${oxId} + ${redId} \\rightarrow 氧化产物 + 还原产物`,
+              })
+            }
+          }
+        })
+      }
+    })
+
     return {
       conflicts: activeConflicts,
       canCoexist: activeConflicts.length === 0,

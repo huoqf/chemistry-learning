@@ -49,4 +49,23 @@ describe('useIonCoexistence', () => {
     expect(result.current.conflicts.length).toBe(0)
     expect(result.current.selectedIonObjects.length).toBe(4)
   })
+
+  it('should correctly allow Ba2+ and AlO2- to coexist without false double-hydrolysis', () => {
+    // Ba(OH)2 是强碱可溶强电解质，Ba2+ 与 AlO2- 完全能大量共存
+    const { result } = renderHook(() => useIonCoexistence(['Ba2+', 'AlO2-']))
+    expect(result.current.canCoexist).toBe(true)
+    expect(result.current.conflicts.length).toBe(0)
+  })
+
+  it('should detect strong oxidant anions (MnO4-, ClO-) and reducing anions (SO32-, I-) redox conflict', () => {
+    // MnO4- 与 SO32- 自发氧化还原
+    const { result: r1 } = renderHook(() => useIonCoexistence(['MnO4-', 'SO32-']))
+    expect(r1.current.canCoexist).toBe(false)
+    expect(r1.current.conflicts.some((c) => c.type === 'redox')).toBe(true)
+
+    // ClO- 与 I- 自发氧化还原
+    const { result: r2 } = renderHook(() => useIonCoexistence(['ClO-', 'I-']))
+    expect(r2.current.canCoexist).toBe(false)
+    expect(r2.current.conflicts.some((c) => c.type === 'redox')).toBe(true)
+  })
 })

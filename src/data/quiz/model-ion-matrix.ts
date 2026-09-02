@@ -32,14 +32,14 @@ export const modelIonMatrix: ModelQuizData = {
       questionText: '下列各组离子在指定溶液中一定能够大量共存的是？',
       options: [
         { label: 'A', text: '在使甲基橙变红的溶液中：Fe²⁺、Na⁺、NO₃⁻、SO₄²⁻', isCorrect: false },
-        { label: 'B', text: '在 c(OH⁻)=1×10⁻¹³ mol/L 的溶液中：Al³⁺、NH₄⁺、Cl⁻、SO₄²⁻', isCorrect: false },
+        { label: 'B', text: '在由水电离出的 c(OH⁻)=1×10⁻¹³ mol/L 的溶液中：Al³⁺、NH₄⁺、Cl⁻、SO₄²⁻', isCorrect: false },
         { label: 'C', text: '在澄清透明溶液中：Cu²⁺、Fe³⁺、Ba²⁺、NO₃⁻、Cl⁻', isCorrect: true },
         { label: 'D', text: '在含有大量 Fe³⁺ 的溶液中：K⁺、NH₄⁺、I⁻、SCN⁻', isCorrect: false },
       ],
       modelAlignmentAnalysis:
         '运用离子共存四大维度排查：颜色限制、酸碱介质限制、氧化还原互斥、剧烈双水解互斥。',
       detailedExplanation:
-        'A 项：使甲基橙变红为酸性环境，H⁺ 与 NO₃⁻ 构成强氧化性体系，会氧化 Fe²⁺；B 项：若为强碱性则 Al³⁺ 与 NH₄⁺ 均不能共存；C 项：各离子间不反应，虽然有颜色但符合“澄清透明”要求，能大量共存；D 项：Fe³⁺ 能氧化 I⁻ 且与 SCN⁻ 络合变红。',
+        'A 项：使甲基橙变红为酸性环境，H⁺ 与 NO₃⁻ 构成强氧化性体系，会氧化 Fe²⁺；B 项：由水电离出的 c(OH⁻)=1×10⁻¹³ mol/L 表明水的电离受抑制，溶液可能显强酸性(pH=1)或强碱性(pH=13)，若为强碱性则 Al³⁺ 与 NH₄⁺ 均不能大量共存；C 项：各离子间不反应，虽然 Cu²⁺、Fe³⁺ 有颜色但符合“澄清透明”要求，能大量共存；D 项：Fe³⁺ 能氧化 I⁻ 且与 SCN⁻ 络合变红。',
     },
   ],
 }
