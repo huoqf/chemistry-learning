@@ -18,7 +18,17 @@ export interface IndustrialFlowParams {
   leachTemp: number // 浸出温度 (20 ~ 90 ℃)
   crushSize: 'coarse' | 'medium' | 'fine' // 矿石粒度
   oxidantAmount: 'sufficient' | 'insufficient' // 氧化剂/还原剂加入量
-  reagent: 'MnO' | 'CuO' | 'ZnO' | 'MgO' | 'Na2CO3' | 'CaCO3' | 'NaOH' // 调 pH 试剂选择
+  reagent:
+    | 'MnO'
+    | 'MnCO3'
+    | 'CuO'
+    | 'ZnO'
+    | 'ZnCO3'
+    | 'MgO'
+    | 'MgCO3'
+    | 'Na2CO3'
+    | 'CaCO3'
+    | 'NaOH' // 调 pH 试剂选择 (涵盖氧化物、碳酸盐、强碱)
   crystallizeMethod: 'cooling' | 'evaporation' // 结晶方式 (降温结晶 vs 蒸发浓缩)
   washSolvent: 'water' | 'ethanol' // 沉淀/晶体洗涤试剂 (水洗 vs 无水乙醇洗)
 }
@@ -52,6 +62,8 @@ export interface ReagentRecommendation {
   isRecommended: boolean
   label: string
   tag: string
+  category: 'target-compound' | 'external' // 试剂分类：主产物难溶物 (氧化物/碳酸盐) vs 外来中和试剂
+  reaction?: string // 消耗 H+ 反应机理方程式
   warning?: string
 }
 

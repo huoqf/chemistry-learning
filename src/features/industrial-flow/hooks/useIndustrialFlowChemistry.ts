@@ -9,16 +9,16 @@ import type {
   IndustrialFlowParams,
   IndustrialFlowChemistry,
   IonConcentrationPoint,
-  ElementFate,
   MassBalanceFlow,
 } from '../types'
+import { getElementFates, getReagentEvaluations } from './industrialFlowData'
 
 /**
  * 25℃ 各金属氢氧化物溶度积常数统一采用高中化学（人教版选择性必修1附录/高考真题标准题设）：
  * - Fe(OH)₃: 4.0e-38 (对应完全沉淀 pH=3.20)
  * - Fe(OH)₂: 8.0e-16 (对应完全沉淀 pH=8.95)
  * - Al(OH)₃: 1.0e-33 (对应完全沉淀 pH=4.70)
- * - Mn(OH)₂: 1.9e-13 (对应开始沉淀 pH=8.40)
+ * - Mn(OH)₂: 1.9e-13 (对应开始沉淀 pH ≈ 8.1~8.3，与浸出率及 c₀ 动态关联)
  * - Cu(OH)₂: 2.2e-20
  * - Zn(OH)₂: 1.2e-17
  * - Mg(OH)₂: 1.8e-11
@@ -180,6 +180,7 @@ export function useIndustrialFlowChemistry(
           color: CHART_COLORS.primary,
           precipitateFormula: 'H₂TiO₃',
           isTarget: true,
+          isPhRemoval: false, // 钛酰离子主要通过加热稀释水解分离，不属于常规碱调控沉淀
         },
         {
           symbol: 'Fe²⁺',
@@ -189,6 +190,7 @@ export function useIndustrialFlowChemistry(
           baseC0: 0.08,
           color: CHART_COLORS.compareA,
           precipitateFormula: 'Fe(OH)₂',
+          isPhRemoval: true,
         },
         {
           symbol: 'Mg²⁺',
@@ -198,6 +200,7 @@ export function useIndustrialFlowChemistry(
           baseC0: 0.03,
           color: CHART_COLORS.compareC,
           precipitateFormula: 'Mg(OH)₂',
+          isPhRemoval: true,
         },
       ]
     } else if (systemId === 'ni-co-li') {
@@ -336,31 +339,53 @@ export function useIndustrialFlowChemistry(
     })
 
     // 5. 安全 pH 区间计算 (仅考量调 pH 步骤需沉淀去除的杂质)
-    const impurityItems = ions.filter((i) => {
-      const raw = rawIons.find((r) => r.symbol === i.symbol)
-      return !raw?.isTarget && raw?.isPhRemoval !== false
-    })
-    const targetItems = ions.filter((i) => rawIons.find((r) => r.symbol === i.symbol)?.isTarget)
-
-    const minSafePh = impurityItems.length > 0 ? Math.max(...impurityItems.map((i) => i.pHEnd)) : 3.5
-    const maxSafePh = targetItems.length > 0 ? Math.min(...targetItems.map((i) => i.pHStart)) : 9.0
-
-    const roundedMin = Math.round(minSafePh * 10) / 10
-    const roundedMax = Math.round(maxSafePh * 10) / 10
-    const hasSafeRange = roundedMin <= roundedMax
-
-    const safePhRange: [number, number] = [roundedMin, roundedMax]
-    const isPhInSafeRange = hasSafeRange && pH >= safePhRange[0] && pH <= safePhRange[1]
-
+    let safePhRange: [number, number]
+    let hasSafeRange: boolean
+    let isPhInSafeRange: boolean
     let safeRangeDescription = ''
-    if (!hasSafeRange) {
-      safeRangeDescription = `无安全分离区间！杂质离子完全沉淀所需 pH (≥${roundedMin}) 高于目标离子析出 pH (≤${roundedMax})，发生严重共沉淀！必须先加氧化剂。`
-    } else if (isPhInSafeRange) {
-      safeRangeDescription = `处于理论最佳区间 [${roundedMin} ~ ${roundedMax}]：杂质已降至 10⁻⁵ mol/L 以下，主产物无损失！`
-    } else if (pH < roundedMin) {
-      safeRangeDescription = `当前 pH=${pH.toFixed(1)} 偏低：杂质未完全沉淀 (c > 10⁻⁵ mol/L)，产品纯度受影响。`
+
+    if (systemId === 'ti-fe') {
+      // 钛铁矿体系核心依靠加热稀释水解（pH 约 1.0~2.5）促使 TiO²⁺ 水解生成 H₂TiO₃，
+      // 并防止 Fe²⁺（pH>6.5 水解）混杂，故水解分离安全窗口为 1.0 ~ 2.5
+      safePhRange = [1.0, 2.5]
+      hasSafeRange = true
+      isPhInSafeRange = pH >= safePhRange[0] && pH <= safePhRange[1]
+      if (isPhInSafeRange) {
+        safeRangeDescription = `处于钛酰离子稀释水解最佳酸度区间 [1.0 ~ 2.5]：TiO²⁺ 彻底水解析出偏钛酸，Fe²⁺ 稳定保留在溶液中不水解。`
+      } else if (pH < 1.0) {
+        safeRangeDescription = `当前 pH=${pH.toFixed(1)} 酸度过高：酸度过大抑制 TiOSO₄ 水解平衡正向移动，TiO₂ 沉淀析出率下降。`
+      } else {
+        safeRangeDescription = `当前 pH=${pH.toFixed(1)} 偏高：酸度偏低易引起 Fe²⁺ 局部水解混入沉淀，降低钛白粉纯度与白度。`
+      }
     } else {
-      safeRangeDescription = `当前 pH=${pH.toFixed(1)} 偏高：已超过目标离子析出阈值 (${roundedMax})，造成产品沉淀损失！`
+      const impurityItems = ions.filter((i) => {
+        const raw = rawIons.find((r) => r.symbol === i.symbol)
+        return !raw?.isTarget && raw?.isPhRemoval !== false
+      })
+      const targetItems = ions.filter((i) => {
+        const raw = rawIons.find((r) => r.symbol === i.symbol)
+        return raw?.isTarget && raw?.isPhRemoval !== false
+      })
+
+      const minSafePh = impurityItems.length > 0 ? Math.max(...impurityItems.map((i) => i.pHEnd)) : 3.5
+      const maxSafePh = targetItems.length > 0 ? Math.min(...targetItems.map((i) => i.pHStart)) : 9.0
+
+      const roundedMin = Math.round(minSafePh * 10) / 10
+      const roundedMax = Math.round(maxSafePh * 10) / 10
+      hasSafeRange = roundedMin <= roundedMax
+
+      safePhRange = [roundedMin, roundedMax]
+      isPhInSafeRange = hasSafeRange && pH >= safePhRange[0] && pH <= safePhRange[1]
+
+      if (!hasSafeRange) {
+        safeRangeDescription = `无安全分离区间！杂质离子完全沉淀所需 pH (≥${roundedMin}) 高于目标离子析出 pH (≤${roundedMax})，发生严重共沉淀！必须先加氧化剂。`
+      } else if (isPhInSafeRange) {
+        safeRangeDescription = `处于理论最佳区间 [${roundedMin} ~ ${roundedMax}]：杂质已降至 10⁻⁵ mol/L 以下，主产物无损失！`
+      } else if (pH < roundedMin) {
+        safeRangeDescription = `当前 pH=${pH.toFixed(1)} 偏低：杂质未完全沉淀 (c > 10⁻⁵ mol/L)，产品纯度受影响。`
+      } else {
+        safeRangeDescription = `当前 pH=${pH.toFixed(1)} 偏高：已超过目标离子析出阈值 (${roundedMax})，造成产品沉淀损失！`
+      }
     }
 
     // 6. 生成 lg c - pH 沉淀分布拟合曲线数据 (pH 从 0.0 到 14.0，步长 0.2)
@@ -388,212 +413,10 @@ export function useIndustrialFlowChemistry(
     }
 
     // 7. 生成元素走向追踪矩阵 (Element Fate Matrix)
-    let elementFates: ElementFate[] = []
-    if (systemId === 'fe-al-mn') {
-      elementFates = [
-        {
-          element: 'Mn (主产物)',
-          rawState: 'MnO₂ (软锰矿)',
-          leachState: 'Mn²⁺ (经还原浸出)',
-          separationStep: '调 pH=4.7~8.1 保留在滤液',
-          finalState: 'MnSO₄·H₂O 晶体',
-          isTarget: true,
-        },
-        {
-          element: 'Fe (主要杂质)',
-          rawState: 'Fe₂O₃ / FeSO₄ 还原剂',
-          leachState: isOxidized ? 'Fe³⁺ (已充分氧化)' : 'Fe²⁺ (氧化不足)',
-          separationStep: isOxidized ? '调 pH≥3.2 完全沉淀' : '需 pH≥9.0 才沉淀(无法分离)',
-          finalState: isOxidized ? 'Fe(OH)₃ 沉淀 (中和渣)' : '残留溶液污染 MnSO₄',
-          isTarget: false,
-        },
-        {
-          element: 'Al (伴生杂质)',
-          rawState: 'Al₂O₃ (泥质脉石)',
-          leachState: 'Al³⁺ 铝离子',
-          separationStep: '调 pH≥4.7 完全沉淀 (防强碱再溶解)',
-          finalState: 'Al(OH)₃ 沉淀 (中和渣)',
-          isTarget: false,
-        },
-        {
-          element: 'Si (不溶脉石)',
-          rawState: 'SiO₂ 石英砂',
-          leachState: '不溶于稀硫酸',
-          separationStep: '酸浸后过滤直接分离',
-          finalState: '滤渣 I (浸出渣)',
-          isTarget: false,
-        },
-      ]
-    } else if (systemId === 'fe-cu-zn') {
-      elementFates = [
-        {
-          element: 'Zn (主产物)',
-          rawState: 'ZnO / ZnS 烟道灰',
-          leachState: 'Zn²⁺ 锌离子',
-          separationStep: '调 pH=5.2 保留在滤液',
-          finalState: 'ZnSO₄·7H₂O 晶体',
-          isTarget: true,
-        },
-        {
-          element: 'Cu (重金属杂质)',
-          rawState: 'CuO 铜杂质',
-          leachState: 'Cu²⁺ 铜离子',
-          separationStep: '后续加过量锌粉置换深度除铜',
-          finalState: 'Cu 单质沉淀渣 (回收铜)',
-          isTarget: false,
-        },
-        {
-          element: 'Fe (主要杂质)',
-          rawState: 'Fe₂O₃ / FeO',
-          leachState: isOxidized ? 'Fe³⁺' : 'Fe²⁺',
-          separationStep: '调 pH≥3.2 水解沉淀',
-          finalState: 'Fe(OH)₃ 沉淀 (中和渣)',
-          isTarget: false,
-        },
-        {
-          element: 'Al (伴生杂质)',
-          rawState: 'Al₂O₃',
-          leachState: 'Al³⁺',
-          separationStep: '调 pH≥4.7 水解沉淀',
-          finalState: 'Al(OH)₃ 沉淀 (中和渣)',
-          isTarget: false,
-        },
-      ]
-    } else if (systemId === 'ti-fe') {
-      elementFates = [
-        {
-          element: 'Ti (主产物)',
-          rawState: 'FeTiO₃ (钛铁矿)',
-          leachState: 'TiOSO₄ (钛酰硫酸盐)',
-          separationStep: '加热稀释水解析出 H₂TiO₃',
-          finalState: '煅烧生成高纯 TiO₂ (钛白粉)',
-          isTarget: true,
-        },
-        {
-          element: 'Fe (伴生回收)',
-          rawState: 'Fe²⁺ / Fe³⁺ 氧化物',
-          leachState: '加铁屑还原为 Fe²⁺ (防水解)',
-          separationStep: '降温结晶析出绿矾',
-          finalState: 'FeSO₄·7H₂O 副产晶体',
-          isTarget: false,
-        },
-        {
-          element: 'Mg (伴生杂质)',
-          rawState: 'MgO 脉石',
-          leachState: 'Mg²⁺ (水解弱，留在母液)',
-          separationStep: '多次结晶后母液外排处理',
-          finalState: '母液废渣',
-          isTarget: false,
-        },
-      ]
-    } else if (systemId === 'ni-co-li') {
-      elementFates = [
-        {
-          element: 'Co/Ni/Li (主产品)',
-          rawState: 'LiCoO₂ / LiNiO₂ 正极废料',
-          leachState: 'Co²⁺ / Ni²⁺ / Li⁺ (H₂O₂还原浸出)',
-          separationStep: '除杂后萃取分离或分步沉淀',
-          finalState: 'CoSO₄ / NiSO₄ 电池级盐',
-          isTarget: true,
-        },
-        {
-          element: 'Fe/Al (集流体杂质)',
-          rawState: '铝箔 / 铁外壳杂质',
-          leachState: 'Fe³⁺ / Al³⁺',
-          separationStep: '调 pH=4.7~5.0 沉淀去除',
-          finalState: 'Fe(OH)₃ / Al(OH)₃ 混合滤渣',
-          isTarget: false,
-        },
-        {
-          element: 'Ca/Mg (水质杂质)',
-          rawState: '工艺水引入杂质',
-          leachState: 'Ca²⁺ / Mg²⁺',
-          separationStep: '加入 NaF 深度沉淀',
-          finalState: 'CaF₂ / MgF₂ 难溶氟化物渣',
-          isTarget: false,
-        },
-      ]
-    } else {
-      elementFates = [
-        {
-          element: 'Mg (主产物)',
-          rawState: 'Mg²⁺ 盐湖卤水 / 白云石',
-          leachState: 'Mg²⁺ 镁离子',
-          separationStep: '调 pH 去铁铝后加碱沉淀',
-          finalState: 'Mg(OH)₂ 煅烧得高纯 MgO',
-          isTarget: true,
-        },
-        {
-          element: 'Fe/Al (微量杂质)',
-          rawState: '黏土伴生泥',
-          leachState: 'Fe³⁺ / Al³⁺',
-          separationStep: '用 MgO 调 pH=5.0 沉淀',
-          finalState: 'Fe(OH)₃ / Al(OH)₃ 滤渣',
-          isTarget: false,
-        },
-        {
-          element: 'Ca (主要共生离子)',
-          rawState: 'Ca²⁺ 卤水伴生',
-          leachState: 'Ca²⁺ 钙离子',
-          separationStep: '加入草酸铵或硫酸根沉淀',
-          finalState: 'CaC₂O₄ 沉淀分离',
-          isTarget: false,
-        },
-      ]
-    }
+    const elementFates = getElementFates(systemId, isOxidized)
 
-    // 8. 调 pH 试剂不增杂智能评估
-    const reagentEvaluations = [
-      {
-        reagent: 'MnO',
-        isRecommended: systemId === 'fe-al-mn',
-        label: 'MnO (氧化锰)',
-        tag: systemId === 'fe-al-mn' ? '首选推荐' : '异相增杂',
-        warning: systemId !== 'fe-al-mn' ? '引入 Mn²⁺ 杂质离子' : undefined,
-      },
-      {
-        reagent: 'ZnO',
-        isRecommended: systemId === 'fe-cu-zn',
-        label: 'ZnO (氧化锌)',
-        tag: systemId === 'fe-cu-zn' ? '首选推荐' : '异相增杂',
-        warning: systemId !== 'fe-cu-zn' ? '引入 Zn²⁺ 杂质离子' : undefined,
-      },
-      {
-        reagent: 'MgO',
-        isRecommended: systemId === 'mg-ca',
-        label: 'MgO (氧化镁)',
-        tag: systemId === 'mg-ca' ? '首选推荐' : '异相增杂',
-        warning: systemId !== 'mg-ca' ? '引入 Mg²⁺ 杂质离子' : undefined,
-      },
-      {
-        reagent: 'CuO',
-        isRecommended: false,
-        label: 'CuO (氧化铜)',
-        tag: '特定铜工艺推荐',
-        warning: '非铜主产物工艺将引入 Cu²⁺ 重金属杂质',
-      },
-      {
-        reagent: 'Na2CO3',
-        isRecommended: false,
-        label: 'Na₂CO₃ (碳酸钠)',
-        tag: '慎用',
-        warning: '引入 Na⁺ 杂质且剧烈放气，难以从硫酸盐中分离',
-      },
-      {
-        reagent: 'CaCO3',
-        isRecommended: false,
-        label: 'CaCO₃ (石灰石)',
-        tag: '副产 CaSO₄',
-        warning: '生成微溶 CaSO₄ 结垢包裹，增加过滤阻力',
-      },
-      {
-        reagent: 'NaOH',
-        isRecommended: false,
-        label: 'NaOH (烧碱)',
-        tag: '易局部过碱',
-        warning: '强碱极易造成局部 pH 过高，导致 Al(OH)₃ 两性反溶且引入 Na⁺',
-      },
-    ]
+    // 8. 调 pH 试剂不增杂智能评估 (动态按工业体系分层)
+    const reagentEvaluations = getReagentEvaluations(systemId)
 
     // 9. 生成滤渣与滤液成分描述
     const precipitates = ions
@@ -698,7 +521,7 @@ export function useIndustrialFlowChemistry(
             ? 'Zn + Cu²⁺ = Zn²⁺ + Cu↓'
             : systemId === 'ti-fe'
             ? 'TiOSO₄ + 2H₂O =(加热)= H₂TiO₃↓ + H₂SO₄'
-            : 'MnSO₄ + H₂O = MnSO₄·H₂O↓',
+            : 'MnSO₄(aq) ➔ MnSO₄·H₂O(s)↓',
         coreQuestion:
           '【高考答题规范】：在结晶操作中为什么采用趁热过滤？采用无水乙醇洗涤晶体的目的是什么？',
         scoringAnswer:

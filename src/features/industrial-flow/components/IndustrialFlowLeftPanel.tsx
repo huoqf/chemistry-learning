@@ -222,9 +222,14 @@ export const IndustrialFlowLeftPanel: React.FC<IndustrialFlowLeftPanelProps> = (
         <LeftPanelSection title="工序三：沉淀除杂参数">
           <div className="flex flex-col gap-3">
             <div>
-              <label className="text-[11px] font-semibold text-slate-600 mb-1.5 block">
-                调 pH 试剂
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-[11px] font-semibold text-slate-600">
+                  调 pH 试剂选择 (不增杂决策)
+                </label>
+                <span className="text-[10px] text-indigo-600 font-mono">
+                  {currentEvaluation?.category === 'target-compound' ? '主产物难溶物' : '外来试剂'}
+                </span>
+              </div>
               <SegmentedControl
                 options={reagentOptions}
                 value={params.reagent}
@@ -234,22 +239,30 @@ export const IndustrialFlowLeftPanel: React.FC<IndustrialFlowLeftPanelProps> = (
 
               {currentEvaluation && (
                 <div
-                  className={`mt-2 p-2 rounded text-[11px] flex items-start gap-1.5 border leading-tight ${
+                  className={`mt-2 p-2 rounded text-[11px] flex flex-col gap-1 border leading-tight ${
                     currentEvaluation.isRecommended
                       ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
                       : 'bg-amber-50 border-amber-200 text-amber-900'
                   }`}
                 >
-                  {currentEvaluation.isRecommended ? (
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                  ) : (
-                    <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-1.5">
+                    {currentEvaluation.isRecommended ? (
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                    ) : (
+                      <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
+                    )}
+                    <span className="font-semibold">
+                      {currentEvaluation.isRecommended
+                        ? '符合不增杂原则：消耗 H⁺ 提高 pH，引入阳离子即为主产物阳离子。'
+                        : currentEvaluation.warning}
+                    </span>
+                  </div>
+
+                  {currentEvaluation.reaction && (
+                    <div className="mt-0.5 pt-1 border-t border-black/5 font-mono text-[10px] text-slate-700">
+                      机理方程式: {currentEvaluation.reaction}
+                    </div>
                   )}
-                  <span>
-                    {currentEvaluation.isRecommended
-                      ? '符合不增杂原则：消耗 H⁺ 提高 pH，引入阳离子即为主产物阳离子。'
-                      : currentEvaluation.warning}
-                  </span>
                 </div>
               )}
             </div>

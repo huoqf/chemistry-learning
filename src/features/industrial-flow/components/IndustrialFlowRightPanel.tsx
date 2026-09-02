@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ChemistryPanel } from '@/components/UI'
-import { Layers, CheckCircle, Award, HelpCircle } from 'lucide-react'
+import { Layers, CheckCircle, Award, HelpCircle, BookOpen, ChevronDown, ChevronUp } from 'lucide-react'
 import type { IndustrialFlowChemistry, IndustrialFlowParams } from '../types'
 import type { GaokaoModelNode } from '@/data/gaokaoModels'
 
@@ -14,6 +14,7 @@ export const IndustrialFlowRightPanel: React.FC<IndustrialFlowRightPanelProps> =
   chemistry,
   params,
 }) => {
+  const [showMatrix, setShowMatrix] = useState(false)
   const { pH, reagent } = params
   const {
     ions,
@@ -356,6 +357,81 @@ export const IndustrialFlowRightPanel: React.FC<IndustrialFlowRightPanelProps> =
             <span>{activeStepInfo.scoringAnswer}</span>
           </div>
         </div>
+      </div>
+
+      {/* 高考解题全景决策与四维自查矩阵 (点击展开/折叠，赋能系统理解记忆与提分) */}
+      <div className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden shadow-xs transition-all">
+        <button
+          type="button"
+          onClick={() => setShowMatrix((prev) => !prev)}
+          className="w-full p-2.5 flex items-center justify-between text-left hover:bg-slate-100/70 transition-colors"
+        >
+          <div className="flex items-center gap-1.5">
+            <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
+            <span className="text-xs font-bold text-slate-800">
+              高考工艺流程四维解题与自查矩阵 (点击背诵)
+            </span>
+          </div>
+          <div className="flex items-center gap-1 text-[11px] text-slate-500 font-medium">
+            <span>{showMatrix ? '收起矩阵' : '展开矩阵'}</span>
+            {showMatrix ? (
+              <ChevronUp className="w-3.5 h-3.5 text-slate-400" />
+            ) : (
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            )}
+          </div>
+        </button>
+
+        {showMatrix && (
+          <div className="p-3 pt-1 border-t border-slate-200 flex flex-col gap-2.5 text-xs">
+            <div className="p-2 rounded bg-indigo-50/60 border border-indigo-100 text-indigo-900 leading-snug">
+              <strong className="font-semibold block mb-0.5">矩阵记忆导读：</strong>
+              高中化学工艺流程题（14~15分）核心由这 4 个维度的正交组合构成。先看原料特征与杂质价态，再定分离 pH 窗口与纯化提取方式。
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <div className="p-2 rounded bg-white border border-slate-200">
+                <div className="font-bold text-slate-800 mb-0.5 text-[11.5px] text-indigo-700">
+                  维度一 · 原料破矿与浸出动力学
+                </div>
+                <div className="text-slate-600 leading-relaxed text-[11px]">
+                  <strong>可选项：</strong> 粗块/细粉 · 常温/60~80℃ · 稀硫酸/盐酸/碱浸 · 是否加还原剂。<br />
+                  <strong>提分标答：</strong> 矿石粉碎增大固液接触面积加快浸出；升高温度加快反应速率，但过高会导致酸挥发或氧化剂分解。
+                </div>
+              </div>
+
+              <div className="p-2 rounded bg-white border border-slate-200">
+                <div className="font-bold text-slate-800 mb-0.5 text-[11.5px] text-indigo-700">
+                  维度二 · 氧化还原与价态调控 (打开分离窗口)
+                </div>
+                <div className="text-slate-600 leading-relaxed text-[11px]">
+                  <strong>可选项：</strong> H₂O₂ 绿色氧化 / 铁屑还原 / 还原剂当量 (100%充分 vs 不足)。<br />
+                  <strong>提分标答：</strong> 将难沉淀的 Fe²⁺ 氧化为 Fe³⁺，使沉淀完全 pH 由 8.95 降至 3.20，拉开与主金属分离的安全 pH 窗口；H₂O₂ 产物为水，不增新杂质。
+                </div>
+              </div>
+
+              <div className="p-2 rounded bg-white border border-slate-200">
+                <div className="font-bold text-slate-800 mb-0.5 text-[11.5px] text-indigo-700">
+                  维度三 · Ksp 沉淀溶解平衡与调 pH 不增杂
+                </div>
+                <div className="text-slate-600 leading-relaxed text-[11px]">
+                  <strong>可选项：</strong> 主产物氧化物/碳酸盐 · 强碱 NaOH · 目标安全 pH 区间。<br />
+                  <strong>提分标答：</strong> 消耗 H⁺ 促进杂质水解沉淀，引入阳离子为主产物离子（不引杂）；下限保证杂质 c≤10⁻⁵ mol/L，上限防止目标离子析出损失。
+                </div>
+              </div>
+
+              <div className="p-2 rounded bg-white border border-slate-200">
+                <div className="font-bold text-slate-800 mb-0.5 text-[11.5px] text-indigo-700">
+                  维度四 · 结晶分离、洗涤检验与质量闭环
+                </div>
+                <div className="text-slate-600 leading-relaxed text-[11px]">
+                  <strong>可选项：</strong> 蒸发浓缩冷却结晶 / 趁热过滤 · 冷水洗 / 无水乙醇洗。<br />
+                  <strong>提分标答：</strong> 乙醇洗涤洗去杂质、降低晶体在水中的溶解损耗且易挥发速干；取最后一次洗涤液滴加试剂无沉淀证明洗净。
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 统一 ChemistryPanel 展示定量量、公式、高考答题模板与警示 (scrollable={false} 杜绝双层嵌套滚动条) */}
