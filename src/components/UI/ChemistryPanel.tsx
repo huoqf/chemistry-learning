@@ -42,6 +42,8 @@ interface ChemistryPanelProps {
   isEquilibrium?: boolean
   equilibriumInfo?: string
   title?: string
+  scrollable?: boolean // 默认为 true。若外层容器已有独立滚动条，设为 false 避免双层嵌套滚动条
+  className?: string
 }
 
 // ─── 常量样式 ──────────────────────────────────────────────
@@ -380,9 +382,51 @@ export const ChemistryPanel: React.FC<ChemistryPanelProps> = ({
   isEquilibrium,
   equilibriumInfo,
   title,
+  scrollable = true,
+  className = '',
 }) => {
+  if (!scrollable) {
+    return (
+      <div className={`flex flex-col space-y-3 ${className}`}>
+        {/* 标题 */}
+        {title && (
+          <div
+            className="shrink-0 px-1 py-1 text-sm font-bold"
+            style={{ color: colors.primary[700], borderBottom: `1px solid ${colors.neutral[200]}` }}
+          >
+            {title}
+          </div>
+        )}
+
+        {/* 化学量区 */}
+        {quantities.length > 0 && (
+          <div className="space-y-1">
+            {quantities.map((q, i) => (
+              <QuantityItem key={i} q={q} />
+            ))}
+          </div>
+        )}
+
+        {/* 平衡态指示 */}
+        <EquilibriumBanner isEquilibrium={isEquilibrium} equilibriumInfo={equilibriumInfo} />
+
+        {/* 公式区 */}
+        <FormulaSection formulas={formulas} />
+
+        {/* 易错警示 */}
+        <WarningSection warnings={warnings} />
+
+        {/* 高考要点 */}
+        <GaokaoSection points={gaokaoPoints} />
+
+        {/* 记忆口诀 */}
+        <MnemonicSection mnemonic={mnemonic} />
+      </div>
+    )
+  }
+
   return (
-    <div className="h-full flex flex-col overflow-hidden">
+    <div className={`h-full flex flex-col overflow-hidden ${className}`}>
       {/* 标题 */}
       {title && (
         <div

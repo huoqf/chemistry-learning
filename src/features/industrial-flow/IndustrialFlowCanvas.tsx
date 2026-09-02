@@ -19,11 +19,14 @@ export function IndustrialFlowCanvas() {
   const [params, setParams] = useState<IndustrialFlowParams>({
     viewMode: 0,
     systemId: 'fe-al-mn',
+    activeStep: 3, // 默认聚焦核心工序 3 (调 pH 沉淀槽)
     pH: 5.2, // 默认处于安全区间 [4.7, 8.4]
     leachTemp: 60,
     crushSize: 'fine',
     oxidantAmount: 'sufficient',
     reagent: 'MnO',
+    crystallizeMethod: 'cooling',
+    washSolvent: 'ethanol',
   })
 
   const updateParam = useCallback((key: keyof IndustrialFlowParams, value: any) => {
@@ -34,11 +37,14 @@ export function IndustrialFlowCanvas() {
     setParams({
       viewMode: 0,
       systemId: 'fe-al-mn',
+      activeStep: 3,
       pH: 5.2,
       leachTemp: 60,
       crushSize: 'fine',
       oxidantAmount: 'sufficient',
       reagent: 'MnO',
+      crystallizeMethod: 'cooling',
+      washSolvent: 'ethanol',
     })
   }, [])
 
@@ -49,10 +55,9 @@ export function IndustrialFlowCanvas() {
   const leftContent = (
     <IndustrialFlowLeftPanel
       params={params}
+      chemistry={chemistry}
       updateParam={updateParam}
       onReset={handleReset}
-      isPhInSafeRange={chemistry.isPhInSafeRange}
-      safePhRange={chemistry.safePhRange}
     />
   )
 
