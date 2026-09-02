@@ -85,13 +85,23 @@ export const IndustrialFlowCenterView: React.FC<IndustrialFlowCenterViewProps> =
     <div className="w-full h-full flex flex-col bg-slate-50 p-2.5 gap-2.5 overflow-hidden select-none">
       {/* 上半部分：高考标准方框工艺流程图 (SVG 矢量流向图，可点击槽体下钻) */}
       <div className="w-full h-[225px] bg-white rounded-xl border border-slate-200 shrink-0 shadow-xs overflow-hidden flex flex-col">
-        <IndustrialFlowSvgFlowchart
-          systemId={systemId}
-          activeStep={activeStep}
-          onSelectStep={(step) => updateParam('activeStep', step)}
-          chemistry={chemistry}
-          pH={pH}
-        />
+        <div className="px-3 py-1 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between text-[11px] text-slate-500 shrink-0">
+          <span className="font-bold text-slate-700">
+            工艺流程方框图（点击各工序槽体下钻微观机理）
+          </span>
+          <span className="text-[10px] text-indigo-700 bg-indigo-50/80 px-2 py-0.5 rounded border border-indigo-100 font-medium">
+            当前聚焦：{activeStepInfo.title}
+          </span>
+        </div>
+        <div className="flex-1 w-full min-h-0">
+          <IndustrialFlowSvgFlowchart
+            systemId={systemId}
+            activeStep={activeStep}
+            onSelectStep={(step) => updateParam('activeStep', step)}
+            chemistry={chemistry}
+            pH={pH}
+          />
+        </div>
       </div>
 
       {/* 下半部分：当前选定反应槽的微观机理放大镜 */}

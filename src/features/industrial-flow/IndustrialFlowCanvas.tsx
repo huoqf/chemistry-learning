@@ -8,13 +8,16 @@ import { ThreePanel } from '@/components/Layout'
 import { GaokaoToolHeader } from '@/components/UI'
 import { getGaokaoModel } from '@/data/gaokaoModels'
 import { getModelQuizData } from '@/data/quiz'
+import { BookOpen } from 'lucide-react'
 import type { IndustrialFlowParams } from './types'
 import { useIndustrialFlowChemistry } from './hooks/useIndustrialFlowChemistry'
 import { IndustrialFlowLeftPanel } from './components/IndustrialFlowLeftPanel'
 import { IndustrialFlowCenterView } from './components/IndustrialFlowCenterView'
 import { IndustrialFlowRightPanel } from './components/IndustrialFlowRightPanel'
+import { IndustrialFlowGuideModal } from './components/IndustrialFlowGuideModal'
 
 export function IndustrialFlowCanvas() {
+  const [isGuideOpen, setIsGuideOpen] = useState(false)
 
   const [params, setParams] = useState<IndustrialFlowParams>({
     viewMode: 0,
@@ -58,6 +61,7 @@ export function IndustrialFlowCanvas() {
       chemistry={chemistry}
       updateParam={updateParam}
       onReset={handleReset}
+      onOpenGuide={() => setIsGuideOpen(true)}
     />
   )
 
@@ -85,12 +89,28 @@ export function IndustrialFlowCanvas() {
         modelId="model-industrial-flow"
         viewMode={params.viewMode}
         onViewModeChange={(m) => updateParam('viewMode', m)}
+        extraRight={
+          <button
+            onClick={() => setIsGuideOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all shadow-xs border border-indigo-400/30 active:scale-95 cursor-pointer"
+            title="查看高考题型、解题思路与本工具用法"
+          >
+            <BookOpen className="w-3.5 h-3.5 text-indigo-200" />
+            解题指引与用法
+          </button>
+        }
       />
 
       {/* 主体 ThreePanel 三栏区域 */}
       <div className="flex-1 overflow-hidden">
         <ThreePanel left={leftContent} center={centerContent} right={rightContent} />
       </div>
+
+      {/* 高考题型剖析与解题用法指引弹窗 */}
+      <IndustrialFlowGuideModal
+        isOpen={isGuideOpen}
+        onClose={() => setIsGuideOpen(false)}
+      />
     </div>
   )
 }

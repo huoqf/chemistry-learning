@@ -16,19 +16,21 @@ import {
   IndustrialFlowParams,
   IndustrialFlowSystemId,
 } from '../types'
-import { CheckCircle2, AlertCircle } from 'lucide-react'
+import { CheckCircle2, AlertCircle, BookOpen } from 'lucide-react'
 
 interface IndustrialFlowLeftPanelProps {
   params: IndustrialFlowParams
   chemistry: IndustrialFlowChemistry
   updateParam: (key: keyof IndustrialFlowParams, value: any) => void
   onReset?: () => void
+  onOpenGuide?: () => void
 }
 
 export const IndustrialFlowLeftPanel: React.FC<IndustrialFlowLeftPanelProps> = ({
   params,
   chemistry,
   updateParam,
+  onOpenGuide,
 }) => {
   const {
     isPhInSafeRange,
@@ -92,6 +94,32 @@ export const IndustrialFlowLeftPanel: React.FC<IndustrialFlowLeftPanelProps> = (
 
   return (
     <LeftPanel className="p-4 flex flex-col gap-3.5 overflow-y-auto">
+      {/* 0. 解题指引与工具用法快捷入口 */}
+      {onOpenGuide && (
+        <div
+          onClick={onOpenGuide}
+          className="p-2.5 rounded-xl bg-gradient-to-r from-indigo-50/90 to-blue-50/80 border border-indigo-200/90 hover:border-indigo-400 transition-all cursor-pointer shadow-2xs group flex items-center justify-between"
+          title="点击查看高考题型、解题思路与本工具用法"
+        >
+          <div className="flex items-center gap-2">
+            <span className="p-1 rounded-md bg-indigo-600 text-white shadow-2xs">
+              <BookOpen className="w-3.5 h-3.5" />
+            </span>
+            <div>
+              <div className="text-xs font-bold text-indigo-950 group-hover:text-indigo-700 transition-colors">
+                高考流程题破题手册
+              </div>
+              <div className="text-[10px] text-slate-500">
+                4类必考题型 · 三线四步法 · 用法指南
+              </div>
+            </div>
+          </div>
+          <span className="text-[11px] font-bold text-indigo-600 group-hover:translate-x-0.5 transition-transform">
+            详情 →
+          </span>
+        </div>
+      )}
+
       {/* 1. 考题体系 */}
       <LeftPanelSection title="工业流程考题体系">
         <SegmentedControl
