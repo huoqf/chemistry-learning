@@ -146,13 +146,43 @@ describe('专题一：无机元素价类二维矩阵 深度化学科学性审计
           return
         }
 
-        // 检查是否存在明显的未配平占位符或格式错误
-        if (eq.includes('undefined') || eq.includes('NaN') || eq.includes('null')) {
+        // 检查是否存在明显的未配平占位符或格式错误 (注意排除 NaNO3 等化学式)
+        if (eq.includes('undefined') || eq.includes('null') || /\bNaN\b/.test(eq)) {
           problematicEquations.push(`[${elem.symbol}] 方程式含非法字符: ${eq}`)
         }
       })
     })
 
     expect(problematicEquations).toEqual([])
+  })
+
+  it('审查元素声明的 categories 是否在 items 中均有对应物质节点 (彻底杜绝空列)', () => {
+    const emptyCategories: string[] = []
+    Object.values(VALENCE_MATRIX_DATA).forEach(elem => {
+      elem.categories.forEach(cat => {
+        const hasItem = elem.items.some(item => item.category === cat)
+        if (!hasItem) {
+          emptyCategories.push(`[${elem.symbol}] 声明了分类 [${cat}]，但 items 中无任何属于该分类的物质`)
+        }
+      })
+    })
+    expect(emptyCategories).toEqual([])
+  })
+
+  it('审查转化路径起止物质是否都能在 items 中找到对应实体', () => {
+    const missingMatches: string[] = []
+    Object.values(VALENCE_MATRIX_DATA).forEach(elem => {
+      elem.transformations.forEach(trans => {
+        const hasFrom = elem.items.some(item => matchesSubstance(trans.fromSubstance, item.substance))
+        const hasTo = elem.items.some(item => matchesSubstance(trans.toSubstance, item.substance))
+        if (!hasFrom) {
+          missingMatches.push(`[${elem.symbol}] 转化 ${trans.id} 的 fromSubstance "${trans.fromSubstance}" 未在 items 中匹配到实体`)
+        }
+        if (!hasTo) {
+          missingMatches.push(`[${elem.symbol}] 转化 ${trans.id} 的 toSubstance "${trans.toSubstance}" 未在 items 中匹配到实体`)
+        }
+      })
+    })
+    expect(missingMatches).toEqual([])
   })
 })

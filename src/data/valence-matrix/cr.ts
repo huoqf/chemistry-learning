@@ -19,7 +19,7 @@ export const CR_CONFIG: ElementValenceConfig = {
       colorText: '银白色坚硬金属',
       colorStyle: 'bg-emerald-100 text-emerald-950 border-emerald-300',
       rgbColor: ATOM_COLORS.Cr,
-      testReaction: '向金属铬片中加入稀盐酸，铬片溶解，产生无色气泡 (H₂↑)，溶液由蓝色迅速转为翠绿色 (Cr³⁺)',
+      testReaction: '向金属铬片中加入稀盐酸，铬片逐渐溶解，产生无色气泡 (H₂↑)，溶液变为翠绿色 (Cr³⁺)',
       equation: '2Cr + 6H⁺ = 2Cr³⁺ + 3H₂↑',
       roleDescription: '过渡金属还原剂',
       isReductant: true,

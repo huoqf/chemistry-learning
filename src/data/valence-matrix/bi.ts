@@ -10,7 +10,7 @@ export const BI_CONFIG: ElementValenceConfig = {
   badgeText: '新高考超强氧化剂铋酸钠·氯化氧铋水解沉淀与胃药',
   atomColor: ATOM_COLORS.Bi || '#E11D48',
   valences: [0, 3, 5],
-  categories: ['单质', '氧化物', '氢氧化物/含氧酸', '盐'],
+  categories: ['单质', '氧化物', '盐'],
   items: [
     {
       substance: 'Bi (金属铋)',

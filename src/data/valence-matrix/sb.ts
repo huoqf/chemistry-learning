@@ -10,7 +10,7 @@ export const SB_CONFIG: ElementValenceConfig = {
   badgeText: '新高考工业辉锑矿冶炼·氯化氧锑沉淀与水解平衡',
   atomColor: ATOM_COLORS.Sb || '#7C3AED',
   valences: [0, 3, 5],
-  categories: ['单质', '氧化物', '氢氧化物/含氧酸', '盐'],
+  categories: ['单质', '氧化物', '盐'],
   items: [
     {
       substance: 'Sb (金属锑)',

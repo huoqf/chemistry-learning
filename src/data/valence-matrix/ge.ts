@@ -10,7 +10,7 @@ export const GE_CONFIG: ElementValenceConfig = {
   badgeText: '新高考半导体与光纤材料·四氯化锗挥发提纯',
   atomColor: ATOM_COLORS.Ge || '#64748B',
   valences: [0, 2, 4],
-  categories: ['单质', '氧化物', '氢氧化物/含氧酸', '盐'],
+  categories: ['单质', '氧化物', '盐'],
   items: [
     {
       substance: 'Ge (单质锗)',

@@ -10,7 +10,7 @@ export const V_CONFIG: ElementValenceConfig = {
   badgeText: '新高考储能全钒液流电池·接触法硫酸催化剂',
   atomColor: ATOM_COLORS.V || '#8B5CF6',
   valences: [0, 2, 3, 4, 5],
-  categories: ['单质', '氧化物', '氢氧化物/含氧酸', '盐'],
+  categories: ['单质', '氧化物', '盐'],
   items: [
     {
       substance: 'V (金属钒)',

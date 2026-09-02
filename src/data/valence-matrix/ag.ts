@@ -10,7 +10,7 @@ export const AG_CONFIG: ElementValenceConfig = {
   badgeText: '新高考高频沉淀转化·银镜反应与卤化银检验',
   atomColor: ATOM_COLORS.Ag || '#CBD5E1',
   valences: [0, 1],
-  categories: ['单质', '氧化物', '氢氧化物/含氧酸', '盐'],
+  categories: ['单质', '氧化物', '盐'],
   items: [
     {
       substance: 'Ag (单质银/银镜)',

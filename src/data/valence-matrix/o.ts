@@ -10,7 +10,7 @@ export const O_CONFIG: ElementValenceConfig = {
   badgeText: '新高考氧化还原与过氧化物基石',
   atomColor: ATOM_COLORS.O,
   valences: [-2, -1, -0.5, 0],
-  categories: ['氢化物/酸', '单质', '氧化物', '盐'],
+  categories: ['氢化物/酸', '单质', '氧化物'],
   items: [
     {
       substance: 'H₂O',

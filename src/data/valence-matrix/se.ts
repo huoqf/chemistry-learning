@@ -10,7 +10,7 @@ export const SE_CONFIG: ElementValenceConfig = {
   badgeText: '新高考氧族元素递变·光敏半导体与氧化脱氢',
   atomColor: ATOM_COLORS.Se || '#EA580C',
   valences: [-2, 0, 4, 6],
-  categories: ['氢化物/酸', '单质', '氧化物', '氢氧化物/含氧酸', '盐'],
+  categories: ['氢化物/酸', '单质', '氧化物', '氢氧化物/含氧酸'],
   items: [
     {
       substance: 'H₂Se (硒化氢)',

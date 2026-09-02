@@ -3,11 +3,12 @@ import { VALENCE_MATRIX_DATA } from '../valence-matrix'
 
 // 简单的化学式原子与电荷解析器
 function parseFormula(formula: string): { atoms: Record<string, number>; charge: number } {
-  // 1. 过滤状态、颜色标记、气体沉淀符号、状态 (s)/(l)/(g)/(aq)
+  // 1. 过滤状态、颜色标记、气体沉淀符号、状态 (s)/(l)/(g)/(aq) 及任意包含中文注释的括号
   let clean = formula
     .replace(/[↓↑]/g, '')
     .replace(/（[^）]+）/g, '')
-    .replace(/\b\((浓|稀|胶体|沉淀|砷镜|血红色|白色|黄色|无色|蓝绿色|粉红|蓝|鲜黄色|棕黑|珠光白|淡黄|紫红|s|l|g|aq)\)/g, '')
+    .replace(/\([^\)]*[\u4e00-\u9fa5]+[^\)]*\)/g, '')
+    .replace(/\b\((s|l|g|aq)\)/gi, '')
     .trim()
 
   // 若整个化学式被单个括号包裹（例如 "(CaSO4·2H2O)"），剥离外层括号

@@ -10,7 +10,7 @@ export const SN_CONFIG: ElementValenceConfig = {
   badgeText: '新高考高频还原剂·氯化亚锡防氧化水解与马口铁',
   atomColor: ATOM_COLORS.Sn || '#CBD5E1',
   valences: [0, 2, 4],
-  categories: ['单质', '氧化物', '氢氧化物/含氧酸', '盐'],
+  categories: ['单质', '氧化物', '盐'],
   items: [
     {
       substance: 'Sn (金属锡/白锡/灰锡)',
