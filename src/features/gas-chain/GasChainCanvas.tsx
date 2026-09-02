@@ -9,82 +9,27 @@ import { GaokaoToolHeader } from '@/components/UI'
 import { getGaokaoModel } from '@/data/gaokaoModels'
 import { getModelQuizData } from '@/data/quiz'
 import type { GasChainParams, GasChainSystemId } from './types'
+import type { GasCategory } from './data/gasChainMatrixData'
+import { GAS_PRESET_CONFIGS } from './data/gasChainMatrixData'
 import { useGasChainChemistry } from './hooks/useGasChainChemistry'
 import { GasChainLeftPanel } from './components/GasChainLeftPanel'
 import { GasChainCenterView } from './components/GasChainCenterView'
 import { GasChainRightPanel } from './components/GasChainRightPanel'
 
-// 5 大经典体系默认预设表（v2：washingSteps 多节点串联）
+// 5 大经典体系默认预设表
 const SYSTEM_PRESETS: Record<GasChainSystemId, Partial<GasChainParams>> = {
-  'cl2-prep': {
-    systemId: 'cl2-prep',
-    targetGas: 'Cl₂',
-    generator: 'flask-heat',
-    washingSteps: [
-      { id: 's1', device: 'wash-bottle',  reagent: 'sat-nacl',   role: 'purify' },
-      { id: 's2', device: 'acid-bottle',  reagent: 'conc-h2so4', role: 'dry'    },
-    ],
-    collection: 'upward-air',
-    tailGas: 'naoh-absorber',
-    temp: 90,
-    heating: true,
-  },
-  'nh3-prep': {
-    systemId: 'nh3-prep',
-    targetGas: 'NH₃',
-    generator: 'testtube-heat',
-    washingSteps: [
-      { id: 's1', device: 'dry-tube', reagent: 'soda-lime', role: 'dry' },
-    ],
-    collection: 'downward-air',
-    tailGas: 'inverted-funnel',
-    temp: 110,
-    heating: true,
-  },
-  'so2-chain': {
-    systemId: 'so2-chain',
-    targetGas: 'SO₂',
-    generator: 'flask-noheat',
-    washingSteps: [
-      { id: 's1', device: 'wash-bottle',  reagent: 'fuchsin',    role: 'detect' },
-      { id: 's2', device: 'acid-bottle',  reagent: 'conc-h2so4', role: 'dry'    },
-    ],
-    collection: 'upward-air',
-    tailGas: 'inverted-funnel',
-    temp: 25,
-    heating: false,
-  },
-  'no-no2-chain': {
-    systemId: 'no-no2-chain',
-    targetGas: 'NO₂',
-    generator: 'flask-noheat',
-    washingSteps: [
-      { id: 's1', device: 'acid-bottle', reagent: 'conc-h2so4', role: 'dry' },
-    ],
-    collection: 'upward-air',
-    tailGas: 'naoh-absorber',
-    temp: 25,
-    heating: false,
-  },
-  'c2h4-prep': {
-    systemId: 'c2h4-prep',
-    targetGas: 'C₂H₄',
-    generator: 'flask-heat',
-    washingSteps: [
-      { id: 's1', device: 'wash-bottle', reagent: 'naoh', role: 'purify' },
-    ],
-    collection: 'water-displacement',
-    tailGas: 'none',
-    temp: 170,
-    heating: true,
-  },
+  'cl2-prep': GAS_PRESET_CONFIGS['Cl₂'],
+  'nh3-prep': GAS_PRESET_CONFIGS['NH₃'],
+  'so2-chain': GAS_PRESET_CONFIGS['SO₂'],
+  'no-no2-chain': GAS_PRESET_CONFIGS['NO₂'],
+  'c2h4-prep': GAS_PRESET_CONFIGS['C₂H₄'],
   custom: {
     systemId: 'custom',
     targetGas: 'Cl₂',
     generator: 'flask-heat',
     washingSteps: [
-      { id: 's1', device: 'wash-bottle',  reagent: 'sat-nacl',   role: 'purify' },
-      { id: 's2', device: 'acid-bottle',  reagent: 'conc-h2so4', role: 'dry'    },
+      { id: 's1', device: 'wash-bottle', reagent: 'sat-nacl', role: 'purify' },
+      { id: 's2', device: 'acid-bottle', reagent: 'conc-h2so4', role: 'dry' },
     ],
     collection: 'upward-air',
     tailGas: 'naoh-absorber',
@@ -98,15 +43,16 @@ export function GasChainCanvas() {
   const model = getGaokaoModel(modelId)
   const quizData = getModelQuizData(modelId)
 
-  // 默认使用 Cl2 强氧化性制备体系
+  // 默认使用 Cl2 强氧化性制备体系，panelMode 默认为 chain
   const [params, setParams] = useState<GasChainParams>({
     viewMode: 0,
+    panelMode: 'chain',
     systemId: 'cl2-prep',
     targetGas: 'Cl₂',
     generator: 'flask-heat',
     washingSteps: [
-      { id: 's1', device: 'wash-bottle',  reagent: 'sat-nacl',   role: 'purify' },
-      { id: 's2', device: 'acid-bottle',  reagent: 'conc-h2so4', role: 'dry'    },
+      { id: 's1', device: 'wash-bottle', reagent: 'sat-nacl', role: 'purify' },
+      { id: 's2', device: 'acid-bottle', reagent: 'conc-h2so4', role: 'dry' },
     ],
     collection: 'upward-air',
     tailGas: 'naoh-absorber',
@@ -114,6 +60,8 @@ export function GasChainCanvas() {
     temp: 90,
     heating: true,
   })
+
+  const [categoryFilter, setCategoryFilter] = useState<GasCategory | 'all'>('all')
 
   const updateParam = useCallback((key: keyof GasChainParams, value: any) => {
     setParams((prev) => ({ ...prev, [key]: value }))
@@ -126,6 +74,25 @@ export function GasChainCanvas() {
       setParams((prev) => ({
         ...prev,
         ...preset,
+      }))
+    }
+  }, [])
+
+  // 13 种核心气体一键精准加载并模拟
+  const handleSelectGas = useCallback((targetGas: string) => {
+    const config = GAS_PRESET_CONFIGS[targetGas]
+    if (config) {
+      setParams((prev) => ({
+        ...prev,
+        ...config,
+        targetGas,
+        panelMode: 'chain',
+      }))
+    } else {
+      setParams((prev) => ({
+        ...prev,
+        targetGas,
+        panelMode: 'chain',
       }))
     }
   }, [])
@@ -154,6 +121,9 @@ export function GasChainCanvas() {
               updateParam={updateParam}
               onReset={handleReset}
               onSelectSystem={handleSelectSystem}
+              onSelectGas={handleSelectGas}
+              categoryFilter={categoryFilter}
+              onCategoryFilterChange={setCategoryFilter}
             />
           }
           center={
@@ -161,6 +131,9 @@ export function GasChainCanvas() {
               params={params}
               chemistry={chemistry}
               quizData={quizData}
+              onApplySystemPreset={handleSelectGas}
+              categoryFilter={categoryFilter}
+              onCategoryFilterChange={setCategoryFilter}
             />
           }
           right={

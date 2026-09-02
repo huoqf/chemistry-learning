@@ -73,6 +73,7 @@ export type TailGasDevice =
 // 全链参数接口（v2：多节点串联）
 export interface GasChainParams {
   viewMode: number          // 视角: 0-图谱探究 | 1-规范踩分 | 2-真题研析
+  panelMode?: 'chain' | 'matrix' // 探究模式: 'chain' (装置链探究) | 'matrix' (全景速查大表)
   systemId: GasChainSystemId// 经典体系
   targetGas: string         // 目标气体名称，如 Cl2, NH3, SO2 等
   generator: GeneratorType  // 发生装置

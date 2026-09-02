@@ -51,8 +51,8 @@ export const KatexFormula: React.FC<KatexFormulaProps> = ({
   const isBlock = mode === 'block'
 
   const baseClass = isBlock
-    ? 'my-2 px-1 py-1.5 bg-primary-50 rounded-sm w-full max-w-full overflow-x-auto overflow-y-hidden text-center'
-    : 'inline-block align-middle mx-1 my-0.5 max-w-full overflow-x-auto overflow-y-hidden'
+    ? 'my-2 px-1 py-1.5 bg-primary-50 rounded-sm w-full max-w-full overflow-x-auto overflow-y-hidden text-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'
+    : 'inline-block align-middle mx-1 my-0.5 max-w-full overflow-x-auto overflow-y-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'
 
   return (
     <div

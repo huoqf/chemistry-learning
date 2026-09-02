@@ -36,20 +36,29 @@ import {
   solvePhysicalChainLayout,
 } from '../physics'
 import type { ApparatusLayout } from '../physics/types'
+import { GasFullMatrixView } from './GasFullMatrixView'
+import type { GasCategory } from '../data/gasChainMatrixData'
 
 interface GasChainCenterViewProps {
   params: GasChainParams
   chemistry: GasChainChemistryResult
   quizData?: ModelQuizData
+  onApplySystemPreset?: (targetGas: string) => void
+  categoryFilter?: GasCategory | 'all'
+  onCategoryFilterChange?: (cat: GasCategory | 'all') => void
 }
 
 export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
   params,
   chemistry,
   quizData,
+  onApplySystemPreset,
+  categoryFilter,
+  onCategoryFilterChange,
 }) => {
   const {
     viewMode,
+    panelMode = 'chain',
     generator,
     washingSteps,
     collection,
@@ -131,11 +140,18 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden relative">
-      {/* 视角 0: 图谱探究 */}
+      {/* 视角 0: 图谱探究 / 全景大表 */}
       {viewMode === 0 && (
-        <div className="w-full h-full relative overflow-hidden flex flex-col">
-          <div className="w-full h-full flex-1 min-h-0">
-            <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
+        panelMode === 'matrix' ? (
+          <GasFullMatrixView
+            onApplySystemPreset={onApplySystemPreset}
+            categoryFilter={categoryFilter}
+            onCategoryFilterChange={onCategoryFilterChange}
+          />
+        ) : (
+          <div className="w-full h-full relative overflow-hidden flex flex-col">
+            <div className="w-full h-full flex-1 min-h-0">
+              <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
               {/* 0. 实验桌台面线 */}
               <rect
                 x={10}
@@ -706,6 +722,7 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
             </AnimationSvgCanvas>
           </div>
         </div>
+        )
       )}
 
       {/* 视角 1: 规范踩分 */}
