@@ -157,8 +157,8 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
     const transButene = ORGANIC_3D_MOLECULES['alkene-trans-2-butene']
     expect(cisButene).toBeDefined()
     expect(transButene).toBeDefined()
-    expect(cisButene.atoms.length).toBe(6)
-    expect(transButene.atoms.length).toBe(6)
+    expect(cisButene.atoms.length).toBe(12) // 4 C + 8 H 全原子真实球棍
+    expect(transButene.atoms.length).toBe(12) // 4 C + 8 H 全原子真实球棍
     expect(cisButene.spatialContrastNote).toContain('顺反')
     expect(transButene.spatialContrastNote).toContain('反式')
 
@@ -291,7 +291,110 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
     expect(result.current.gasCO2).toBe(1.0)
     expect(result.current.precipitateAg).toBe(2.0)
   })
+
+  it('3D 球棍模型全原子与化学键拓扑严格审计：无缺失氢原子、无孤立悬空原子', () => {
+    // 理论各分子的 H 原子总数期望字典
+    const EXPECTED_H_COUNTS: Record<string, number> = {
+      'alkene-c=c': 4, // 乙烯 C2H4
+      'alkyne-c#c': 2, // 乙炔 C2H2
+      'alcohol-oh': 6, // 乙醇 C2H6O
+      'phenol-oh': 6, // 苯酚 C6H6O
+      'benzyl-alcohol': 8, // 苯甲醇 C7H8O
+      'aldehyde-cho': 4, // 乙醛 C2H4O
+      'ketone-co': 6, // 丙酮 C3H6O
+      'carboxyl-cooh': 4, // 乙酸 C2H4O2
+      'ester-coor': 8, // 乙酸乙酯 C4H8O2
+      'phenol-ester': 8, // 乙酸苯酯 C8H8O2
+      'halo-alkane-x': 5, // 溴乙烷 C2H5Br
+      'halo-halogen': 5, // 别名
+      'amide-conh': 5, // 乙酰胺 C2H5NO
+      'peptide-amide': 5, // 别名
+      'amino-nh2': 7, // 乙胺 C2H7N
+      'nitro-no2': 5, // 硝基苯 C6H5NO2
+      'cyano-cn': 3, // 乙腈 C2H3N
+      'alkene-cis-2-butene': 8, // 顺-2-丁烯 C4H8
+      'alkene-trans-2-butene': 8, // 反-2-丁烯 C4H8
+      'lactic-acid-chiral': 6, // L-乳酸 C3H6O3
+      'd-lactic-acid-chiral': 6, // D-乳酸 C3H6O3
+      '2-chlorobutane-chiral': 9, // 2-氯丁烷 C4H9Cl
+      aspirin: 8, // 阿司匹林 C9H8O4
+      'formic-phenyl-ester': 6, // 甲酸苯酯 C7H6O2
+      'methyl-salicylate': 8, // 水杨酸甲酯 C8H8O3
+      salicylaldehyde: 6, // 水杨醛 C7H6O2
+    }
+
+    for (const [id, mol] of Object.entries(ORGANIC_3D_MOLECULES)) {
+      expect(mol.atoms.length).toBeGreaterThan(0)
+      expect(mol.bonds.length).toBeGreaterThan(0)
+
+      // 验证 H 原子总数
+      const expectedH = EXPECTED_H_COUNTS[id]
+      if (expectedH !== undefined) {
+        const actualH = mol.atoms.filter((a) => a.symbol === 'H').length
+        expect(actualH, `分子 [${id}] 的 H 原子数应为 ${expectedH}，但实际为 ${actualH}`).toBe(expectedH)
+      }
+
+      // 验证拓扑连通性：每个原子都必须有至少一条化学键连接
+      for (const atom of mol.atoms) {
+        const isConnected = mol.bonds.some((b) => {
+          const dStart = Math.hypot(b.start[0] - atom.position[0], b.start[1] - atom.position[1], b.start[2] - atom.position[2])
+          const dEnd = Math.hypot(b.end[0] - atom.position[0], b.end[1] - atom.position[1], b.end[2] - atom.position[2])
+          return dStart < 0.25 || dEnd < 0.25
+        })
+        expect(isConnected, `分子 [${id}] 中的原子 [${atom.id}] (${atom.elementName}) 必须连入化学键网络`).toBe(true)
+      }
+    }
+  })
+
+  it('化学物理量与空间几何严格审计：键长合规、无原子重叠、价键饱和度', () => {
+    for (const [id, mol] of Object.entries(ORGANIC_3D_MOLECULES)) {
+      // 1. 检查键长是否在合理世界单位区间 [0.5, 2.2]
+      for (const bond of mol.bonds) {
+        const len = Math.hypot(
+          bond.end[0] - bond.start[0],
+          bond.end[1] - bond.start[1],
+          bond.end[2] - bond.start[2]
+        )
+        expect(
+          len,
+          `分子 [${id}] 中的化学键 [${bond.id}] 长度 (${len.toFixed(2)}) 必须在 [0.5, 2.2] 合理区间`
+        ).toBeGreaterThanOrEqual(0.5)
+        expect(
+          len,
+          `分子 [${id}] 中的化学键 [${bond.id}] 长度 (${len.toFixed(2)}) 不能过长`
+        ).toBeLessThanOrEqual(2.2)
+      }
+
+      // 2. 检查任意两原子之间不能发生非物理重叠 (距离 > 0.4)
+      const n = mol.atoms.length
+      for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+          const a1 = mol.atoms[i]
+          const a2 = mol.atoms[j]
+          const dist = Math.hypot(
+            a1.position[0] - a2.position[0],
+            a1.position[1] - a2.position[1],
+            a1.position[2] - a2.position[2]
+          )
+          expect(
+            dist,
+            `分子 [${id}] 中的两原子 [${a1.id}] 与 [${a2.id}] 距离 (${dist.toFixed(2)}) 过近，发生非物理重叠`
+          ).toBeGreaterThan(0.4)
+        }
+      }
+
+      // 3. 检查每个原子的半径与颜色符合标准 Token
+      for (const atom of mol.atoms) {
+        expect(atom.radius).toBeGreaterThan(0.15)
+        expect(atom.radius).toBeLessThanOrEqual(0.5)
+        expect(atom.color).toBeDefined()
+        expect(atom.symbol).toMatch(/^(C|H|O|N|Br|Cl)$/)
+      }
+    }
+  })
 })
+
+
 
 
 

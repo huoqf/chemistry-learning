@@ -1,7 +1,14 @@
 import React, { useMemo } from 'react'
 import type { FunctionalGroupItem, TotalConsumptionResult } from '../types'
 import { PRESET_MOLECULES, FUNCTIONAL_GROUPS } from '../constants'
-import { SCENE_COLORS, FONT, withAlpha } from '@/theme'
+import {
+  SCENE_COLORS,
+  CANVAS_COLORS,
+  CHEMISTRY_COLORS,
+  PHENOMENON_COLORS,
+  FONT,
+  withAlpha,
+} from '@/theme'
 
 interface OrganicMatrixSceneProps {
   selectedGroup?: FunctionalGroupItem
@@ -16,12 +23,12 @@ export const OrganicMatrixScene: React.FC<OrganicMatrixSceneProps> = ({
   font,
 }) => {
   const reagents = [
-    { key: 'Na' as const, label: '金属钠 (Na)', value: consumption.Na, unit: 'mol', color: '#3b82f6' },
-    { key: 'NaOH' as const, label: '氢氧化钠 (NaOH)', value: consumption.NaOH, unit: 'mol', color: '#ec4899' },
-    { key: 'NaHCO3' as const, label: '碳酸氢钠 (NaHCO₃)', value: consumption.NaHCO3, unit: 'mol', color: '#8b5cf6' },
-    { key: 'Na2CO3' as const, label: '碳酸钠 (Na₂CO₃)', value: consumption.Na2CO3, unit: 'mol', color: '#6366f1' },
-    { key: 'Br2' as const, label: '溴 (Br₂)', value: consumption.Br2, unit: 'mol', color: '#f97316' },
-    { key: 'H2' as const, label: '氢气 (H₂)', value: consumption.H2, unit: 'mol', color: '#10b981' },
+    { key: 'Na' as const, label: '金属钠 (Na)', value: consumption.Na, unit: 'mol', color: CHEMISTRY_COLORS.concentration },
+    { key: 'NaOH' as const, label: '氢氧化钠 (NaOH)', value: consumption.NaOH, unit: 'mol', color: CHEMISTRY_COLORS.indicator },
+    { key: 'NaHCO3' as const, label: '碳酸氢钠 (NaHCO₃)', value: consumption.NaHCO3, unit: 'mol', color: CHEMISTRY_COLORS.volume },
+    { key: 'Na2CO3' as const, label: '碳酸钠 (Na₂CO₃)', value: consumption.Na2CO3, unit: 'mol', color: CHEMISTRY_COLORS.cation },
+    { key: 'Br2' as const, label: '溴 (Br₂)', value: consumption.Br2, unit: 'mol', color: PHENOMENON_COLORS.br2Water },
+    { key: 'H2' as const, label: '氢气 (H₂)', value: consumption.H2, unit: 'mol', color: CHEMISTRY_COLORS.forwardDirection },
   ]
 
   const maxVal = Math.max(...reagents.map((r) => r.value), 4)
@@ -83,10 +90,10 @@ export const OrganicMatrixScene: React.FC<OrganicMatrixSceneProps> = ({
             y={12}
             fontSize={font(FONT.label)}
             fontWeight="bold"
-            fill="#0f172a"
+            fill={CANVAS_COLORS.labelText}
           >
             {activePreset ? activePreset.title : '目标分子模型'}
-            <tspan fontSize={font(FONT.annotation)} fill="#6366f1" fontWeight="normal">
+            <tspan fontSize={font(FONT.annotation)} fill={CANVAS_COLORS.annotation} fontWeight="normal">
               {' '}
               {activePreset ? `(${activePreset.chemicalName})` : '(自定义组合分子体系)'}
             </tspan>
@@ -96,7 +103,7 @@ export const OrganicMatrixScene: React.FC<OrganicMatrixSceneProps> = ({
           <g transform="translate(0, 32)">
             {activeGroups.length > 0 ? (
               <g>
-                <text x={0} y={15} fontSize={font(FONT.small)} fill="#475569" fontWeight="medium">
+                <text x={0} y={15} fontSize={font(FONT.small)} fill={CANVAS_COLORS.labelTextLight} fontWeight="medium">
                   分子内官能团构成：
                 </text>
                 {activeGroups.map((item, idx) => {
@@ -110,25 +117,25 @@ export const OrganicMatrixScene: React.FC<OrganicMatrixSceneProps> = ({
                         width={130}
                         height={24}
                         rx={6}
-                        fill="#eff6ff"
-                        stroke="#bfdbfe"
+                        fill={CANVAS_COLORS.objectFill}
+                        stroke={CANVAS_COLORS.axis}
                       />
                       <text
                         x={8}
                         y={16}
                         fontSize={font(FONT.annotation)}
                         fontWeight="bold"
-                        fill="#1e40af"
+                        fill={CANVAS_COLORS.objectStroke}
                       >
                         {item.group.structureSvg}{' '}
-                        <tspan fill="#3b82f6">× {item.count}</tspan>
+                        <tspan fill={CHEMISTRY_COLORS.concentration}>× {item.count}</tspan>
                       </text>
                     </g>
                   )
                 })}
               </g>
             ) : (
-              <text x={0} y={15} fontSize={font(FONT.small)} fill="#94a3b8">
+              <text x={0} y={15} fontSize={font(FONT.small)} fill={CANVAS_COLORS.textMuted}>
                 暂未添加官能团，请在左侧选择经典母题或增加基团数量
               </text>
             )}
@@ -154,7 +161,7 @@ export const OrganicMatrixScene: React.FC<OrganicMatrixSceneProps> = ({
           y={30}
           fontSize={font(FONT.label)}
           fontWeight="bold"
-          fill="#0f172a"
+          fill={CANVAS_COLORS.labelText}
         >
           各核心试剂定量反应消耗与加法拆解 (基准：1 mol 目标分子)
         </text>
@@ -173,14 +180,14 @@ export const OrganicMatrixScene: React.FC<OrganicMatrixSceneProps> = ({
                   x={0}
                   y={18}
                   fontSize={font(FONT.small)}
-                  fill="#334155"
+                  fill={CANVAS_COLORS.labelText}
                   fontWeight="bold"
                 >
                   {r.label}
                 </text>
 
                 {/* 柱槽背景 */}
-                <rect x={150} y={4} width={230} height={18} rx={5} fill="#f1f5f9" />
+                <rect x={150} y={4} width={230} height={18} rx={5} fill={CANVAS_COLORS.gridSubtle} />
 
                 {/* 动态柱 */}
                 <rect
@@ -199,7 +206,7 @@ export const OrganicMatrixScene: React.FC<OrganicMatrixSceneProps> = ({
                   y={18}
                   fontSize={font(FONT.label)}
                   fontWeight="bold"
-                  fill={r.value > 0 ? r.color : '#94a3b8'}
+                  fill={r.value > 0 ? r.color : CANVAS_COLORS.textMuted}
                 >
                   {r.value} {r.unit}
                 </text>
@@ -212,14 +219,14 @@ export const OrganicMatrixScene: React.FC<OrganicMatrixSceneProps> = ({
                     width={245}
                     height={23}
                     rx={4}
-                    fill={r.value > 0 ? '#f8fafc' : '#f1f5f9'}
-                    stroke={r.value > 0 ? '#e2e8f0' : 'transparent'}
+                    fill={r.value > 0 ? CANVAS_COLORS.objectFillNeutral : CANVAS_COLORS.gridSubtle}
+                    stroke={r.value > 0 ? CANVAS_COLORS.grid : 'transparent'}
                   />
                   <text
                     x={8}
                     y={16}
                     fontSize={font(FONT.annotation)}
-                    fill={r.value > 0 ? '#4338ca' : '#94a3b8'}
+                    fill={r.value > 0 ? CANVAS_COLORS.objectStroke : CANVAS_COLORS.textMuted}
                     fontFamily="monospace"
                   >
                     = {breakdownStr.length > 28 ? breakdownStr.slice(0, 26) + '...' : breakdownStr}
@@ -249,7 +256,7 @@ export const OrganicMatrixScene: React.FC<OrganicMatrixSceneProps> = ({
           y={24}
           fontSize={font(FONT.small)}
           fontWeight="bold"
-          fill="#1e293b"
+          fill={CANVAS_COLORS.labelText}
         >
           宏观实验特征产物实时监控看板
         </text>
@@ -269,46 +276,46 @@ export const OrganicMatrixScene: React.FC<OrganicMatrixSceneProps> = ({
               productCards.push({
                 label: '与 Na 反应放 H₂',
                 valStr: `${consumption.gasH2} mol`,
-                bg: '#eff6ff',
-                border: '#bfdbfe',
-                textColor: '#1e40af',
-                valColor: '#2563eb',
+                bg: CANVAS_COLORS.objectFill,
+                border: CANVAS_COLORS.axis,
+                textColor: CANVAS_COLORS.objectStroke,
+                valColor: CHEMISTRY_COLORS.concentration,
               })
             }
             if (consumption.gasCO2 > 0) {
               productCards.push({
                 label: '与 NaHCO₃ 放 CO₂',
                 valStr: `${consumption.gasCO2} mol`,
-                bg: '#faf5ff',
-                border: '#e9d5ff',
-                textColor: '#6b21a8',
-                valColor: '#7c3aed',
+                bg: withAlpha(CHEMISTRY_COLORS.entropy, 0.08),
+                border: withAlpha(CHEMISTRY_COLORS.entropy, 0.3),
+                textColor: CHEMISTRY_COLORS.entropy,
+                valColor: CHEMISTRY_COLORS.entropy,
               })
             }
             if (consumption.precipitateAg > 0) {
               productCards.push({
                 label: '银镜析出 (Ag 沉淀)',
                 valStr: `${consumption.precipitateAg} mol`,
-                bg: '#f8fafc',
-                border: '#cbd5e1',
-                textColor: '#475569',
-                valColor: '#334155',
+                bg: CANVAS_COLORS.objectFillNeutral,
+                border: CANVAS_COLORS.axis,
+                textColor: CANVAS_COLORS.labelTextLight,
+                valColor: CANVAS_COLORS.labelText,
               })
             }
             if (consumption.precipitateCu2O > 0) {
               productCards.push({
                 label: '砖红沉淀 (Cu₂O)',
                 valStr: `${consumption.precipitateCu2O} mol`,
-                bg: '#fff1f2',
-                border: '#fecdd3',
-                textColor: '#9f1239',
-                valColor: '#e11d48',
+                bg: CANVAS_COLORS.dangerBg,
+                border: CANVAS_COLORS.dangerBorder,
+                textColor: CANVAS_COLORS.dangerText,
+                valColor: PHENOMENON_COLORS.cu2oPrecipitate,
               })
             }
 
             if (productCards.length === 0) {
               return (
-                <text x={0} y={26} fontSize={font(FONT.small)} fill="#94a3b8">
+                <text x={0} y={26} fontSize={font(FONT.small)} fill={CANVAS_COLORS.textMuted}>
                   当前分子体系与常用定性试剂反应不产生特征气体或专属沉淀（无 H₂/CO₂ 气体、无银镜或砖红沉淀）。
                 </text>
               )
@@ -352,5 +359,6 @@ export const OrganicMatrixScene: React.FC<OrganicMatrixSceneProps> = ({
     </g>
   )
 }
+
 
 

@@ -3,6 +3,8 @@ import {
   type Organic3DMolecule,
   createMultiBonds,
   createBenzeneRing,
+  createMethylGroup,
+  createMethyleneGroup,
 } from './organic3dTypes'
 
 export const ISOMER_3D_MOLECULES: Record<string, Organic3DMolecule> = {
@@ -37,6 +39,8 @@ export const ISOMER_3D_MOLECULES: Record<string, Organic3DMolecule> = {
       { id: 'c4', symbol: 'C', elementName: '顺式甲基碳 (sp³)', position: [1.6, 1.1, 0], color: ATOM_COLORS.C, radius: 0.34, hybridization: 'sp³' },
       { id: 'h2', symbol: 'H', elementName: '氢 (下侧)', position: [-0.9, -1.0, 0], color: ATOM_COLORS.H, radius: 0.22 },
       { id: 'h3', symbol: 'H', elementName: '氢 (下侧)', position: [0.9, -1.0, 0], color: ATOM_COLORS.H, radius: 0.22 },
+      ...createMethylGroup([-1.6, 1.1, 0], [-1.0, 1.1, 0], 'cis-me1').atoms,
+      ...createMethylGroup([1.6, 1.1, 0], [1.0, 1.1, 0], 'cis-me2').atoms,
     ],
     bonds: [
       ...createMultiBonds([-0.67, 0, 0], [0.67, 0, 0], 2, 'cis-c=c'),
@@ -44,6 +48,8 @@ export const ISOMER_3D_MOLECULES: Record<string, Organic3DMolecule> = {
       { id: 'c3-c4', start: [0.67, 0, 0], end: [1.6, 1.1, 0], order: 1 },
       { id: 'c2-h2', start: [-0.67, 0, 0], end: [-0.9, -1.0, 0], order: 1 },
       { id: 'c3-h3', start: [0.67, 0, 0], end: [0.9, -1.0, 0], order: 1 },
+      ...createMethylGroup([-1.6, 1.1, 0], [-1.0, 1.1, 0], 'cis-me1').bonds,
+      ...createMethylGroup([1.6, 1.1, 0], [1.0, 1.1, 0], 'cis-me2').bonds,
     ],
   },
 
@@ -78,6 +84,8 @@ export const ISOMER_3D_MOLECULES: Record<string, Organic3DMolecule> = {
       { id: 'c4', symbol: 'C', elementName: '反式甲基碳 (右下)', position: [1.6, -1.1, 0], color: ATOM_COLORS.C, radius: 0.34, hybridization: 'sp³' },
       { id: 'h2', symbol: 'H', elementName: '氢 (左下)', position: [-0.9, -1.0, 0], color: ATOM_COLORS.H, radius: 0.22 },
       { id: 'h3', symbol: 'H', elementName: '氢 (右上)', position: [0.9, 1.0, 0], color: ATOM_COLORS.H, radius: 0.22 },
+      ...createMethylGroup([-1.6, 1.1, 0], [-1.0, 1.1, 0], 'trans-me1').atoms,
+      ...createMethylGroup([1.6, -1.1, 0], [1.0, -1.1, 0], 'trans-me2').atoms,
     ],
     bonds: [
       ...createMultiBonds([-0.67, 0, 0], [0.67, 0, 0], 2, 'trans-c=c'),
@@ -85,6 +93,8 @@ export const ISOMER_3D_MOLECULES: Record<string, Organic3DMolecule> = {
       { id: 'c3-c4', start: [0.67, 0, 0], end: [1.6, -1.1, 0], order: 1 },
       { id: 'c2-h2', start: [-0.67, 0, 0], end: [-0.9, -1.0, 0], order: 1 },
       { id: 'c3-h3', start: [0.67, 0, 0], end: [0.9, 1.0, 0], order: 1 },
+      ...createMethylGroup([-1.6, 1.1, 0], [-1.0, 1.1, 0], 'trans-me1').bonds,
+      ...createMethylGroup([1.6, -1.1, 0], [1.0, -1.1, 0], 'trans-me2').bonds,
     ],
   },
 
@@ -112,20 +122,18 @@ export const ISOMER_3D_MOLECULES: Record<string, Organic3DMolecule> = {
       '与金属 Na 反应放 H₂，与羧酸发生酯化反应',
     ],
     atoms: [
-      ...createBenzeneRing([-0.6, 0, 0], 1.3, 'benzyl-ring').atoms,
+      ...createBenzeneRing([-0.6, 0, 0], 1.35, 'benzyl-ring', [0]).atoms,
       { id: 'c_benzyl', symbol: 'C', elementName: '苄位碳 (sp³)', position: [1.6, 0, 0], color: ATOM_COLORS.C, radius: 0.35, hybridization: 'sp³', isFunctionalGroup: true },
       { id: 'o_benzyl', symbol: 'O', elementName: '醇羟基氧', position: [2.3, 1.1, 0.3], color: ATOM_COLORS.O, radius: 0.32, isFunctionalGroup: true },
       { id: 'h_benzyl_oh', symbol: 'H', elementName: '醇活泼氢', position: [3.1, 0.9, 0.1], color: ATOM_COLORS.H, radius: 0.22, isFunctionalGroup: true },
-      { id: 'h_benzyl_1', symbol: 'H', elementName: '苄位氢', position: [1.8, -0.6, 0.85], color: ATOM_COLORS.H, radius: 0.22 },
-      { id: 'h_benzyl_2', symbol: 'H', elementName: '苄位氢', position: [1.8, -0.6, -0.85], color: ATOM_COLORS.H, radius: 0.22 },
+      ...createMethyleneGroup([1.6, 0, 0], [0.75, 0, 0], [2.3, 1.1, 0.3], 'benzyl-ch2').atoms,
     ],
     bonds: [
-      ...createBenzeneRing([-0.6, 0, 0], 1.3, 'benzyl-ring').bonds,
-      { id: 'ring-c_benzyl', start: [0.7, 0, 0], end: [1.6, 0, 0], order: 1 },
+      ...createBenzeneRing([-0.6, 0, 0], 1.35, 'benzyl-ring', [0]).bonds,
+      { id: 'ring-c_benzyl', start: [0.75, 0, 0], end: [1.6, 0, 0], order: 1 },
       { id: 'c_benzyl-o', start: [1.6, 0, 0], end: [2.3, 1.1, 0.3], order: 1 },
       { id: 'o-h', start: [2.3, 1.1, 0.3], end: [3.1, 0.9, 0.1], order: 1 },
-      { id: 'c_benzyl-h1', start: [1.6, 0, 0], end: [1.8, -0.6, 0.85], order: 1 },
-      { id: 'c_benzyl-h2', start: [1.6, 0, 0], end: [1.8, -0.6, -0.85], order: 1 },
+      ...createMethyleneGroup([1.6, 0, 0], [0.75, 0, 0], [2.3, 1.1, 0.3], 'benzyl-ch2').bonds,
     ],
   },
 
@@ -163,6 +171,7 @@ export const ISOMER_3D_MOLECULES: Record<string, Organic3DMolecule> = {
       { id: 'h_oh', symbol: 'H', elementName: '醇羟基氢', position: [-0.1, 1.9, -0.1], color: ATOM_COLORS.H, radius: 0.22, isFunctionalGroup: true },
       { id: 'c_me', symbol: 'C', elementName: '甲基碳', position: [-1.2, -0.8, -0.3], color: ATOM_COLORS.C, radius: 0.34, hybridization: 'sp³' },
       { id: 'h_chiral', symbol: 'H', elementName: '手性中心氢', position: [0.2, -0.5, 0.85], color: ATOM_COLORS.H, radius: 0.22 },
+      ...createMethylGroup([-1.2, -0.8, -0.3], [-1.2, -0.8, -0.3], 'lac-l-me').atoms,
     ],
     bonds: [
       { id: 'c_chiral-c_cooh', start: [0, 0, 0], end: [1.3, 0.4, 0], order: 1 },
@@ -173,6 +182,7 @@ export const ISOMER_3D_MOLECULES: Record<string, Organic3DMolecule> = {
       { id: 'o_oh-h_oh', start: [-0.4, 1.25, 0.4], end: [-0.1, 1.9, -0.1], order: 1 },
       { id: 'c_chiral-c_me', start: [0, 0, 0], end: [-1.2, -0.8, -0.3], order: 1 },
       { id: 'c_chiral-h_chiral', start: [0, 0, 0], end: [0.2, -0.5, 0.85], order: 1 },
+      ...createMethylGroup([-1.2, -0.8, -0.3], [-1.2, -0.8, -0.3], 'lac-l-me').bonds,
     ],
   },
 
@@ -209,6 +219,7 @@ export const ISOMER_3D_MOLECULES: Record<string, Organic3DMolecule> = {
       { id: 'h_oh', symbol: 'H', elementName: '醇羟基氢', position: [-0.1, 1.9, 0.1], color: ATOM_COLORS.H, radius: 0.22, isFunctionalGroup: true },
       { id: 'c_me', symbol: 'C', elementName: '甲基碳', position: [-1.2, -0.8, 0.3], color: ATOM_COLORS.C, radius: 0.34, hybridization: 'sp³' },
       { id: 'h_chiral', symbol: 'H', elementName: '手性中心氢', position: [0.2, -0.5, -0.85], color: ATOM_COLORS.H, radius: 0.22 },
+      ...createMethylGroup([-1.2, -0.8, 0.3], [-1.2, -0.8, 0.3], 'lac-d-me').atoms,
     ],
     bonds: [
       { id: 'c_chiral-c_cooh', start: [0, 0, 0], end: [1.3, 0.4, 0], order: 1 },
@@ -219,6 +230,7 @@ export const ISOMER_3D_MOLECULES: Record<string, Organic3DMolecule> = {
       { id: 'o_oh-h_oh', start: [-0.4, 1.25, -0.4], end: [-0.1, 1.9, 0.1], order: 1 },
       { id: 'c_chiral-c_me', start: [0, 0, 0], end: [-1.2, -0.8, 0.3], order: 1 },
       { id: 'c_chiral-h_chiral', start: [0, 0, 0], end: [0.2, -0.5, -0.85], order: 1 },
+      ...createMethylGroup([-1.2, -0.8, 0.3], [-1.2, -0.8, 0.3], 'lac-d-me').bonds,
     ],
   },
 
@@ -246,6 +258,9 @@ export const ISOMER_3D_MOLECULES: Record<string, Organic3DMolecule> = {
       { id: 'c3', symbol: 'C', elementName: '3号亚甲基碳', position: [1.1, -0.7, 0.4], color: ATOM_COLORS.C, radius: 0.35, hybridization: 'sp³' },
       { id: 'c4', symbol: 'C', elementName: '4号甲基碳', position: [2.3, 0.1, -0.1], color: ATOM_COLORS.C, radius: 0.34, hybridization: 'sp³' },
       { id: 'h_chiral', symbol: 'H', elementName: '手性氢', position: [-0.1, 0.2, -1.0], color: ATOM_COLORS.H, radius: 0.22 },
+      ...createMethylGroup([-1.3, -0.5, 0], [-1.3, -0.5, 0], 'cb-me1').atoms,
+      ...createMethyleneGroup([1.1, -0.7, 0.4], [0, 0, 0], [2.3, 0.1, -0.1], 'cb-ch2').atoms,
+      ...createMethylGroup([2.3, 0.1, -0.1], [1.2, 0.8, -0.5], 'cb-me4').atoms,
     ],
     bonds: [
       { id: 'c_chiral-c1', start: [0, 0, 0], end: [-1.3, -0.5, 0], order: 1 },
@@ -253,6 +268,9 @@ export const ISOMER_3D_MOLECULES: Record<string, Organic3DMolecule> = {
       { id: 'c_chiral-c3', start: [0, 0, 0], end: [1.1, -0.7, 0.4], order: 1 },
       { id: 'c3-c4', start: [1.1, -0.7, 0.4], end: [2.3, 0.1, -0.1], order: 1 },
       { id: 'c_chiral-h_chiral', start: [0, 0, 0], end: [-0.1, 0.2, -1.0], order: 1 },
+      ...createMethylGroup([-1.3, -0.5, 0], [-1.3, -0.5, 0], 'cb-me1').bonds,
+      ...createMethyleneGroup([1.1, -0.7, 0.4], [0, 0, 0], [2.3, 0.1, -0.1], 'cb-ch2').bonds,
+      ...createMethylGroup([2.3, 0.1, -0.1], [1.2, 0.8, -0.5], 'cb-me4').bonds,
     ],
   },
 }
