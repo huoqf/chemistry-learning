@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import { ThreePanel, AnimationSvgCanvas } from '@/components/Layout'
 import {
   GaokaoToolHeader,
@@ -8,7 +8,7 @@ import {
 import { useAnimationViewport } from '@/hooks'
 import { CANVAS_PRESETS } from '@/theme'
 import { getModelQuizData } from '@/data/quiz'
-import { FUNCTIONAL_GROUPS } from './constants'
+import { FUNCTIONAL_GROUPS, PRESET_MOLECULES } from './constants'
 import { useOrganicQuantitative } from './hooks/useOrganicQuantitative'
 import { OrganicLeftPanel } from './components/OrganicLeftPanel'
 import { OrganicMatrixScene } from './components/OrganicMatrixScene'
@@ -37,8 +37,24 @@ export const OrganicFunctionalMatrixCanvas: React.FC = () => {
     preset: CANVAS_PRESETS.full,
   })
 
-  // 纯计算：定量消耗
-  const consumption = useOrganicQuantitative(groupCounts)
+  // 识别当前匹配的母题预设
+  const activePresetId = useMemo(() => {
+    if (panelMode !== 'preset') return undefined
+    for (const preset of PRESET_MOLECULES) {
+      const presetEntries = Object.entries(preset.counts)
+      const currentNonZero = Object.entries(groupCounts).filter(([, count]) => count > 0)
+      if (presetEntries.length !== currentNonZero.length) continue
+
+      const isMatch = presetEntries.every(
+        ([id, count]) => (groupCounts[id] || 0) === count
+      )
+      if (isMatch) return preset.id
+    }
+    return undefined
+  }, [groupCounts, panelMode])
+
+  // 纯计算：定量消耗（母题模式下结合母题特异性）
+  const consumption = useOrganicQuantitative(groupCounts, activePresetId)
   const selectedGroup = FUNCTIONAL_GROUPS.find((g) => g.id === selectedGroupId)
 
   const handleChangeCount = useCallback((id: string, delta: number) => {

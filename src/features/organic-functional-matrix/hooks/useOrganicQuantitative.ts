@@ -8,7 +8,8 @@ import type { TotalConsumptionResult } from '../types'
  * @param groupCounts 官能团 ID -> 数量的键值对
  */
 export function useOrganicQuantitative(
-  groupCounts: Record<string, number>
+  groupCounts: Record<string, number>,
+  presetId?: string
 ): TotalConsumptionResult {
   return useMemo(() => {
     let totalNa = 0
@@ -30,6 +31,11 @@ export function useOrganicQuantitative(
       Br2: [],
       H2: [],
     }
+
+    // 检查是否为水杨醛母题（醛基占据酚羟基邻位，苯环仅剩 2 处取代）
+    const isSalicylaldehyde =
+      presetId === 'salicylaldehyde' ||
+      (groupCounts['aldehyde-cho'] === 1 && groupCounts['phenol-oh'] === 1 && Object.keys(groupCounts).length === 2 && presetId !== undefined)
 
     Object.entries(groupCounts).forEach(([groupId, count]) => {
       if (count <= 0) return
@@ -66,6 +72,8 @@ export function useOrganicQuantitative(
           reason = '酰胺键碱性水解'
         } else if (groupId === 'cyano-cn') {
           reason = '氰基碱性水解生成羧酸盐（释放 NH₃）'
+        } else if (groupId === 'carbonate-ester') {
+          reason = '碳酸酯基水解（生成碳酸盐与醇，消耗 2 NaOH）'
         }
         breakdowns.NaOH.push({
           groupId: group.id,
@@ -110,16 +118,26 @@ export function useOrganicQuantitative(
 
       // Br2
       if (group.consumptions.Br2 > 0) {
-        const mol = group.consumptions.Br2 * count
+        // 水杨醛母题特异性校正：酚羟基邻位被醛基占据，苯环仅剩 2 处取代
+        const molPerGroup = isSalicylaldehyde && groupId === 'phenol-oh' ? 2 : group.consumptions.Br2
+        const mol = molPerGroup * count
         totalBr2 += mol
+        let brReason = '碳碳不饱和键加成反应'
+        if (groupId === 'phenol-oh') {
+          brReason = isSalicylaldehyde
+            ? '水杨醛中醛基占据1个邻位，苯环仅在4,6位发生2处溴代取代'
+            : '苯酚邻对位 3 处取代反应'
+        } else if (groupId === 'aldehyde-cho') {
+          brReason = '醛基被溴水氧化为羧基'
+        }
         breakdowns.Br2.push({
           groupId: group.id,
           groupName: group.name,
           groupFormula: group.formula,
           count,
-          molPerGroup: group.consumptions.Br2,
+          molPerGroup,
           totalMol: mol,
-          reason: groupId === 'phenol-oh' ? '苯酚邻对位 3 处取代反应' : groupId === 'aldehyde-cho' ? '醛基被溴水氧化为羧基' : '碳碳不饱和键加成反应',
+          reason: brReason,
         })
       }
 
@@ -176,6 +194,6 @@ export function useOrganicQuantitative(
       precipitateCu2O,
       breakdowns,
     }
-  }, [groupCounts])
+  }, [groupCounts, presetId])
 }
 

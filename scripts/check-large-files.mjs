@@ -19,6 +19,9 @@ const ALLOWLIST = new Set([
   // GasChainCenterView: 纯视觉渲染组件，5-slot apparatus JSX 无物理计算，
   // 职责单一，拆分后 props drilling 收益不明显
   'src/features/gas-chain/components/GasChainCenterView.tsx',
+  // organic-functional-matrix/constants.ts: 16大新高考官能团定性与定量转化全景静态数据字典，
+  // 纯声明式静态数据，领域高度内聚闭环，拥有43项自动化测试全面守护，机械拆分收益不明显
+  'src/features/organic-functional-matrix/constants.ts',
 ])
 
 function walk(dir) {

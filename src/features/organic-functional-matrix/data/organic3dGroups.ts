@@ -614,6 +614,84 @@ export const FUNCTIONAL_GROUP_3D_MOLECULES: Record<string, Organic3DMolecule> = 
       ...createMethylGroup([-1.4, 0, 0], [-1.0, 0, 0], 'cyano-me').bonds,
     ],
   },
+
+  // 17. 二甲醚 (醚键 -C-O-C-)
+  'ether-bond': {
+    id: 'ether-bond',
+    name: '二甲醚 (CH₃-O-CH₃)',
+    formula: 'CH_3-O-CH_3',
+    categoryName: '醚类 / 氧桥键',
+    relatedGroupId: 'ether-bond',
+    description: '氧原子为 sp³ 杂化，含 2 对孤对电子，C-O-C 骨架呈特征折线形（键角约 111.7°）。无活泼氢，化学性质极度稳定，不与金属钠或氢氧化钠反应。',
+    spatialContrastNote:
+      '【醇 vs 醚 3D 异构辨析】：二甲醚与乙醇分子式均为 C₂H₆O。在空间中，乙醇的氧连着一个活泼氢 (H-O-)，具有极性氢键并能置换钠；而二甲醚的氧居中嵌入两个甲基碳之间 (-C-O-C-)，无活泼氢，空间高度对称，呈现完全不同的物理化学性质！',
+    variants: [
+      { id: 'ether-bond', label: '二甲醚 (醚类基准)', formula: 'CH₃-O-CH₃', differenceHint: '醚键氧桥，无活泼氢', targetMoleculeId: 'ether-bond' },
+      { id: 'alcohol-oh', label: '乙醇 (官能团异构体)', formula: 'CH₃CH₂OH', differenceHint: '含活泼羟基氢，与 Na 反应', targetMoleculeId: 'alcohol-oh' },
+    ],
+    geometryFeatures: {
+      hybridization: '氧原子与两个碳原子均为 sp³ 杂化',
+      coplanarInfo: 'C-O-C 3 个骨架原子必定共平面 (折线形)',
+      reactionSite: '强酸浓 HI 加热发生醚键断裂；通常反应中充当惰性溶剂',
+    },
+    keyPoints: [
+      '高考同分异构高频：饱和一元醇与一元醚互为官能团异构体 (通式 CₙH₂ₙ₊₂O)',
+      '¹H-NMR 仅有 1 组单峰 (高度对称的 6 个甲基氢)',
+      '化学性质惰性，不与金属钠反应，不被酸性高锰酸钾氧化',
+    ],
+    atoms: [
+      { id: 'o_ether', symbol: 'O', elementName: '醚氧原子 (sp³)', position: [0, 0.4, 0], color: ATOM_COLORS.O, radius: 0.33, hybridization: 'sp³', isFunctionalGroup: true },
+      { id: 'c1', symbol: 'C', elementName: '左侧甲基碳', position: [-1.2, -0.3, 0], color: ATOM_COLORS.C, radius: 0.35, hybridization: 'sp³' },
+      { id: 'c2', symbol: 'C', elementName: '右侧甲基碳', position: [1.2, -0.3, 0], color: ATOM_COLORS.C, radius: 0.35, hybridization: 'sp³' },
+      ...createMethylGroup([-1.2, -0.3, 0], [-1.0, -0.6, 0], 'ether-me1').atoms,
+      ...createMethylGroup([1.2, -0.3, 0], [1.0, -0.6, 0], 'ether-me2').atoms,
+    ],
+    bonds: [
+      { id: 'c1-o', start: [-1.2, -0.3, 0], end: [0, 0.4, 0], order: 1 },
+      { id: 'o-c2', start: [0, 0.4, 0], end: [1.2, -0.3, 0], order: 1 },
+      ...createMethylGroup([-1.2, -0.3, 0], [-1.0, -0.6, 0], 'ether-me1').bonds,
+      ...createMethylGroup([1.2, -0.3, 0], [1.0, -0.6, 0], 'ether-me2').bonds,
+    ],
+  },
+
+  // 18. 碳酸二甲酯 (碳酸酯基 -O-COO-)
+  'carbonate-ester': {
+    id: 'carbonate-ester',
+    name: '碳酸二甲酯 (CH₃O-COO-CH₃)',
+    formula: 'CH_3O-COO-CH_3',
+    categoryName: '碳酸酯 / 绿色化学基元',
+    relatedGroupId: 'carbonate-ester',
+    description: '羰基碳与 3 个氧原子相连，碳原子为 sp² 杂化呈平面三角形。碱性水解消耗 2 mol NaOH 生成碳酸钠与甲醇。',
+    geometryFeatures: {
+      hybridization: '羰基碳为 sp² 平面，酯氧与甲基碳为 sp³',
+      coplanarInfo: 'O=C(-O)₂ 4 个中心原子共平面',
+      reactionSite: '两侧酯键水解（消耗 2 mol NaOH，生成碳酸钠）',
+    },
+    keyPoints: [
+      '新高考热点：聚碳酸酯 (PC) 高分子合成的原料与结构片段',
+      '水解消耗比：1 mol 脂肪族碳酸酯消耗 2 mol NaOH',
+      '水解产物酸化后产生使石灰水变浑浊的 CO₂ 气体',
+    ],
+    atoms: [
+      { id: 'c_carbonyl', symbol: 'C', elementName: '碳酸羰基碳 (sp²)', position: [0, 0.2, 0], color: ATOM_COLORS.C, radius: 0.35, hybridization: 'sp²', isFunctionalGroup: true },
+      { id: 'o_carbonyl', symbol: 'O', elementName: '羰基氧', position: [0, 1.45, 0], color: ATOM_COLORS.O, radius: 0.33, isFunctionalGroup: true },
+      { id: 'o_left', symbol: 'O', elementName: '左酯氧', position: [-1.15, -0.45, 0], color: ATOM_COLORS.O, radius: 0.32, isFunctionalGroup: true },
+      { id: 'o_right', symbol: 'O', elementName: '右酯氧', position: [1.15, -0.45, 0], color: ATOM_COLORS.O, radius: 0.32, isFunctionalGroup: true },
+      { id: 'c_me1', symbol: 'C', elementName: '左甲基碳', position: [-2.35, 0.2, 0], color: ATOM_COLORS.C, radius: 0.35 },
+      { id: 'c_me2', symbol: 'C', elementName: '右甲基碳', position: [2.35, 0.2, 0], color: ATOM_COLORS.C, radius: 0.35 },
+      ...createMethylGroup([-2.35, 0.2, 0], [-1.2, -0.3, 0], 'carb-me1').atoms,
+      ...createMethylGroup([2.35, 0.2, 0], [1.2, -0.3, 0], 'carb-me2').atoms,
+    ],
+    bonds: [
+      ...createMultiBonds([0, 0.2, 0], [0, 1.45, 0], 2, 'carb-c=o'),
+      { id: 'c_carb-o_left', start: [0, 0.2, 0], end: [-1.15, -0.45, 0], order: 1 },
+      { id: 'c_carb-o_right', start: [0, 0.2, 0], end: [1.15, -0.45, 0], order: 1 },
+      { id: 'o_left-c_me1', start: [-1.15, -0.45, 0], end: [-2.35, 0.2, 0], order: 1 },
+      { id: 'o_right-c_me2', start: [1.15, -0.45, 0], end: [2.35, 0.2, 0], order: 1 },
+      ...createMethylGroup([-2.35, 0.2, 0], [-1.2, -0.3, 0], 'carb-me1').bonds,
+      ...createMethylGroup([2.35, 0.2, 0], [1.2, -0.3, 0], 'carb-me2').bonds,
+    ],
+  },
 }
 
 

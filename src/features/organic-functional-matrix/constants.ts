@@ -275,7 +275,7 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
     structureSvg: '-C(=O)NH-',
     category: 'nitrogen-containing',
     testReagents: ['双缩脲试剂 (碱性 CuSO₄ 溶液)'],
-    testPhenomenon: '呈现特异性紫玫瑰色配位络合物',
+    testPhenomenon: '蛋白质/多肽 (≥三肽) 呈现特异性紫玫瑰色配位络合物；简单二肽及单酰胺不显色',
     testEquation: 'R-CONH-R\' + NaOH \\xrightarrow{\\Delta} R-COONa + R\'-NH_2',
     consumptions: {
       Na: 0,
@@ -286,7 +286,7 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
       H2: 0,
     },
     qualitativeFeatures: {
-      silverOrFehling: '双缩脲反应显紫玫瑰色',
+      silverOrFehling: '双缩脲反应显紫玫瑰色 (需 ≥2 个肽键)',
       kmno4: '不反应',
       gasOutput: '无气体',
       reactionTypes: ['碱性水解 (耗1NaOH)', '酸性水解 (耗1HCl)', '缩聚形成'],
@@ -295,7 +295,7 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
       ir: '酰胺Ⅰ带约 1650~1680 cm⁻¹ (C=O 伸缩)；酰胺Ⅱ带约 1530~1550 cm⁻¹ (N-H 弯曲)；3300 cm⁻¹ (N-H 伸缩)',
       hnmr: '酰胺质子 -CONH- 处于低场 δ = 5.5~8.5 ppm (宽峰，受四极矩弛豫及交换影响)',
     },
-    notes: '蛋白质遇强酸、强碱、重金属盐、加热发生变性（不可逆）；遇饱和轻金属盐发生盐析（可逆）。',
+    notes: '双缩脲反应是蛋白质/多肽的特征反应，分子中必须含有两个或两个以上肽键（即三肽及以上）才能显紫玫瑰色，简单二肽或单酰胺不反应！蛋白质遇强酸、强碱、重金属盐、加热发生变性（不可逆）；遇饱和轻金属盐发生盐析（可逆）。',
   },
   {
     id: 'ketone-co',
@@ -332,8 +332,8 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
     formula: '-NH_2',
     structureSvg: '-NH_2',
     category: 'nitrogen-containing',
-    testReagents: ['稀盐酸 / 湿润红色石蕊试纸', '亚硝酸 (重氮化)'],
-    testPhenomenon: '与无机酸成盐，水溶液使湿润红色石蕊试纸变蓝',
+    testReagents: ['稀盐酸', 'pH 试纸 / 红色石蕊试纸 (低级脂肪胺)'],
+    testPhenomenon: '与稀盐酸反应成盐并溶解；低级脂肪胺水溶液显弱碱性，芳香胺碱性极弱',
     testEquation: 'R-NH_2 + HCl \\rightarrow R-NH_3^+Cl^-',
     consumptions: {
       Na: 0,
@@ -353,7 +353,7 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
       ir: '3300~3500 cm⁻¹ 双峰 (伯胺 -NH₂ 对称与不对称伸缩振动)；1600 cm⁻¹ (N-H 弯曲振动)',
       hnmr: '氨基质子 -NH₂ 化学位移处于中低场 δ = 1.0~5.0 ppm (加 D₂O 交换消失)',
     },
-    notes: '氨基酸两性原理：氨基具有碱性（与强酸 1:1 成盐），羧基具有酸性（与强碱 1:1 中和）。',
+    notes: '氨基显碱性：低级脂肪胺碱性略强于氨，可使红色石蕊试纸变蓝；芳香胺（如苯胺）碱性极弱，几乎不能使石蕊变蓝，但能与稀盐酸 1:1 反应生成易溶于水的盐酸盐。',
   },
   {
     id: 'nitro-no2',
@@ -382,7 +382,7 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
       ir: '1500~1560 cm⁻¹ (不对称伸缩振动)；1340~1380 cm⁻¹ (对称伸缩振动特征强吸收峰)',
       hnmr: '硝基极强吸电子去屏蔽效应，使邻位苯环质子化学位移显著移向极低场 (δ = 8.1~8.3 ppm)',
     },
-    notes: '高考合成路线王牌前体：硝基是强吸电子间位定位基，通过催化加氢或 Fe/HCl 还原消耗 3 mol H₂ 定向转化为邻对位定位的氨基 (-NH₂)。',
+    notes: '高考合成路线王牌前体：硝基经催化加氢 (耗 3 H₂) 或铁粉/稀盐酸 (Fe + 6HCl + Ar-NO₂ → Ar-NH₃Cl + 3FeCl₂ + 2H₂O，再加碱释放芳香胺) 定向还原为氨基 (-NH₂)。',
   },
   {
     id: 'cyano-cn',
@@ -413,6 +413,64 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
     },
     notes: '新高考增长碳链明星反应：卤代烃与 NaCN 发生亲核取代引入氰基（增加 1 个碳原子），水解一步获得羧基，加氢还原获得伯胺。',
   },
+  {
+    id: 'ether-bond',
+    name: '醚键 (-C-O-C-)',
+    formula: 'R-O-R\'',
+    structureSvg: '-O-',
+    category: 'oxygen-containing',
+    testReagents: ['浓氢碘酸 (HI 加热)', '金属钠 (不反应)', 'NaOH 溶液 (不反应)'],
+    testPhenomenon: '化学性质极稳定；与 Na、NaOH、酸性高锰酸钾均不反应；与浓 HI 加热发生醚键断裂生成碘代烃与醇',
+    testEquation: 'R-O-R\' + 2HI \\xrightarrow{\\Delta} R-I + R\'-I + H_2O',
+    consumptions: {
+      Na: 0,
+      NaOH: 0,
+      NaHCO3: 0,
+      Na2CO3: 0,
+      Br2: 0,
+      H2: 0,
+    },
+    qualitativeFeatures: {
+      silverOrFehling: '不反应',
+      kmno4: '不反应 (化学惰性，常作有机溶剂)',
+      gasOutput: '无气体',
+      reactionTypes: ['浓酸裂解', '配位络合 (如冠醚)'],
+    },
+    spectroscopy: {
+      ir: '1050~1150 cm⁻¹ (强而特征的 C-O-C 不对称伸缩振动)；完全无羟基与羰基峰',
+      hnmr: '醚氧邻位质子 -O-CH₂- 化学位移中度低场 δ = 3.2~3.6 ppm',
+    },
+    notes: '高考超高频同分异构题眼：饱和一元醇与一元醚互为【官能团异构体】(通式 CₙH₂ₙ₊₂O，如乙醇与二甲醚)。醚键性质极其惰性，不与 Na / NaOH 反应，常用于萃取溶剂或保护反应环境。',
+  },
+  {
+    id: 'carbonate-ester',
+    name: '碳酸酯基 (-O-COO-)',
+    formula: '-O-C(=O)-O-',
+    structureSvg: '-O-C(=O)O-',
+    category: 'oxygen-containing',
+    testReagents: ['NaOH 溶液加热水解 + 稀酸酸化'],
+    testPhenomenon: '碱性加热彻底水解；酸化后产生无色无味使澄清石灰水变浑浊的气体 (CO₂)',
+    testEquation: 'CH_3O-COO-CH_3 + 2NaOH \\xrightarrow{\\Delta} Na_2CO_3 + 2CH_3OH',
+    consumptions: {
+      Na: 0,
+      NaOH: 2, // 1 mol 脂肪族碳酸酯水解消耗 2 mol NaOH 生成 1 mol Na2CO3 + 2 mol 醇；若为芳香碳酸酯(如聚碳酸酯PC)则消耗 4 mol NaOH
+      NaHCO3: 0,
+      Na2CO3: 0,
+      Br2: 0,
+      H2: 0,
+    },
+    qualitativeFeatures: {
+      silverOrFehling: '不反应',
+      kmno4: '不反应',
+      gasOutput: '水解产物酸化释放 CO₂',
+      reactionTypes: ['碱性水解 (耗2NaOH)', '缩聚形成高分子材料'],
+    },
+    spectroscopy: {
+      ir: '1740~1760 cm⁻¹ (强碳酸酯羰基 C=O 伸缩振动)；1250 cm⁻¹ (强 C-O 单键伸缩)',
+      hnmr: '碳酸二甲酯甲基质子呈特征单峰 δ = 3.8 ppm',
+    },
+    notes: '新高考高分子明星基团：双酚 A 与碳酸二苯酯/光气缩聚形成工程塑料【聚碳酸酯 (PC)】。水解消耗比：1 mol 脂肪族碳酸酯消耗 2 mol NaOH；若两端均为酚羟基残基（如 PC 水解）则 1 mol 链节消耗高达 4 mol NaOH！',
+  },
 ]
 
 export const PROTECTION_GROUPS: ProtectionGroupItem[] = [
@@ -421,7 +479,7 @@ export const PROTECTION_GROUPS: ProtectionGroupItem[] = [
     name: '酚羟基的苄基化保护 (Bn-保护)',
     targetGroup: '酚羟基 (Ar-OH)',
     protectionReagent: '苄溴 (BnBr) + K₂CO₃ 弱碱',
-    protectionEquation: 'Ar-OH + C_6H_5CH_2Br \\xrightarrow{K_2CO_3} Ar-O-CH_2C_6H_5 + HBr',
+    protectionEquation: 'Ar-OH + C_6H_5CH_2Br + K_2CO_3 \\xrightarrow{\\Delta} Ar-O-CH_2C_6H_5 + KBr + KHCO_3',
     deprotectionCondition: 'H₂ / Pd-C 催化氢解还原',
     deprotectionEquation: 'Ar-O-CH_2C_6H_5 + H_2 \\xrightarrow{Pd-C} Ar-OH + C_6H_5CH_3',
     examSignificance:
@@ -443,9 +501,9 @@ export const PROTECTION_GROUPS: ProtectionGroupItem[] = [
     name: '醛/酮羰基的缩醛/缩酮保护',
     targetGroup: '醛/酮羰基 (>C=O / -CHO)',
     protectionReagent: '乙二醇 (HO-CH₂CH₂-OH) + 干燥酸催化',
-    protectionEquation: 'R_2C=O + HO-CH_2CH_2-OH \\xrightarrow{H^+} R_2C\\langle_O^O\\rangle + H_2O',
+    protectionEquation: 'R_2C=O + HO-CH_2CH_2-OH \\xrightarrow{H^+} R_2C(OCH_2CH_2O) + H_2O',
     deprotectionCondition: '稀酸水溶液加热水解 (H₃O⁺ / Δ)',
-    deprotectionEquation: 'R_2C\\langle_O^O\\rangle + H_2O \\xrightarrow{H^+, \\Delta} R_2C=O + HO-CH_2CH_2-OH',
+    deprotectionEquation: 'R_2C(OCH_2CH_2O) + H_2O \\xrightarrow{H^+, \\Delta} R_2C=O + HO-CH_2CH_2-OH',
     examSignificance:
       '防止羰基在格氏反应、LiAlH₄ 强还原其他羧酸酯基或强碱性烷基化过程中被优先加成破坏。',
   },
@@ -455,8 +513,8 @@ export const PROTECTION_GROUPS: ProtectionGroupItem[] = [
     targetGroup: '羧基 (-COOH)',
     protectionReagent: '甲醇 (CH₃OH) + 浓硫酸催化加热',
     protectionEquation: 'R-COOH + CH_3OH \\xrightarrow{浓H_2SO_4, \\Delta} R-COOCH_3 + H_2O',
-    deprotectionCondition: '稀 NaOH 加热水解后酸酸化',
-    deprotectionEquation: 'R-COOCH_3 + NaOH \\xrightarrow{\\Delta} R-COONa + CH_3OH \\xrightarrow{H^+} R-COOH',
+    deprotectionCondition: '稀酸催化水解 (或稀 NaOH 水解后加酸酸化)',
+    deprotectionEquation: 'R-COOCH_3 + H_2O \\xrightleftharpoons{H^+, \\Delta} R-COOH + CH_3OH',
     examSignificance:
       '掩盖活泼酸性质子，防止羧基与有机金属试剂（如格氏试剂 RMgX）剧烈反应释放烷烃。',
   },
@@ -520,15 +578,15 @@ export const PRESET_MOLECULES: PresetMoleculeDetail[] = [
     structureFormula: 'o-(CH₃COO)-C₆H₄-COOH',
     counts: { 'phenol-ester': 1, 'carboxyl-cooh': 1 },
     focusGroupId: 'phenol-ester',
-    breakdownSummary: '1 mol 阿司匹林水解消耗 3 mol NaOH、1 mol NaHCO₃、1 mol Na',
+    breakdownSummary: '完全水解消耗 3 mol NaOH；未水解分子与 Na 反应放 0.5 H₂，与 NaHCO₃ 反应放 1 CO₂',
     examAnalysis:
-      '高考头号母题：水解时酚酯键断开，生成 1 mol 乙酸和 1 mol 水杨酸（邻羟基苯甲酸）。水杨酸分子中同时含有 1 个 -COOH 和 1 个酚 -OH。因此水解产物总计含 2 个羧酸基团与 1 个酚羟基，3 处均呈酸性，故总计消耗 3 mol NaOH！',
+      '高考头号母题：水解时酚酯键断开，生成 1 mol 乙酸和 1 mol 水杨酸（邻羟基苯甲酸）。水杨酸分子中同时含有 1 个 -COOH 和 1 个酚 -OH。因此水解产物总计含 2 个羧酸基团与 1 个酚羟基，3 处均呈酸性，故总计消耗 3 mol NaOH！未水解前分子中仅羧基具有酸性质子，故仅消耗 1 mol Na 与 1 mol NaHCO₃。',
     keyEquations: [
       'CH_3COO-C_6H_4-COOH + 3NaOH \\xrightarrow{\\Delta} CH_3COONa + NaO-C_6H_4-COONa + 2H_2O',
       'CH_3COO-C_6H_4-COOH + NaHCO_3 \\rightarrow CH_3COO-C_6H_4-COONa + CO_2\\uparrow + H_2O',
     ],
     examTraps:
-      '易错点：① 水解前加入 FeCl₃ 不显紫色（酚羟基被乙酰化保护）；② 碱性水解后必须先加酸酸化，再滴入 FeCl₃ 才会显特异紫色；③ 与 NaHCO₃ 反应仅放出 1 mol CO₂。',
+      '易错点：① 水解前加入 FeCl₃ 不显紫色（酚羟基被乙酰化保护）；② 碱性水解后必须先加酸酸化，再滴入 FeCl₃ 才会显特异紫色；③ 与 NaHCO₃ 反应仅放出 1 mol CO₂；④ 绝不可表述为“水解消耗 Na”，Na 置换反应是在无水有机介质中进行。',
   },
   {
     id: 'formic-phenyl-ester',
@@ -540,13 +598,13 @@ export const PRESET_MOLECULES: PresetMoleculeDetail[] = [
     focusGroupId: 'phenol-ester',
     breakdownSummary: '发生银镜反应出 2 Ag；水解消耗 2 mol NaOH（生成甲酸钠 + 苯酚钠）',
     examAnalysis:
-      '新高考超高频双重特性母题：分子中含有甲酸酯基（表现醛基性质，发生银镜反应出 2 mol Ag），同时属于酚酯，水解生成 1 mol 甲酸钠与 1 mol 苯酚钠，共消耗 2 mol NaOH；水解后的甲酸钠依然能发生银镜反应！',
+      '新高考超高频双重特性母题：分子中所含官能团为【酯基】（甲酸酯基），因含有甲酰基 (H-C=O) 结构而兼具【醛基的还原性】。水解生成 1 mol 甲酸钠与 1 mol 苯酚钠，共消耗 2 mol NaOH；产物甲酸钠依然能发生银镜反应！高考答题注意：问官能团名称必须答“酯基”（或甲酸酯基），写“醛基”会判错。',
     keyEquations: [
       'HCOO-C_6H_5 + 2[Ag(NH_3)_2]OH \\xrightarrow{\\Delta} NH_4O-COO-C_6H_5 + 2Ag\\downarrow + 3NH_3 + H_2O',
       'HCOO-C_6H_5 + 2NaOH \\xrightarrow{\\Delta} HCOONa + C_6H_5ONa + H_2O',
     ],
     examTraps:
-      '高考特级推断题眼：“1 mol 酯水解消耗 2 mol NaOH，且水解产物均能发生银镜反应” ➔ 必为甲酸酚酯类异构体！',
+      '高考特级推断题眼：“1 mol 酯水解消耗 2 mol NaOH，且水解产物均能发生银镜反应” ➔ 必为甲酸酚酯类异构体！切记：其官能团严格名称为“酯基”，不可单独列出醛基。',
   },
   {
     id: 'ester-vs-phenol-ester',
@@ -612,12 +670,12 @@ export const PRESET_MOLECULES: PresetMoleculeDetail[] = [
     focusGroupId: 'aldehyde-cho',
     breakdownSummary: '生成 2 mol Ag 银镜；消耗 3 mol 浓溴水（2 溴代取代 + 1 醛基氧化）',
     examAnalysis:
-      '集酚类与醛类特异性于一身的高考明星分子。醛基部分可发生银镜反应产生 2 mol Ag 或生成 1 mol Cu₂O 沉淀；与浓溴水反应时，苯环邻对位发生 2 处取代，醛基被溴水氧化消耗 1 mol Br₂，总计消耗 3 mol Br₂。',
+      '集酚类与醛类特异性于一身的高考明星分子。醛基部分可发生银镜反应产生 2 mol Ag 或生成 1 mol Cu₂O 沉淀；与浓溴水反应时：由于 -CHO 占据了苯环一个邻位，苯环仅剩 4位(对位)与 6位(另一邻位)发生溴代取代 (耗 2 Br₂)，同时醛基被溴水氧化生成羧酸 (耗 1 Br₂)，本分子真实总计消耗 3 mol Br₂。',
     keyEquations: [
       'o-(OH)-C_6H_4-CHO + 2[Ag(NH_3)_2]OH \\xrightarrow{\\Delta} o-(OH)-C_6H_4-COONH_4 + 2Ag\\downarrow + 3NH_3 + H_2O',
     ],
     examTraps:
-      '定量计算陷阱：计算与浓溴水反应时，切勿漏掉醛基被溴水氧化的 1 mol Br₂！',
+      '【高考特级陷阱·位阻定位】：通用基团累加模型中，独立酚羟基耗 3 Br₂、醛基氧化耗 1 Br₂（共4）；但水杨醛因醛基占据邻位，苯环实际仅发生 2 处取代，实际消耗为 3 mol Br₂！请务必注意具体分子取代位点。',
   },
   {
     id: 'comprehensive',
@@ -636,6 +694,42 @@ export const PRESET_MOLECULES: PresetMoleculeDetail[] = [
     ],
     examTraps:
       '酸性鉴别金标准：遇到 NaHCO₃ 放出气体的只有羧基，醇羟基和双键均不产生干扰。',
+  },
+  {
+    id: 'alcohol-vs-ether',
+    title: '醇 vs 醚 官能团异构',
+    chemicalName: '乙醇与二甲醚对映对比体系',
+    subtitle: '1 醇-OH vs 1 醚键 ➔ 耗 1 Na vs 0 惰性',
+    structureFormula: 'CH₃CH₂OH 与 CH₃-O-CH₃',
+    counts: { 'alcohol-oh': 1, 'ether-bond': 1 },
+    focusGroupId: 'ether-bond',
+    breakdownSummary: '乙醇消耗 1 mol Na 放 0.5 H₂；二甲醚为醚键无活泼氢，消耗均为 0',
+    examAnalysis:
+      '高考同分异构体必考母题：同分异构体 C₂H₆O 存在乙醇与二甲醚两种构型。乙醇含 -OH，能与 Na 反应放出 H₂；二甲醚含醚键 (-O-)，常温下呈化学惰性，不与 Na、NaOH、KMnO₄ 反应。',
+    keyEquations: [
+      '2CH_3CH_2OH + 2Na \\rightarrow 2CH_3CH_2ONa + H_2\\uparrow',
+      'CH_3-O-CH_3 + Na \\rightarrow 不反应',
+    ],
+    examTraps:
+      '波谱区别铁律：¹H-NMR 中乙醇有 3 组峰 (比 3:2:1)，二甲醚仅有 1 组单峰 (高度对称 6H)；IR 中乙醇有 3200~3600 cm⁻¹ 强宽羟基吸收，二甲醚仅有 1100 cm⁻¹ C-O-C 峰。',
+  },
+  {
+    id: 'dimethyl-carbonate',
+    title: '碳酸二甲酯水解',
+    chemicalName: '碳酸二甲酯 (DMC)',
+    subtitle: '1 碳酸酯基 ➔ 消耗 2 NaOH + 酸化放 CO₂',
+    structureFormula: 'CH₃O-COO-CH₃',
+    counts: { 'carbonate-ester': 1 },
+    focusGroupId: 'carbonate-ester',
+    breakdownSummary: '消耗 2 mol NaOH，生成 1 mol Na₂CO₃ 和 2 mol 甲醇；酸化后放 1 mol CO₂',
+    examAnalysis:
+      '新高考有机合成高频绿色试剂：分子内含碳酸酯基 (-O-COO-)，碱性水解消耗 2 mol NaOH 生成碳酸钠与甲醇；若为芳香聚碳酸酯 (PC) 水解，生成双酚 A 钠与碳酸钠，1 mol 链节消耗 4 mol NaOH！',
+    keyEquations: [
+      'CH_3O-COO-CH_3 + 2NaOH \\xrightarrow{\\Delta} Na_2CO_3 + 2CH_3OH',
+      'Na_2CO_3 + 2HCl \\rightarrow 2NaCl + CO_2\\uparrow + H_2O',
+    ],
+    examTraps:
+      '高分子 PC 考点：双酚 A 与光气或碳酸二苯酯缩聚生成聚碳酸酯，水解后产生酚羟基，耗碱量极高。',
   },
 ]
 
@@ -684,10 +778,10 @@ export const GAOKAO_CLUES: GaokaoClueItem[] = [
   },
   {
     id: 'clue-bromine-color',
-    clueText: '能使溴水或酸性高锰酸钾紫红色褪去',
+    clueText: '能与溴的 CCl₄ 溶液发生加成反应褪色，或能使溴水褪色且不产生沉淀和气体',
     deductionTarget: '分子中含【碳碳双键 C=C】或【碳碳三键 C≡C】',
     matchedGroupId: 'alkene-c=c',
-    principle: '不饱和键发生加成反应使溴水褪色，或被酸性高锰酸钾强氧化剂氧化而褪色。',
+    principle: '严格限定加成反应褪色！若仅提“使溴水褪色”，醛基被氧化、酚类生成三溴苯酚沉淀亦会使溴水褪色；若仅提“使酸性 KMnO₄ 褪色”，醇、醛、酚及甲苯类同系物均可褪色。',
   },
   {
     id: 'clue-amino-base',
@@ -705,10 +799,10 @@ export const GAOKAO_CLUES: GaokaoClueItem[] = [
   },
   {
     id: 'clue-nmr-chiral',
-    clueText: '¹H-NMR 显示 4 组峰且面积比为 1:1:1:3，分子具有手性',
-    deductionTarget: '含有【手性碳原子 *C】的非对称取代结构 (如乳酸或 2-氯丙酸)',
+    clueText: '¹H-NMR 显示 4 组峰且面积比为 1:1:1:3，分子具有手性 (*C)',
+    deductionTarget: '含有【手性碳原子 *C】的非对称结构 (如乳酸或 2-氯丙酸)',
     matchedGroupId: 'carboxyl-cooh',
-    principle: '手性碳原子连接 4 个不同基团，分子不存在对称面与对称中心，各质子化学环境均不相同。',
+    principle: '手性碳原子连接 4 个不同原子或基团（如乳酸中 -H, -CH₃, -OH, -COOH），分子无对称面与对称中心，各质子环境均不同且存在旋光对映异构。',
   },
   {
     id: 'clue-nitro-reduction',
@@ -723,5 +817,19 @@ export const GAOKAO_CLUES: GaokaoClueItem[] = [
     deductionTarget: '分子中含【氰基 -C≡N】',
     matchedGroupId: 'cyano-cn',
     principle: '氰基经强酸/强碱加热完全水解为羧酸与铵盐/氨气，红外光谱具有特征三键伸缩强吸收。',
+  },
+  {
+    id: 'clue-ether-inert',
+    clueText: '分子式符合 CₙH₂ₙ₊₂O 但完全不与金属 Na 反应，红外光谱无羟基吸收峰',
+    deductionTarget: '分子中含【醚键 -C-O-C-】(醇与醚官能团异构)',
+    matchedGroupId: 'ether-bond',
+    principle: '饱和一元醇与一元醚互为官能团异构体。醇中含活泼氢可置换 Na 放 H₂，醚中氧原子连接两个碳原子无活泼氢，不反应。',
+  },
+  {
+    id: 'clue-carbonate-hydrolysis',
+    clueText: '1 mol 该酯水解消耗 2 mol NaOH，水解酸化后放出无色无味使石灰水变浑浊气体 (CO₂)',
+    deductionTarget: '分子中含【碳酸酯基 -O-COO-】',
+    matchedGroupId: 'carbonate-ester',
+    principle: '碳酸酯水解生成碳酸盐与醇/酚，1 mol 脂肪族碳酸酯消耗 2 mol NaOH，酸化后碳酸根分解释放 CO₂。',
   },
 ]

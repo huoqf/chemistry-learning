@@ -4,14 +4,15 @@ import {
   GAOKAO_CLUES,
   PROTECTION_GROUPS,
   POLYMERIZATION_MODELS,
+  PRESET_MOLECULES,
 } from '../constants'
 import { ORGANIC_3D_MOLECULES } from '../data/organic3dData'
 import { useOrganicQuantitative } from '../hooks/useOrganicQuantitative'
 import { renderHook } from '@testing-library/react'
 
 describe('有机官能团定性特征与定量转化反应矩阵数据与计算审计', () => {
-  it('应包含 14 大新高考高频官能团与核心题眼', () => {
-    expect(FUNCTIONAL_GROUPS.length).toBe(14)
+  it('应包含 16 大新高考高频官能团与核心题眼', () => {
+    expect(FUNCTIONAL_GROUPS.length).toBe(16)
     const ids = FUNCTIONAL_GROUPS.map((g) => g.id)
     expect(ids).toContain('alkene-c=c')
     expect(ids).toContain('alkyne-c#c')
@@ -27,8 +28,10 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
     expect(ids).toContain('amino-nh2')
     expect(ids).toContain('nitro-no2')
     expect(ids).toContain('cyano-cn')
+    expect(ids).toContain('ether-bond')
+    expect(ids).toContain('carbonate-ester')
 
-    expect(GAOKAO_CLUES.length).toBeGreaterThanOrEqual(10)
+    expect(GAOKAO_CLUES.length).toBeGreaterThanOrEqual(12)
   })
 
   it('酚酯水解必须消耗 2 mol NaOH，普通酯水解消耗 1 mol NaOH', () => {
@@ -75,7 +78,7 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
     expect(result.current.breakdowns.NaOH[0].totalMol + result.current.breakdowns.NaOH[1].totalMol).toBe(5)
   })
 
-  it('Na2CO3 定量消耗：1 酚羟基 + 1 羧基 复合体系消耗 1.5 mol Na2CO3 并放 0.5 mol CO2', () => {
+  it('Na2CO3 定量消耗与气体特征：1 酚羟基 + 1 羧基 体系消耗 1.5 mol Na2CO3，遇 NaHCO3 放 1.0 mol CO2', () => {
     const { result } = renderHook(() =>
       useOrganicQuantitative({
         'phenol-oh': 1, // 消耗 1 Na2CO3 (生成 1 NaHCO3 不出气)
@@ -84,13 +87,14 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
     )
 
     expect(result.current.Na2CO3).toBe(1.5)
-    expect(result.current.gasCO2).toBe(1) // 来自羧基与 NaHCO3/中和
+    // 验证与 NaHCO3 专属定性放气特征 (1 mol 羧基 1:1 放 1 mol CO2)
+    expect(result.current.gasCO2).toBe(1)
     expect(result.current.NaOH).toBe(2)
     expect(result.current.Na).toBe(2)
     expect(result.current.gasH2).toBe(1.0)
   })
 
-  it('12 大官能团均应具备完整的定性检验试剂、现象与定性特征标注', () => {
+  it('16 大官能团均应具备完整的定性检验试剂、现象与定性特征标注', () => {
     for (const g of FUNCTIONAL_GROUPS) {
       expect(g.testReagents.length).toBeGreaterThan(0)
       expect(g.testPhenomenon.length).toBeGreaterThan(0)
@@ -123,10 +127,10 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
     expect(result.current.H2).toBe(1) // 醛基加氢还原
   })
 
-  it('3D 空间球棍模型数据库应完整覆盖 12 大官能团与核心母题分子', async () => {
+  it('3D 空间球棍模型数据库应完整覆盖 16 大官能团与核心母题分子', async () => {
     const { ORGANIC_3D_MOLECULES, get3DModelForGroup } = await import('../data/organic3dData')
     
-    // 验证所有 12 大官能团均能正确获取 3D 模型
+    // 验证所有 16 大官能团均能正确获取 3D 模型
     for (const g of FUNCTIONAL_GROUPS) {
       const model = get3DModelForGroup(g.id)
       expect(model).toBeDefined()
@@ -241,7 +245,7 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
     expect(result.current.breakdowns.H2[1].reason).toContain('氰基')
   })
 
-  it('CI 守门机制：全量 14 大官能团电荷与活泼氢守恒自动化遍历断言', () => {
+  it('CI 守门机制：全量 16 大官能团电荷与活泼氢守恒自动化遍历断言', () => {
     // 遍历所有官能团验证活泼氢与 Na/NaOH 守恒法则：
     // 1. 若与 Na 反应（产生 H2），则必为醇-OH、酚-OH 或 羧基-COOH，且消耗比为 1:1
     // 2. 羧基与 NaHCO3 必须 1:1 产生 CO2 且与 NaOH 1:1 中和
@@ -263,7 +267,7 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
     }
   })
 
-  it('CI 守门机制：极端全量混合物（包含全部 14 种官能团各 1 个）多维定量计算一致性', () => {
+  it('CI 守门机制：极端全量混合物（包含全部 16 种官能团各 1 个）多维定量计算一致性', () => {
     const allCounts: Record<string, number> = {}
     FUNCTIONAL_GROUPS.forEach((g) => {
       allCounts[g.id] = 1
@@ -273,7 +277,7 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
 
     // 理论期望：
     // Na = 醇(1) + 酚(1) + 羧(1) = 3
-    // NaOH = 酚(1) + 羧(1) + 醇酯(1) + 酚酯(2) + 卤代(1) + 酰胺(1) + 氰基(1) = 8
+    // NaOH = 酚(1) + 羧(1) + 醇酯(1) + 酚酯(2) + 卤代(1) + 酰胺(1) + 氰基(1) + 碳酸酯(2) = 10
     // NaHCO3 = 羧(1) = 1
     // Na2CO3 = 酚(1) + 羧(0.5) = 1.5
     // Br2 = 双键(1) + 三键(2) + 酚(3) + 醛(1) = 7
@@ -282,7 +286,7 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
     // gasCO2 = 羧(1) = 1.0
     // precipitateAg = 醛(2) = 2.0
     expect(result.current.Na).toBe(3)
-    expect(result.current.NaOH).toBe(8)
+    expect(result.current.NaOH).toBe(10)
     expect(result.current.NaHCO3).toBe(1)
     expect(result.current.Na2CO3).toBe(1.5)
     expect(result.current.Br2).toBe(7)
@@ -312,6 +316,8 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
       'amino-nh2': 7, // 乙胺 C2H7N
       'nitro-no2': 5, // 硝基苯 C6H5NO2
       'cyano-cn': 3, // 乙腈 C2H3N
+      'ether-bond': 6, // 二甲醚 C2H6O
+      'carbonate-ester': 6, // 碳酸二甲酯 C3H6O3
       'alkene-cis-2-butene': 8, // 顺-2-丁烯 C4H8
       'alkene-trans-2-butene': 8, // 反-2-丁烯 C4H8
       'lactic-acid-chiral': 6, // L-乳酸 C3H6O3
@@ -389,6 +395,85 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
         expect(atom.radius).toBeLessThanOrEqual(0.5)
         expect(atom.color).toBeDefined()
         expect(atom.symbol).toMatch(/^(C|H|O|N|Br|Cl)$/)
+      }
+    }
+  })
+
+  it('新教材扩展基团审计：醚键完全不反应(惰性)，碳酸酯基水解消耗 2 mol NaOH', () => {
+    const { result: etherRes } = renderHook(() =>
+      useOrganicQuantitative({
+        'ether-bond': 1,
+      })
+    )
+    expect(etherRes.current.Na).toBe(0)
+    expect(etherRes.current.NaOH).toBe(0)
+    expect(etherRes.current.NaHCO3).toBe(0)
+    expect(etherRes.current.Br2).toBe(0)
+    expect(etherRes.current.H2).toBe(0)
+
+    const { result: carbRes } = renderHook(() =>
+      useOrganicQuantitative({
+        'carbonate-ester': 1,
+      })
+    )
+    expect(carbRes.current.NaOH).toBe(2)
+    expect(carbRes.current.breakdowns.NaOH[0].reason).toContain('碳酸酯基水解')
+  })
+
+  it('高考题眼线索 (GAOKAO_CLUES) 映射完备性：所有 matchedGroupId 必须合法存在于 FUNCTIONAL_GROUPS', () => {
+    const validGroupIds = new Set(FUNCTIONAL_GROUPS.map((g) => g.id))
+    for (const clue of GAOKAO_CLUES) {
+      expect(
+        validGroupIds.has(clue.matchedGroupId),
+        `线索 [${clue.id}] 的 matchedGroupId [${clue.matchedGroupId}] 必须存在于 FUNCTIONAL_GROUPS 中`
+      ).toBe(true)
+      expect(clue.clueText.length).toBeGreaterThan(0)
+      expect(clue.deductionTarget.length).toBeGreaterThan(0)
+      expect(clue.principle.length).toBeGreaterThan(0)
+    }
+  })
+
+  it('高考预设母题分子 (PRESET_MOLECULES) 全量数据自洽性审计：官能团存在且定量计算一致', () => {
+    const validGroupIds = new Set(FUNCTIONAL_GROUPS.map((g) => g.id))
+    expect(PRESET_MOLECULES.length).toBeGreaterThanOrEqual(9)
+
+    for (const preset of PRESET_MOLECULES) {
+      expect(preset.chemicalName.length).toBeGreaterThan(0)
+      expect(preset.keyEquations.length).toBeGreaterThan(0)
+      expect(preset.examAnalysis.length).toBeGreaterThan(0)
+
+      // 验证 counts 中的官能团 ID 合法性
+      for (const [groupId, count] of Object.entries(preset.counts)) {
+        expect(
+          validGroupIds.has(groupId),
+          `母题 [${preset.id}] 中的官能团 [${groupId}] 必须为合法的 FUNCTIONAL_GROUPS ID`
+        ).toBe(true)
+        expect(count).toBeGreaterThan(0)
+      }
+
+      // 验证调用定量计算 hook 不报错且产物有效
+      const { result } = renderHook(() => useOrganicQuantitative(preset.counts))
+      expect(result.current).toBeDefined()
+      expect(typeof result.current.NaOH).toBe('number')
+      expect(typeof result.current.Na).toBe('number')
+      expect(typeof result.current.Br2).toBe('number')
+      expect(typeof result.current.H2).toBe('number')
+    }
+  })
+
+  it('高中化学立体构型铁律：手性碳 (*C) 必须严格为 sp³ 杂化四面体构型', () => {
+    for (const [id, mol] of Object.entries(ORGANIC_3D_MOLECULES)) {
+      for (const atom of mol.atoms) {
+        if (atom.isChiral) {
+          expect(
+            atom.symbol,
+            `分子 [${id}] 中标记为手性中心的原子 [${atom.id}] 元素符号必须为 C`
+          ).toBe('C')
+          expect(
+            atom.hybridization,
+            `分子 [${id}] 中的手性碳原子 [${atom.id}] 必须为 sp³ 杂化四面体，严禁为 sp² 或 sp`
+          ).toBe('sp³')
+        }
       }
     }
   })
