@@ -5,22 +5,22 @@ export const vseprHybridQuizData: ModelQuizData = {
   scoringSteps: [
     {
       id: 'step-1',
-      title: '步骤 1：明确中心原子价电子数 b 与配位原子贡献数 cx',
+      title: '步骤 1：明确中心原子价电子数 a 与离子电荷修正',
       type: 'fill-in',
-      questionText: '计算微粒中心原子价电子数 b。在 CO₃²⁻ 中，碳原子价电子数 b 为 4，配位氧原子需求 cx 为 6，带 2 个单位负电荷。修正后中心 C 价电子总和为多少？',
+      questionText: '计算微粒中心原子价电子数 a。在 CO₃²⁻ 中，碳原子价电子数 a 为 4，带 2 个单位负电荷。修正后中心 C 价电子总和 a\' = a + |q| 为多少？',
       placeholder: '输入整数',
       correctAnswer: ['6'],
-      explanation: '中心 C 原子价电子 b = 4，阴离子加 2 个电荷，4 + 2 = 6。',
+      explanation: '中心 C 原子最外层价电子 a = 4，阴离子加上 2 个电荷，4 + 2 = 6。',
     },
     {
       id: 'step-2',
-      title: '步骤 2：计算价层电子对数 VSEPR 与孤电子对数',
+      title: '步骤 2：计算价层电子对数与孤电子对数',
       type: 'calculation',
-      questionText: '运用 VSEPR 公式，SO₂ 中中心 S 原子价电子数 b=6，配位 O 原子需求 cx=4。则 SO₂ 的价层电子对数与孤电子对数分别为（用 comma 分隔）：',
-      formulaLatex: '\\text{VSEPR } = a + \\frac{b - cx}{2} = 2 + \\frac{6 - 4}{2} = 3',
+      questionText: '运用课标 VSEPR 公式，SO₂ 中中心 S 原子价电子数 a=6，配位 O 原子需求 b=2，配位原子数 x=2。则 SO₂ 的价层电子对数与孤电子对数分别为（用 comma 分隔）：',
+      formulaLatex: '\\text{价层对数 } = x + \\frac{a - xb}{2} = 2 + \\frac{6 - 2 \\times 2}{2} = 3',
       placeholder: '3,1 或 3, 1',
       correctAnswer: ['3,1', '3, 1'],
-      explanation: '价层电子对数 = 2 + (6 - 4)/2 = 3，孤电子对数 = (6 - 4)/2 = 1。',
+      explanation: '孤电子对数 n = (6 - 2×2)/2 = 1，价层电子对数 = 2 + 1 = 3。',
     },
     {
       id: 'step-3',
@@ -57,11 +57,6 @@ export const vseprHybridQuizData: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查 VSEPR 电子对数计算 (SO₂ 为 3, SO₃ 为 3) 以及孤电子对排斥对键角的压缩效应。',
       detailedExplanation: '1. SO₂ 中 S 价电子对数 = 2 + (6 - 2×2)/2 = 3，含 1 对孤电子对，sp² 杂化，VSEPR 模型为平面三角形，由于孤电子对的排斥，实际键角小于 120° (~119.5°)；\n2. SO₃ 中 S 价电子对数 = 3 + (6 - 2×3)/2 = 3，无孤电子对，sp² 杂化，实际构型为平面三角形，键角为 120°。\n3. 因此 SO₃ 键角 (120°) > SO₂ 键角 (~119.5°)。',
-      diagramType: 'titration-error-diagram',
-      diagramConfig: {
-        errorDiagramType: 'permanganate-view-angle',
-        title: 'SO₂ (V形/含1对孤电子对) vs SO₃ (平面三角形) 3D 构型与键角对比图',
-      },
     },
     {
       id: 'quiz-vsepr-2',
@@ -78,11 +73,6 @@ export const vseprHybridQuizData: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查阴阳离子 VSEPR 电荷修正公式与分子实际空间构型的区分。',
       detailedExplanation: 'NH₄⁺ 价层电子对数 = 4 + (5 - 1 - 4×1)/2 = 4，无孤电子对，sp³ 杂化，正四面体；H₃O⁺ 价层电子对数 = 3 + (6 - 1 - 3×1)/2 = 4，含 1 对孤电子对，sp³ 杂化，三角锥形。故两者杂化相同 (sp³)，但实际构型不同。',
-      diagramType: 'titration-error-diagram',
-      diagramConfig: {
-        errorDiagramType: 'iodometry-purity',
-        title: 'NH₄⁺ (正四面体) 与 H₃O⁺ (三角锥形) sp³ 杂化模型对比图',
-      },
     },
     {
       id: 'quiz-vsepr-3',
@@ -99,11 +89,6 @@ export const vseprHybridQuizData: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查等电子体原理及 sp² 杂化。CO₃²⁻ 电子对数 = 3 + (4+2-6)/2 = 3，sp² 杂化，平面三角形，含有 4 轨道 6 电子的大 π 键 (Π₄⁶)。',
       detailedExplanation: 'CO₃²⁻ 与 NO₃⁻ 为等电子体，中心原子均为 sp² 杂化，无孤电子对，均为平面三角形，3 个 C-O 键完全等同。',
-      diagramType: 'titration-error-diagram',
-      diagramConfig: {
-        errorDiagramType: 'cod-back-titration',
-        title: 'CO₃²⁻ 与 NO₃⁻ 等电子体 sp² 平面三角形大 π 键结构图',
-      },
     },
     {
       id: 'quiz-vsepr-4',
@@ -120,11 +105,6 @@ export const vseprHybridQuizData: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：排斥力大小规律：孤对-孤对 > 孤对-成键 > 成键-成键。CH₄(0对孤对, 109.5°) > NH₃(1对孤对, 107.3°) > H₂O(2对孤对, 104.5°)。',
       detailedExplanation: '孤电子对的电子云更靠近中心原子，对成键电子对的排斥力强于成键电子对之间的排斥。孤电子对越多，键角被挤压得越小。',
-      diagramType: 'titration-error-diagram',
-      diagramConfig: {
-        errorDiagramType: 'permanganate-view-angle',
-        title: 'CH₄(0对) ➔ NH₃(1对) ➔ H₂O(2对) 孤电子对排斥挤压键角示意图',
-      },
     },
     {
       id: 'quiz-vsepr-5',
@@ -141,11 +121,6 @@ export const vseprHybridQuizData: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：Xe (8个价电子)。XeF₂ 电子对数 = 2 + (8-2)/2 = 5，其中 3 对孤对排布于三角双锥赤道面，两个 F 位于轴向，构型为直线形 (180°)。XeF₄ 电子对数 = 4 + (8-4)/2 = 6，2 对孤对位于八面体上下顶点，平面四方形。',
       detailedExplanation: 'XeF₂ 电子对数为 5，3 对孤对占据赤道平面（减小排斥），F-Xe-F 在一条直线上，构型为直线形 (键角 180°)，A 项完全正确。',
-      diagramType: 'titration-error-diagram',
-      diagramConfig: {
-        errorDiagramType: 'iodometry-purity',
-        title: 'XeF₂ (直线形) 与 XeF₄ (平面四方形) VSEPR 电子对排布图',
-      },
     },
   ],
 }

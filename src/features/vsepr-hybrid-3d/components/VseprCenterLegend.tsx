@@ -21,8 +21,7 @@ export const VseprCenterLegend: React.FC<VseprCenterLegendProps> = ({
       {/* 头部标题与模式标识 */}
       <div className="font-bold text-slate-900 text-xs pb-1.5 border-b border-slate-200 flex items-center justify-between">
         <span className="flex items-center gap-1">
-          <span>📌</span>
-          <span>3D 图例与线条说明</span>
+          <span>3D 图例与图元说明</span>
         </span>
         <span className="text-[10px] bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded font-semibold border border-indigo-200">
           {displayMode === 'ball_stick' && '分子构型模式'}

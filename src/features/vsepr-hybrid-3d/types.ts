@@ -20,6 +20,7 @@ export type MolecularGeometryType =
   | 'bent'
   | 'tetrahedral'
   | 'trigonal_pyramidal'
+  | 'square_planar'
   | 'trigonal_bipyramidal'
   | 'octahedral'
 
@@ -72,14 +73,21 @@ export interface VseprMoleculeData {
   name: string
   category: 'AB2' | 'AB3' | 'AB4' | 'Ion' | 'Expanded'
   centerAtomSymbol: string
-  centerValenceElectrons: number // b
-  terminalAtomCount: number // a
-  terminalAtomElectronNeed: number // c
-  charge: number // 阴离子为负，阳离子为正
-  
-  vseprPairs: number // (a + (b - cx)/2)
-  lonePairs: number // (b - cx)/2
-  bondPairs: number // a
+  /** 中心原子价电子数 a (主族元素即最外层电子数) */
+  centerValenceElectrons: number
+  /** 配位原子数 x (即 σ 键电子对数) */
+  terminalAtomCount: number
+  /** 每个配位原子最多能结合的电子数 b (H/卤素为 1, O/S 为 2, N 为 3) */
+  terminalAtomElectronNeed: number
+  /** 离子电荷 q (阴离子为负，阳离子为正) */
+  charge: number
+
+  /** 价层电子对数 x + (a ± q - xb) / 2 */
+  vseprPairs: number
+  /** 孤电子对数 (a ± q - xb) / 2 */
+  lonePairs: number
+  /** σ 键电子对数 x */
+  bondPairs: number
   hybridization: HybridizationType
   vseprGeometry: VseprGeometryType
   vseprGeometryName: string
@@ -87,12 +95,12 @@ export interface VseprMoleculeData {
   molecularGeometryName: string
   theoreticalAngle: number // 理论角度
   actualAngle: number // 实际角度 (考虑到孤对排斥)
-  
+
   atoms: AtomNode[]
   bonds: BondEdge[]
   lonePairNodes: LonePairNode[]
   angles: BondAngleData[]
-  
+
   examNotes: string
 }
 

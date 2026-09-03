@@ -179,8 +179,9 @@ export const ATOM_COLORS = {
   Sn: '#CBD5E1', // 锡 (银白)
   Sb: '#7C3AED', // 锑 (深紫)
   Bi: '#E11D48', // 铋 (粉红)
-  W:  '#475569', // 钨 (深钢灰)
-  Mo: '#0284C7', // 钼 (天蓝)
+  W:   '#475569', // 钨 (深钢灰)
+  Mo:  '#0284C7', // 钼 (天蓝)
+  Xe:  '#06B6D4', // 氙 (稀有气体青蓝)
 } as const
 
 export type AtomColorKey = keyof typeof ATOM_COLORS

@@ -39,10 +39,10 @@ export const VseprLeftPanel: React.FC<VseprLeftPanelProps> = ({
   const expandedGroup = VSEPR_MOLECULE_LIST.filter(m => m.category === 'Expanded')
 
   const displayModeOptions = [
-    { label: '⚾ 分子实际构型', value: 'ball_stick' },
-    { label: '☁️ VSEPR 模型', value: 'vsepr_cloud' },
-    { label: '🔮 杂化 Lobes', value: 'hybrid_orbital' },
-    { label: '⚡ 静电排斥', value: 'repulsion_demo' },
+    { label: '分子实际构型', value: 'ball_stick' },
+    { label: 'VSEPR 模型', value: 'vsepr_cloud' },
+    { label: '杂化 Lobes', value: 'hybrid_orbital' },
+    { label: '静电排斥', value: 'repulsion_demo' },
   ]
 
   return (
@@ -100,7 +100,7 @@ export const VseprLeftPanel: React.FC<VseprLeftPanelProps> = ({
         </div>
       </LeftPanelSection>
 
-      {/* 2. 3D 观察模式分段切片 (使用 SegmentedControl 组件) */}
+      {/* 2. 3D 观察模式分段切片 (使用 SegmentedControl 组件，严谨无装饰 emoji) */}
       <LeftPanelSection title="3D 观察模式透视">
         <SegmentedControl
           options={displayModeOptions}
@@ -125,29 +125,79 @@ export const VseprLeftPanel: React.FC<VseprLeftPanelProps> = ({
         </div>
       </LeftPanelSection>
 
-      {/* 4. 键角递减快捷对比组 */}
-      <LeftPanelSection title="键角压缩高频对比">
-        <div className="text-[11px] text-slate-600 space-y-1.5">
-          <p className="font-semibold text-slate-700">孤电子对增多导致键角压缩：</p>
-          <div className="grid grid-cols-3 gap-1">
-            <OptionButton
-              label="CH₄"
-              description="109.5°"
-              selected={selectedMoleculeId === 'ch4'}
-              onClick={() => onSelectMoleculeId('ch4')}
-            />
-            <OptionButton
-              label="NH₃"
-              description="107.3°"
-              selected={selectedMoleculeId === 'nh3'}
-              onClick={() => onSelectMoleculeId('nh3')}
-            />
-            <OptionButton
-              label="H₂O"
-              description="104.5°"
-              selected={selectedMoleculeId === 'h2o'}
-              onClick={() => onSelectMoleculeId('h2o')}
-            />
+      {/* 4. 高考高频母题对比组 */}
+      <LeftPanelSection title="高考真题核心对比">
+        <div className="text-[11px] text-slate-600 space-y-2.5">
+          <div>
+            <p className="font-semibold text-slate-700 mb-1">孤电子对增多 ➔ 键角递减：</p>
+            <div className="grid grid-cols-3 gap-1">
+              <OptionButton
+                label="CH₄"
+                description="109.5°"
+                selected={selectedMoleculeId === 'ch4'}
+                onClick={() => onSelectMoleculeId('ch4')}
+              />
+              <OptionButton
+                label="NH₃"
+                description="107.3°"
+                selected={selectedMoleculeId === 'nh3'}
+                onClick={() => onSelectMoleculeId('nh3')}
+              />
+              <OptionButton
+                label="H₂O"
+                description="104.5°"
+                selected={selectedMoleculeId === 'h2o'}
+                onClick={() => onSelectMoleculeId('h2o')}
+              />
+            </div>
+          </div>
+
+          <div>
+            <p className="font-semibold text-slate-700 mb-1">硫系微粒谱系 (sp² vs sp³)：</p>
+            <div className="grid grid-cols-2 gap-1">
+              <OptionButton
+                label="SO₂"
+                description="sp² · V形"
+                selected={selectedMoleculeId === 'so2'}
+                onClick={() => onSelectMoleculeId('so2')}
+              />
+              <OptionButton
+                label="SO₃"
+                description="sp² · 平面三角"
+                selected={selectedMoleculeId === 'so3'}
+                onClick={() => onSelectMoleculeId('so3')}
+              />
+              <OptionButton
+                label="SO₃²⁻"
+                description="sp³ · 三角锥"
+                selected={selectedMoleculeId === 'so3_2minus'}
+                onClick={() => onSelectMoleculeId('so3_2minus')}
+              />
+              <OptionButton
+                label="SO₄²⁻"
+                description="sp³ · 正四面体"
+                selected={selectedMoleculeId === 'so4_2minus'}
+                onClick={() => onSelectMoleculeId('so4_2minus')}
+              />
+            </div>
+          </div>
+
+          <div>
+            <p className="font-semibold text-slate-700 mb-1">稀有气体超价化合物 (真题5)：</p>
+            <div className="grid grid-cols-2 gap-1">
+              <OptionButton
+                label="XeF₂"
+                description="sp³d · 直线形"
+                selected={selectedMoleculeId === 'xef2'}
+                onClick={() => onSelectMoleculeId('xef2')}
+              />
+              <OptionButton
+                label="XeF₄"
+                description="sp³d² · 平面正方"
+                selected={selectedMoleculeId === 'xef4'}
+                onClick={() => onSelectMoleculeId('xef4')}
+              />
+            </div>
           </div>
         </div>
       </LeftPanelSection>

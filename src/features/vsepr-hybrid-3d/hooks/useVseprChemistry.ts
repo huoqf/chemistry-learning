@@ -11,9 +11,9 @@ export function useVseprChemistry(molecule: VseprMoleculeData): VseprChemistryRe
   return useMemo(() => {
     const {
       centerAtomSymbol,
-      centerValenceElectrons: b,
-      terminalAtomCount: a,
-      terminalAtomElectronNeed: c,
+      centerValenceElectrons: a, // 中心原子价电子数 a
+      terminalAtomCount: x, // 配位原子数 x (σ键数)
+      terminalAtomElectronNeed: b, // 配位原子结合电子需求数 b
       charge,
       vseprPairs,
       lonePairs,
@@ -23,29 +23,32 @@ export function useVseprChemistry(molecule: VseprMoleculeData): VseprChemistryRe
       actualAngle,
     } = molecule
 
-    // 格式化阴阳离子电荷符号
-    const chargeStr = charge === 0 ? '' : charge < 0 ? ` + ${Math.abs(charge)}` : ` - ${charge}`
+    // 格式化阴阳离子电荷符号：阳离子减去电荷，阴离子加上电荷
+    const chargeLatex = charge === 0 ? '' : charge < 0 ? ` + ${Math.abs(charge)}` : ` - ${charge}`
+    const chargeDesc = charge === 0 ? '' : charge < 0 ? ` (阴离子加 ${Math.abs(charge)} 个电子)` : ` (阳离子减 ${charge} 个电子)`
 
-    // 1. 标准 KaTeX LaTeX 公式字符串 (避免转义陷阱)
-    const vseprFormulaText = `\\text{VSEPR} = a + \\frac{b - cx ${chargeStr}}{2} = ${a} + \\frac{${b} - ${c} \\times ${a}${chargeStr}}{2} = ${vseprPairs}`
+    // 1. 标准 KaTeX 公式字符串 (严格遵循高中选必2课标: 价层电子对数 = x + (a ± q - xb) / 2)
+    const vseprFormulaText = `\\text{价层对数} = x + \\frac{a - xb ${chargeLatex}}{2} = ${x} + \\frac{${a} - ${x} \\times ${b}${chargeLatex}}{2} = ${vseprPairs}`
 
-    // 2. 构造分步踩分推导步骤
+    // 2. 构造高考阅卷分步踩分推导步骤
     const vseprCalculationSteps = `
-1. 中心原子 (${centerAtomSymbol}) 价电子数 b = ${b}；
-2. 配位原子数 a = ${a} (每个配位原子需求 c = ${c})；
-3. 价层电子对数计算：${a} + (${b} - ${c}×${a}${chargeStr})/2 = ${vseprPairs}；
-4. 孤电子对数 = ${lonePairs}；杂化类型 = ${hybridization}；
-5. VSEPR 模型 = ${vseprGeometryName}；分子实际空间构型 = ${molecularGeometryName}。
+1. 确定中心原子 (${centerAtomSymbol}) 价电子数 a = ${a}${chargeDesc}；
+2. 确定配位原子数 x = ${x} (每个配位原子需求电子数 b = ${b})；
+3. 代入公式计算中心原子孤电子对数 n = (${a}${chargeLatex} - ${x}×${b}) / 2 = ${lonePairs}；
+4. 计算价层电子对总数 = x + n = ${x} + ${lonePairs} = ${vseprPairs}；
+5. 判断杂化类型与构型：${vseprPairs} 对 ➔ ${hybridization} 杂化；
+   • VSEPR 理想模型：${vseprGeometryName}
+   • 分子/离子实际空间构型：${molecularGeometryName}。
 `.trim()
 
-    // 3. 孤电子对排斥力描述 (修正赋值逻辑)
+    // 3. 孤电子对排斥力与键角变化描述
     let lonePairRepulsionDescription = ''
     if (lonePairs === 0) {
-      lonePairRepulsionDescription = `中心原子无孤电子对，成键电子对在空间完全均匀分布，实际键角等于理论夹角 (${actualAngle}°)。`
+      lonePairRepulsionDescription = `中心原子无孤电子对，${x} 对成键电子对在空间完全对称排布，实际键角等于理想夹角 (${actualAngle}°)。`
     } else if (lonePairs === 1) {
-      lonePairRepulsionDescription = `中心原子包含 1 对孤电子对。孤电子对对成键电子对产生较强的静电排斥，将键角从理论四面体/平面角度压缩至 ${actualAngle}°。`
+      lonePairRepulsionDescription = `中心原子含 1 对孤电子对。孤电子对对成键电子对的静电排斥力大于成键电子对之间的排斥力，将键角挤压至 ${actualAngle}°。`
     } else {
-      lonePairRepulsionDescription = `中心原子包含 ${lonePairs} 对孤电子对。孤电子对-孤电子对及孤电子对-成键电子对的叠加排斥力显著增大，将实际键角压缩至 ${actualAngle}°。`
+      lonePairRepulsionDescription = `中心原子含 ${lonePairs} 对孤电子对。孤电子对-孤电子对及孤电子对-成键电子对的排斥效应显著叠加，将键角大幅压缩至 ${actualAngle}°。`
     }
 
     return {

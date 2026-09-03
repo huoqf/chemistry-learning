@@ -1,7 +1,7 @@
 import type { VseprMoleculeData } from '../types'
 import { ATOM_COLORS } from '@/theme'
 
-/** 12 种高考必考分子/离子数据库 */
+/** 17 种高考必考分子/离子数据库 */
 export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
   // 1. CO2 (AB2, sp, 直线形)
   {
@@ -58,7 +58,7 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     vseprGeometry: 'trigonal_planar',
     vseprGeometryName: '平面三角形',
     molecularGeometry: 'bent',
-    molecularGeometryName: 'V 形 (角形)',
+    molecularGeometryName: 'V形 (折线形)',
     theoreticalAngle: 120,
     actualAngle: 119.5,
     atoms: [
@@ -76,10 +76,50 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     angles: [
       { id: 'a1', atom1Id: 'o1', centerAtomId: 's', atom2Id: 'o2', angleDegree: 119.5, displayLabel: '119.5°' },
     ],
-    examNotes: '极性分子。中心 S 为 sp² 杂化，VSEPR 模型为平面三角形，含 1 对孤电子对排斥，实际分子构型为 V 形。',
+    examNotes: '极性分子。中心 S 为 sp² 杂化，VSEPR 模型为平面三角形，含 1 对孤电子对排斥，实际分子构型为 V形 (折线形)。与 SO₃ (120°) 构成高考高频对比。',
   },
 
-  // 3. BF3 (AB3, sp2, 平面三角形)
+  // 3. SO3 (AB3, sp2, 平面三角形 - 高考高频对比母题)
+  {
+    id: 'so3',
+    formula: 'SO₃',
+    name: '三氧化硫',
+    category: 'AB3',
+    centerAtomSymbol: 'S',
+    centerValenceElectrons: 6,
+    terminalAtomCount: 3,
+    terminalAtomElectronNeed: 2,
+    charge: 0,
+    vseprPairs: 3,
+    lonePairs: 0,
+    bondPairs: 3,
+    hybridization: 'sp2',
+    vseprGeometry: 'trigonal_planar',
+    vseprGeometryName: '平面三角形',
+    molecularGeometry: 'trigonal_planar',
+    molecularGeometryName: '平面三角形',
+    theoreticalAngle: 120,
+    actualAngle: 120,
+    atoms: [
+      { id: 's', symbol: 'S', elementName: '硫原子', role: 'center', position: [0, 0, 0], color: ATOM_COLORS.S, radius: 0.5 },
+      { id: 'o1', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [0, 1.4, 0], color: ATOM_COLORS.O, radius: 0.38 },
+      { id: 'o2', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [-1.21, -0.7, 0], color: ATOM_COLORS.O, radius: 0.38 },
+      { id: 'o3', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [1.21, -0.7, 0], color: ATOM_COLORS.O, radius: 0.38 },
+    ],
+    bonds: [
+      { id: 'b1', fromAtomId: 's', toAtomId: 'o1', bondOrder: 2, bondType: 'sigma' },
+      { id: 'b2', fromAtomId: 's', toAtomId: 'o2', bondOrder: 2, bondType: 'sigma' },
+      { id: 'b3', fromAtomId: 's', toAtomId: 'o3', bondOrder: 2, bondType: 'sigma' },
+    ],
+    lonePairNodes: [],
+    angles: [
+      { id: 'a1', atom1Id: 'o1', centerAtomId: 's', atom2Id: 'o2', angleDegree: 120, displayLabel: '120°' },
+      { id: 'a2', atom1Id: 'o2', centerAtomId: 's', atom2Id: 'o3', angleDegree: 120, displayLabel: '120°' },
+    ],
+    examNotes: '非极性分子。中心 S 原子价电子对数 = 3 + (6 - 3×2)/2 = 3，无孤电子对，sp² 杂化，VSEPR 模型与分子构型均为平面三角形，键角 120° (大于 SO₂ 的 119.5°)。',
+  },
+
+  // 4. BF3 (AB3, sp2, 平面三角形)
   {
     id: 'bf3',
     formula: 'BF₃',
@@ -119,7 +159,7 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     examNotes: '非极性分子。中心 B 为 sp² 杂化，缺电子化合物，无孤电子对，分子空间构型为平面三角形。',
   },
 
-  // 4. CH4 (AB4, sp3, 正四面体)
+  // 5. CH4 (AB4, sp3, 正四面体)
   {
     id: 'ch4',
     formula: 'CH₄',
@@ -160,7 +200,7 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     examNotes: '非极性分子。中心 C 为 sp³ 杂化，4 个 C-H σ 键完全等同，键角均为 109.5°。',
   },
 
-  // 5. NH3 (AB3, sp3, 三角锥形)
+  // 6. NH3 (AB3, sp3, 三角锥形)
   {
     id: 'nh3',
     formula: 'NH₃',
@@ -201,7 +241,7 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     examNotes: '极性分子。中心 N 为 sp³ 杂化，含 1 对孤电子对，对成键电子对强排斥，使键角由 109.5° 压缩至 107.3°，构型为三角锥形。',
   },
 
-  // 6. H2O (AB2, sp3, V形)
+  // 7. H2O (AB2, sp3, V形)
   {
     id: 'h2o',
     formula: 'H₂O',
@@ -219,7 +259,7 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     vseprGeometry: 'tetrahedral',
     vseprGeometryName: '四面体形',
     molecularGeometry: 'bent',
-    molecularGeometryName: 'V 形 (角形)',
+    molecularGeometryName: 'V形 (折线形)',
     theoreticalAngle: 109.5,
     actualAngle: 104.5,
     atoms: [
@@ -241,7 +281,7 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     examNotes: '强极性分子。中心 O 为 sp³ 杂化，含 2 对孤电子对，产生更强的排斥力，键角被显著压缩至 104.5°。键角对比：CH₄(109.5°) > NH₃(107.3°) > H₂O(104.5°)。',
   },
 
-  // 7. CO3(2-) 阴离子
+  // 8. CO3(2-) 阴离子
   {
     id: 'co3_2minus',
     formula: 'CO₃²⁻',
@@ -277,10 +317,49 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     angles: [
       { id: 'a1', atom1Id: 'o1', centerAtomId: 'c', atom2Id: 'o2', angleDegree: 120, displayLabel: '120°' },
     ],
-    examNotes: '阴离子 VSEPR 计算公式：先修正价电子数 b\' = b + |q| = 4 + 2 = 6；再代入：VSEPR = a + (b\' - cx)/2 = 3 + (6 - 3×2)/2 = 3 + 0 = 3，无孤电子对，中心 C 为 sp² 杂化，呈平面三角形。',
+    examNotes: '阴离子 VSEPR 课标规范：修正中心价电子 a\' = a + |q| = 4 + 2 = 6；孤对数 = (6 - 3×2)/2 = 0；价层电子对数 = 3 + 0 = 3，中心 C 为 sp² 杂化，离子空间构型为平面三角形。与 NO₃⁻ 互为等电子体。',
   },
 
-  // 8. NH4(+) 阳离子
+  // 9. NO3(-) 阴离子 (与 CO3²⁻ 构成经典等电子体对比)
+  {
+    id: 'no3_minus',
+    formula: 'NO₃⁻',
+    name: '硝酸根离子',
+    category: 'Ion',
+    centerAtomSymbol: 'N',
+    centerValenceElectrons: 5,
+    terminalAtomCount: 3,
+    terminalAtomElectronNeed: 2,
+    charge: -1,
+    vseprPairs: 3,
+    lonePairs: 0,
+    bondPairs: 3,
+    hybridization: 'sp2',
+    vseprGeometry: 'trigonal_planar',
+    vseprGeometryName: '平面三角形',
+    molecularGeometry: 'trigonal_planar',
+    molecularGeometryName: '平面三角形',
+    theoreticalAngle: 120,
+    actualAngle: 120,
+    atoms: [
+      { id: 'n', symbol: 'N', elementName: '氮原子', role: 'center', position: [0, 0, 0], color: ATOM_COLORS.N, radius: 0.45 },
+      { id: 'o1', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [0, 1.35, 0], color: ATOM_COLORS.O, radius: 0.38 },
+      { id: 'o2', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [-1.17, -0.67, 0], color: ATOM_COLORS.O, radius: 0.38 },
+      { id: 'o3', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [1.17, -0.67, 0], color: ATOM_COLORS.O, radius: 0.38 },
+    ],
+    bonds: [
+      { id: 'b1', fromAtomId: 'n', toAtomId: 'o1', bondOrder: 1, bondType: 'sigma' },
+      { id: 'b2', fromAtomId: 'n', toAtomId: 'o2', bondOrder: 1, bondType: 'sigma' },
+      { id: 'b3', fromAtomId: 'n', toAtomId: 'o3', bondOrder: 1, bondType: 'sigma' },
+    ],
+    lonePairNodes: [],
+    angles: [
+      { id: 'a1', atom1Id: 'o1', centerAtomId: 'n', atom2Id: 'o2', angleDegree: 120, displayLabel: '120°' },
+    ],
+    examNotes: '阴离子 VSEPR 课标规范：修正中心价电子 a\' = a + |q| = 5 + 1 = 6；孤对数 = (6 - 3×2)/2 = 0；价层电子对数 = 3 + 0 = 3，中心 N 为 sp² 杂化，平面三角形。与 CO₃²⁻ 具有相同的价电子总数，为等电子体。',
+  },
+
+  // 10. NH4(+) 阳离子
   {
     id: 'nh4_plus',
     formula: 'NH₄⁺',
@@ -318,10 +397,133 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     angles: [
       { id: 'a1', atom1Id: 'h1', centerAtomId: 'n', atom2Id: 'h2', angleDegree: 109.5, displayLabel: '109.5°' },
     ],
-    examNotes: '阳离子 VSEPR 计算公式：先修正价电子数 b\' = b - |q| = 5 - 1 = 4；再代入：VSEPR = a + (b\' - cx)/2 = 4 + (4 - 4×1)/2 = 4 + 0 = 4，中心 N 为 sp³ 杂化，4 个 N-H 键完全对称，呈正四面体形 (键角由 107.3° 增大为 109.5°)。',
+    examNotes: '阳离子 VSEPR 课标规范：修正中心价电子 a\' = a - q = 5 - 1 = 4；孤对数 = (4 - 4×1)/2 = 0；价层电子对数 = 4 + 0 = 4，中心 N 为 sp³ 杂化，4 个 N-H 键完全对称，呈正四面体形 (键角由 NH₃ 的 107.3° 增大为 109.5°)。',
   },
 
-  // 9. PCl5 (超价分子拓展, sp3d, 三角双锥)
+  // 11. H3O(+) 阳离子 (与 NH4+、NH3 构成高考经典对比)
+  {
+    id: 'h3o_plus',
+    formula: 'H₃O⁺',
+    name: '水合氢离子',
+    category: 'Ion',
+    centerAtomSymbol: 'O',
+    centerValenceElectrons: 6,
+    terminalAtomCount: 3,
+    terminalAtomElectronNeed: 1,
+    charge: 1,
+    vseprPairs: 4,
+    lonePairs: 1,
+    bondPairs: 3,
+    hybridization: 'sp3',
+    vseprGeometry: 'tetrahedral',
+    vseprGeometryName: '四面体形',
+    molecularGeometry: 'trigonal_pyramidal',
+    molecularGeometryName: '三角锥形',
+    theoreticalAngle: 109.5,
+    actualAngle: 107.0,
+    atoms: [
+      { id: 'o', symbol: 'O', elementName: '氧原子', role: 'center', position: [0, 0.2, 0], color: ATOM_COLORS.O, radius: 0.45 },
+      { id: 'h1', symbol: 'H', elementName: '氢原子', role: 'terminal', position: [1.05, -0.3, 0], color: ATOM_COLORS.H, radius: 0.3 },
+      { id: 'h2', symbol: 'H', elementName: '氢原子', role: 'terminal', position: [-0.52, -0.3, 0.91], color: ATOM_COLORS.H, radius: 0.3 },
+      { id: 'h3', symbol: 'H', elementName: '氢原子', role: 'terminal', position: [-0.52, -0.3, -0.91], color: ATOM_COLORS.H, radius: 0.3 },
+    ],
+    bonds: [
+      { id: 'b1', fromAtomId: 'o', toAtomId: 'h1', bondOrder: 1, bondType: 'sigma' },
+      { id: 'b2', fromAtomId: 'o', toAtomId: 'h2', bondOrder: 1, bondType: 'sigma' },
+      { id: 'b3', fromAtomId: 'o', toAtomId: 'h3', bondOrder: 1, bondType: 'sigma' },
+    ],
+    lonePairNodes: [
+      { id: 'lp1', direction: [0, 1.2, 0], label: '1 对孤电子对' },
+    ],
+    angles: [
+      { id: 'a1', atom1Id: 'h1', centerAtomId: 'o', atom2Id: 'h2', angleDegree: 107.0, displayLabel: '107°' },
+    ],
+    examNotes: '阳离子 VSEPR 课标规范：修正中心价电子 a\' = a - q = 6 - 1 = 5；孤对数 = (5 - 3×1)/2 = 1；价层电子对数 = 3 + 1 = 4，中心 O 为 sp³ 杂化。含 1 对孤电子对，立体构型为三角锥形。与 NH₄⁺ (正四面体) 杂化相同但空间构型不同。',
+  },
+
+  // 12. SO4(2-) 阴离子 (高考极高频正四面体离子)
+  {
+    id: 'so4_2minus',
+    formula: 'SO₄²⁻',
+    name: '硫酸根离子',
+    category: 'Ion',
+    centerAtomSymbol: 'S',
+    centerValenceElectrons: 6,
+    terminalAtomCount: 4,
+    terminalAtomElectronNeed: 2,
+    charge: -2,
+    vseprPairs: 4,
+    lonePairs: 0,
+    bondPairs: 4,
+    hybridization: 'sp3',
+    vseprGeometry: 'tetrahedral',
+    vseprGeometryName: '正四面体形',
+    molecularGeometry: 'tetrahedral',
+    molecularGeometryName: '正四面体形',
+    theoreticalAngle: 109.5,
+    actualAngle: 109.5,
+    atoms: [
+      { id: 's', symbol: 'S', elementName: '硫原子', role: 'center', position: [0, 0, 0], color: ATOM_COLORS.S, radius: 0.5 },
+      { id: 'o1', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [0, 1.3, 0], color: ATOM_COLORS.O, radius: 0.38 },
+      { id: 'o2', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [1.22, -0.43, 0], color: ATOM_COLORS.O, radius: 0.38 },
+      { id: 'o3', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [-0.61, -0.43, 1.06], color: ATOM_COLORS.O, radius: 0.38 },
+      { id: 'o4', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [-0.61, -0.43, -1.06], color: ATOM_COLORS.O, radius: 0.38 },
+    ],
+    bonds: [
+      { id: 'b1', fromAtomId: 's', toAtomId: 'o1', bondOrder: 1, bondType: 'sigma' },
+      { id: 'b2', fromAtomId: 's', toAtomId: 'o2', bondOrder: 1, bondType: 'sigma' },
+      { id: 'b3', fromAtomId: 's', toAtomId: 'o3', bondOrder: 1, bondType: 'sigma' },
+      { id: 'b4', fromAtomId: 's', toAtomId: 'o4', bondOrder: 1, bondType: 'sigma' },
+    ],
+    lonePairNodes: [],
+    angles: [
+      { id: 'a1', atom1Id: 'o1', centerAtomId: 's', atom2Id: 'o2', angleDegree: 109.5, displayLabel: '109.5°' },
+    ],
+    examNotes: '阴离子 VSEPR 课标规范：修正中心价电子 a\' = a + |q| = 6 + 2 = 8；孤对数 = (8 - 4×2)/2 = 0；价层电子对数 = 4 + 0 = 4，中心 S 为 sp³ 杂化，4 个 S-O 键长等同，构型为高度对称的正四面体形。',
+  },
+
+  // 13. SO3(2-) 阴离子 (高考高频三角锥形离子)
+  {
+    id: 'so3_2minus',
+    formula: 'SO₃²⁻',
+    name: '亚硫酸根离子',
+    category: 'Ion',
+    centerAtomSymbol: 'S',
+    centerValenceElectrons: 6,
+    terminalAtomCount: 3,
+    terminalAtomElectronNeed: 2,
+    charge: -2,
+    vseprPairs: 4,
+    lonePairs: 1,
+    bondPairs: 3,
+    hybridization: 'sp3',
+    vseprGeometry: 'tetrahedral',
+    vseprGeometryName: '四面体形',
+    molecularGeometry: 'trigonal_pyramidal',
+    molecularGeometryName: '三角锥形',
+    theoreticalAngle: 109.5,
+    actualAngle: 106.0,
+    atoms: [
+      { id: 's', symbol: 'S', elementName: '硫原子', role: 'center', position: [0, 0.2, 0], color: ATOM_COLORS.S, radius: 0.5 },
+      { id: 'o1', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [1.15, -0.35, 0], color: ATOM_COLORS.O, radius: 0.38 },
+      { id: 'o2', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [-0.57, -0.35, 0.99], color: ATOM_COLORS.O, radius: 0.38 },
+      { id: 'o3', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [-0.57, -0.35, -0.99], color: ATOM_COLORS.O, radius: 0.38 },
+    ],
+    bonds: [
+      { id: 'b1', fromAtomId: 's', toAtomId: 'o1', bondOrder: 1, bondType: 'sigma' },
+      { id: 'b2', fromAtomId: 's', toAtomId: 'o2', bondOrder: 1, bondType: 'sigma' },
+      { id: 'b3', fromAtomId: 's', toAtomId: 'o3', bondOrder: 1, bondType: 'sigma' },
+    ],
+    lonePairNodes: [
+      { id: 'lp1', direction: [0, 1.2, 0], label: '1 对孤电子对' },
+    ],
+    angles: [
+      { id: 'a1', atom1Id: 'o1', centerAtomId: 's', atom2Id: 'o2', angleDegree: 106.0, displayLabel: '106°' },
+    ],
+    examNotes: '阴离子 VSEPR 课标规范：修正中心价电子 a\' = a + |q| = 6 + 2 = 8；孤对数 = (8 - 3×2)/2 = 1；价层电子对数 = 3 + 1 = 4，中心 S 为 sp³ 杂化。含 1 对孤电子对，立体构型为三角锥形，键角压缩至 106°。与 SO₄²⁻ (正四面体) 形成极具代表性的硫系对比。',
+  },
+
+  // 14. PCl5 (超价分子拓展, sp3d, 三角双锥)
   {
     id: 'pcl5',
     formula: 'PCl₅',
@@ -365,7 +567,7 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     examNotes: '高考结构拓展考点：中心 P 原子打破八隅体规则（扩充八隅体），为 sp³d 杂化，呈现三角双锥几何构型，兼具 90° 与 120° 两种键角。',
   },
 
-  // 10. SF6 (超价分子拓展, sp3d2, 正八面体)
+  // 13. SF6 (超价分子拓展, sp3d2, 正八面体)
   {
     id: 'sf6',
     formula: 'SF₆',
@@ -408,6 +610,91 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
       { id: 'a1', atom1Id: 'f1', centerAtomId: 's', atom2Id: 'f3', angleDegree: 90, displayLabel: '90°' },
     ],
     examNotes: '超价分子典型代表。中心 S 原子为 sp³d² 杂化，价层电子对数为 6，呈极具对称性的正八面体构型，所有相邻 S-F 键角均为 90°。',
+  },
+
+  // 16. XeF2 (超价分子拓展, sp3d, 直线形 - 高考真题变式5对齐)
+  {
+    id: 'xef2',
+    formula: 'XeF₂',
+    name: '二氟化氙',
+    category: 'Expanded',
+    centerAtomSymbol: 'Xe',
+    centerValenceElectrons: 8,
+    terminalAtomCount: 2,
+    terminalAtomElectronNeed: 1,
+    charge: 0,
+    vseprPairs: 5,
+    lonePairs: 3,
+    bondPairs: 2,
+    hybridization: 'sp3d',
+    vseprGeometry: 'trigonal_bipyramidal',
+    vseprGeometryName: '三角双锥形',
+    molecularGeometry: 'linear',
+    molecularGeometryName: '直线形',
+    theoreticalAngle: 180,
+    actualAngle: 180,
+    atoms: [
+      { id: 'xe', symbol: 'Xe', elementName: '氙原子', role: 'center', position: [0, 0, 0], color: ATOM_COLORS.Xe, radius: 0.52 },
+      { id: 'f1', symbol: 'F', elementName: '氟原子 (轴向)', role: 'terminal', position: [0, 1.5, 0], color: ATOM_COLORS.F, radius: 0.35 },
+      { id: 'f2', symbol: 'F', elementName: '氟原子 (轴向)', role: 'terminal', position: [0, -1.5, 0], color: ATOM_COLORS.F, radius: 0.35 },
+    ],
+    bonds: [
+      { id: 'b1', fromAtomId: 'xe', toAtomId: 'f1', bondOrder: 1, bondType: 'sigma' },
+      { id: 'b2', fromAtomId: 'xe', toAtomId: 'f2', bondOrder: 1, bondType: 'sigma' },
+    ],
+    lonePairNodes: [
+      { id: 'lp1', direction: [1.2, 0, 0], label: '赤道孤对 1' },
+      { id: 'lp2', direction: [-0.6, 0, 1.04], label: '赤道孤对 2' },
+      { id: 'lp3', direction: [-0.6, 0, -1.04], label: '赤道孤对 3' },
+    ],
+    angles: [
+      { id: 'a1', atom1Id: 'f1', centerAtomId: 'xe', atom2Id: 'f2', angleDegree: 180, displayLabel: '180°' },
+    ],
+    examNotes: '高考真题热点：中心 Xe 价电子数 8，价层电子对数 = 2 + (8 - 2×1)/2 = 5，为 sp³d 杂化。根据互斥理论，3 对孤电子对排布于排斥力最小的赤道平面，两个 F 位于两极轴向，分子实际空间构型为直线形 (键角 180°)。',
+  },
+
+  // 17. XeF4 (超价分子拓展, sp3d2, 平面正方形 - 高考真题变式5对齐)
+  {
+    id: 'xef4',
+    formula: 'XeF₄',
+    name: '四氟化氙',
+    category: 'Expanded',
+    centerAtomSymbol: 'Xe',
+    centerValenceElectrons: 8,
+    terminalAtomCount: 4,
+    terminalAtomElectronNeed: 1,
+    charge: 0,
+    vseprPairs: 6,
+    lonePairs: 2,
+    bondPairs: 4,
+    hybridization: 'sp3d2',
+    vseprGeometry: 'octahedral',
+    vseprGeometryName: '正八面体形',
+    molecularGeometry: 'square_planar',
+    molecularGeometryName: '平面正方形',
+    theoreticalAngle: 90,
+    actualAngle: 90,
+    atoms: [
+      { id: 'xe', symbol: 'Xe', elementName: '氙原子', role: 'center', position: [0, 0, 0], color: ATOM_COLORS.Xe, radius: 0.52 },
+      { id: 'f1', symbol: 'F', elementName: '氟原子', role: 'terminal', position: [1.4, 0, 0], color: ATOM_COLORS.F, radius: 0.35 },
+      { id: 'f2', symbol: 'F', elementName: '氟原子', role: 'terminal', position: [-1.4, 0, 0], color: ATOM_COLORS.F, radius: 0.35 },
+      { id: 'f3', symbol: 'F', elementName: '氟原子', role: 'terminal', position: [0, 0, 1.4], color: ATOM_COLORS.F, radius: 0.35 },
+      { id: 'f4', symbol: 'F', elementName: '氟原子', role: 'terminal', position: [0, 0, -1.4], color: ATOM_COLORS.F, radius: 0.35 },
+    ],
+    bonds: [
+      { id: 'b1', fromAtomId: 'xe', toAtomId: 'f1', bondOrder: 1, bondType: 'sigma' },
+      { id: 'b2', fromAtomId: 'xe', toAtomId: 'f2', bondOrder: 1, bondType: 'sigma' },
+      { id: 'b3', fromAtomId: 'xe', toAtomId: 'f3', bondOrder: 1, bondType: 'sigma' },
+      { id: 'b4', fromAtomId: 'xe', toAtomId: 'f4', bondOrder: 1, bondType: 'sigma' },
+    ],
+    lonePairNodes: [
+      { id: 'lp1', direction: [0, 1.2, 0], label: '轴向孤对 1' },
+      { id: 'lp2', direction: [0, -1.2, 0], label: '轴向孤对 2' },
+    ],
+    angles: [
+      { id: 'a1', atom1Id: 'f1', centerAtomId: 'xe', atom2Id: 'f3', angleDegree: 90, displayLabel: '90°' },
+    ],
+    examNotes: '高考真题热点：中心 Xe 价电子数 8，价层电子对数 = 4 + (8 - 4×1)/2 = 6，为 sp³d² 杂化。2 对孤电子对相互排斥处于八面体对位 (上下两极)，4 个 F 原子位于赤道平面，分子实际空间构型为平面正方形 (键角 90°)。',
   },
 ]
 

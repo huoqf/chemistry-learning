@@ -37,23 +37,42 @@ export const BondAngleAnnotation: React.FC<BondAngleAnnotationProps> = ({ angles
         const numPoints = 24
         const curvePoints: [number, number, number][] = []
 
-        // 计算角平分线方向用于放置 Html 标注
-        const bisector = new THREE.Vector3().addVectors(v1, v2).normalize()
+        const dot = Math.min(Math.max(v1.dot(v2), -1), 1)
+        const isLinear = dot <= -0.999 // 接近 180° (如 CO2)
 
-        for (let i = 0; i <= numPoints; i++) {
-          const t = i / numPoints
-          // 向量 Slerp 球形球面插值
-          const pVector = v1.clone().applyQuaternion(
-            new THREE.Quaternion().setFromUnitVectors(
-              v1,
-              v1.clone().lerp(v2, t).normalize()
-            )
-          )
-          const p = cPos.clone().add(pVector.multiplyScalar(radius))
-          curvePoints.push([p.x, p.y, p.z])
+        let labelPos: THREE.Vector3
+
+        if (isLinear) {
+          // 直线形分子 (180°): 选择一个垂直于键轴的法向基底 (优先选用 Y 轴上方)
+          const refAxis = Math.abs(v1.y) < 0.9 ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(0, 0, 1)
+          const perpDir = refAxis.clone().projectOnPlane(v1).normalize()
+          if (perpDir.y < 0) perpDir.negate() // 确保朝上
+
+          // 绕垂直轴作 0 ~ π 的正圆半弧
+          const rotAxis = new THREE.Vector3().crossVectors(v1, perpDir).normalize()
+          for (let i = 0; i <= numPoints; i++) {
+            const angle = (i / numPoints) * Math.PI
+            const pVec = v1.clone().applyAxisAngle(rotAxis, angle)
+            const p = cPos.clone().add(pVec.multiplyScalar(radius))
+            curvePoints.push([p.x, p.y, p.z])
+          }
+
+          labelPos = cPos.clone().add(perpDir.multiplyScalar(radius + 0.35))
+        } else {
+          // 常规弯曲分子: 沿 v1 与 v2 所在平面的严格圆弧旋转
+          const rotAxis = new THREE.Vector3().crossVectors(v1, v2).normalize()
+          const totalAngle = Math.acos(dot)
+          const bisector = new THREE.Vector3().addVectors(v1, v2).normalize()
+
+          for (let i = 0; i <= numPoints; i++) {
+            const angle = (i / numPoints) * totalAngle
+            const pVec = v1.clone().applyAxisAngle(rotAxis, angle)
+            const p = cPos.clone().add(pVec.multiplyScalar(radius))
+            curvePoints.push([p.x, p.y, p.z])
+          }
+
+          labelPos = cPos.clone().add(bisector.multiplyScalar(radius + 0.35))
         }
-
-        const labelPos = cPos.clone().add(bisector.multiplyScalar(radius + 0.35))
 
         return (
           <group key={angleData.id}>
