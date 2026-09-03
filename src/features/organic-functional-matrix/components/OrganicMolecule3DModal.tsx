@@ -69,6 +69,8 @@ export const OrganicMolecule3DModal: React.FC<OrganicMolecule3DModalProps> = ({
     return ORGANIC_3D_MOLECULES[activeMoleculeId] || molecule
   }, [activeMoleculeId, molecule])
 
+  const hasMolecule = Boolean(molecule)
+
   // 监听容器大小以防 Three.js 0 尺寸报错，挂载时立即获取尺寸
   useEffect(() => {
     const el = containerRef.current
@@ -89,7 +91,7 @@ export const OrganicMolecule3DModal: React.FC<OrganicMolecule3DModalProps> = ({
     })
     observer.observe(el)
     return () => observer.disconnect()
-  }, [activeMolecule?.id, Boolean(molecule)])
+  }, [activeMolecule?.id, hasMolecule])
 
   // 键盘 Esc 关闭
   useEffect(() => {

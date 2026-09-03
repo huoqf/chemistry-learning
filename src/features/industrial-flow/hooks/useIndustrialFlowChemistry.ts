@@ -782,7 +782,7 @@ export function useIndustrialFlowChemistry(
       massBalance,
       activeStepInfo,
     }
-  }, [systemId, pH, leachTemp, crushSize, oxidantAmount, params.activeStep, params.crystallizeMethod, params.washSolvent])
+  }, [systemId, pH, leachTemp, crushSize, oxidantAmount, params.activeStep])
 }
 
 function kspCalculated(ksp: number, charge: number, cOH: number, c0: number): number {

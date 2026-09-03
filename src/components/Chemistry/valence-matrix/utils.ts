@@ -9,7 +9,7 @@ export function normalizeChemicalFormula(raw: string): string {
   if (!raw) return ''
   return raw
     .trim()
-    .replace(/\([^\)]*[\u4e00-\u9fa5]+[^\)]*\)/g, '')
+    .replace(/\([^)]*[\u4e00-\u9fa5]+[^)]*\)/g, '')
     .replace(/（[^）]*[\u4e00-\u9fa5]+[^）]*）/g, '')
     .replace(/₀/g, '0').replace(/₁/g, '1').replace(/₂/g, '2')
     .replace(/₃/g, '3').replace(/₄/g, '4').replace(/₅/g, '5')

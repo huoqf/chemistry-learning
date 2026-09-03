@@ -7,7 +7,7 @@ function parseFormula(formula: string): { atoms: Record<string, number>; charge:
   let clean = formula
     .replace(/[↓↑]/g, '')
     .replace(/（[^）]+）/g, '')
-    .replace(/\([^\)]*[\u4e00-\u9fa5]+[^\)]*\)/g, '')
+    .replace(/\([^)]*[\u4e00-\u9fa5]+[^)]*\)/g, '')
     .replace(/\b\((s|l|g|aq)\)/gi, '')
     .trim()
 
@@ -78,7 +78,7 @@ function parseFormula(formula: string): { atoms: Record<string, number>; charge:
   const expandBrackets = (str: string): string => {
     let prev = str
     while (true) {
-      const next = prev.replace(/[\(\[]([A-Za-z0-9]+)[\)\]]([0-9]*)/g, (_: string, group: string, countStr: string) => {
+      const next = prev.replace(/[([]([A-Za-z0-9]+)[)\]]([0-9]*)/g, (_: string, group: string, countStr: string) => {
         const count = countStr ? parseInt(countStr, 10) : 1
         return group.replace(/([A-Z][a-z]?)([0-9]*)/g, (__: string, elem: string, cStr: string) => {
           const c = cStr ? parseInt(cStr, 10) : 1
@@ -132,7 +132,7 @@ function parseSide(sideStr: string): { atoms: Record<string, number>; charge: nu
       const isSubtracted = idx > 0
 
       // 过滤电化学半反应中的电子项，如 "2e⁻" 或 "e⁻"
-      if (/^[0-9]*\s*e[⁻\-]?$/.test(sub)) {
+      if (/^[0-9]*\s*e[⁻-]?$/.test(sub)) {
         const eMatch = sub.match(/^([0-9]*)\s*e/)
         const eCount = eMatch && eMatch[1] ? parseInt(eMatch[1], 10) : 1
         // 电子本身带-1价。如果是 - 2e⁻，则相当于 - (-2) = +2 电荷；如果是 + 2e⁻，相当于 + (-2) = -2 电荷

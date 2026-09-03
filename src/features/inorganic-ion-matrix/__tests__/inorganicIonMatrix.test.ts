@@ -96,7 +96,7 @@ describe('无机离子特征检验与共存排斥矩阵数据审计', () => {
   })
 
   it('分步连续滴加必须符合高中化学相变状态转移 (Al3+ / Mg2+ / Fe2+ / SO42- / MnO4- / S2O32-)', async () => {
-    const { computeStepChemistry } = await import('../components/IonMatrixScene')
+    const { computeStepChemistry } = await import('../components/IonMatrixChemistry')
 
     // 1. Al3+ 两性氢氧化物：少量沉淀 -> 过量完全溶解
     const alStep0 = computeStepChemistry('Al3+', 'al3-naoh-drop', 0, 'rgba(226, 232, 240, 0.6)')
