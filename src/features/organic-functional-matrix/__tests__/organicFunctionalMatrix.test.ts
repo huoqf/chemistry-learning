@@ -31,7 +31,7 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
     expect(ids).toContain('ether-bond')
     expect(ids).toContain('carbonate-ester')
 
-    expect(GAOKAO_CLUES.length).toBeGreaterThanOrEqual(12)
+    expect(GAOKAO_CLUES.length).toBe(14)
   })
 
   it('酚酯水解必须消耗 2 mol NaOH，普通酯水解消耗 1 mol NaOH', () => {
@@ -75,7 +75,10 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
 
     // 验证拆解数据
     expect(result.current.breakdowns.NaOH).toHaveLength(2)
-    expect(result.current.breakdowns.NaOH[0].totalMol + result.current.breakdowns.NaOH[1].totalMol).toBe(5)
+    const phenolEsterBreakdown = result.current.breakdowns.NaOH.find((b) => b.groupId === 'phenol-ester')
+    const carboxylBreakdown = result.current.breakdowns.NaOH.find((b) => b.groupId === 'carboxyl-cooh')
+    expect(phenolEsterBreakdown?.totalMol).toBe(4)
+    expect(carboxylBreakdown?.totalMol).toBe(1)
   })
 
   it('Na2CO3 定量消耗与气体特征：1 酚羟基 + 1 羧基 体系消耗 1.5 mol Na2CO3，遇 NaHCO3 放 1.0 mol CO2', () => {
@@ -241,8 +244,10 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
     expect(result.current.NaOH).toBe(1)
     expect(result.current.breakdowns.H2).toHaveLength(2)
     expect(result.current.breakdowns.NaOH).toHaveLength(1)
-    expect(result.current.breakdowns.H2[0].reason).toContain('硝基')
-    expect(result.current.breakdowns.H2[1].reason).toContain('氰基')
+    const nitroH2 = result.current.breakdowns.H2.find((b) => b.groupId === 'nitro-no2')
+    const cyanoH2 = result.current.breakdowns.H2.find((b) => b.groupId === 'cyano-cn')
+    expect(nitroH2?.reason).toContain('硝基')
+    expect(cyanoH2?.reason).toContain('氰基')
   })
 
   it('CI 守门机制：全量 16 大官能团电荷与活泼氢守恒自动化遍历断言', () => {
@@ -435,7 +440,7 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
 
   it('高考预设母题分子 (PRESET_MOLECULES) 全量数据自洽性审计：官能团存在且定量计算一致', () => {
     const validGroupIds = new Set(FUNCTIONAL_GROUPS.map((g) => g.id))
-    expect(PRESET_MOLECULES.length).toBeGreaterThanOrEqual(9)
+    expect(PRESET_MOLECULES.length).toBe(9)
 
     for (const preset of PRESET_MOLECULES) {
       expect(preset.chemicalName.length).toBeGreaterThan(0)
@@ -476,6 +481,35 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
         }
       }
     }
+  })
+
+  it('Hook 防御性边界审计：空对象、非正数计数及未知 ID 均能安全处理', () => {
+    const { result: emptyRes } = renderHook(() => useOrganicQuantitative({}))
+    expect(emptyRes.current.Na).toBe(0)
+    expect(emptyRes.current.NaOH).toBe(0)
+    expect(emptyRes.current.breakdowns.NaOH).toEqual([])
+
+    const { result: zeroRes } = renderHook(() =>
+      useOrganicQuantitative({
+        'phenol-oh': 0,
+        'carboxyl-cooh': -1,
+        'unknown-group-id': 2,
+      })
+    )
+    expect(zeroRes.current.Na).toBe(0)
+    expect(zeroRes.current.NaOH).toBe(0)
+    expect(zeroRes.current.breakdowns.Na).toEqual([])
+  })
+
+  it('3D 模型查找防御性审计：不存在的 ID 安全返回 undefined', async () => {
+    const { get3DModelForGroup } = await import('../data/organic3dData')
+    expect(get3DModelForGroup('non-existent-group')).toBeUndefined()
+  })
+
+  it('甲醛题眼特异性：明确标注 1 mol HCHO 等效含 2 醛基并生成 4 mol Ag', () => {
+    const aldehyde = FUNCTIONAL_GROUPS.find((g) => g.id === 'aldehyde-cho')
+    expect(aldehyde?.qualitativeFeatures?.silverOrFehling).toContain('甲醛 1 mol 产生 4 Ag')
+    expect(aldehyde?.notes).toContain('1 mol HCHO 产生 4 mol Ag')
   })
 })
 

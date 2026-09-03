@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, dev]
   pull_request:
-    branches: [main]
+    branches: [main, dev]
 
 jobs:
   check:
@@ -29,11 +29,7 @@ jobs:
         run: npx tsc --noEmit
 
       - name: Lint (architecture checks)
-        run: |
-          node scripts/check-font-size.mjs
-          node scripts/check-no-raf.mjs
-          node scripts/check-no-marker.mjs
-          node scripts/check-large-files.mjs
+        run: npm run lint
 
       - name: Lint (oxlint, zero-warning gate)
         run: npx oxlint --max-warnings 0

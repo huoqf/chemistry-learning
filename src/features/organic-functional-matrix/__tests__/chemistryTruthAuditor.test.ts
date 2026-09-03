@@ -108,6 +108,7 @@ describe('高中化学真理性与高考命题合规性自动化守门审计', (
       )
       expect(result.current.Br2, '水杨醛真实 Br2 消耗应为 3 mol').toBe(3)
       expect(result.current.breakdowns.Br2.some((b) => b.reason.includes('水杨醛'))).toBe(true)
+      expect(result.current.breakdowns.Br2.some((b) => b.reason.includes('醛基'))).toBe(true)
     })
 
     it('甲酸苯酯母题规范：官能团标准答案为酯基，兼具醛基还原性，水解耗 2 NaOH', () => {
@@ -150,6 +151,13 @@ describe('高中化学真理性与高考命题合规性自动化守门审计', (
       const pla = POLYMERIZATION_MODELS.find((m) => m.id === 'poly-pla')
       expect(pla?.smallMoleculeOutput).toContain('(n - 1)')
       expect(pla?.reactionEquation).toContain('(n-1) H_2O')
+    })
+
+    it('单烯烃加聚反应 (PE) 原子利用率 100%，小分子脱除量严格为 0', () => {
+      const pe = POLYMERIZATION_MODELS.find((m) => m.id === 'poly-pe')
+      expect(pe).toBeDefined()
+      expect(pe?.smallMoleculeOutput).toContain('0 (无小分子脱除)')
+      expect(pe?.reactionEquation).not.toMatch(/\+\s*H_2O/)
     })
   })
 })
