@@ -134,7 +134,7 @@ export function getElementFates(systemId: IndustrialFlowSystemId, isOxidized: bo
         isTarget: false,
       },
     ]
-  } else {
+  } else if (systemId === 'mg-ca') {
     return [
       {
         element: 'Mg (主产物)',
@@ -158,6 +158,96 @@ export function getElementFates(systemId: IndustrialFlowSystemId, isOxidized: bo
         leachState: 'Ca²⁺ 钙离子',
         separationStep: '加入草酸铵或硫酸根沉淀',
         finalState: 'CaC₂O₄ 沉淀分离',
+        isTarget: false,
+      },
+    ]
+  } else if (systemId === 'al-fe-si') {
+    return [
+      {
+        element: 'Al (主产物)',
+        rawState: 'Al₂O₃ (一水硬铝石/三水铝石)',
+        leachState: '[Al(OH)₄]⁻ 强碱浸出液',
+        separationStep: '通入过量 CO₂ 酸化水解完全沉淀',
+        finalState: '高纯 α-Al₂O₃ (煅烧产物)',
+        isTarget: true,
+      },
+      {
+        element: 'Fe (主要赤泥成分)',
+        rawState: 'Fe₂O₃ 赤铁矿伴生',
+        leachState: '强碱中极难溶解',
+        separationStep: '碱浸后第一道固液过滤分离',
+        finalState: '赤泥滤渣 (高炉炼铁副产原料)',
+        isTarget: false,
+      },
+      {
+        element: 'Si (泥质脉石杂质)',
+        rawState: 'SiO₂ / 高岭石脉石',
+        leachState: '与碱反应溶为硅酸根',
+        separationStep: '加热与铝酸钠反应生成水合铝硅酸钠沉淀',
+        finalState: '脱硅渣 (进入赤泥固相)',
+        isTarget: false,
+      },
+    ]
+  } else if (systemId === 'li-fe-p') {
+    return [
+      {
+        element: 'Li (核心主产品)',
+        rawState: 'LiFePO₄ 废旧电池黑粉',
+        leachState: 'Li⁺ 硫酸锂溶液',
+        separationStep: '加饱和纯碱加热至90℃趁热过滤',
+        finalState: '电池级 Li₂CO₃ 晶体',
+        isTarget: true,
+      },
+      {
+        element: 'Fe (高附加值副产)',
+        rawState: 'LiFePO₄ (+2 价铁)',
+        leachState: 'H₂O₂ 氧化为 Fe³⁺',
+        separationStep: '调 pH=2.0~2.5 与磷酸根结合沉淀',
+        finalState: '高纯电池级 FePO₄ 前驱体',
+        isTarget: false,
+      },
+      {
+        element: 'P (磷酸根成分)',
+        rawState: 'LiFePO₄ 晶格骨架',
+        leachState: 'PO₄³⁻ 磷酸根离子',
+        separationStep: '沉淀结合进入固相',
+        finalState: 'FePO₄ 沉淀产品',
+        isTarget: false,
+      },
+      {
+        element: 'C (导电剂杂质)',
+        rawState: '导电炭黑 / 乙炔黑',
+        leachState: '不溶于酸性氧化液',
+        separationStep: '酸浸后第一道精密过滤',
+        finalState: '炭黑滤渣 (外排或焚烧回收)',
+        isTarget: false,
+      },
+    ]
+  } else {
+    // cu-fe 孔雀石/废铜制备胆矾
+    return [
+      {
+        element: 'Cu (主产物)',
+        rawState: 'Cu₂(OH)₂CO₃ / 废铜粉',
+        leachState: 'Cu²⁺ 硫酸铜溶液',
+        separationStep: '调 pH=3.2~4.4 保留在滤液结晶',
+        finalState: 'CuSO₄·5H₂O 胆矾晶体',
+        isTarget: true,
+      },
+      {
+        element: 'Fe (主要杂质)',
+        rawState: 'Fe₂O₃ / FeO 伴生杂质',
+        leachState: isOxidized ? 'Fe³⁺ (已氧化)' : 'Fe²⁺ (氧化不足)',
+        separationStep: isOxidized ? '加 CuO 调 pH≥3.2 完全沉淀' : '需 pH≥9.0 无法与铜分离',
+        finalState: isOxidized ? 'Fe(OH)₃ 中和渣' : '残留污染硫酸铜晶体',
+        isTarget: false,
+      },
+      {
+        element: 'Si (不溶脉石)',
+        rawState: 'SiO₂ 脉石泥沙',
+        leachState: '不溶于稀硫酸',
+        separationStep: '酸浸后过滤直接分离',
+        finalState: '滤渣 I (浸出脉石渣)',
         isTarget: false,
       },
     ]
@@ -290,7 +380,7 @@ export function getReagentEvaluations(systemId: IndustrialFlowSystemId): Reagent
         warning: '电池级化学品严防 Ca²⁺ 污染，后续极难通过萃取彻底脱钙',
       },
     ]
-  } else {
+  } else if (systemId === 'mg-ca') {
     return [
       {
         reagent: 'MgO',
@@ -325,6 +415,101 @@ export function getReagentEvaluations(systemId: IndustrialFlowSystemId): Reagent
         category: 'external',
         reaction: 'OH⁻ + H⁺ = H₂O',
         warning: '强碱造成局部过碱，导致 Mg(OH)₂ 提前过早沉淀损失',
+      },
+    ]
+  } else if (systemId === 'al-fe-si') {
+    return [
+      {
+        reagent: 'CO2',
+        isRecommended: true,
+        label: '通入过量 CO₂ 气流',
+        tag: '拜耳法首选',
+        category: 'external',
+        reaction: '[Al(OH)₄]⁻ + CO₂ = Al(OH)₃↓ + HCO₃⁻',
+      },
+      {
+        reagent: 'NaOH',
+        isRecommended: false,
+        label: 'NaOH 强碱',
+        tag: '抑制水解析出',
+        category: 'external',
+        reaction: '无水解反应',
+        warning: '强碱抑制偏铝酸根分解水解，无法析出 Al(OH)₃ 沉淀',
+      },
+      {
+        reagent: 'CaCO3',
+        isRecommended: false,
+        label: 'CaCO₃ 石灰石',
+        tag: '无法酸解中和',
+        category: 'external',
+        warning: '难溶弱碱性盐无法分解铝酸根，且引入微溶钙盐杂质',
+      },
+    ]
+  } else if (systemId === 'li-fe-p') {
+    return [
+      {
+        reagent: 'Na2CO3',
+        isRecommended: true,
+        label: '饱和 Na₂CO₃ 溶液',
+        tag: '沉锂标准试剂',
+        category: 'external',
+        reaction: '2Li⁺ + CO₃²⁻ = Li₂CO₃↓',
+      },
+      {
+        reagent: 'NaOH',
+        isRecommended: false,
+        label: 'NaOH (烧碱)',
+        tag: '生成极易溶 LiOH',
+        category: 'external',
+        reaction: 'Li⁺ + OH⁻ = LiOH(极易溶)',
+        warning: '氢氧化锂为强碱极易溶于水，不能实现锂元素固液沉淀分离',
+      },
+      {
+        reagent: 'CaCO3',
+        isRecommended: false,
+        label: 'CaCO₃ (石灰石)',
+        tag: '引入电池死敌钙',
+        category: 'external',
+        reaction: '无有效沉锂反应',
+        warning: '电池级化学品严防 Ca²⁺ 杂质，难溶碳酸盐无法沉锂',
+      },
+    ]
+  } else {
+    // cu-fe
+    return [
+      {
+        reagent: 'CuO',
+        isRecommended: true,
+        label: 'CuO (氧化铜粉)',
+        tag: '首选氧化物',
+        category: 'target-compound',
+        reaction: 'CuO + 2H⁺ = Cu²⁺ + H₂O',
+      },
+      {
+        reagent: 'Cu2(OH)2CO3',
+        isRecommended: true,
+        label: '碱式碳酸铜',
+        tag: '推荐碳酸盐',
+        category: 'target-compound',
+        reaction: 'Cu₂(OH)₂CO₃ + 4H⁺ = 2Cu²⁺ + CO₂↑ + 3H₂O',
+      },
+      {
+        reagent: 'NaOH',
+        isRecommended: false,
+        label: 'NaOH (烧碱)',
+        tag: '局部沉淀铜损耗',
+        category: 'external',
+        reaction: 'OH⁻ + H⁺ = H₂O',
+        warning: '强碱极易造成局部过碱析出 Cu(OH)₂ 蓝色沉淀，损失产物并引入 Na⁺',
+      },
+      {
+        reagent: 'CaCO3',
+        isRecommended: false,
+        label: 'CaCO₃ (石灰石)',
+        tag: '副产石膏微溶物',
+        category: 'external',
+        reaction: 'CaCO₃ + 2H⁺ + SO₄²⁻ = CaSO₄↓ + CO₂↑ + H₂O',
+        warning: '硫酸体系生成微溶 CaSO₄ 包裹并严重污染胆矾晶体',
       },
     ]
   }

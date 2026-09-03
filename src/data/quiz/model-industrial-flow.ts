@@ -205,5 +205,53 @@ export const modelIndustrialFlow: ModelQuizData = {
       detailedExplanation:
         '选 D。题目要求选错误的选项。加入过量 NaOH 会导致主目标离子 Mg²⁺ 生成 Mg(OH)₂ 沉淀析出造成严重损失，违反流程设计原则。故 D 选项说法错误，符合题意。',
     },
+    {
+      id: 'var-industrial-6',
+      yearProvince: '2024 新课标全国卷 / 山东高考真题',
+      modelId: 'model-industrial-flow',
+      title: '铝土矿 (主要含 Al₂O₃，含 Fe₂O₃、SiO₂ 杂质) 拜耳法制备高纯氧化铝工艺',
+      contextDescription:
+        '铝土矿经足量过量 NaOH 溶液碱浸后，过滤除去赤泥滤渣 (主要含 Fe₂O₃ 及水合铝硅酸钠)；滤液中通入过量 CO₂ 气流，析出 Al(OH)₃ 白色沉淀，经高温煅烧得到高纯 α-Al₂O₃。',
+      questionText:
+        '下列关于该工艺流程各工序的化学分析中，正确的是：',
+      diagramType: 'precipitation-curve',
+      diagramConfig: {
+        title: '铝酸钠溶液在不同 pH 下铝元素存在形态分布图',
+      },
+      options: [
+        { label: 'A', text: '赤泥主要成分仅有未反应的 SiO₂，Fe₂O₃ 溶于强碱进入滤液', isCorrect: false },
+        { label: 'B', text: '通入过量 CO₂ 析出 Al(OH)₃ 的离子方程式为：2[Al(OH)₄]⁻ + CO₂ = 2Al(OH)₃↓ + CO₃²⁻ + H₂O', isCorrect: false },
+        { label: 'C', text: '酸化沉淀时若改用过量盐酸代替 CO₂，Al(OH)₃ 沉淀量基本不变', isCorrect: false },
+        { label: 'D', text: '通入过量 CO₂ 酸化不仅使 Al(OH)₃ 沉淀完全，且由于碳酸酸性弱，Al(OH)₃ 绝不会重新溶解', isCorrect: true },
+      ],
+      modelAlignmentAnalysis:
+        '【盲盒剖析：拜耳法两性溶解与酸化通 CO₂ 规范】\n1. 碱浸原理：Al₂O₃ 具有两性溶于强碱，Fe₂O₃ 为碱性氧化物不溶于强碱进入赤泥，实现铁铝彻底分离。\n2. 通 CO₂ 酸化核心得分点：CO₂ 过量时生成 HCO₃⁻，反应为 [Al(OH)₄]⁻ + CO₂ = Al(OH)₃↓ + HCO₃⁻；B 项方程式产物错写成 CO₃²⁻。\n3. 若加盐酸，盐酸过量会导致两性 Al(OH)₃ 重新溶解为 Al³⁺，不能保证沉淀产率。\n4. 弱酸 CO₂ 过量不会溶解 Al(OH)₃，操作容错率极高，产率最高。',
+      detailedExplanation:
+        '选 D。CO₂ 酸性较弱，过量时沉淀物 Al(OH)₃ 不会发生两性反溶，能确保铝元素全部沉淀析出；过量 CO₂ 反应产物为 HCO₃⁻ 而非 CO₃²⁻（B 错）；Fe₂O₃ 不溶于强碱留在赤泥中（A 错）；过量盐酸会导致沉淀溶解（C 错）。',
+    },
+    {
+      id: 'var-industrial-7',
+      yearProvince: '2024 全国甲卷 / 广东高考真题压轴',
+      modelId: 'model-industrial-flow',
+      title: '退役磷酸铁锂电池正极材料 (主要含 LiFePO₄，含碳黑杂质) 回收电池级碳酸锂工艺',
+      contextDescription:
+        '正极黑粉经稀硫酸和 H₂O₂ 氧化酸浸后，过滤除去不溶导电炭黑；滤液调 pH 沉淀回收高纯 FePO₄；随后向富锂母液中加入饱和 Na₂CO₃ 溶液，加热至 90℃ 析出白色 Li₂CO₃ 晶体，并进行“趁热过滤”和“热水洗涤”。已知：Li₂CO₃ 的溶解度随温度升高而显著减小 (0℃: 1.54g; 100℃: 0.72g)，副产物 Na₂SO₄ 溶解度随温度升高而增大。',
+      questionText:
+        '关于沉淀 Li₂CO₃ 过程中采用“90℃ 加热”、“趁热过滤”和“热水洗涤”的原因，分析最为准确的是：',
+      diagramType: 'precipitation-curve',
+      diagramConfig: {
+        title: 'Li₂CO₃ 与 Na₂SO₄ 溶解度随温度变化对照曲线图',
+      },
+      options: [
+        { label: 'A', text: '升高温度可以加快结晶速率，防止 Li₂CO₃ 晶型发生剧烈转变', isCorrect: false },
+        { label: 'B', text: 'Li₂CO₃ 溶解度随温度升高而降低，90℃ 加热析出率高；趁热过滤和热水洗涤可防止降温溶解损耗，同时洗去易溶的 Na₂SO₄ 杂质', isCorrect: true },
+        { label: 'C', text: '热水洗涤的主要目的是将 Li₂CO₃ 晶体表面的水分子彻底蒸发干燥', isCorrect: false },
+        { label: 'D', text: '若改用 0℃ 冰水洗涤晶体，洗涤效果更佳且损失更小', isCorrect: false },
+      ],
+      modelAlignmentAnalysis:
+        '【盲盒剖析：反常溶解度与趁热过滤/热水洗涤满分采分点】\n1. 反常溶解度特性：Li₂CO₃ 具有特殊的负温度溶解度效应，温度越高溶解度越小；因此 80~90℃ 高温下析出率最高。\n2. 趁热过滤与热水洗涤目的：若降温过滤或用冷水洗涤，由于低温下 Li₂CO₃ 溶解度变大，会造成大量产品溶解损失！\n3. 纯化分离本质：副产物 Na₂SO₄ 在高温下溶解度极高，留在热母液中，热水洗涤能迅速洗去表面残留硫酸钠且不损耗碳酸锂。',
+      detailedExplanation:
+        '选 B。Li₂CO₃ 的溶解度随温度升高而减小（反常溶解度），90℃ 高温析晶产率最大；趁热过滤能避免降温导致产品重新溶解；热水洗涤既能充分洗去附着在晶体表面的 Na₂SO₄，又能大幅度减少 Li₂CO₃ 的溶解损失（低温下溶解度反而变大），故 B 项分析最准确。',
+    },
   ],
 }

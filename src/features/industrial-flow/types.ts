@@ -9,6 +9,9 @@ export type IndustrialFlowSystemId =
   | 'ti-fe'
   | 'ni-co-li'
   | 'mg-ca'
+  | 'al-fe-si' // 铝土矿拜耳法碱浸制高纯 Al2O3
+  | 'li-fe-p' // 废旧磷酸铁锂电池回收电池级 Li2CO3 与 FePO4
+  | 'cu-fe' // 孔雀石/废铜制备高纯胆矾 CuSO4·5H2O
 
 export interface IndustrialFlowParams {
   viewMode: 0 | 1 | 2 // 0: 动画流程与沉淀曲线, 1: 规范踩分, 2: 高考真题
@@ -22,15 +25,17 @@ export interface IndustrialFlowParams {
     | 'MnO'
     | 'MnCO3'
     | 'CuO'
+    | 'Cu2(OH)2CO3'
     | 'ZnO'
     | 'ZnCO3'
     | 'MgO'
     | 'MgCO3'
     | 'Na2CO3'
     | 'CaCO3'
-    | 'NaOH' // 调 pH 试剂选择 (涵盖氧化物、碳酸盐、强碱)
-  crystallizeMethod: 'cooling' | 'evaporation' // 结晶方式 (降温结晶 vs 蒸发浓缩)
-  washSolvent: 'water' | 'ethanol' // 沉淀/晶体洗涤试剂 (水洗 vs 无水乙醇洗)
+    | 'NaOH'
+    | 'CO2' // 通入过量 CO2 酸化沉淀
+  crystallizeMethod: 'cooling' | 'evaporation' | 'heating' // 结晶方式 (降温结晶 vs 蒸发浓缩 vs 加热析晶)
+  washSolvent: 'water' | 'ethanol' | 'hot-water' // 洗涤试剂 (水洗 vs 乙醇洗 vs 热水洗涤)
 }
 
 export interface IonConcentrationPoint {

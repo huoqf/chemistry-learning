@@ -324,7 +324,7 @@ function SvgCurveRenderer({
         沉淀完全线 (c = 10⁻⁵ mol/L)
       </text>
 
-      {/* 各离子曲线 */}
+      {/* 各离子曲线与行内化学式标注 */}
       {ions.map((ion) => {
         let dStr = ''
         let hasStarted = false
@@ -343,6 +343,12 @@ function SvgCurveRenderer({
           }
         })
 
+        // 行内标签位置：选在开始沉淀 pH 稍前或斜率中段
+        const labelPh = Math.max(0.5, Math.min(13.2, ion.pHStart + 0.3))
+        const labelLgc = Math.max(-11, Math.min(-0.8, Math.log10(ion.c0) - 0.8))
+        const labelX = toSvgX(labelPh)
+        const labelY = toSvgY(labelLgc)
+
         return (
           <g key={ion.symbol}>
             <path
@@ -353,6 +359,89 @@ function SvgCurveRenderer({
               strokeLinecap="round"
               strokeLinejoin="round"
             />
+            {/* 曲线行内标注：高考规范沉淀物化学式与离子 */}
+            <g transform={`translate(${labelX}, ${labelY})`}>
+              <rect
+                x={-2}
+                y={-12}
+                width={ion.precipitateFormula.length * 8 + 36}
+                height={15}
+                rx={3}
+                fill="#ffffff"
+                fillOpacity={0.88}
+                stroke={ion.color}
+                strokeWidth={0.8}
+              />
+              <text
+                x={2}
+                y={-1}
+                fontSize={9.5}
+                fill={ion.color}
+                fontWeight="bold"
+                fontFamily="sans-serif"
+              >
+                {ion.precipitateFormula} ({ion.symbol})
+              </text>
+            </g>
+          </g>
+        )
+      })}
+
+      {/* 高考题眼特征点投影：完全沉淀点 (c = 10⁻⁵ mol/L) 与开始沉淀点 */}
+      {ions.map((ion) => {
+        // 杂质离子：完全沉淀点 (pH = pHEnd, lg c = -5)
+        const isImpurity = ion.pHEnd < 7.5
+        const endX = toSvgX(ion.pHEnd)
+        const startX = toSvgX(ion.pHStart)
+        const startY = toSvgY(Math.log10(ion.c0))
+
+        return (
+          <g key={`feat-${ion.symbol}`}>
+            {isImpurity && (
+              <g>
+                {/* 完全沉淀垂线投影至 X 轴 */}
+                <line
+                  x1={endX}
+                  y1={lineY5}
+                  x2={endX}
+                  y2={plotOrigin.y + plotSize.height}
+                  stroke={ion.color}
+                  strokeWidth={1}
+                  strokeDasharray="2 2"
+                  strokeOpacity={0.8}
+                />
+                <circle cx={endX} cy={lineY5} r={3.5} fill={ion.color} stroke="#ffffff" strokeWidth={1.5} />
+                <g transform={`translate(${endX}, ${lineY5 - 6})`}>
+                  <rect x={-20} y={-11} width={40} height={12} rx={2} fill={ion.color} />
+                  <text x={0} y={-2} fontSize={8.5} fill="#ffffff" fontWeight="bold" textAnchor="middle">
+                    pH {ion.pHEnd.toFixed(1)}
+                  </text>
+                </g>
+              </g>
+            )}
+
+            {!isImpurity && (
+              <g>
+                {/* 目标离子开始沉淀点垂线投影 */}
+                <line
+                  x1={startX}
+                  y1={startY}
+                  x2={startX}
+                  y2={plotOrigin.y + plotSize.height}
+                  stroke={ion.color}
+                  strokeWidth={1}
+                  strokeDasharray="2 2"
+                  strokeOpacity={0.8}
+                />
+                <circle cx={startX} cy={startY} r={3.5} fill={ion.color} stroke="#ffffff" strokeWidth={1.5} />
+                <g transform={`translate(${startX}, ${startY - 6})`}>
+                  <rect x={-24} y={-11} width={48} height={12} rx={2} fill={ion.color} />
+                  <text x={0} y={-2} fontSize={8.5} fill="#ffffff" fontWeight="bold" textAnchor="middle">
+                    析出 pH {ion.pHStart.toFixed(1)}
+                  </text>
+                </g>
+              </g>
+            )}
           </g>
         )
       })}

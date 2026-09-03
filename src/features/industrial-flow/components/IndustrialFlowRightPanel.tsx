@@ -128,6 +128,24 @@ export const IndustrialFlowRightPanel: React.FC<IndustrialFlowRightPanelProps> =
                 latex: 'MnO_2 + 2Fe^{2+} + 4H^+ = Mn^{2+} + 2Fe^{3+} + 2H_2O',
                 note: 'MnO₂ 不溶于稀硫酸，必须加入 Fe²⁺/草酸/H₂O₂ 将 +4 价 Mn 还原为可溶的 Mn²⁺ 溶出。',
               }
+            : params.systemId === 'al-fe-si'
+            ? {
+                name: '铝土矿拜耳法强碱浸出反应式',
+                latex: 'Al_2O_3 + 2OH^- + 3H_2O = 2[Al(OH)_4]^-',
+                note: '利用氧化铝的两性溶于强碱，杂质 Fe₂O₃ 不溶成为赤泥，实现铝铁分离。',
+              }
+            : params.systemId === 'li-fe-p'
+            ? {
+                name: '正极废粉氧化浸出反应式',
+                latex: '2LiFePO_4 + H_2O_2 + H_2SO_4 = 2FePO_4\\downarrow + Li_2SO_4 + 2H_2O',
+                note: '双氧水将难溶的 +2 价铁氧化为 +3 价，生成难溶 FePO₄ 沉淀并将 Li⁺ 溶出至溶液。',
+              }
+            : params.systemId === 'cu-fe'
+            ? {
+                name: '孔雀石稀硫酸酸浸反应式',
+                latex: 'Cu_2(OH)_2CO_3 + 4H^+ = 2Cu^{2+} + CO_2\\uparrow + 3H_2O',
+                note: '碱式碳酸盐与酸反应快速溶解，不溶石英脉石留在滤渣中。',
+              }
             : params.systemId === 'ni-co-li'
             ? {
                 name: '三元正极 H₂O₂ 还原酸浸反应式',
@@ -148,6 +166,18 @@ export const IndustrialFlowRightPanel: React.FC<IndustrialFlowRightPanelProps> =
                 latex: '2Fe^{3+} + Fe = 3Fe^{2+}',
                 note: '逆向还原防止易水解的 Fe³⁺ 水解污染钛酸，Fe²⁺ 留在溶液中通过冷冻结晶析出绿矾。',
               }
+            : params.systemId === 'al-fe-si'
+            ? {
+                name: '赤泥粗脱硅反应式',
+                latex: 'SiO_3^{2-} + 2[Al(OH)_4]^- = 难溶铝硅酸钠\\downarrow + 2OH^-',
+                note: '硅酸钠与铝酸钠反应生成难溶的水合铝硅酸钠沉淀，固液分离随赤泥去除。',
+              }
+            : params.systemId === 'li-fe-p'
+            ? {
+                name: '铁磷结合沉淀反应方程式',
+                latex: 'Fe^{3+} + PO_4^{3-} = FePO_4\\downarrow',
+                note: '在微酸性环境 (pH 2.0~2.5) 形成高纯 FePO₄ 沉淀，实现铁磷与锂的彻底固液分离。',
+              }
             : {
                 name: 'H₂O₂ 氧化 Fe²⁺ 离子方程式',
                 latex: '2Fe^{2+} + H_2O_2 + 2H^+ = 2Fe^{3+} + 2H_2O',
@@ -156,10 +186,21 @@ export const IndustrialFlowRightPanel: React.FC<IndustrialFlowRightPanelProps> =
         ]
       : currentStep === 3
       ? [
+          params.systemId === 'al-fe-si'
+            ? {
+                name: '通过量 CO₂ 酸化沉淀偏铝酸钠反应式',
+                latex: '[Al(OH)_4]^- + CO_2 = Al(OH)_3\\downarrow + HCO_3^-',
+                note: '高考题眼：CO₂ 过量产物必然是 HCO₃⁻ 而非 CO₃²⁻；弱酸不会导致两性 Al(OH)₃ 重新溶解。',
+              }
+            : {
+                name: '沉淀完全 pH 理论推导公式',
+                latex: 'c(OH^-) = \\sqrt[n]{\\frac{K_{sp}}{10^{-5}}}, \\quad pH = 14 - pOH',
+                note: '高考规定离子残余浓度 c ≤ 10⁻⁵ mol/L 即认为沉淀完全，由 Ksp 算出所需最小 pH。',
+              },
           {
-            name: '沉淀完全 pH 理论推导公式',
-            latex: 'pOH = -\\lg c(OH^-) = \\frac{\\lg K_{sp} - \\lg(10^{-5})}{n}',
-            note: '高考规定离子残余浓度 c ≤ 10⁻⁵ mol/L 即认为沉淀完全，由 Ksp 算出所需最小 pH。',
+            name: '高考答题规范：Fe³⁺ 完全沉淀 pH 演算步骤',
+            latex: 'c(OH^-) = \\sqrt[3]{\\frac{4.0 \\times 10^{-38}}{10^{-5}}} \\approx 1.59 \\times 10^{-11} \\implies pH = 14 - 10.80 = 3.20',
+            note: '标准采分规范：必须先写 c(OH⁻) 开方表达式，再求负对数 pOH，最后由 14 - pOH 得出 pH=3.20。',
           },
           {
             name: `调 pH 试剂反应 (${reagent} 消耗 H⁺ 不增杂)`,
@@ -168,6 +209,8 @@ export const IndustrialFlowRightPanel: React.FC<IndustrialFlowRightPanelProps> =
                 ? 'MnO + 2H^+ = Mn^{2+} + H_2O'
                 : reagent === 'ZnO'
                 ? 'ZnO + 2H^+ = Zn^{2+} + H_2O'
+                : reagent === 'CuO'
+                ? 'CuO + 2H^+ = Cu^{2+} + H_2O'
                 : reagent === 'MgO'
                 ? 'MgO + 2H^+ = Mg^{2+} + H_2O'
                 : `${reagent} + 2H^+ = 阳离子 + H_2O`,
@@ -175,7 +218,19 @@ export const IndustrialFlowRightPanel: React.FC<IndustrialFlowRightPanelProps> =
           },
         ]
       : [
-          params.systemId === 'fe-cu-zn'
+          params.systemId === 'li-fe-p'
+            ? {
+                name: '90℃ 高温反常加热沉锂反应式',
+                latex: '2Li^+ + CO_3^{2-} \\xlongequal{90^\\circ C} Li_2CO_3\\downarrow',
+                note: '反常溶解度：Li₂CO₃ 溶解度随温度升高而减小，90℃ 加热沉淀析出率最高，趁热过滤防降温回溶！',
+              }
+            : params.systemId === 'al-fe-si'
+            ? {
+                name: '氢氧化铝高温煅烧脱水方程式',
+                latex: '2Al(OH)_3 \\xlongequal{高温} Al_2O_3 + 3H_2O',
+                note: '高温热分解脱水，得到耐高温陶瓷与电解铝级 α-Al₂O₃ 原料。',
+              }
+            : params.systemId === 'fe-cu-zn'
             ? {
                 name: '过量锌粉置换深度除铜反应式',
                 latex: 'Zn + Cu^{2+} = Zn^{2+} + Cu\\downarrow',
@@ -231,10 +286,20 @@ export const IndustrialFlowRightPanel: React.FC<IndustrialFlowRightPanelProps> =
           },
         ]
       : [
-          {
-            text: '【蒸发浓缩与趁热过滤两大核心目的】：① 溶解度随温度升高显著增大的物质采用降温结晶；② 趁热过滤能防止目标产物随温度降低析出损失，或防止高温下未析出的杂质混入晶体。',
-            importance: 'gaokao' as const,
-          },
+          params.systemId === 'li-fe-p'
+            ? {
+                text: '【磷酸铁锂反常溶解度趁热过滤绝杀考点】：Li₂CO₃ 具有特殊的负温度溶解度系数（温度越高溶解度越小）。故采用 80~90℃ 高温加纯碱沉锂，并必须“趁热过滤”和“热水洗涤”，既可除去可溶性硫酸钠杂质，又最大程度减少产物溶解损耗！',
+                importance: 'gaokao' as const,
+              }
+            : params.systemId === 'al-fe-si'
+            ? {
+                text: '【拜耳法通入 CO₂ 酸化标准答题语】：通入过量 CO₂ 产物为 Al(OH)₃ 沉淀和可溶性碳酸氢钠；因碳酸酸性弱，过量也不会导致两性 Al(OH)₃ 重新溶解，沉淀完全且产率高。',
+                importance: 'gaokao' as const,
+              }
+            : {
+                text: '【蒸发浓缩与趁热过滤两大核心目的】：① 溶解度随温度升高显著增大的物质采用降温结晶；② 趁热过滤能防止目标产物随温度降低析出损失，或防止高温下未析出的杂质混入晶体。',
+                importance: 'gaokao' as const,
+              },
           {
             text: '【无水乙醇洗涤晶体的三大目的】：① 洗去晶体表面附着的可溶性杂质；② 减少晶体在洗涤剂中的溶解损耗（醇溶性低）；③ 无水乙醇易挥发，便于晶体快速干燥。',
             importance: 'hard' as const,

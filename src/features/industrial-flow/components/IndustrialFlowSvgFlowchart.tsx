@@ -206,7 +206,7 @@ export const IndustrialFlowSvgFlowchart: React.FC<IndustrialFlowSvgFlowchartProp
           statusColor: '#7c3aed',
         },
       ]
-    } else {
+    } else if (systemId === 'mg-ca') {
       // mg-ca
       return [
         {
@@ -247,6 +247,135 @@ export const IndustrialFlowSvgFlowchart: React.FC<IndustrialFlowSvgFlowchartProp
           wasteOut: '母液中和外排',
           filtrateOut: '高纯 MgO 产物',
           statusTag: 'Mg(OH)₂ 煅烧得 MgO',
+          statusColor: '#7c3aed',
+        },
+      ]
+    } else if (systemId === 'al-fe-si') {
+      return [
+        {
+          step: 1,
+          title: '铝土矿强碱浸',
+          subTitle: '两性溶解破矿',
+          reagentIn: '过量 NaOH 溶液',
+          wasteOut: '赤泥主要成分',
+          filtrateOut: '含 [Al(OH)₄]⁻ 强碱液',
+          statusTag: `浸出率 ${leachRate}%`,
+          statusColor: '#d97706',
+        },
+        {
+          step: 2,
+          title: '赤泥脱硅分离',
+          subTitle: '固液重力分离',
+          reagentIn: '精细脱硅澄清',
+          wasteOut: '赤泥渣: Fe₂O₃,硅酸盐',
+          filtrateOut: '净化偏铝酸钠滤液',
+          statusTag: '铁不溶形成赤泥',
+          statusColor: '#059669',
+        },
+        {
+          step: 3,
+          title: '通 CO₂ 酸化槽',
+          subTitle: '酸化水解析出',
+          reagentIn: '过量 CO₂ 气流',
+          wasteOut: '副产母液: NaHCO₃',
+          filtrateOut: 'Al(OH)₃ 沉淀滤饼',
+          statusTag: isPhInSafeRange ? 'Al(OH)₃ 析出完全' : '注意 CO₂ 通入量',
+          statusColor: isPhInSafeRange ? '#059669' : '#d97706',
+        },
+        {
+          step: 4,
+          title: '高温回转窑煅烧',
+          subTitle: '热分解脱水',
+          reagentIn: '高温 1200℃ 煅烧',
+          wasteOut: '高温水蒸气外排',
+          filtrateOut: '高纯 α-Al₂O₃',
+          statusTag: '煅烧制耐火氧化铝',
+          statusColor: '#7c3aed',
+        },
+      ]
+    } else if (systemId === 'li-fe-p') {
+      return [
+        {
+          step: 1,
+          title: '正极氧化酸浸',
+          subTitle: '氧化溶解破晶格',
+          reagentIn: 'H₂SO₄ + H₂O₂',
+          wasteOut: '炭黑不溶渣 I',
+          filtrateOut: '含 Li⁺,Fe³⁺,PO₄³⁻ 浸出液',
+          statusTag: `浸出率 ${leachRate}%`,
+          statusColor: '#d97706',
+        },
+        {
+          step: 2,
+          title: '铁磷沉淀分离',
+          subTitle: '调节 pH 析出',
+          reagentIn: '调 pH 至 2.0~2.5',
+          wasteOut: '高纯 FePO₄ 滤渣 II',
+          filtrateOut: '富锂纯净清液',
+          statusTag: 'FePO₄ 沉淀回收',
+          statusColor: '#059669',
+        },
+        {
+          step: 3,
+          title: '沉淀槽深度除杂',
+          subTitle: '除微量金属离子',
+          reagentIn: '精密沉淀剂',
+          wasteOut: '微量杂质沉淀渣',
+          filtrateOut: '电池级高纯硫酸锂',
+          statusTag: '高纯锂纯化',
+          statusColor: '#059669',
+        },
+        {
+          step: 4,
+          title: '加热沉锂趁热滤',
+          subTitle: '90℃ 反常析晶',
+          reagentIn: '饱和 Na₂CO₃ + 90℃',
+          wasteOut: '高温母液循环回流',
+          filtrateOut: '电池级 Li₂CO₃ 晶体',
+          statusTag: '趁热过滤热水洗涤',
+          statusColor: '#7c3aed',
+        },
+      ]
+    } else {
+      // cu-fe
+      return [
+        {
+          step: 1,
+          title: '孔雀石酸浸槽',
+          subTitle: '稀硫酸破矿浸取',
+          reagentIn: '稀 H₂SO₄',
+          wasteOut: '滤渣I: SiO₂ 脉石',
+          filtrateOut: '含 Cu²⁺,Fe²⁺,Fe³⁺ 滤液',
+          statusTag: `浸出率 ${leachRate}%`,
+          statusColor: '#d97706',
+        },
+        {
+          step: 2,
+          title: '双氧水氧化池',
+          subTitle: 'Fe²⁺➔Fe³⁺ 调价',
+          reagentIn: 'H₂O₂ 溶液',
+          filtrateOut: '全 Fe³⁺ 硫酸铜滤液',
+          statusTag: isOxidized ? 'Fe³⁺ 氧化充分' : '未充分氧化',
+          statusColor: isOxidized ? '#059669' : '#e11d48',
+        },
+        {
+          step: 3,
+          title: '加 CuO 调 pH 槽',
+          subTitle: '不增杂水解沉铁',
+          reagentIn: 'CuO / 碱式碳酸铜',
+          wasteOut: '中和渣: Fe(OH)₃ 沉淀',
+          filtrateOut: '纯净 CuSO₄ 滤液',
+          statusTag: isPhInSafeRange ? `pH=${pH.toFixed(1)} 最佳` : `pH=${pH.toFixed(1)} 偏离`,
+          statusColor: isPhInSafeRange ? '#059669' : '#d97706',
+        },
+        {
+          step: 4,
+          title: '蒸发浓缩冷却结晶',
+          subTitle: '制胆矾晶体',
+          reagentIn: '蒸发浓缩 + 冷却',
+          wasteOut: '结晶母液回流',
+          filtrateOut: 'CuSO₄·5H₂O 胆矾晶体',
+          statusTag: '冰水洗涤防溶解',
           statusColor: '#7c3aed',
         },
       ]
@@ -307,7 +436,7 @@ export const IndustrialFlowSvgFlowchart: React.FC<IndustrialFlowSvgFlowchartProp
       {/* SVG 画布主体 (保持与外层 225px 容器完美吻合) */}
       <div className="flex-1 w-full relative overflow-hidden flex items-center justify-center px-2 py-1">
         <svg
-          viewBox="0 0 780 185"
+          viewBox="0 0 835 185"
           className="w-full h-full"
           preserveAspectRatio="xMidYMid meet"
         >

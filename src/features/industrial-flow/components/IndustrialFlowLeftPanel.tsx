@@ -49,32 +49,68 @@ export const IndustrialFlowLeftPanel: React.FC<IndustrialFlowLeftPanelProps> = (
     { label: 'Ti-Fe 钛白粉', value: 'ti-fe' },
     { label: 'Ni-Co-Li 锂电池', value: 'ni-co-li' },
     { label: 'Mg-Ca 盐湖卤水', value: 'mg-ca' },
+    { label: 'Al-Fe-Si 拜耳法', value: 'al-fe-si' },
+    { label: 'Li-Fe-P 磷酸铁锂', value: 'li-fe-p' },
+    { label: 'Cu-Fe 胆矾提纯', value: 'cu-fe' },
   ]
 
   // 2. 工序槽体选项 (与中屏方框图槽体 100% 对应联动)
-  const stepOptions = [
-    {
-      label: params.systemId === 'fe-al-mn' ? '1. 还原酸浸槽' : '1. 矿石酸浸槽',
-      value: 1,
-    },
-    {
-      label: params.systemId === 'ti-fe' ? '2. 铁屑还原槽' : '2. 氧化反应槽',
-      value: 2,
-    },
-    {
-      label: '3. 调pH沉淀槽',
-      value: 3,
-    },
-    {
-      label:
-        params.systemId === 'fe-cu-zn'
-          ? '4. 锌粉置换槽'
-          : params.systemId === 'ti-fe'
-          ? '4. 水解制钛酸'
-          : '4. 结晶提纯槽',
-      value: 4,
-    },
-  ]
+  const stepOptions =
+    params.systemId === 'fe-al-mn'
+      ? [
+          { label: '1. 还原酸浸槽', value: 1 },
+          { label: '2. 氧化反应槽', value: 2 },
+          { label: '3. 调pH沉淀槽', value: 3 },
+          { label: '4. 结晶提纯槽', value: 4 },
+        ]
+      : params.systemId === 'fe-cu-zn'
+      ? [
+          { label: '1. 矿渣酸浸槽', value: 1 },
+          { label: '2. 氧化反应池', value: 2 },
+          { label: '3. 中和除铁铝', value: 3 },
+          { label: '4. 锌粉置换槽', value: 4 },
+        ]
+      : params.systemId === 'ti-fe'
+      ? [
+          { label: '1. 钛铁矿酸浸', value: 1 },
+          { label: '2. 铁屑还原槽', value: 2 },
+          { label: '3. 结晶分离绿矾', value: 3 },
+          { label: '4. 水解制钛酸', value: 4 },
+        ]
+      : params.systemId === 'ni-co-li'
+      ? [
+          { label: '1. 正极还原酸浸', value: 1 },
+          { label: '2. 还原调价槽', value: 2 },
+          { label: '3. 调pH沉淀槽', value: 3 },
+          { label: '4. 萃取分离结晶', value: 4 },
+        ]
+      : params.systemId === 'al-fe-si'
+      ? [
+          { label: '1. 铝土矿碱浸', value: 1 },
+          { label: '2. 赤泥脱硅分离', value: 2 },
+          { label: '3. 通CO₂酸化槽', value: 3 },
+          { label: '4. 煅烧氧化铝', value: 4 },
+        ]
+      : params.systemId === 'li-fe-p'
+      ? [
+          { label: '1. 正极氧化浸出', value: 1 },
+          { label: '2. 铁磷沉淀分离', value: 2 },
+          { label: '3. 沉淀深度除杂', value: 3 },
+          { label: '4. 加热趁热沉锂', value: 4 },
+        ]
+      : params.systemId === 'cu-fe'
+      ? [
+          { label: '1. 孔雀石酸浸', value: 1 },
+          { label: '2. 双氧水氧化', value: 2 },
+          { label: '3. 加CuO调pH', value: 3 },
+          { label: '4. 结晶制胆矾', value: 4 },
+        ]
+      : [
+          { label: '1. 白云石酸溶', value: 1 },
+          { label: '2. 杂质价态调控', value: 2 },
+          { label: '3. 调pH除杂沉淀', value: 3 },
+          { label: '4. 煅烧制氧化镁', value: 4 },
+        ]
 
   // 3. 粒度选项
   const crushOptions = [
@@ -131,18 +167,39 @@ export const IndustrialFlowLeftPanel: React.FC<IndustrialFlowLeftPanelProps> = (
               updateParam('reagent', 'MnO')
               updateParam('pH', 5.2)
               updateParam('oxidantAmount', 'sufficient')
+              updateParam('crystallizeMethod', 'cooling')
+              updateParam('washSolvent', 'ethanol')
             } else if (val === 'fe-cu-zn') {
               updateParam('reagent', 'ZnO')
               updateParam('pH', 5.2)
               updateParam('oxidantAmount', 'sufficient')
+              updateParam('crystallizeMethod', 'cooling')
+              updateParam('washSolvent', 'water')
             } else if (val === 'ti-fe') {
               updateParam('reagent', 'NaOH')
               updateParam('pH', 1.5)
               updateParam('oxidantAmount', 'sufficient')
+              updateParam('crystallizeMethod', 'cooling')
             } else if (val === 'ni-co-li') {
               updateParam('reagent', 'NaOH')
               updateParam('pH', 4.8)
               updateParam('oxidantAmount', 'sufficient')
+            } else if (val === 'al-fe-si') {
+              updateParam('reagent', 'CO2')
+              updateParam('pH', 10.2)
+              updateParam('crystallizeMethod', 'cooling')
+              updateParam('washSolvent', 'water')
+            } else if (val === 'li-fe-p') {
+              updateParam('reagent', 'Na2CO3')
+              updateParam('pH', 2.2)
+              updateParam('crystallizeMethod', 'heating')
+              updateParam('washSolvent', 'hot-water')
+            } else if (val === 'cu-fe') {
+              updateParam('reagent', 'CuO')
+              updateParam('pH', 3.6)
+              updateParam('oxidantAmount', 'sufficient')
+              updateParam('crystallizeMethod', 'cooling')
+              updateParam('washSolvent', 'water')
             } else if (val === 'mg-ca') {
               updateParam('reagent', 'MgO')
               updateParam('pH', 5.0)
