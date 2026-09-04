@@ -13,6 +13,9 @@ export interface ReagentStepRightPanelProps {
   currentStep: ReagentStepPoint
   progress: number
   interpolatedPptLevel: number
+  isAirIsolated?: boolean
+  isReverseTitration?: boolean
+  isWeakBase?: boolean
 }
 
 export function ReagentStepRightPanel({
@@ -21,11 +24,14 @@ export function ReagentStepRightPanel({
   currentStep,
   progress,
   interpolatedPptLevel,
+  isAirIsolated,
+  isReverseTitration,
+  isWeakBase,
 }: ReagentStepRightPanelProps) {
   const navigate = useNavigate()
   const model = getGaokaoModel('model-reagent-step')
 
-  // 1. 化学量定义 (ChemistryPanel 消费)
+  // 1. 化学量定义 (ChemistryPanel 消费，遵守铁律 4B 语义颜色 Token 规范)
   const quantities: ChemistryQuantity[] = useMemo(() => {
     return [
       {
@@ -33,28 +39,28 @@ export function ReagentStepRightPanel({
         label: '当前反应阶段',
         value: stepIndex + 1,
         unit: '阶段',
-        colorKey: 'hydroxide',
+        colorKey: 'reactionRate',
       },
       {
         key: 'ph',
         label: '环境估算 pH',
         value: parseFloat(currentStep.ph.toFixed(1)),
         unit: 'pH',
-        colorKey: 'hydroxide',
+        colorKey: 'pH',
       },
       {
         key: 'progress',
         label: '滴加总体积',
         value: parseFloat((progress * 10).toFixed(1)),
         unit: 'mL',
-        colorKey: 'hydroxide',
+        colorKey: 'volume',
       },
       {
         key: 'pptVal',
         label: '沉淀估算量',
         value: Math.round(interpolatedPptLevel * 200),
         unit: 'mmol',
-        colorKey: 'hydroxide',
+        colorKey: 'amount',
       },
     ]
   }, [currentStep, progress, stepIndex, interpolatedPptLevel])
@@ -89,12 +95,20 @@ export function ReagentStepRightPanel({
     ]
   }, [currentScene])
 
+  const modeBadge = isReverseTitration
+    ? ' [反向滴加]'
+    : isWeakBase
+    ? ' [换用弱碱]'
+    : isAirIsolated && currentScene.id === 'fe-air-ox'
+    ? ' [隔绝空气]'
+    : ''
+
   return (
     <div className="h-full flex flex-col overflow-hidden bg-white">
       {/* 上半部分：标准 ChemistryPanel 展现区 (拆解、公式、要点、警示) */}
       <div className="flex-1 min-h-0 overflow-y-auto border-b border-slate-200">
         <ChemistryPanel
-          title={`${currentScene.title} · 高考规范拆解`}
+          title={`${currentScene.title}${modeBadge} · 高考规范拆解`}
           quantities={quantities}
           formulas={formulas}
           gaokaoPoints={gaokaoPoints}

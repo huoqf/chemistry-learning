@@ -45,6 +45,9 @@ export type { VolumetricFlaskApparatusProps } from './VolumetricFlaskApparatus'
 export { TestTubeApparatus } from './TestTubeApparatus'
 export type { TestTubeApparatusProps } from './TestTubeApparatus'
 
+export { DropperApparatus } from './DropperApparatus'
+export type { DropperApparatusProps } from './DropperApparatus'
+
 export { GasJarApparatus } from './GasJarApparatus'
 export type { GasJarApparatusProps } from './GasJarApparatus'
 

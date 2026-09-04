@@ -100,4 +100,29 @@ describe('useReagentChemistry 高考试剂滴加演练逻辑测试', () => {
     expect(result.current.chartData.length).toBeGreaterThan(10)
     expect(result.current.chartData[0].x).toBe(0)
   })
+
+  it('切换实验对比条件应安全联动自动重置进度', () => {
+    const { result } = renderHook(() => useReagentChemistry({ initialSceneId: 'al-amphoteric' }))
+
+    // 假设已滴加到 0.8
+    act(() => {
+      result.current.setProgress(0.8)
+    })
+    expect(result.current.progress).toBe(0.8)
+
+    // 切换为反滴，进度必须重置为 0
+    act(() => {
+      result.current.handleAlModeChange('reverse-strong')
+    })
+    expect(result.current.progress).toBe(0)
+    expect(result.current.isReverseTitration).toBe(true)
+
+    // 切换防氧化模式，进度也必须重置为 0
+    act(() => {
+      result.current.setProgress(0.6)
+      result.current.handleToggleAirIsolated()
+    })
+    expect(result.current.progress).toBe(0)
+    expect(result.current.isAirIsolated).toBe(true)
+  })
 })

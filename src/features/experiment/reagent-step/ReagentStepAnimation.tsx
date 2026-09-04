@@ -17,11 +17,11 @@ export function ReagentStepAnimation() {
     setViewMode,
 
     isAirIsolated,
-    setIsAirIsolated,
     isReverseTitration,
-    setIsReverseTitration,
     isWeakBase,
-    setIsWeakBase,
+    alMode,
+    handleToggleAirIsolated,
+    handleAlModeChange,
 
     stepIndex,
     currentStep,
@@ -32,7 +32,6 @@ export function ReagentStepAnimation() {
 
     chartData,
     handleSceneChange,
-    handleStepClick,
     handleSingleDrop,
     handleBulkAdd,
     handleReset,
@@ -53,17 +52,11 @@ export function ReagentStepAnimation() {
             <ReagentStepLeftPanel
               sceneId={sceneId}
               currentScene={currentScene}
-              progress={progress}
               isAirIsolated={isAirIsolated}
-              setIsAirIsolated={setIsAirIsolated}
-              isReverseTitration={isReverseTitration}
-              setIsReverseTitration={setIsReverseTitration}
-              isWeakBase={isWeakBase}
-              setIsWeakBase={setIsWeakBase}
-              stepIndex={stepIndex}
-              currentStep={currentStep}
+              alMode={alMode}
               handleSceneChange={handleSceneChange}
-              handleStepClick={handleStepClick}
+              handleToggleAirIsolated={handleToggleAirIsolated}
+              handleAlModeChange={handleAlModeChange}
             />
           }
           center={
@@ -94,6 +87,9 @@ export function ReagentStepAnimation() {
               currentStep={currentStep}
               progress={progress}
               interpolatedPptLevel={interpolatedPptLevel}
+              isAirIsolated={isAirIsolated}
+              isReverseTitration={isReverseTitration}
+              isWeakBase={isWeakBase}
             />
           }
         />

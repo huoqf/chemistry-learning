@@ -32,6 +32,24 @@ export const modelReagentStep: ModelQuizData = {
       correctAnswer: ['[Cu(NH3)4]2+', '[Cu(NH3)4]^2+'],
       explanation: '踩分点：先生成浅蓝色 Cu(OH)₂ 沉淀，继续滴加过量氨水，沉淀溶解得到深蓝色 [Cu(NH₃)₄]²⁺ 络合溶液。',
     },
+    {
+      id: 'step-4-ag-trans',
+      title: '步骤 4：AgCl → AgI 沉淀转化实验评价与沉淀剂足量踩分',
+      type: 'keywords',
+      questionText: '向 2 mL 0.1 mol/L AgNO₃ 溶液中滴入 2 滴 0.1 mol/L NaCl 溶液产生白色沉淀，再滴加 4 滴 0.1 mol/L KI 溶液变黄，能否证明 Ksp(AgCl) > Ksp(AgI)？并说明理由。',
+      formulaLatex: 'AgCl(s) + I^- = AgI(s) + Cl^-',
+      correctAnswer: ['不能', 'AgNO3过量', '游离Ag+'],
+      explanation: '踩分点：不能证明！因为 AgNO₃ 极大过量，滴入的 KI 直接与未反应的游离 Ag⁺ 反应生成黄色 AgI 沉淀，而非 AgCl 沉淀转化！证明沉淀转化必须保证 NaCl 足量或 Ag⁺ 沉淀完全。',
+    },
+    {
+      id: 'step-5-ion-competition',
+      title: '步骤 5：酸性多元离子 (H⁺/Fe³⁺/Al³⁺/NH₄⁺) 滴加 NaOH 先后竞争顺序',
+      type: 'keywords',
+      questionText: '向含 H⁺、Fe³⁺、Al³⁺、NH₄⁺ 的酸性混合液中逐滴滴加 NaOH 溶液直至过量，反应的先后竞争顺序为：',
+      formulaLatex: 'H^+ \\to Fe^{3+} \\to Al^{3+} \\to NH_4^+ \\to Al(OH)_3',
+      correctAnswer: ['中和H+', 'Fe3+', 'Al3+', 'NH4+', '溶解Al(OH)3'],
+      explanation: '踩分点：核心竞争口诀“先酸后铁再铝，后铵根，最后氢氧化铝溶解”。即：H⁺(中和) → Fe³⁺(沉淀) → Al³⁺(沉淀) → NH₄⁺(结合) → Al(OH)₃(两性溶解)。',
+    },
   ],
   variantQuizzes: [
     {
@@ -132,6 +150,42 @@ export const modelReagentStep: ModelQuizData = {
       diagramType: 'precipitation-curve',
       diagramConfig: {
         title: 'Fe³⁺、Al³⁺、Mg²⁺ 混合液滴加强碱分步沉淀 lg c - pH 竞争曲线图',
+      },
+    },
+    {
+      id: 'var-reagent-6',
+      yearProvince: '2024 新课标高考真题',
+      modelId: 'model-reagent-step',
+      title: '沉淀转化实验设计评价与沉淀剂过量陷阱辨析',
+      contextDescription: '下列实验操作、现象与所得到的实验结论均正确且相符的是：',
+      questionText: '根据实验目的选择正确的实验方案：',
+      options: [
+        {
+          label: 'A',
+          text: '向 2 mL 0.1 mol/L AgNO₃ 溶液中滴入 2 滴 0.1 mol/L NaCl 溶液生成白色沉淀，再滴加 4 滴 0.1 mol/L KI 溶液产生黄色沉淀，证明 Ksp(AgCl) > Ksp(AgI)',
+          isCorrect: false,
+        },
+        {
+          label: 'B',
+          text: '向 2 mL 0.1 mol/L NaCl 溶液中滴加 2 滴 0.1 mol/L AgNO₃ 溶液产生白色沉淀，过滤洗涤后向沉淀中滴加 0.1 mol/L KI 溶液变黄，证明 Ksp(AgCl) > Ksp(AgI)',
+          isCorrect: true,
+        },
+        {
+          label: 'C',
+          text: '向 AlCl₃ 溶液中滴加少量 NaOH 溶液生成沉淀，继续滴加过量氨水沉淀溶解，证明 Al(OH)₃ 是两性氢氧化物',
+          isCorrect: false,
+        },
+        {
+          label: 'D',
+          text: '向 FeSO₄ 溶液中直接滴加未去氧的 NaOH 溶液，白色沉淀不褪色，说明 Fe(OH)₂ 还原性弱',
+          isCorrect: false,
+        },
+      ],
+      modelAlignmentAnalysis: '【母题模型对齐】：高频实验评价题眼——沉淀转化实验中必须排除未反应沉淀离子的直接沉淀干扰。',
+      detailedExplanation: 'A 项中 AgNO₃ 溶液极大过量，加入 KI 时未反应的 Ag⁺ 直接与 I⁻ 反应生成 AgI 黄色沉淀，不能证明是沉淀转化；B 项保证 NaCl 过量（Ag⁺ 反应完全）或经洗涤去除游离 Ag⁺，滴加 KI 沉淀变黄才能确证 AgCl 转化为 AgI，进而说明 Ksp(AgCl) > Ksp(AgI)；C 项过量氨水不能溶解 Al(OH)₃；D 项 Fe(OH)₂ 还原性强，接触空气迅速被氧化变色。',
+      diagramType: 'precipitation-curve',
+      diagramConfig: {
+        title: 'AgCl → AgI → Ag₂S 溶度积 Ksp 梯度差沉淀转化图',
       },
     },
   ],

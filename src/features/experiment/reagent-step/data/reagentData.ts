@@ -10,6 +10,11 @@ export const REAGENT_SCENES: Record<ReagentSceneId, ReagentSceneConfig> = {
     dropperReagent: 'NaOH 溶液',
     badgeText: '亚铁氧化变色',
     supportsAirIsolation: true,
+    guidance: {
+      condition: '新制 FeSO₄ 溶液 + 0.1 mol/L NaOH 溶液，对比空气暴露与油层隔绝',
+      coreQuestion: 'Fe(OH)₂ 白色沉淀在空气中为何不能长久存在？如何设计防氧化操作？',
+      observation: '切换“开启/关闭隔绝空气”，观察白色沉淀是否转化为灰绿色和红褐色。',
+    },
     examPoints: [
       'Fe(OH)₂ 白色沉淀在空气中被迅速氧化为灰绿色，最终变为红褐色 Fe(OH)₃',
       '氧化总化学方程式：4Fe(OH)₂ + O₂ + 2H₂O = 4Fe(OH)₃',
@@ -75,8 +80,14 @@ export const REAGENT_SCENES: Record<ReagentSceneId, ReagentSceneConfig> = {
     beakerSolution: 'AlCl₃ 溶液 (无色)',
     dropperReagent: 'NaOH 溶液 / 氨水',
     badgeText: '铝盐两性滴加',
+    supportsAlMode: true,
     supportsReverseTitration: true,
     supportsWeakBase: true,
+    guidance: {
+      condition: '0.1 mol/L AlCl₃ 溶液 + 1.0 mol/L NaOH 溶液 / 1.0 mol/L 氨水',
+      coreQuestion: '正滴与反滴的起沉点有何本质区别？弱碱为何不能溶解 Al(OH)₃？',
+      observation: '对比正滴 (3:1 比值后溶解)、反滴 (前期无沉淀) 与弱碱 (沉淀不溶) 曲线差异。',
+    },
     examPoints: [
       '向 Al³⁺ 中滴加 NaOH：先生成白色 Al(OH)₃ 沉淀 (n(OH⁻):n(Al³⁺)=3)，过量沉淀完全溶解生成 [Al(OH)₄]⁻ (n=4)',
       '向 NaOH 中滴加 Al³⁺ (反滴)：开始强碱过量生成 [Al(OH)₄]⁻ 无沉淀，直至碱耗尽才开始产生沉淀',
@@ -142,6 +153,11 @@ export const REAGENT_SCENES: Record<ReagentSceneId, ReagentSceneConfig> = {
     beakerSolution: 'CuSO₄ 溶液 (蓝色)',
     dropperReagent: '稀氨水 (NH₃·H₂O)',
     badgeText: '铜氨络合变色',
+    guidance: {
+      condition: '0.1 mol/L CuSO₄ 溶液 + 浓氨水逐滴滴加',
+      coreQuestion: '浅蓝沉淀与深蓝溶液的化学本质分别是什么？配位键如何形成？',
+      observation: '观察由浅蓝沉淀向深蓝紫澄清络合物溶液突变过程，以及加入乙醇析出晶体的原理。',
+    },
     examPoints: [
       '少量氨水：Cu²⁺ + 2NH₃·H₂O = Cu(OH)₂↓ + 2NH₄⁺ (产生浅蓝色 Cu(OH)₂ 沉淀)',
       '过量氨水：Cu(OH)₂ + 4NH₃ = [Cu(NH₃)₄]²⁺ + 2OH⁻ (沉淀溶解，生成深蓝色/深蓝紫色透明溶液)',
@@ -207,6 +223,11 @@ export const REAGENT_SCENES: Record<ReagentSceneId, ReagentSceneConfig> = {
     beakerSolution: '含 Fe³⁺ / Fe²⁺ 的待测液',
     dropperReagent: 'KSCN 溶液 / 氯水 / 铁氰化钾 K₃[Fe(CN)₆]',
     badgeText: '铁离子显色检验',
+    guidance: {
+      condition: '0.1 mol/L Fe³⁺ / Fe²⁺ 混合待测液 + KSCN / 铁氰化钾试剂',
+      coreQuestion: '如何严谨检验 Fe²⁺ 同时排除原溶液中 Fe³⁺ 的干扰？',
+      observation: '对比滴加 KSCN 的血红络合变色与铁氰化钾专属性蓝色沉淀反应。',
+    },
     examPoints: [
       'Fe³⁺ 检验：滴加 KSCN 溶液，溶液变为血红色 Fe(SCN)₃ 络合物',
       'Fe²⁺ 经典检验：先加 KSCN 溶液不变色，再滴加新制氯水/H₂O₂ 变为血红色 (2Fe²⁺ + Cl₂ = 2Fe³⁺ + 2Cl⁻)',
@@ -260,12 +281,18 @@ export const REAGENT_SCENES: Record<ReagentSceneId, ReagentSceneConfig> = {
     beakerSolution: 'AgNO₃ 溶液 (无色)',
     dropperReagent: 'NaCl → NaI → Na₂S 依次滴加',
     badgeText: '沉淀转化 Ksp',
+    guidance: {
+      condition: '0.01 mol/L AgNO₃ 溶液 + 依次滴加 NaCl、NaI、Na₂S',
+      coreQuestion: '沉淀转化的本质是什么？为何第一种沉淀剂必须足量才能证明沉淀转化？',
+      observation: '观察白色 AgCl → 黄色 AgI → 黑色 Ag₂S 梯级突变，结合 Ksp 数量级推导平衡常数。',
+    },
     examPoints: [
       '沉淀转化规律：一般由 Ksp 较大的沉淀转化为 Ksp 更小的沉淀 (如 AgCl > AgI > Ag₂S)',
       '颜色渐变演练：白色沉淀 (AgCl) → 黄色沉淀 (AgI) → 黑色沉淀 (Ag₂S)',
       '离子方程式：AgCl(s) + I⁻ = AgI(s) + Cl⁻ ； 2AgI(s) + S²⁻ = Ag₂S(s) + 2I⁻',
+      '转化平衡常数计算：K = Ksp(AgCl) / Ksp(AgI) ≈ (1.8×10⁻¹⁰) / (8.5×10⁻¹⁷) ≈ 2.1×10⁶ ≫ 1，反应极彻底',
     ],
-    keyWarning: '注意化学平衡解释：沉淀转化为溶解平衡移动，Ksp(Ag₂S) 远小于 Ksp(AgI) 和 Ksp(AgCl)。',
+    keyWarning: '【高考最高频命题陷阱】：向 AgNO₃ 中加 NaCl 产生白色沉淀，再加 KI 产生黄色沉淀，若 AgNO₃ 过量，则剩余 Ag⁺ 直接与 I⁻ 反应生成沉淀，不能证明发生沉淀转化！证明沉淀转化必须保证沉淀剂足量或无游离 Ag⁺。',
     steps: [
       {
         progress: 0,

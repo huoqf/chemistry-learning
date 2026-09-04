@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useAnimationViewport } from '@/hooks'
 import { CANVAS_PRESETS, CHEMISTRY_COLORS, CHART_COLORS } from '@/theme'
 import { AnimationSvgCanvas } from '@/components/Layout'
-import { TestTubeApparatus } from '@/components/Chemistry/TestTubeApparatus'
+import { TestTubeApparatus, DropperApparatus } from '@/components/Chemistry'
 import { BaseChart, ChartLine, ChartCursor } from '@/components/Chart'
 import type { ReagentSceneConfig, ReagentStepPoint } from '../types'
 
@@ -40,8 +40,9 @@ export function ReagentStepScene({
 
   // 滴管 (Pipette) 定位与下降特效
   const isDropperDeep = isAirIsolated && currentScene.id === 'fe-air-ox'
-  const dropperY = isDropperDeep ? tubeY + 70 : tubeY - 90
   const liquidLevelRatio = Math.min(0.75, 0.25 + progress * 0.4)
+  const liquidSurfaceY = tubeY + tubeHeight * (1 - liquidLevelRatio)
+  const dropperTipY = isDropperDeep ? liquidSurfaceY + 30 : tubeY - 35
 
   // 3. 整理定量图表数据点
   const currentVolume = progress * 10 // 0 ~ 10 mL
@@ -89,11 +90,7 @@ export function ReagentStepScene({
           </defs>
           <rect x="-140" y="0" width="280" height="650" fill="url(#reagent-grid-mini)" opacity={0.6} />
 
-          {/* 1. 铁架台夹持装置 */}
-          <rect x={tubeX - 22} y={tubeY + 30} width={10} height={180} fill="#475569" rx={2} />
-          <rect x={tubeX - 22} y={tubeY + 50} width={34} height={10} fill="#64748B" rx={2} />
-
-          {/* 2. 试管主体 (透传 canvasSize.font 缩放) */}
+          {/* 1. 试管主体 (透传 canvasSize.font 缩放) */}
           <g>
             <TestTubeApparatus
               x={tubeX}
@@ -122,35 +119,19 @@ export function ReagentStepScene({
             )}
           </g>
 
-          {/* 3. 滴管/滴定管 (Pipette Apparatus) */}
-          <g transform={`translate(${tubeX + tubeWidth / 2 - 8}, ${dropperY})`}>
-            <path d="M 2 0 Q 8 -12 14 0 Z" fill="#EF4444" />
-            <rect x="5" y="0" width="6" height="70" fill="rgba(255,255,255,0.8)" stroke="#94A3B8" strokeWidth="1" />
-            <line x1="5" y1="20" x2="9" y2="20" stroke="#475569" strokeWidth="0.8" />
-            <line x1="5" y1="35" x2="9" y2="35" stroke="#475569" strokeWidth="0.8" />
-            <line x1="5" y1="50" x2="9" y2="50" stroke="#475569" strokeWidth="0.8" />
-            <polygon points="5,70 11,70 9,85 7,85" fill="rgba(255,255,255,0.9)" stroke="#94A3B8" strokeWidth="1" />
-          </g>
-
-          {/* 4. 动态液滴落入动画 */}
-          {progress > 0 && progress < 1 && (
-            <g>
-              <circle
-                cx={tubeX + tubeWidth / 2}
-                cy={dropperY + 95 + ((progress * 100) % 35)}
-                r="3.5"
-                fill="#38BDF8"
-                opacity="0.85"
-              />
-              <circle
-                cx={tubeX + tubeWidth / 2}
-                cy={dropperY + 115 + ((progress * 100) % 35)}
-                r="2.5"
-                fill="#38BDF8"
-                opacity="0.6"
-              />
-            </g>
-          )}
+          {/* 2. 标准胶头滴管组件 (支持伸入液面下防氧化模式与规范垂直悬空滴加) */}
+          <DropperApparatus
+            x={tubeX + tubeWidth / 2}
+            y={dropperTipY}
+            bodyHeight={isDropperDeep ? 115 : 75}
+            bodyWidth={10}
+            liquidLevel={Math.max(0.15, 1 - progress * 0.7)}
+            liquidColor="rgba(56, 189, 248, 0.45)"
+            isSqueezed={progress > 0 && progress < 1}
+            dropProgress={progress > 0 && progress < 1 ? progress : 0}
+            dropColor="#38BDF8"
+            isDeep={isDropperDeep}
+          />
 
           {/* 5. 试管中沉淀标注 (遵守铁律 7：font(N) 包裹字号) */}
           <g transform={`translate(${tubeX + tubeWidth + 12}, ${tubeY + 110})`}>

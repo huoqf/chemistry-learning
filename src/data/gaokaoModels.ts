@@ -82,11 +82,12 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'TestTube',
     badgeText: '试剂滴加',
     badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
-    relatedKnowledgeIds: ['iron', 'aluminum'],
+    relatedKnowledgeIds: ['iron', 'aluminum', 'copper', 'precipitation-equilibrium'],
     examPointSummary: [
-      'Fe(OH)₂ 被空气中氧气氧化为 Fe(OH)₃ 的现象演变与方程式',
-      'Al³⁺ 滴加强碱先沉淀后溶解的定量关系与图像',
-      '连续滴加试剂时分步反应的先后竞争顺序',
+      'Fe(OH)₂ 被空气中氧气氧化为 Fe(OH)₃ 的现象演变与防氧化三要素',
+      'Al³⁺ 滴加强碱先沉淀后溶解的 3:1 定量关系与强弱碱图像比对',
+      '多元阳离子分步滴加竞争顺序 (中和强酸 → 难溶沉淀 → 结合弱碱根 → 两性沉淀溶解)',
+      'AgCl → AgI → Ag₂S 沉淀转化规律及“沉淀剂需足量/无游离银离子”高考实验评价陷阱',
     ],
   },
   {

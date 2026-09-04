@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { REAGENT_SCENES } from '../data/reagentData'
-import type { ReagentSceneId, ReagentStepPoint, ReagentSceneConfig, ViewMode } from '../types'
+import type { ReagentSceneId, ReagentStepPoint, ReagentSceneConfig, ViewMode, AlTitrationMode } from '../types'
 
 export interface UseReagentChemistryOptions {
   initialSceneId?: ReagentSceneId
@@ -89,6 +89,25 @@ export function useReagentChemistry(options?: UseReagentChemistryOptions) {
   const [isAirIsolated, setIsAirIsolated] = useState<boolean>(false)
   const [isReverseTitration, setIsReverseTitration] = useState<boolean>(false)
   const [isWeakBase, setIsWeakBase] = useState<boolean>(false)
+  const [alMode, setAlModeState] = useState<AlTitrationMode>('forward-strong')
+
+  // 铝盐滴加模式切换联动（切换时自动重置进度并暂停播放）
+  const handleAlModeChange = useCallback((mode: AlTitrationMode) => {
+    setAlModeState(mode)
+    setIsReverseTitration(mode === 'reverse-strong')
+    setIsWeakBase(mode === 'forward-weak')
+    setProgress(0)
+    setIsAutoPlaying(false)
+  }, [])
+
+  // 隔绝空气操作切换联动（切换时自动重置进度并暂停播放）
+  const handleToggleAirIsolated = useCallback(() => {
+    setIsAirIsolated((prev) => {
+      setProgress(0)
+      setIsAutoPlaying(false)
+      return !prev
+    })
+  }, [])
 
   const currentScene: ReagentSceneConfig = useMemo(() => {
     return REAGENT_SCENES[sceneId] ?? REAGENT_SCENES['fe-air-ox']
@@ -102,6 +121,7 @@ export function useReagentChemistry(options?: UseReagentChemistryOptions) {
     setIsAirIsolated(false)
     setIsReverseTitration(false)
     setIsWeakBase(false)
+    setAlModeState('forward-strong')
   }, [])
 
   // 自动滴加定时逻辑
@@ -310,6 +330,9 @@ export function useReagentChemistry(options?: UseReagentChemistryOptions) {
     setIsReverseTitration,
     isWeakBase,
     setIsWeakBase,
+    alMode,
+    handleAlModeChange,
+    handleToggleAirIsolated,
 
     stepIndex: activeStepState.stepIndex,
     currentStep: activeStepState.currentStep,

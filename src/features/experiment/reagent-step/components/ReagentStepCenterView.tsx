@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useAnimationViewport } from '@/hooks'
 import { CANVAS_PRESETS, CHEMISTRY_COLORS, CHART_COLORS } from '@/theme'
 import { AnimationSvgCanvas } from '@/components/Layout'
-import { TestTubeApparatus } from '@/components/Chemistry/TestTubeApparatus'
+import { TestTubeApparatus, DropperApparatus } from '@/components/Chemistry'
 import { BaseChart, ChartLine, ChartCursor } from '@/components/Chart'
 import { TitrationControls, ScoringCardSection, GaokaoVariantQuiz } from '@/components/UI'
 import type { ViewMode, ReagentSceneConfig, ReagentStepPoint } from '../types'
@@ -84,16 +84,42 @@ export function ReagentStepCenterView({
   const tubeX = 110
   const tubeY = 240
   const isDropperDeep = isAirIsolated && currentScene.id === 'fe-air-ox'
-  const dropperY = isDropperDeep ? tubeY + 70 : tubeY - 90
   const liquidLevelRatio = Math.min(0.75, 0.25 + progress * 0.4)
+  const liquidSurfaceY = tubeY + tubeHeight * (1 - liquidLevelRatio)
+  const dropperTipY = isDropperDeep ? liquidSurfaceY + 30 : tubeY - 35
 
-  // 快跳节点转换
+  // 快跳节点转换 (完全与左屏实验对比模式及高中化学特征体积动态同步)
   const stepsForControls = useMemo(() => {
+    if (currentScene.id === 'al-amphoteric') {
+      if (isReverseTitration) {
+        return [
+          { title: '滴加前：澄清强碱 NaOH 溶液', volume: 0 },
+          { title: '强碱耗尽点：开始析出 Al(OH)₃ 沉淀', volume: 7.5 },
+          { title: '反滴终点：生成最大量 Al(OH)₃ 沉淀', volume: 10.0 },
+        ]
+      }
+      if (isWeakBase) {
+        return [
+          { title: '滴加前：澄清无色 AlCl₃ 溶液', volume: 0 },
+          { title: '沉淀最大值：生成 Al(OH)₃ 白色胶状沉淀', volume: 5.0 },
+          { title: '弱碱过量：NH₃·H₂O 无法溶解沉淀', volume: 10.0 },
+        ]
+      }
+    }
+
+    if (currentScene.id === 'fe-air-ox' && isAirIsolated) {
+      return [
+        { title: '滴加前：浅绿色 Fe²⁺ 溶液 (已煮沸去氧)', volume: 0 },
+        { title: '滴入碱液：长滴管在油层下生成白色 Fe(OH)₂', volume: 4.0 },
+        { title: '抗氧化终态：隔绝空气长久保持白色', volume: 10.0 },
+      ]
+    }
+
     return currentScene.steps.map((st) => ({
       title: st.title,
       volume: st.progress * 10,
     }))
-  }, [currentScene])
+  }, [currentScene, isReverseTitration, isWeakBase, isAirIsolated])
 
   if (viewMode === 'scoring' && quizData && quizData.scoringSteps.length > 0) {
     return (
@@ -125,10 +151,6 @@ export function ReagentStepCenterView({
             </defs>
             <rect x="-140" y="0" width="280" height="650" fill="url(#reagent-grid-mini)" opacity={0.6} />
 
-            {/* 铁架台 */}
-            <rect x={tubeX - 22} y={tubeY + 30} width={10} height={180} fill="#475569" rx={2} />
-            <rect x={tubeX - 22} y={tubeY + 50} width={34} height={10} fill="#64748B" rx={2} />
-
             {/* 试管主体 */}
             <g>
               <TestTubeApparatus
@@ -157,35 +179,19 @@ export function ReagentStepCenterView({
               )}
             </g>
 
-            {/* 滴管/滴定管 */}
-            <g transform={`translate(${tubeX + tubeWidth / 2 - 8}, ${dropperY})`}>
-              <path d="M 2 0 Q 8 -12 14 0 Z" fill="#EF4444" />
-              <rect x="5" y="0" width="6" height="70" fill="rgba(255,255,255,0.8)" stroke="#94A3B8" strokeWidth="1" />
-              <line x1="5" y1="20" x2="9" y2="20" stroke="#475569" strokeWidth="0.8" />
-              <line x1="5" y1="35" x2="9" y2="35" stroke="#475569" strokeWidth="0.8" />
-              <line x1="5" y1="50" x2="9" y2="50" stroke="#475569" strokeWidth="0.8" />
-              <polygon points="5,70 11,70 9,85 7,85" fill="rgba(255,255,255,0.9)" stroke="#94A3B8" strokeWidth="1" />
-            </g>
-
-            {/* 动态液滴 */}
-            {progress > 0 && progress < 1 && (
-              <g>
-                <circle
-                  cx={tubeX + tubeWidth / 2}
-                  cy={dropperY + 95 + ((progress * 100) % 35)}
-                  r="3.5"
-                  fill="#38BDF8"
-                  opacity="0.85"
-                />
-                <circle
-                  cx={tubeX + tubeWidth / 2}
-                  cy={dropperY + 115 + ((progress * 100) % 35)}
-                  r="2.5"
-                  fill="#38BDF8"
-                  opacity="0.6"
-                />
-              </g>
-            )}
+            {/* 标准胶头滴管组件 (支持伸入液面下防氧化模式与规范垂直悬空滴加) */}
+            <DropperApparatus
+              x={tubeX + tubeWidth / 2}
+              y={dropperTipY}
+              bodyHeight={isDropperDeep ? 115 : 75}
+              bodyWidth={10}
+              liquidLevel={Math.max(0.15, 1 - progress * 0.7)}
+              liquidColor="rgba(56, 189, 248, 0.45)"
+              isSqueezed={isAutoPlaying || (progress > 0 && progress < 1)}
+              dropProgress={progress > 0 && progress < 1 ? progress : 0}
+              dropColor="#38BDF8"
+              isDeep={isDropperDeep}
+            />
 
             {/* 沉淀标注 */}
             <g transform={`translate(${tubeX + tubeWidth + 12}, ${tubeY + 110})`}>

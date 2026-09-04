@@ -33,10 +33,19 @@ export interface ReagentSceneConfig {
   examPoints: string[]
   keyWarning: string
   steps: ReagentStepPoint[]
-  /** 模式选项 */
+  /** 模式选项支持 */
   supportsAirIsolation?: boolean
+  supportsAlMode?: boolean
   supportsReverseTitration?: boolean
   supportsWeakBase?: boolean
+  /** 实验指引与核心设问 (铁律 3C) */
+  guidance?: {
+    condition: string
+    coreQuestion: string
+    observation: string
+  }
 }
+
+export type AlTitrationMode = 'forward-strong' | 'reverse-strong' | 'forward-weak'
 
 export type ViewMode = 'animation' | 'scoring' | 'quiz'

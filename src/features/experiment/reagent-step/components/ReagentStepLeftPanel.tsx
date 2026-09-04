@@ -1,41 +1,33 @@
-import { LeftPanel, LeftPanelSection, OptionButton } from '@/components/UI'
-import { ShieldAlert, ArrowLeftRight, FlaskConical } from 'lucide-react'
-
+import { LeftPanel, LeftPanelSection, OptionButton, SegmentedControl, ToggleSwitch } from '@/components/UI'
 import { REAGENT_SCENES } from '../data/reagentData'
-import type { ReagentSceneId, ReagentSceneConfig, ReagentStepPoint } from '../types'
+import type { ReagentSceneId, ReagentSceneConfig, AlTitrationMode } from '../types'
 
 export interface ReagentStepLeftPanelProps {
   sceneId: ReagentSceneId
   currentScene: ReagentSceneConfig
-  progress: number
-
   isAirIsolated: boolean
-  setIsAirIsolated: (v: boolean) => void
-  isReverseTitration: boolean
-  setIsReverseTitration: (v: boolean) => void
-  isWeakBase: boolean
-  setIsWeakBase: (v: boolean) => void
-
-  stepIndex: number
-  currentStep: ReagentStepPoint
+  alMode: AlTitrationMode
   handleSceneChange: (id: ReagentSceneId) => void
-  handleStepClick: (index: number) => void
+  handleToggleAirIsolated: () => void
+  handleAlModeChange: (mode: AlTitrationMode) => void
 }
 
+/**
+ * ReagentStepLeftPanel — 专题四左侧控制台
+ *
+ * 规范：
+ * - 遵守铁律 3C：标题纯粹、严禁装饰性图标堆砌、保持学术沉稳
+ * - 遵守铁律 4：完全复用系统 UI 组件 (LeftPanel, OptionButton, SegmentedControl, ToggleSwitch)
+ * - 状态安全联动：模式切换自动联动重置进度，避免跳跃与物理不一致
+ */
 export function ReagentStepLeftPanel({
   sceneId,
   currentScene,
-
   isAirIsolated,
-  setIsAirIsolated,
-  isReverseTitration,
-  setIsReverseTitration,
-  isWeakBase,
-  setIsWeakBase,
-
-  stepIndex,
+  alMode,
   handleSceneChange,
-  handleStepClick,
+  handleToggleAirIsolated,
+  handleAlModeChange,
 }: ReagentStepLeftPanelProps) {
   return (
     <LeftPanel>
@@ -55,93 +47,59 @@ export function ReagentStepLeftPanel({
         </div>
       </LeftPanelSection>
 
-      {/* 3. 反应关键节点快跳 */}
-      <LeftPanelSection title="反应历程节点快跳" subtitle="点击快速定位至反应特征节点">
-        <div className="grid grid-cols-2 gap-1.5">
-          {currentScene.steps.map((st, idx) => (
-            <button
-              key={idx}
-              onClick={() => handleStepClick(idx)}
-              className={`px-2 py-1.5 rounded text-[11px] text-left truncate transition-colors border ${
-                stepIndex === idx
-                  ? 'bg-amber-50 text-amber-900 border-amber-300 font-bold shadow-2xs'
-                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-              }`}
-            >
-              {idx + 1}. {st.title.split('：')[0]}
-            </button>
-          ))}
-        </div>
-      </LeftPanelSection>
-
-      {/* 4. 特殊高考实验条件对比开关 */}
-      {(currentScene.supportsAirIsolation ||
-        currentScene.supportsReverseTitration ||
-        currentScene.supportsWeakBase) && (
-        <LeftPanelSection title="实验条件对比探究" subtitle="高考延伸考点对比探究开关">
-          <div className="flex flex-col gap-2">
+      {/* 2. 实验条件对比探究 (仅在场景支持时展示，使用标准 SegmentedControl / ToggleSwitch) */}
+      {(currentScene.supportsAirIsolation || currentScene.supportsAlMode) && (
+        <LeftPanelSection title="实验条件对比探究" subtitle="切换滴加顺序与对比变量">
+          <div className="flex flex-col gap-2.5">
+            {/* 亚铁隔绝空气防氧化操作切换 */}
             {currentScene.supportsAirIsolation && (
-              <button
-                onClick={() => setIsAirIsolated(!isAirIsolated)}
-                className={`p-2.5 rounded-lg border text-xs text-left flex items-center justify-between transition-colors ${
-                  isAirIsolated
-                    ? 'bg-emerald-50 border-emerald-300 text-emerald-950 font-bold'
-                    : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <ShieldAlert className="w-4 h-4 text-emerald-600" />
-                  <span>隔绝空气操作 (长滴管/植物油层)</span>
+              <div className="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-white">
+                <div className="flex flex-col">
+                  <span className="text-xs font-semibold text-slate-800">隔绝空气防氧化操作</span>
+                  <span className="text-[10px] text-slate-500">长滴管伸入液面下 / 植物油层封顶</span>
                 </div>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-semibold">
-                  {isAirIsolated ? '已开启' : '关闭'}
-                </span>
-              </button>
+                <ToggleSwitch
+                  checked={isAirIsolated}
+                  onChange={handleToggleAirIsolated}
+                />
+              </div>
             )}
 
-            {currentScene.supportsReverseTitration && (
-              <button
-                onClick={() => {
-                  setIsWeakBase(false)
-                  setIsReverseTitration(!isReverseTitration)
-                }}
-                className={`p-2.5 rounded-lg border text-xs text-left flex items-center justify-between transition-colors ${
-                  isReverseTitration
-                    ? 'bg-indigo-50 border-indigo-300 text-indigo-950 font-bold'
-                    : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <ArrowLeftRight className="w-4 h-4 text-indigo-600" />
-                  <span>反向滴加 (Al³⁺ 滴入 NaOH)</span>
-                </div>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800 font-semibold">
-                  {isReverseTitration ? '反滴模式' : '正滴模式'}
-                </span>
-              </button>
+            {/* 铝盐滴加三模式规范分段选择器 */}
+            {currentScene.supportsAlMode && (
+              <div className="flex flex-col gap-1.5">
+                <span className="text-xs font-semibold text-slate-800">滴加方式与碱液选择</span>
+                <SegmentedControl
+                  value={alMode}
+                  onChange={(val) => handleAlModeChange(val as AlTitrationMode)}
+                  options={[
+                    { value: 'forward-strong', label: '正滴强碱' },
+                    { value: 'reverse-strong', label: '反滴强碱' },
+                    { value: 'forward-weak', label: '换用弱碱' },
+                  ]}
+                />
+              </div>
             )}
+          </div>
+        </LeftPanelSection>
+      )}
 
-            {currentScene.supportsWeakBase && (
-              <button
-                onClick={() => {
-                  setIsReverseTitration(false)
-                  setIsWeakBase(!isWeakBase)
-                }}
-                className={`p-2.5 rounded-lg border text-xs text-left flex items-center justify-between transition-colors ${
-                  isWeakBase
-                    ? 'bg-sky-50 border-sky-300 text-sky-950 font-bold'
-                    : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <FlaskConical className="w-4 h-4 text-sky-600" />
-                  <span>换用弱碱 (一水合氨 NH₃·H₂O)</span>
-                </div>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-semibold">
-                  {isWeakBase ? '弱碱模式' : '强碱模式'}
-                </span>
-              </button>
-            )}
+      {/* 3. 铁律 3C 结构化实验引导与核心设问 */}
+      {currentScene.guidance && (
+        <LeftPanelSection title="实验观察与核心设问" subtitle="高考实验探究抓手">
+          <div className="p-3 rounded-lg bg-slate-50 border border-slate-200/80 flex flex-col gap-2.5 text-xs">
+            <div>
+              <div className="text-[11px] font-bold text-slate-500 mb-0.5">实验前提条件</div>
+              <div className="text-slate-800 font-medium">{currentScene.guidance.condition}</div>
+            </div>
+            <div>
+              <div className="text-[11px] font-bold text-indigo-700 mb-0.5">高考核心设问</div>
+              <div className="text-slate-800 font-medium">{currentScene.guidance.coreQuestion}</div>
+            </div>
+            <div>
+              <div className="text-[11px] font-bold text-amber-800 mb-0.5">现象观察指引</div>
+              <div className="text-slate-700">{currentScene.guidance.observation}</div>
+            </div>
           </div>
         </LeftPanelSection>
       )}
