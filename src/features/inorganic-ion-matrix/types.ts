@@ -44,7 +44,43 @@ export interface CoexistenceConflict {
   equation: string
 }
 
-export type InquiryMode = 'single-test' | 'coexistence-check' | 'coexistence-matrix'
+export type InquiryMode =
+  | 'single-test'
+  | 'coexistence-check'
+  | 'mechanism-grid'
+  | 'coexistence-matrix'
+
+export type MechanismDimensionId =
+  | 'double-hydrolysis'
+  | 'redox-hidden'
+  | 'precipitate-trap'
+  | 'gas-weak-acid'
+
+export interface MechanismMasterItem {
+  id: string
+  dimensionId: MechanismDimensionId
+  cationId: string
+  anionId: string
+  title: string
+  productSummary: string
+  phenomenon: string
+  equation: string
+  mechanismReason: string
+  examTrap: string
+  tag: '必考' | '高频' | '易错' | '压轴'
+}
+
+export interface MechanismDimensionGroup {
+  id: MechanismDimensionId
+  title: string
+  subtitle: string
+  themeColor: string
+  badgeBg: string
+  badgeText: string
+  borderColor: string
+  examFocus: string
+  items: MechanismMasterItem[]
+}
 
 export type MatrixConflictCategory =
   | 'none' // 稳定共存
@@ -74,3 +110,4 @@ export interface IonMatrixState {
   coexistenceSelectedIons: string[] // 共存探究选中的离子列表
   isReactionActive: boolean // 是否触发反应动画
 }
+

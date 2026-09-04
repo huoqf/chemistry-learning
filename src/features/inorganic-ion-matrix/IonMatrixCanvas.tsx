@@ -15,6 +15,7 @@ import { IonLeftPanel } from './components/IonLeftPanel'
 import { IonMatrixScene } from './components/IonMatrixScene'
 import { IonRightPanel } from './components/IonRightPanel'
 import { IonCoexistenceMatrixView } from './components/IonCoexistenceMatrixView'
+import { IonMechanismGridView } from './components/IonMechanismGridView'
 
 export const IonMatrixCanvas: React.FC = () => {
   const modelId = 'model-ion-matrix'
@@ -23,7 +24,7 @@ export const IonMatrixCanvas: React.FC = () => {
   // 视角模式 (0: 矩阵探究 | 1: 规范踩分 | 2: 真题研析)
   const [viewMode, setViewMode] = useState<number>(0)
 
-  // 探究状态：支持 3 档模式
+  // 探究状态：支持 4 档模式 (single-test | coexistence-check | mechanism-grid | coexistence-matrix)
   const [inquiryMode, setInquiryMode] = useState<InquiryMode>('single-test')
   const [selectedIonId, setSelectedIonId] = useState<string>('Fe3+')
   const [selectedReagentId, setSelectedReagentId] = useState<string>('fe3-kscn')
@@ -132,7 +133,13 @@ export const IonMatrixCanvas: React.FC = () => {
           center={
             <div className="w-full h-full flex flex-col overflow-hidden">
               {viewMode === 0 && (
-                inquiryMode === 'coexistence-matrix' ? (
+                inquiryMode === 'mechanism-grid' ? (
+                  <IonMechanismGridView
+                    selectedPair={selectedMatrixPair}
+                    onSelectPair={handleSelectMatrixPair}
+                    onNavigateToBeaker={handleNavigateToBeaker}
+                  />
+                ) : inquiryMode === 'coexistence-matrix' ? (
                   <IonCoexistenceMatrixView
                     selectedPair={selectedMatrixPair}
                     onSelectPair={handleSelectMatrixPair}

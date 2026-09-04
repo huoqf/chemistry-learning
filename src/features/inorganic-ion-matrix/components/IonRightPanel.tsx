@@ -9,8 +9,11 @@ import {
   BookOpen,
   AlertTriangle,
   Lightbulb,
+  Flame,
+  Zap,
 } from 'lucide-react'
 import { KatexFormula } from '@/components/UI'
+import { findMechanismItem, MECHANISM_GROUPS } from '../data/mechanismGridData'
 
 interface IonRightPanelProps {
   inquiryMode: InquiryMode
@@ -218,6 +221,131 @@ export const IonRightPanel: React.FC<IonRightPanelProps> = ({
               </li>
             </ul>
           </div>
+        </>
+      )}
+
+      {inquiryMode === 'mechanism-grid' && (
+        <>
+          {(() => {
+            const currentItem = selectedPair
+              ? findMechanismItem(selectedPair.cationId, selectedPair.anionId)
+              : undefined
+
+            const currentGroup = currentItem
+              ? MECHANISM_GROUPS.find((g) => g.id === currentItem.dimensionId)
+              : undefined
+
+            if (currentItem && currentGroup) {
+              return (
+                <div className="space-y-3">
+                  {/* 母题芯片基本身份 */}
+                  <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-2xs space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 font-bold text-xs text-slate-900">
+                        {currentGroup.id === 'double-hydrolysis' && (
+                          <Flame className="w-4 h-4 text-rose-600" />
+                        )}
+                        {currentGroup.id === 'redox-hidden' && (
+                          <Zap className="w-4 h-4 text-purple-600" />
+                        )}
+                        {currentGroup.id === 'precipitate-trap' && (
+                          <ShieldAlert className="w-4 h-4 text-blue-600" />
+                        )}
+                        {currentGroup.id === 'gas-weak-acid' && (
+                          <Sparkles className="w-4 h-4 text-amber-600" />
+                        )}
+                        <span>{currentItem.title}</span>
+                      </div>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-blue-100 text-blue-800">
+                        {currentItem.tag}
+                      </span>
+                    </div>
+
+                    <div className="p-2 rounded-lg bg-blue-50/70 border border-blue-100 flex items-center justify-between text-xs">
+                      <span className="text-slate-500 font-medium">核心反应产物：</span>
+                      <span className="font-bold text-blue-900">{currentItem.productSummary}</span>
+                    </div>
+                  </div>
+
+                  {/* 离子反应方程式 (KaTeX 规范书写) */}
+                  <div className="p-3 bg-indigo-50/60 rounded-xl border border-indigo-200 space-y-1.5">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-950">
+                      <Sparkles className="w-4 h-4 text-indigo-600" />
+                      <span>规范离子反应方程式 (必背)</span>
+                    </div>
+                    <div className="p-2.5 bg-white rounded-lg border border-indigo-100 text-xs text-indigo-950 overflow-x-auto shadow-2xs">
+                      <KatexFormula formula={currentItem.equation} mode="block" />
+                    </div>
+                  </div>
+
+                  {/* 反应机理与现象剖析 */}
+                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5 text-xs">
+                    <div className="font-bold text-slate-800 flex items-center gap-1.5">
+                      <Lightbulb className="w-4 h-4 text-amber-500" />
+                      <span>反应本质机理与宏观现象</span>
+                    </div>
+                    <p className="text-slate-700 leading-relaxed font-medium">
+                      {currentItem.phenomenon}
+                    </p>
+                    <p className="text-[11px] text-slate-500 leading-relaxed pt-1 border-t border-slate-200">
+                      <strong>驱动力：</strong>
+                      {currentItem.mechanismReason}
+                    </p>
+                  </div>
+
+                  {/* 高考命题设问陷阱 (提分雷达) */}
+                  <div className="p-3 bg-rose-50/70 rounded-xl border border-rose-200 space-y-1.5 text-xs text-rose-950">
+                    <div className="flex items-center gap-1.5 font-bold text-rose-900">
+                      <ShieldAlert className="w-4 h-4 text-rose-600" />
+                      <span>高考命题陷阱与破题点拨</span>
+                    </div>
+                    <div className="p-2 bg-white rounded-lg border border-rose-100 leading-relaxed font-medium">
+                      {currentItem.examTrap}
+                    </div>
+                  </div>
+
+                  {/* 维度归属与通关总结 */}
+                  <div className="p-2.5 bg-slate-100/70 rounded-xl border border-slate-200 text-[11px] text-slate-600 flex items-center justify-between">
+                    <span>归属维度：{currentGroup.title}</span>
+                    <span className="font-bold text-slate-800">一票否决共存</span>
+                  </div>
+                </div>
+              )
+            }
+
+            return (
+              <div className="space-y-3 text-xs">
+                <div className="p-3 bg-indigo-50 rounded-xl border border-indigo-200 text-indigo-950 space-y-1.5">
+                  <div className="font-bold flex items-center gap-1.5">
+                    <BookOpen className="w-4 h-4 text-indigo-600" />
+                    <span>新高考 4 大互斥维度命题思维导图</span>
+                  </div>
+                  <p className="text-[11px] text-indigo-800 leading-relaxed">
+                    点击中屏九宫格中任意母题芯片，右侧将立即调取该母题的高考规范方程式、设问角度及命题避坑秘籍。
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  {MECHANISM_GROUPS.map((g) => (
+                    <div
+                      key={g.id}
+                      className="p-2.5 bg-white rounded-xl border border-slate-200 space-y-1 shadow-2xs"
+                    >
+                      <div className="flex items-center justify-between font-bold text-slate-900 text-[11px]">
+                        <span>{g.title}</span>
+                        <span className="text-[10px] text-slate-500 font-mono">
+                          {g.items.length} 组
+                        </span>
+                      </div>
+                      <p className="text-[10.5px] text-slate-600 leading-relaxed">
+                        {g.examFocus}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          })()}
         </>
       )}
 
