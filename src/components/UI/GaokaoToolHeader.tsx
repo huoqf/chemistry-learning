@@ -18,6 +18,7 @@ import {
   LucideIcon,
 } from 'lucide-react'
 import { GaokaoModelNode, getGaokaoModel } from '@/data/gaokaoModels'
+import { renderNaText } from '@/utils'
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Zap,
@@ -92,10 +93,10 @@ export const GaokaoToolHeader: React.FC<GaokaoToolHeaderProps> = ({
           <div className="flex items-center gap-2">
             <span className="font-bold text-sm text-white flex items-center gap-1.5">
               <IconComp className="w-4 h-4 text-indigo-400 shrink-0" />
-              {title}
+              {renderNaText(title)}
             </span>
             <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${badgeColor}`}>
-              {badgeText}
+              {renderNaText(badgeText)}
             </span>
           </div>
           <span className="text-[11px] text-slate-400">{subtitle}</span>

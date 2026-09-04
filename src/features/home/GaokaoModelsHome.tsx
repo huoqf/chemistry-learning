@@ -84,7 +84,7 @@ export function GaokaoModelsHome({ onSwitchToTextbookTree }: GaokaoModelsHomePro
                 : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
             }`}
           >
-            全部母题专题 ({gaokaoModels.length})
+            全部专题 ({gaokaoModels.length})
           </button>
           <button
             onClick={() => setActiveCategory('master-model')}
@@ -94,7 +94,7 @@ export function GaokaoModelsHome({ onSwitchToTextbookTree }: GaokaoModelsHomePro
                 : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
             }`}
           >
-            🏆 高考解题母题 (突跃/双对比/3D晶胞)
+            🏆 高考解题母题 ({gaokaoModels.filter(m => m.category === 'master-model').length})
           </button>
           <button
             onClick={() => setActiveCategory('memory-matrix')}
@@ -104,7 +104,17 @@ export function GaokaoModelsHome({ onSwitchToTextbookTree }: GaokaoModelsHomePro
                 : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
             }`}
           >
-            🎨 记忆强化矩阵 (价类二维图/探究显色)
+            🎨 记忆强化矩阵 ({gaokaoModels.filter(m => m.category === 'memory-matrix').length})
+          </button>
+          <button
+            onClick={() => setActiveCategory('experiment-chain')}
+            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
+              activeCategory === 'experiment-chain'
+                ? 'bg-teal-600 text-white shadow-sm'
+                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+            }`}
+          >
+            🧪 综合实验流程链 ({gaokaoModels.filter(m => m.category === 'experiment-chain').length})
           </button>
         </div>
       </div>

@@ -4,7 +4,7 @@ import { getModelQuizData } from '../gaokaoQuizData'
 import { getKnowledgeNode } from '../knowledgeTree'
 
 describe('Gaokao Models & Quiz Data 整合审计测试', () => {
-  it('恰好包含 18 个高考专属交互工具 (5 大记忆矩阵 + 9 大解题母题 + 4 大实验与专题工具)', () => {
+  it('恰好包含 18 个高考专属交互工具 (5 大记忆矩阵 + 10 大解题母题 + 3 大实验流程链)', () => {
     // 精确断言总数，防止遗漏/重复注册
     expect(gaokaoModels.length).toBe(18)
 
@@ -16,8 +16,9 @@ describe('Gaokao Models & Quiz Data 整合审计测试', () => {
     expect(modelIds).toContain('model-organic-matrix')
     expect(modelIds).toContain('model-reagent-step')
     expect(modelIds).toContain('model-flash-cards')
+    expect(gaokaoModels.filter(m => m.category === 'memory-matrix').length).toBe(5)
 
-    // ── B. 9 大解题母题 (master-model) ──
+    // ── B. 10 大解题母题 (master-model) ──
     expect(modelIds).toContain('model-titration-balance')
     expect(modelIds).toContain('model-electrochemical-twin')
     expect(modelIds).toContain('model-crystal-3d-split')
@@ -26,15 +27,15 @@ describe('Gaokao Models & Quiz Data 整合审计测试', () => {
     expect(modelIds).toContain('model-organic-mechanism')
     expect(modelIds).toContain('model-hess-law')
     expect(modelIds).toContain('model-element-periodic-property')
+    expect(modelIds).toContain('model-avogadro-constant')
     expect(modelIds).toContain('model-organic-retrosynthesis')
+    expect(gaokaoModels.filter(m => m.category === 'master-model').length).toBe(10)
 
-    // ── C. 2 大实验链 (experiment-chain) ──
+    // ── C. 3 大实验综合流程链 (experiment-chain) ──
     expect(modelIds).toContain('model-gas-chain')
     expect(modelIds).toContain('model-industrial-flow')
-
-    // ── D. 2 大高频专题工具 (avogadro-constant / titration-error-purity) ──
-    expect(modelIds).toContain('model-avogadro-constant')
     expect(modelIds).toContain('model-titration-error-purity')
+    expect(gaokaoModels.filter(m => m.category === 'experiment-chain').length).toBe(3)
   })
 
   it('所有高考母题 category 字段必须是合法枚举值', () => {
@@ -45,9 +46,8 @@ describe('Gaokao Models & Quiz Data 整合审计测试', () => {
         `母题 ${model.id} 的 category="${model.category}" 不在合法枚举中`
       ).toContain(model.category)
     })
-    // 记忆矩阵类别应有 4 个（含 NA 工具被归类为 memory-matrix）
     const memoryMatrix = gaokaoModels.filter(m => m.category === 'memory-matrix')
-    expect(memoryMatrix.length).toBeGreaterThanOrEqual(3)
+    expect(memoryMatrix.length).toBe(5)
   })
 
   it('所有高考母题工具路由与关联教材知识 ID 必须有效声明', () => {

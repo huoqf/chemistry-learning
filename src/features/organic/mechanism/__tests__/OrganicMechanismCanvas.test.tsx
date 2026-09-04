@@ -26,7 +26,7 @@ describe('OrganicMechanismCanvas Component', () => {
     )
 
     // 验证机制选择与渲染
-    expect(screen.getByText('母题八：有机反应官能团断键机制工具')).toBeDefined()
+    expect(screen.getByText('母题六：有机反应机理与键位断裂重组')).toBeDefined()
     expect(screen.getByText('图谱探究')).toBeDefined()
   })
 
