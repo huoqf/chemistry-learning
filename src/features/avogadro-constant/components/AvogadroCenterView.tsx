@@ -1,17 +1,14 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { AnimationSvgCanvas } from '@/components/Layout'
 import { useAnimationViewport } from '@/hooks/useAnimationViewport'
 import { useSceneScale } from '@/hooks/useSceneScale'
-import { CANVAS_PRESETS, SCENE_COLORS, CHART_COLORS } from '@/theme'
+import { CANVAS_PRESETS, CHART_COLORS } from '@/theme'
 import { BaseChart } from '@/components/Chart/BaseChart'
 import { ChartLine } from '@/components/Chart/ChartLine'
 import { ChartCursor } from '@/components/Chart/ChartCursor'
 import { ScoringCardSection, GaokaoVariantQuiz } from '@/components/UI'
-import {
-  BeakerApparatus,
-  OxidationBridgeArrow,
-  QuantityBars,
-} from '@/components/Chemistry'
+import { useAnimationFrame } from '@/utils/animation'
+import { AvogadroScene } from './AvogadroScene'
 import type { AvogadroParams, AvogadroResult } from '../types'
 import type { ModelQuizData } from '@/data/quiz/types'
 
@@ -28,46 +25,193 @@ export const AvogadroCenterView: React.FC<AvogadroCenterViewProps> = ({
   quizData,
   viewMode,
 }) => {
-  // 1. Viewport 绑定：选择 CANVAS_PRESETS.splitH (420px + 420px 左右等宽)
+  // 1. Viewport 绑定：选择 CANVAS_PRESETS.splitH (420×650 左右等宽)
   const { containerRef, canvasSize, vp } = useAnimationViewport({
     preset: CANVAS_PRESETS.splitH,
   })
-  useSceneScale({ vp, preset: CANVAS_PRESETS.splitH, anchor: 'center' })
+  const sceneScale = useSceneScale({ vp, preset: CANVAS_PRESETS.splitH, anchor: 'center' })
 
-  // 右侧图表动态点集：生成微粒数 / 电子转移量演变曲线
-  const curvePoints = useMemo(() => {
-    const points: { x: number; y: number }[] = []
-    const total = 50
-    for (let i = 0; i <= total; i++) {
-      const x = (i / total) * 100 // 用量
-      let y = x
-      if (params.trapCategory === 'structure-bonds' && params.structureItem === 'P4') {
-        y = (x / 124) * 6 * 31 // P4 键数
-      } else if (params.trapCategory === 'redox-electron' && params.redoxItem === 'NO2-N2O4-reversible') {
-        y = x * 0.75 // 二聚平衡分子数减少
-      } else if (params.trapCategory === 'electrolyte-hydrolysis') {
-        y = Math.log10(x + 1) * 20
+  // 2. 统一动画时间驱动（遵循铁律 1，使用 useAnimationFrame）
+  const [animTime, setAnimTime] = useState<number>(0)
+  useAnimationFrame(
+    (dt) => {
+      setAnimTime((t) => t + dt * 0.001)
+    },
+    { playing: true }
+  )
+
+  // 3. 右侧图表科学对比曲线（全量预计算：真实微粒数 vs 错解陷阱误判数）
+  const { actualPoints, fallacyPoints, xLabel, yLabel, maxRangeX, maxRangeY } = useMemo(() => {
+    const act: { x: number; y: number }[] = []
+    const fal: { x: number; y: number }[] = []
+    const count = 40
+
+    let maxX = 50
+    let maxY = 100
+    let xName = '物质用量'
+    let yName = '粒子数 / 电子数 (NA)'
+
+    const cat = params.trapCategory
+
+    if (cat === 'state-volume') {
+      xName = params.amountUnit === 'L' ? '体积 V (L)' : '物质用量'
+      yName = '微粒数 (NA)'
+      maxX = 50
+      maxY = chemistry.isStateGas ? 3 : 15
+
+      for (let i = 0; i <= count; i++) {
+        const x = (i / count) * maxX
+        const yTrap = x / 22.4
+        const yReal = chemistry.isStateGas
+          ? x / (params.temperatureCondition === 'standard' ? 22.4 : 24.5)
+          : (x * 1000) / 18 / 200
+        fal.push({ x, y: yTrap })
+        act.push({ x, y: yReal })
       }
-      points.push({ x, y })
-    }
-    return points
-  }, [params.trapCategory, params.structureItem, params.redoxItem])
+    } else if (cat === 'structure-bonds') {
+      xName = params.amountUnit === 'g' ? '质量 m (g)' : '摩尔数 n (mol)'
+      yName = '化学键 / 粒子数 (NA)'
+      maxX = 60
+      maxY = 6
 
-  // 复用 QuantityBars 组件的量分配对比点
-  const barItems = useMemo(() => {
-    return chemistry.particleStats.map((st, idx) => ({
-      key: `bar-${idx}`,
-      label: st.label,
-      value: st.actualMoles,
-      color: st.isTrap ? '#EF4444' : '#10B981',
-      unit: st.unit,
-    }))
-  }, [chemistry.particleStats])
+      for (let i = 0; i <= count; i++) {
+        const x = (i / count) * maxX
+        let yReal = 0
+        let yTrap = 0
+
+        if (params.structureItem === 'P4') {
+          const moles = params.amountUnit === 'g' ? x / 124 : x
+          yReal = moles * 6 // 真实 6 条棱键
+          yTrap = moles * 4 // 错当 4 个顶点 4 条键
+        } else if (params.structureItem === 'SiO2') {
+          const moles = params.amountUnit === 'g' ? x / 60 : x
+          yReal = moles * 4 // 真实 4 条 Si-O 键
+          yTrap = moles * 2 // 错看分子式 2 个 O
+        } else if (params.structureItem === 'graphite') {
+          const moles = params.amountUnit === 'g' ? x / 12 : x
+          yReal = moles * 1.5 // 均摊 1.5 键
+          yTrap = moles * 3 // 未均摊 3 键
+        } else if (params.structureItem === 'ice') {
+          const moles = params.amountUnit === 'g' ? x / 18 : x
+          yReal = moles * 2 // 均摊 2 mol 氢键
+          yTrap = moles * 4 // 错当 4 mol
+        } else if (params.structureItem === 'Na2O2') {
+          const moles = params.amountUnit === 'g' ? x / 78 : x
+          yReal = moles * 1 // 1 mol 阴离子
+          yTrap = moles * 2 // 拆成 2 个 O-
+        } else {
+          yReal = x * 0.1
+          yTrap = x * 0.2
+        }
+
+        act.push({ x, y: yReal })
+        fal.push({ x, y: yTrap })
+      }
+    } else if (cat === 'electrolyte-hydrolysis') {
+      xName = params.electrolyteItem === 'NaHSO4-molten' ? '用量 n (mol)' : '浓度 c (mol/L)'
+      yName = '离子 / 微粒数 (NA)'
+      maxX = params.electrolyteItem === 'NaHSO4-molten' ? 2 : 1
+      maxY = 3
+
+      for (let i = 0; i <= count; i++) {
+        const x = (i / count) * maxX
+        let yReal = 0
+        let yTrap = 0
+
+        if (params.electrolyteItem === 'NaHSO4-molten') {
+          yReal = x * 2 // 熔融态 2 mol
+          yTrap = x * 3 // 水溶液 3 mol
+        } else if (params.electrolyteItem === 'CH3COOH') {
+          yReal = x * params.solutionVolume * 0.013
+          yTrap = x * params.solutionVolume * 1.0
+        } else if (params.electrolyteItem === 'FeCl3') {
+          yReal = x * params.solutionVolume * 0.001
+          yTrap = x * params.solutionVolume * 1.0
+        } else {
+          yReal = x * params.solutionVolume * 1.1
+          yTrap = x * params.solutionVolume * 1.0
+        }
+
+        act.push({ x, y: yReal })
+        fal.push({ x, y: yTrap })
+      }
+    } else if (cat === 'redox-electron') {
+      xName = '反应物投料 n (mol)'
+      yName = '转移电子数 ne (NA)'
+      maxX = 2
+      maxY = 4
+
+      for (let i = 0; i <= count; i++) {
+        const x = (i / count) * maxX
+        let yReal = 0
+        let yTrap = 0
+
+        if (params.redoxItem === 'Cl2-NaOH') {
+          yReal = x * 1
+          yTrap = x * 2
+        } else if (params.redoxItem === 'Cu-S') {
+          yReal = x * 1
+          yTrap = x * 2
+        } else if (params.redoxItem === 'NO2-N2O4-reversible') {
+          yReal = x * 0.7
+          yTrap = x * 1.0
+        } else {
+          yReal = x * 1
+          yTrap = x * 2
+        }
+
+        act.push({ x, y: yReal })
+        fal.push({ x, y: yTrap })
+      }
+    } else {
+      // 5-step-matrix
+      xName = '排查思维步骤'
+      yName = '解题避坑置信度 (%)'
+      maxX = 5
+      maxY = 100
+
+      for (let i = 0; i <= 5; i++) {
+        act.push({ x: i, y: i * 20 })
+      }
+    }
+
+    return {
+      actualPoints: act,
+      fallacyPoints: fal,
+      xLabel: xName,
+      yLabel: yName,
+      maxRangeX: maxX,
+      maxRangeY: maxY,
+    }
+  }, [params, chemistry.isStateGas])
+
+  // 当前游标横坐标
+  const cursorX = useMemo(() => {
+    if (params.trapCategory === '5-step-matrix') {
+      return params.matrixStepIndex + 1
+    }
+    if (params.trapCategory === 'electrolyte-hydrolysis' && params.electrolyteItem !== 'NaHSO4-molten') {
+      return Math.min(maxRangeX, params.solutionConcentration)
+    }
+    return Math.min(maxRangeX, params.amountValue)
+  }, [params, maxRangeX])
+
+  // 4. 气体分子运动坐标预设
+  const gasMolecules = useMemo(() => [
+    { base: [50, 70], seed: 1.1, rot0: 15 },
+    { base: [145, 65], seed: 2.3, rot0: 45 },
+    { base: [95, 105], seed: 3.7, rot0: -30 },
+    { base: [165, 115], seed: 0.8, rot0: 75 },
+    { base: [55, 145], seed: 4.2, rot0: -60 },
+    { base: [130, 155], seed: 1.9, rot0: 10 },
+    { base: [85, 185], seed: 5.1, rot0: 120 },
+    { base: [160, 180], seed: 2.7, rot0: -85 },
+  ], [])
 
   // 视角 1: 规范踩分卡
   if (viewMode === 1) {
     return (
-      <div className="w-full h-full flex flex-col p-4 bg-slate-50 overflow-y-auto">
+      <div className="w-full h-full flex flex-col p-4 overflow-y-auto">
         {quizData?.scoringSteps && quizData.scoringSteps.length > 0 ? (
           <ScoringCardSection steps={quizData.scoringSteps} />
         ) : (
@@ -80,7 +224,7 @@ export const AvogadroCenterView: React.FC<AvogadroCenterViewProps> = ({
   // 视角 2: 高考真题研析
   if (viewMode === 2) {
     return (
-      <div className="w-full h-full flex flex-col p-4 bg-slate-50 overflow-y-auto">
+      <div className="w-full h-full flex flex-col p-4 overflow-y-auto">
         {quizData?.variantQuizzes && quizData.variantQuizzes.length > 0 ? (
           <GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />
         ) : (
@@ -90,454 +234,89 @@ export const AvogadroCenterView: React.FC<AvogadroCenterViewProps> = ({
     )
   }
 
-  // 视角 0: 纯净 splitH 双视野 (左 420px 22.4L 空间/晶体化学场景 + 右 420px 动态游标图表)
+  // 视角 0: 纯净 splitH 双视野 (左 50% SVG 微观/宏观动画场景 + 右 50% 科学对比图表与游标)
   return (
-    <div className="w-full h-full flex flex-col overflow-hidden bg-white select-none">
-      {/* 左右均分 Container */}
-      <div className="flex-1 min-h-0 w-full flex flex-row overflow-hidden border-b border-slate-200">
-        
-        {/* ── 左侧 420px 化学器材与 22.4L 空间/晶体 SVG 视口区 ── */}
-        <div className="w-[420px] h-full shrink-0 border-r border-slate-200/80 relative bg-slate-50/30">
-          <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
-            <defs>
-              <pattern id="avogadro-grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#E2E8F0" strokeWidth="0.5" />
-              </pattern>
-            </defs>
-            <rect x="0" y="0" width="420" height="650" fill="url(#avogadro-grid)" opacity={0.5} />
+    <div className="w-full h-full flex flex-row overflow-hidden select-none">
+      {/* ── 左侧：纯 SVG 化学装置与微观拓扑场景 (CANVAS_PRESETS.splitH 420×650) ── */}
+      <div className="flex-1 h-full min-w-0 relative">
+        <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
+          <AvogadroScene
+            params={params}
+            chemistry={chemistry}
+            animTime={animTime}
+            canvasSize={canvasSize}
+            sceneScale={sceneScale}
+            gasMolecules={gasMolecules}
+          />
+        </AnimationSvgCanvas>
+      </div>
 
-            {/* 0. 五步秒杀诊断流水线 (当在五步秒杀模式时优先呈现) */}
-            {params.trapCategory === '5-step-matrix' && (
-              <g transform="translate(30, 70)">
-                <text x="180" y="20" fill="#1e293b" fontSize={canvasSize.font(15)} textAnchor="middle" fontWeight="bold">
-                  五步秒杀盲盒排查流水线
-                </text>
-                <text x="180" y="42" fill="#64748b" fontSize={canvasSize.font(11)} textAnchor="middle">
-                  高考阿伏加德罗常数选择题选项 100% 秒杀闭环
-                </text>
-
-                {[
-                  { step: '① 审环境', target: '标准状况 (0℃) / 常温 (25℃) / 溶液体积 V', desc: '环境决定适用公式：非气体禁用 Vm=22.4；无体积无法求微粒数', pass: params.matrixStepIndex >= 0 },
-                  { step: '② 审状态', target: 'SO₃ (固), HF (液), CCl₄ (液), H₂O (冰/水)', desc: '识别标况非气体：严禁套用 22.4 L/mol 计算！', pass: params.matrixStepIndex >= 1 },
-                  { step: '③ 审结构', target: 'SiO₂ (4键), 石墨 (1.5键), P₄ (6键), 冰 (2氢键)', desc: '共价晶体/分子晶体均摊法与同位素中子数统计', pass: params.matrixStepIndex >= 2 },
-                  { step: '④ 审过程', target: 'CH₃COOH 电离 / FeCl₃ 水解胶粒 / 熔融 NaHSO₄', desc: '弱电解质部分电离、胶粒为多分子聚集体、熔融不拆共价键', pass: params.matrixStepIndex >= 3 },
-                  { step: '⑤ 审电子', target: 'Cl₂/Na₂O₂ 歧化 1e⁻ / Cu+S 变价 1e⁻ / 电子数', desc: '变价元素代数求和，歧化反应只看一侧化合价升降', pass: params.matrixStepIndex >= 4 },
-                ].map((item, idx) => {
-                  const isCurrent = params.matrixStepIndex === idx
-                  const yPos = 65 + idx * 64
-                  return (
-                    <g key={idx} transform={`translate(0, ${yPos})`}>
-                      <rect
-                        x="0"
-                        y="0"
-                        width="360"
-                        height="52"
-                        rx="10"
-                        fill={isCurrent ? '#f0fdf4' : '#ffffff'}
-                        stroke={isCurrent ? '#16a34a' : '#cbd5e1'}
-                        strokeWidth={isCurrent ? 2.5 : 1}
-                      />
-                      <rect
-                        x="0"
-                        y="0"
-                        width="6"
-                        height="52"
-                        rx="3"
-                        fill={isCurrent ? '#16a34a' : '#94a3b8'}
-                      />
-                      <text x="16" y="22" fill={isCurrent ? '#15803d' : '#334155'} fontSize={canvasSize.font(13)} fontWeight="bold">
-                        {item.step}
-                      </text>
-                      <text x="92" y="21" fill="#475569" fontSize={canvasSize.font(11)} fontWeight="medium">
-                        {item.target}
-                      </text>
-                      <text x="16" y="40" fill="#64748b" fontSize={canvasSize.font(10)}>
-                        {item.desc}
-                      </text>
-                      {isCurrent && (
-                        <circle cx="340" cy="26" r="10" fill="#16a34a" />
-                      )}
-                      {isCurrent && (
-                        <text x="340" y="30" fill="#ffffff" fontSize={canvasSize.font(10)} textAnchor="middle" fontWeight="bold">
-                          ✓
-                        </text>
-                      )}
-                    </g>
-                  )
-                })}
-              </g>
-            )}
-
-            {/* 1. 标况状态与 22.4 L 空间体积标尺 */}
-            {params.trapCategory === 'state-volume' && (
-              <g transform="translate(60, 80)">
-                <rect x="0" y="0" width="300" height="300" rx="16" fill="#f8fafc" stroke="#64748b" strokeWidth="2.5" strokeDasharray="6 4" />
-                <text x="150" y="30" fill="#334155" fontSize={canvasSize.font(14)} textAnchor="middle" fontWeight="bold">
-                  22.4 L 标准状况密闭空间 (0℃, 101 kPa)
-                </text>
-                <line x1="15" y1="50" x2="285" y2="50" stroke="#cbd5e1" strokeWidth="1" />
-
-                {chemistry.isStateGas ? (
-                  <g transform="translate(0, 40)">
-                    <circle cx="50" cy="50" r="14" fill="#38bdf8" opacity="0.8" stroke="#0284c7" strokeWidth="1.5" />
-                    <circle cx="150" cy="80" r="14" fill="#38bdf8" opacity="0.8" stroke="#0284c7" strokeWidth="1.5" />
-                    <circle cx="240" cy="40" r="14" fill="#38bdf8" opacity="0.8" stroke="#0284c7" strokeWidth="1.5" />
-                    <circle cx="90" cy="160" r="14" fill="#38bdf8" opacity="0.8" stroke="#0284c7" strokeWidth="1.5" />
-                    <circle cx="210" cy="190" r="14" fill="#38bdf8" opacity="0.8" stroke="#0284c7" strokeWidth="1.5" />
-                    <circle cx="160" cy="220" r="14" fill="#38bdf8" opacity="0.8" stroke="#0284c7" strokeWidth="1.5" />
-                    <text x="150" y="140" fill="#0284c7" fontSize={canvasSize.font(13)} textAnchor="middle" fontWeight="bold">
-                      气体分子热运动，均匀充满 22.4 L 空间
-                    </text>
-                    <text x="150" y="165" fill="#0369a1" fontSize={canvasSize.font(12)} textAnchor="middle">
-                      1 mol 任何气体在标况下体积均约为 22.4 L (1 <tspan fontStyle="italic">N</tspan><tspan fontSize="0.75em" dy="3">A</tspan><tspan dy="-3" fontSize="1em"></tspan>)
-                    </text>
-                  </g>
-                ) : (
-                  <g transform="translate(0, 40)">
-                    <rect x="10" y="220" width="280" height="30" rx="4" fill="#e11d48" opacity="0.8" />
-                    <text x="150" y="240" fill="#ffffff" fontSize={canvasSize.font(11)} textAnchor="middle" fontWeight="bold">
-                      1 mol 真实物质液/固态体积 (仅 18~90 mL ≪ 22.4 L)
-                    </text>
-                    <text x="150" y="100" fill="#e11d48" fontSize={canvasSize.font(14)} textAnchor="middle" fontWeight="bold">
-                      🛑 标况下为固态/液态！非气体！
-                    </text>
-                    <text x="150" y="130" fill="#be123c" fontSize={canvasSize.font(12)} textAnchor="middle">
-                      若硬填满 22.4 L 液态物质，其分子数高达数秒摩尔 (500+ <tspan fontStyle="italic">N</tspan><tspan fontSize="0.75em" dy="3">A</tspan><tspan dy="-3" fontSize="1em"></tspan>)
-                    </text>
-                    <text x="150" y="155" fill="#9f1239" fontSize={canvasSize.font(13)} textAnchor="middle" fontWeight="bold">
-                      严禁套用 Vm = 22.4 L/mol 计算！
-                    </text>
-                    <line x1="20" y1="20" x2="280" y2="210" stroke="#ef4444" strokeWidth="3" opacity="0.4" />
-                    <line x1="20" y1="210" x2="280" y2="20" stroke="#ef4444" strokeWidth="3" opacity="0.4" />
-                  </g>
-                )}
-              </g>
-            )}
-
-            {/* 2. 结构化学与化学键高保真拓扑 */}
-            {params.trapCategory === 'structure-bonds' && (
-              <g transform="translate(210, 240)">
-                {params.structureItem === 'SiO2' ? (
-                  /* SiO2 空间网状硅氧四面体拓扑 */
-                  <g>
-                    <line x1="0" y1="0" x2="0" y2="-65" stroke="#38bdf8" strokeWidth="3" />
-                    <line x1="0" y1="0" x2="-60" y2="40" stroke="#38bdf8" strokeWidth="3" />
-                    <line x1="0" y1="0" x2="60" y2="40" stroke="#38bdf8" strokeWidth="3" />
-                    <line x1="0" y1="0" x2="0" y2="60" stroke="#38bdf8" strokeWidth="3" strokeDasharray="3 3" />
-                    <line x1="0" y1="-65" x2="40" y2="-100" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
-                    <line x1="-60" y1="40" x2="-100" y2="60" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
-                    <line x1="60" y1="40" x2="100" y2="60" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
-                    <circle cx="0" cy="0" r="22" fill="#0284c7" stroke="#0369a1" strokeWidth="2" />
-                    <text x="0" y="6" fill="#ffffff" fontSize={canvasSize.font(13)} textAnchor="middle" fontWeight="bold">Si</text>
-                    <circle cx="0" cy="-65" r="14" fill="#f87171" stroke="#dc2626" strokeWidth="1.5" />
-                    <text x="0" y="-60" fill="#ffffff" fontSize={canvasSize.font(10)} textAnchor="middle" fontWeight="bold">O</text>
-                    <circle cx="-60" cy="40" r="14" fill="#f87171" stroke="#dc2626" strokeWidth="1.5" />
-                    <text x="-60" y="45" fill="#ffffff" fontSize={canvasSize.font(10)} textAnchor="middle" fontWeight="bold">O</text>
-                    <circle cx="60" cy="40" r="14" fill="#f87171" stroke="#dc2626" strokeWidth="1.5" />
-                    <text x="60" y="45" fill="#ffffff" fontSize={canvasSize.font(10)} textAnchor="middle" fontWeight="bold">O</text>
-                    <circle cx="0" cy="60" r="14" fill="#f87171" stroke="#dc2626" strokeWidth="1.5" />
-                    <text x="0" y="65" fill="#ffffff" fontSize={canvasSize.font(10)} textAnchor="middle" fontWeight="bold">O</text>
-                    <text x="0" y="115" fill="#0369a1" fontSize={canvasSize.font(13)} textAnchor="middle" fontWeight="bold">
-                      1 mol SiO₂ (60 g) 含 4 mol Si-O 键 (每个Si连4个O)
-                    </text>
-                  </g>
-                ) : params.structureItem === 'graphite' ? (
-                  /* 石墨六元环平面网状拓扑 */
-                  <g>
-                    <polygon points="0,-60 52,-30 52,30 0,60 -52,30 -52,-30" fill="#f1f5f9" stroke="#475569" strokeWidth="3" />
-                    <line x1="52" y1="-30" x2="90" y2="-50" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
-                    <line x1="52" y1="30" x2="90" y2="50" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
-                    <line x1="-52" y1="-30" x2="-90" y2="-50" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
-                    <line x1="-52" y1="30" x2="-90" y2="50" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
-                    {[[0, -60], [52, -30], [52, 30], [0, 60], [-52, 30], [-52, -30]].map(([x, y], idx) => (
-                      <g key={idx}>
-                        <circle cx={x} cy={y} r="14" fill="#334155" stroke="#0f172a" strokeWidth="1.5" />
-                        <text x={x} y={y + 4} fill="#ffffff" fontSize={canvasSize.font(10)} textAnchor="middle" fontWeight="bold">C</text>
-                      </g>
-                    ))}
-                    <text x="0" y="105" fill="#334155" fontSize={canvasSize.font(13)} textAnchor="middle" fontWeight="bold">
-                      石墨均摊法：1 mol C 形成 1.5 mol C-C 键 (3 × 1/2)
-                    </text>
-                  </g>
-                ) : params.structureItem === 'P4' ? (
-                  <g>
-                    <polygon points="0,-110 -100,60 100,60" fill="none" stroke="#a855f7" strokeWidth="3.5" />
-                    <line x1="0" y1="-110" x2="0" y2="0" stroke="#a855f7" strokeWidth="3.5" />
-                    <line x1="-100" y1="60" x2="0" y2="0" stroke="#a855f7" strokeWidth="3.5" strokeDasharray="4 4" />
-                    <line x1="100" y1="60" x2="0" y2="0" stroke="#a855f7" strokeWidth="3.5" strokeDasharray="4 4" />
-                    <circle cx="0" cy="-110" r="20" fill="#f3e8ff" stroke="#7e22ce" strokeWidth="2.5" />
-                    <circle cx="-100" cy="60" r="20" fill="#f3e8ff" stroke="#7e22ce" strokeWidth="2.5" />
-                    <circle cx="100" cy="60" r="20" fill="#f3e8ff" stroke="#7e22ce" strokeWidth="2.5" />
-                    <circle cx="0" cy="0" r="20" fill="#f3e8ff" stroke="#7e22ce" strokeWidth="2.5" />
-                    <text x="0" y="-103" fill="#6b21a8" fontSize={canvasSize.font(14)} textAnchor="middle" fontWeight="bold">P</text>
-                    <text x="-100" y="66" fill="#6b21a8" fontSize={canvasSize.font(14)} textAnchor="middle" fontWeight="bold">P</text>
-                    <text x="100" y="66" fill="#6b21a8" fontSize={canvasSize.font(14)} textAnchor="middle" fontWeight="bold">P</text>
-                    <text x="0" y="6" fill="#6b21a8" fontSize={canvasSize.font(14)} textAnchor="middle" fontWeight="bold">P</text>
-                    <text x="0" y="115" fill="#6b21a8" fontSize={canvasSize.font(14)} textAnchor="middle" fontWeight="bold">
-                      正四面体：4 个 P 顶点，6 条 P-P 棱键 (60°)
-                    </text>
-                  </g>
-                ) : params.structureItem === 'S8' ? (
-                  <g>
-                    <polygon points="-80,-40 -30,-80 30,-80 80,-40 60,30 20,60 -20,60 -60,30" fill="none" stroke="#eab308" strokeWidth="3.5" />
-                    {[-80, -30, 30, 80, 60, 20, -20, -60].map((x, i) => {
-                      const ys = [-40, -80, -80, -40, 30, 60, 60, 30]
-                      return (
-                        <circle key={i} cx={x} cy={ys[i]} r="14" fill="#fef9c3" stroke="#ca8a04" strokeWidth="2" />
-                      )
-                    })}
-                    <text x="0" y="105" fill="#854d0e" fontSize={canvasSize.font(13)} textAnchor="middle" fontWeight="bold">
-                      S₈ 皇冠状环：1 mol S₈ 含有 8 mol S-S 键
-                    </text>
-                  </g>
-                ) : params.structureItem === 'ice' ? (
-                  <g>
-                    <circle cx="0" cy="0" r="28" fill="#38bdf8" opacity="0.8" />
-                    <text x="0" y="5" fill="#ffffff" fontSize={canvasSize.font(13)} textAnchor="middle" fontWeight="bold">H₂O</text>
-                    <line x1="0" y1="0" x2="-60" y2="-60" stroke="#0284c7" strokeWidth="3" strokeDasharray="4 3" />
-                    <line x1="0" y1="0" x2="60" y2="-60" stroke="#0284c7" strokeWidth="3" strokeDasharray="4 3" />
-                    <line x1="0" y1="0" x2="-60" y2="60" stroke="#0284c7" strokeWidth="3" strokeDasharray="4 3" />
-                    <line x1="0" y1="0" x2="60" y2="60" stroke="#0284c7" strokeWidth="3" strokeDasharray="4 3" />
-                    <circle cx="-60" cy="-60" r="16" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1.5" />
-                    <circle cx="60" cy="-60" r="16" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1.5" />
-                    <circle cx="-60" cy="60" r="16" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1.5" />
-                    <circle cx="60" cy="60" r="16" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1.5" />
-                    <text x="0" y="105" fill="#0369a1" fontSize={canvasSize.font(13)} textAnchor="middle" fontWeight="bold">
-                      均摊法：1 mol 冰 (18 g) 含有 2 mol 氢键 (4 × 1/2)
-                    </text>
-                  </g>
-                ) : params.structureItem === 'T2O' ? (
-                  <g>
-                    <circle cx="0" cy="0" r="30" fill="#0284c7" />
-                    <text x="0" y="5" fill="#ffffff" fontSize={canvasSize.font(14)} textAnchor="middle" fontWeight="bold">¹⁶O</text>
-                    <circle cx="-50" cy="40" r="22" fill="#7c3aed" />
-                    <text x="-50" y="45" fill="#ffffff" fontSize={canvasSize.font(13)} textAnchor="middle" fontWeight="bold">³H (T)</text>
-                    <circle cx="50" cy="40" r="22" fill="#7c3aed" />
-                    <text x="50" y="45" fill="#ffffff" fontSize={canvasSize.font(13)} textAnchor="middle" fontWeight="bold">³H (T)</text>
-                    <line x1="-20" y1="15" x2="-35" y2="28" stroke="#334155" strokeWidth="3" />
-                    <line x1="20" y1="15" x2="35" y2="28" stroke="#334155" strokeWidth="3" />
-                    <text x="0" y="105" fill="#6d28d9" fontSize={canvasSize.font(13)} textAnchor="middle" fontWeight="bold">
-                      T₂O 分子：含有 12 mol 中子 (M = 22 g/mol)
-                    </text>
-                  </g>
-                ) : (
-                  <g>
-                    <circle cx="-55" cy="0" r="34" fill="#0284c7" />
-                    <circle cx="55" cy="0" r="34" fill="#e11d48" />
-                    <line x1="-20" y1="0" x2="20" y2="0" stroke="#0f172a" strokeWidth="4" />
-                    <text x="-55" y="6" fill="#ffffff" fontSize={canvasSize.font(14)} textAnchor="middle" fontWeight="bold">Na⁺</text>
-                    <text x="55" y="6" fill="#ffffff" fontSize={canvasSize.font(14)} textAnchor="middle" fontWeight="bold">O₂²⁻</text>
-                    <text x="0" y="85" fill="#334155" fontSize={canvasSize.font(13)} textAnchor="middle" fontWeight="bold">
-                      阴离子整体为 O₂²⁻ (阴阳离子比 1:2)
-                    </text>
-                  </g>
-                )}
-              </g>
-            )}
-
-            {/* 3. 弱电解质与水解/熔融/胶体对比 */}
-            {params.trapCategory === 'electrolyte-hydrolysis' && (
-              <g transform="translate(110, 150)">
-                {params.electrolyteItem === 'NaHSO4-molten' ? (
-                  <g transform="translate(100, 100)">
-                    <rect x="-90" y="-70" width="180" height="150" rx="12" fill="#fff7ed" stroke="#f97316" strokeWidth="2.5" />
-                    <text x="0" y="-45" fill="#c2410c" fontSize={canvasSize.font(14)} textAnchor="middle" fontWeight="bold">
-                      熔融态 NaHSO₄ 离解
-                    </text>
-                    <circle cx="-40" cy="20" r="22" fill="#3b82f6" />
-                    <text x="-40" y="26" fill="#ffffff" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">Na⁺</text>
-                    <circle cx="40" cy="20" r="26" fill="#ea580c" />
-                    <text x="40" y="26" fill="#ffffff" fontSize={canvasSize.font(11)} textAnchor="middle" fontWeight="bold">HSO₄⁻</text>
-                    <text x="0" y="60" fill="#9a3412" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">
-                      仅断裂离子键 ➔ 生成 2 mol 离子！
-                    </text>
-                  </g>
-                ) : params.electrolyteItem === 'FeCl3' ? (
-                  /* FeCl3 胶体粒子聚集态场景 */
-                  <g>
-                    <BeakerApparatus
-                      x={40}
-                      y={40}
-                      width={140}
-                      height={160}
-                      fillLevel={0.7}
-                      fillColor="#fef3c7"
-                      label="Fe(OH)₃ 胶体分散系"
-                      font={canvasSize.font}
-                    />
-                    {/* 纳米胶团聚集体 */}
-                    <circle cx="110" cy="130" r="32" fill="#b45309" opacity="0.85" stroke="#78350f" strokeWidth="2" strokeDasharray="3 3" />
-                    <text x="110" y="125" fill="#ffffff" fontSize={canvasSize.font(10)} textAnchor="middle" fontWeight="bold">
-                      胶粒聚集体
-                    </text>
-                    <text x="110" y="140" fill="#fef3c7" fontSize={canvasSize.font(8)} textAnchor="middle">
-                      (含数百个Fe(OH)₃)
-                    </text>
-                    <text x="110" y="220" fill="#b45309" fontSize={canvasSize.font(11)} textAnchor="middle" fontWeight="bold">
-                      🛑 胶体微粒数 ≪ 0.1 NA！
-                    </text>
-                  </g>
-                ) : params.electrolyteItem === 'Na2CO3' ? (
-                  /* Na2CO3 水解阴离子增加场景 */
-                  <g>
-                    <BeakerApparatus
-                      x={40}
-                      y={40}
-                      width={140}
-                      height={160}
-                      fillLevel={0.7}
-                      fillColor={SCENE_COLORS.reagent.solution}
-                      label="Na₂CO₃ 水解溶液"
-                      font={canvasSize.font}
-                    />
-                    <circle cx="70" cy="110" r="13" fill="#0284c7" />
-                    <text x="70" y="114" fill="#ffffff" fontSize={canvasSize.font(8)} textAnchor="middle" fontWeight="bold">HCO₃⁻</text>
-                    <circle cx="130" cy="120" r="11" fill="#ef4444" />
-                    <text x="130" y="123" fill="#ffffff" fontSize={canvasSize.font(8)} textAnchor="middle" fontWeight="bold">OH⁻</text>
-                    <circle cx="100" cy="150" r="15" fill="#0369a1" />
-                    <text x="100" y="154" fill="#ffffff" fontSize={canvasSize.font(8)} textAnchor="middle" fontWeight="bold">CO₃²⁻</text>
-                  </g>
-                ) : (
-                  /* CH3COOH 弱酸电离场景 */
-                  <g>
-                    <BeakerApparatus
-                      x={40}
-                      y={40}
-                      width={140}
-                      height={160}
-                      fillLevel={0.7}
-                      fillColor={SCENE_COLORS.reagent.solution}
-                      label="CH₃COOH 弱酸电离"
-                      font={canvasSize.font}
-                    />
-                    <circle cx="80" cy="110" r="14" fill="#0284c7" />
-                    <text x="80" y="114" fill="#ffffff" fontSize={canvasSize.font(9)} textAnchor="middle" fontWeight="bold">CH₃COO⁻</text>
-                    <circle cx="130" cy="130" r="10" fill="#ef4444" />
-                    <text x="130" y="133" fill="#ffffff" fontSize={canvasSize.font(8)} textAnchor="middle" fontWeight="bold">H⁺</text>
-                  </g>
-                )}
-              </g>
-            )}
-
-            {/* 4. 氧化还原与 NO2 二聚平衡 */}
-            {params.trapCategory === 'redox-electron' && (
-              <g transform="translate(210, 240)">
-                {params.redoxItem === 'NO2-N2O4-reversible' ? (
-                  /* 2NO2 <-> N2O4 二聚碰撞分子变少矢量图 */
-                  <g>
-                    <rect x="-100" y="-80" width="200" height="160" rx="16" fill="#fef2f2" stroke="#ef4444" strokeWidth="2.5" />
-                    <text x="0" y="-55" fill="#991b1b" fontSize={canvasSize.font(14)} textAnchor="middle" fontWeight="bold">
-                      2NO₂ ⇌ N₂O₄ 二聚平衡
-                    </text>
-                    
-                    {/* 红棕色 NO2 单体 */}
-                    <circle cx="-50" cy="0" r="18" fill="#b91c1c" />
-                    <text x="-50" y="5" fill="#ffffff" fontSize={canvasSize.font(11)} textAnchor="middle" fontWeight="bold">NO₂</text>
-                    <circle cx="-10" cy="20" r="18" fill="#b91c1c" />
-                    <text x="-10" y="25" fill="#ffffff" fontSize={canvasSize.font(11)} textAnchor="middle" fontWeight="bold">NO₂</text>
-                    
-                    {/* 动态可逆箭头 */}
-                    <text x="20" y="5" fill="#dc2626" fontSize={canvasSize.font(16)} textAnchor="middle" fontWeight="bold">⇌</text>
-                    
-                    {/* 无色 N2O4 二聚分子 */}
-                    <ellipse cx="60" cy="10" rx="28" ry="20" fill="#fee2e2" stroke="#dc2626" strokeWidth="2" />
-                    <text x="60" y="15" fill="#991b1b" fontSize={canvasSize.font(11)} textAnchor="middle" fontWeight="bold">N₂O₄</text>
-
-                    <text x="0" y="60" fill="#b91c1c" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">
-                      2 个 NO₂ 分子二聚为 1 个 N₂O₄ ➔ 分子总数 &lt; 1 NA
-                    </text>
-                  </g>
-                ) : (
-                  /* 歧化反应 / Cu+S 双线桥 */
-                  <g>
-                    <text x="0" y="-90" fill="#d97706" fontSize={canvasSize.font(14)} textAnchor="middle" fontWeight="bold">
-                      {params.redoxItem === 'Cu-S' ? 'Cu + S ≜ Cu₂S (弱氧化剂变价)' : 'Cl₂ + NaOH 歧化反应电子转移'}
-                    </text>
-                    <OxidationBridgeArrow
-                      startPos={[-80, 0]}
-                      endPos={[80, 0]}
-                      label={params.redoxItem === 'Cu-S' ? '失 1e⁻ (生成 +1 价 Cu)' : '失 1e⁻ (氧化为 NaClO)'}
-                      arcHeight={35}
-                      font={canvasSize.font}
-                    />
-                    <circle cx="-80" cy="0" r="24" fill="#fef3c7" stroke="#d97706" strokeWidth="2" />
-                    <text x="-80" y="5" fill="#b45309" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">0</text>
-                    <circle cx="80" cy="0" r="24" fill="#dcfce7" stroke="#16a34a" strokeWidth="2" />
-                    <text x="80" y="5" fill="#15803d" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">+1</text>
-                  </g>
-                )}
-              </g>
-            )}
-
-            {/* 复用 QuantityBars 直接在 SVG 场景下半部绘制对比柱 */}
-            <g transform="translate(40, 420)">
-              <QuantityBars
-                items={barItems}
-                initialTotal={2}
-                font={canvasSize.font}
-                compact={true}
-              />
-            </g>
-          </AnimationSvgCanvas>
-
-          {/* 浮动场景卡 */}
-          <div className="absolute top-3 left-3 right-3 bg-white/90 border border-slate-200 p-2.5 rounded-lg text-xs backdrop-blur shadow-xs flex items-center justify-between">
-            <span className="font-bold text-slate-800">
-              物理状态：{chemistry.physicalState}
-            </span>
-            <span className={`px-2 py-0.5 rounded font-bold ${
-              chemistry.trapLevel === 'high' ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'
-            }`}>
-              {chemistry.trapBadge}
-            </span>
+      {/* ── 右侧：真实值 vs 错解误判值科学对比图表与实时游标 ── */}
+      <div className="flex-1 h-full min-w-0 flex flex-col overflow-hidden border-l border-slate-200/80 p-4">
+        {/* 图表标题与图例说明 */}
+        <div className="flex items-center justify-between mb-2 shrink-0">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-slate-800">微粒数量 / 电子数对比演变</span>
+            <div className="flex items-center gap-2 text-[10px] ml-2">
+              <span className="flex items-center gap-1 text-sky-600 font-bold">
+                <span className="inline-block w-2.5 h-0.5 bg-sky-600 rounded-sm"></span> 真实值
+              </span>
+              {fallacyPoints.length > 0 && (
+                <span className="flex items-center gap-1 text-rose-500 font-bold">
+                  <span className="inline-block w-2.5 h-0.5 bg-rose-500 border-b border-dashed border-rose-500"></span> 错解陷阱
+                </span>
+              )}
+            </div>
           </div>
+          <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-700 font-bold">
+            {params.temperatureCondition === 'standard' ? '标况 0℃' : '常温 25℃'}
+          </span>
         </div>
 
-        {/* ── 右侧 420px SVG 动态图表与游标实时追踪区 ── */}
-        <div className="flex-1 h-full min-w-0 flex flex-col p-3 bg-white relative">
-          <div className="flex items-center justify-between mb-2 shrink-0">
-            <span className="text-xs font-bold text-slate-800">
-              微粒数 / 电子转移量演变曲线 (ChartCursor 游标实时联动)
-            </span>
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-700 font-bold">
-              {chemistry.isStateGas ? `V_m = ${chemistry.vmValue} L/mol` : 'V_m: 不适用 (非气体)'}
-            </span>
-          </div>
+        {/* BaseChart 核心图表 */}
+        <div className="flex-1 min-h-0 relative">
+          <BaseChart
+            title=""
+            xDomain={[0, maxRangeX * 1.05]}
+            yDomain={[0, maxRangeY * 1.05]}
+            xLabel={xLabel}
+            yLabel={yLabel}
+          >
+            {/* 真实科学演变实线 */}
+            <ChartLine
+              points={actualPoints}
+              color={CHART_COLORS.primary}
+              strokeWidth={2.5}
+            />
 
-          <div className="flex-1 min-h-0 relative">
-            <BaseChart
-              title=""
-              xDomain={[0, 100]}
-              yDomain={[0, 100]}
-              xLabel="给定条件用量 (L / mol / g)"
-              yLabel="统计微粒数 / 转移电子数 (N_A)"
-            >
+            {/* 错解误判虚线对比 */}
+            {fallacyPoints.length > 0 && (
               <ChartLine
-                points={curvePoints}
-                color={CHART_COLORS.primary}
-                strokeWidth={2.5}
+                points={fallacyPoints}
+                color="#EF4444"
+                strokeWidth={1.8}
+                dash={[4, 3]}
               />
+            )}
 
-              {/* 游标线与左屏控制台参数绝对 100% 实时同步 (去除了强拼等号漏洞) */}
-              <ChartCursor
-                x={
-                  params.trapCategory === 'electrolyte-hydrolysis' && params.electrolyteItem !== 'NaHSO4-molten'
-                    ? (params.solutionVolume / 5) * 100
-                    : params.amountValue
-                }
-                dataPoints={[
-                  {
-                    y: Math.min(90, (chemistry.particleStats[0]?.actualMoles || 1) * 10),
-                    label: `实测值: ${(chemistry.particleStats[0]?.actualMoles || 1).toFixed(2)} NA`,
-                    series: 'primary',
-                  },
-                ]}
-                font={canvasSize.font}
-              />
-            </BaseChart>
-          </div>
+            {/* 游标联动线：精确吸附于实线并展示真实值 */}
+            <ChartCursor
+              x={cursorX}
+              dataPoints={[
+                {
+                  y: actualPoints.length > 0
+                    ? actualPoints[Math.min(actualPoints.length - 1, Math.round((cursorX / maxRangeX) * (actualPoints.length - 1)))].y
+                    : 1,
+                  label: chemistry.particleStats[0]?.actualMoles >= 100
+                    ? `实际: ${chemistry.particleStats[0].actualMoles.toFixed(0)}+ NA`
+                    : `实际: ${(chemistry.particleStats[0]?.actualMoles || 1).toFixed(2)} NA`,
+                  series: 'primary',
+                },
+              ]}
+              font={canvasSize.font}
+            />
+          </BaseChart>
         </div>
-
       </div>
     </div>
   )
