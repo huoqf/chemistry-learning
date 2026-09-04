@@ -22,9 +22,6 @@ const ALLOWLIST = new Set([
   // organic-functional-matrix/constants.ts: 16大新高考官能团定性与定量转化全景静态数据字典，
   // 纯声明式静态数据，领域高度内聚闭环，拥有43项自动化测试全面守护，机械拆分收益不明显
   'src/features/organic-functional-matrix/constants.ts',
-  // IonMatrixChemistry: 覆盖高中化学 32 种核心阴阳离子全集与各类试剂选项的真实微观相变计算纯函数，
-  // 纯函数计算无 JSX 与状态混杂，领域高度内聚闭环，拥有自动化测试守护，机械拆分收益不明显
-  'src/features/inorganic-ion-matrix/components/IonMatrixChemistry.ts',
 ])
 
 function walk(dir) {
