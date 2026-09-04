@@ -59,6 +59,11 @@ export interface CellDetails {
   energyConversion: string
   electrolyteInfo: string
   membraneFunction: string
+  secondaryTitle?: string
+  secondaryLeftElectrode?: ElectrodeReaction
+  secondaryRightElectrode?: ElectrodeReaction
+  secondaryOverallReaction?: string
+  secondaryEnergyConversion?: string
 }
 
 export interface QuantResult {
@@ -67,6 +72,8 @@ export interface QuantResult {
   molesProductRight: number // 右极产物摩尔数 mol
   massChangeLeft: number // 左极质量变化 g
   massChangeRight: number // 右极质量变化 g
+  gasVolumeLeft?: number // 左极(如阳极Cl₂/O₂)气体标准状况体积 L
   gasVolumeRight: number // 右极气体标准状况体积 L
+  molesMembraneIon?: number // 穿膜微粒物质的量 mol
   deltaPH: number // pH 变化推算
 }

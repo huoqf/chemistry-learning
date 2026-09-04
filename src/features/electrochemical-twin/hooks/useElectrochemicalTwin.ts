@@ -26,42 +26,46 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
     let molesProductRight = 0
     let massChangeLeft = 0
     let massChangeRight = 0
+    let gasVolumeLeft = 0
     let gasVolumeRight = 0
+    let molesMembraneIon = 0
 
     if (mode === 0) {
-      // 模式 0：Cu-Zn 原电池
-      // 负极(左): Zn - 2e⁻ -> Zn²⁺ (M_Zn = 65.38 g/mol)
-      // 正极(右): Cu²⁺ + 2e⁻ -> Cu (M_Cu = 63.55 g/mol)
+      // 模式 0：Cu-Zn 原电池 (负极 Zn 溶解，正极 Cu 析出)
       molesProductLeft = molesElectron / 2
       molesProductRight = molesElectron / 2
       massChangeLeft = -(molesProductLeft * 65.38)
       massChangeRight = molesProductRight * 63.55
+      gasVolumeLeft = 0
       gasVolumeRight = 0
+      molesMembraneIon = molesElectron // 盐桥平衡电荷对应离子
     } else if (mode === 1) {
-      // 模式 1：全钒液流电池（无电极质量变化与气体生成）
+      // 模式 1：全钒液流电池 (均在溶液中转化，无电极固相增减与产气)
       molesProductLeft = molesElectron
       molesProductRight = molesElectron
       massChangeLeft = 0
       massChangeRight = 0
+      gasVolumeLeft = 0
       gasVolumeRight = 0
+      molesMembraneIon = molesElectron // 穿膜 H⁺ 摩尔数与转移电子数严格 1:1
     } else if (mode === 2) {
-      // 模式 2：饱和食盐水电解（氯碱工业）
-      // 阳极(左): 2Cl⁻ - 2e⁻ -> Cl₂↑ (V_m = 22.4 L/mol)
-      // 阴极(右): 2H₂O + 2e⁻ -> H₂↑ + 2OH⁻
-      molesProductLeft = molesElectron / 2
-      molesProductRight = molesElectron / 2
+      // 模式 2：饱和食盐水电解（氯碱工业：阳极 Cl₂，阴极 H₂，生成 NaOH）
+      molesProductLeft = molesElectron / 2 // Cl₂
+      molesProductRight = molesElectron / 2 // H₂
       massChangeLeft = 0
       massChangeRight = 0
-      gasVolumeRight = (molesElectron / 2) * 22.4 // 析出气体体积 (标况)
+      gasVolumeLeft = (molesElectron / 2) * 22.4 // 阳极 Cl₂ 标况体积
+      gasVolumeRight = (molesElectron / 2) * 22.4 // 阴极 H₂ 标况体积
+      molesMembraneIon = molesElectron // 穿膜 Na⁺ 或 Cl⁻ 或 BPM 裂解产物
     } else {
-      // 模式 3：电解硫酸铜溶液
-      // 阳极(左): 2H₂O - 4e⁻ -> O₂↑ + 4H⁺ 或 4OH⁻ - 4e⁻ -> 2H₂O + O₂↑
-      // 阴极(右): Cu²⁺ + 2e⁻ -> Cu (沉积)
-      molesProductLeft = molesElectron / 4
-      molesProductRight = molesElectron / 2
+      // 模式 3：电解硫酸铜溶液 (阳极析出 O₂，阴极沉积金属 Cu)
+      molesProductLeft = molesElectron / 4 // O₂
+      molesProductRight = molesElectron / 2 // Cu
       massChangeLeft = 0
-      massChangeRight = molesProductRight * 63.55
-      gasVolumeRight = (molesElectron / 4) * 22.4 // 阳极析出 O₂ 体积 (标况)
+      massChangeRight = molesProductRight * 63.55 // 阴极析出 Cu 质量
+      gasVolumeLeft = (molesElectron / 4) * 22.4 // 阳极析出 O₂ 标况体积
+      gasVolumeRight = 0
+      molesMembraneIon = molesElectron
     }
 
     // 溶液 pH 动态偏移估算 (按 1L 溶液)
@@ -73,7 +77,9 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
       molesProductRight: +molesProductRight.toFixed(5),
       massChangeLeft: +massChangeLeft.toFixed(3),
       massChangeRight: +massChangeRight.toFixed(3),
+      gasVolumeLeft: +gasVolumeLeft.toFixed(3),
       gasVolumeRight: +gasVolumeRight.toFixed(3),
+      molesMembraneIon: +molesMembraneIon.toFixed(5),
       deltaPH,
     }
   }, [currentAmp, timeSec, mode])
@@ -86,17 +92,17 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
       // 模式 0：经典原电池 vs 电解池对比
       return {
         title: '经典双池基准：原电池 (Cu-Zn) vs 电解池 (C-Cu)',
-        subtitle: '左屏自发化学能转化为电能，右屏外接电源电能转化为化学能',
+        subtitle: '左池自发化学能转化为电能，右池外接电源电能转化为化学能',
         cellType: 'galvanic',
         leftElectrode: {
-          name: '负极 (Zn) - 氧化反应',
+          name: '原电池负极 (Zn) - 氧化反应',
           poleType: 'negative',
           reactionFormula: '\\text{Zn} - 2e^- \\rightarrow \\text{Zn}^{2+}',
           electronChange: '失去 2e⁻',
           phenomenon: '锌片逐渐溶解变薄，溶液中 Zn²⁺ 浓度升高',
         },
         rightElectrode: {
-          name: '正极 (Cu) - 还原反应',
+          name: '原电池正极 (Cu) - 还原反应',
           poleType: 'positive',
           reactionFormula: '\\text{Cu}^{2+} + 2e^- \\rightarrow \\text{Cu}',
           electronChange: '得到 2e⁻',
@@ -106,60 +112,85 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
         energyConversion: '化学能 \\rightarrow 电能 (\\Delta G < 0)',
         electrolyteInfo: '左烧杯 ZnSO₄ 溶液（负极），右烧杯 CuSO₄ 溶液（正极），两烧杯由盐桥连通',
         membraneFunction: '盐桥中的 K⁺ 移向正极(Cu)，Cl⁻ 移向负极(Zn)，维持电荷平衡',
+        secondaryTitle: '外接电解池 (石墨C阳极 - 铜Cu阴极 电解CuSO₄)',
+        secondaryLeftElectrode: {
+          name: '电解池阳极 (C) - 氧化反应',
+          poleType: 'anode',
+          reactionFormula: '2\\text{H}_2\\text{O} - 4e^- \\rightarrow \\text{O}_2\\uparrow + 4\\text{H}^+',
+          electronChange: '失去 4e⁻',
+          phenomenon: '阳极碳棒表面产生无色气泡 (O₂ 气体)',
+        },
+        secondaryRightElectrode: {
+          name: '电解池阴极 (Cu) - 还原反应',
+          poleType: 'cathode',
+          reactionFormula: '\\text{Cu}^{2+} + 2e^- \\rightarrow \\text{Cu}',
+          electronChange: '得到 2e⁻',
+          phenomenon: '阴极铜棒表面析出红亮金属铜，厚度增加',
+        },
+        secondaryOverallReaction: '2\\text{CuSO}_4 + 2\\text{H}_2\\text{O} \\xrightarrow{\\text{电解}} 2\\text{Cu} + 2\\text{H}_2\\text{SO}_4 + \\text{O}_2\\uparrow',
+        secondaryEnergyConversion: '电能 \\rightarrow 化学能 (强迫非自发反应)',
       }
     }
 
     if (mode === 1) {
-      // 模式 1：新型全钒液流电池 / 蓄电池
+      // 模式 1：新型全钒液流电池 / 蓄电池（支持同屏充放电双态对比）
       const isDischarge = batteryState === 0
-      if (isDischarge) {
-        return {
-          title: '全钒液流电池 - 放电模式 (原电池)',
-          subtitle: '自发进行：$V^{2+}$ 氧化为 $V^{3+}$，放电输出电能',
-          cellType: 'galvanic',
-          leftElectrode: {
-            name: '负极 - 氧化反应',
-            poleType: 'negative',
-            reactionFormula: '\\text{V}^{2+} - e^- \\rightarrow \\text{V}^{3+}',
-            electronChange: '失去 1e⁻',
-            phenomenon: '溶液由紫色变为绿色 ($V^{2+} \\rightarrow V^{3+}$)',
-          },
-          rightElectrode: {
-            name: '正极 - 还原反应',
-            poleType: 'positive',
-            reactionFormula: '\\text{VO}_2^+ + 2\\text{H}^+ + e^- \\rightarrow \\text{VO}^{2+} + \\text{H}_2\\text{O}',
-            electronChange: '得到 1e⁻',
-            phenomenon: '溶液由黄色变为蓝色 (\\text{VO}_2^+ \\rightarrow \\text{VO}^{2+})',
-          },
-          overallReaction: '\\text{V}^{2+} + \\text{VO}_2^+ + 2\\text{H}^+ = \\text{V}^{3+} + \\text{VO}^{2+} + \\text{H}_2\\text{O}',
-          energyConversion: '化学能 \\rightarrow 电能',
-          electrolyteInfo: '酸性钒盐溶液 ($H_2SO_4$ 介质)',
-          membraneFunction: '阳离子/质子交换膜：$H^+$ 从负极区向正极区迁移（阳离子向正极方向移动）',
-        }
-      } else {
-        return {
-          title: '全钒液流电池 - 充电模式 (电解池)',
-          subtitle: '外电源驱动：强迫进行逆反应，恢复高价与低价钒活性物质',
-          cellType: 'electrolytic',
-          leftElectrode: {
-            name: '阴极 (接电源负极) - 还原反应',
-            poleType: 'cathode',
-            reactionFormula: '\\text{V}^{3+} + e^- \\rightarrow \\text{V}^{2+}',
-            electronChange: '得到 1e⁻',
-            phenomenon: '溶液由绿色恢复为紫色 ($V^{3+} \\rightarrow V^{2+}$)',
-          },
-          rightElectrode: {
-            name: '阳极 (接电源正极) - 氧化反应',
-            poleType: 'anode',
-            reactionFormula: '\\text{VO}^{2+} + \\text{H}_2\\text{O} - e^- \\rightarrow \\text{VO}_2^+ + 2\\text{H}^+',
-            electronChange: '失去 1e⁻',
-            phenomenon: '溶液由蓝色恢复为黄色 (\\text{VO}^{2+} \\rightarrow \\text{VO}_2^+)',
-          },
-          overallReaction: '\\text{V}^{3+} + \\text{VO}^{2+} + \\text{H}_2\\text{O} = \\text{V}^{2+} + \\text{VO}_2^+ + 2\\text{H}^+',
-          energyConversion: '电能 \\rightarrow 化学能',
-          electrolyteInfo: '酸性钒盐溶液 ($H_2SO_4$ 介质)',
-          membraneFunction: '阳离子/质子交换膜：$H^+$ 从阳极区向阴极区迁移（阳离子向阴极方向移动）',
-        }
+      const dischargeLeft = {
+        name: '放电负极 (氧化反应)',
+        poleType: 'negative' as const,
+        reactionFormula: '\\text{V}^{2+} - e^- \\rightarrow \\text{V}^{3+}',
+        electronChange: '失去 1e⁻',
+        phenomenon: '溶液由紫色变为绿色 (V²⁺ \\rightarrow V³⁺)',
+      }
+      const dischargeRight = {
+        name: '放电正极 (还原反应)',
+        poleType: 'positive' as const,
+        reactionFormula: '\\text{VO}_2^+ + 2\\text{H}^+ + e^- \\rightarrow \\text{VO}^{2+} + \\text{H}_2\\text{O}',
+        electronChange: '得到 1e⁻',
+        phenomenon: '溶液由黄色变为蓝色 (VO₂⁺ \\rightarrow VO²⁺)',
+      }
+      const chargeLeft = {
+        name: '充电阴极 (接电源负极·还原反应)',
+        poleType: 'cathode' as const,
+        reactionFormula: '\\text{V}^{3+} + e^- \\rightarrow \\text{V}^{2+}',
+        electronChange: '得到 1e⁻',
+        phenomenon: '溶液由绿色恢复为紫色 (V³⁺ \\rightarrow V²⁺)',
+      }
+      const chargeRight = {
+        name: '充电阳极 (接电源正极·氧化反应)',
+        poleType: 'anode' as const,
+        reactionFormula: '\\text{VO}^{2+} + \\text{H}_2\\text{O} - e^- \\rightarrow \\text{VO}_2^+ + 2\\text{H}^+',
+        electronChange: '失去 1e⁻',
+        phenomenon: '溶液由蓝色恢复为黄色 (VO²⁺ \\rightarrow VO₂⁺)',
+      }
+
+      return {
+        title: isDischarge
+          ? '全钒液流电池 - 放电模式 (原电池·化学能→电能)'
+          : '全钒液流电池 - 充电模式 (电解池·电能→化学能)',
+        subtitle: isDischarge
+          ? '放电自发进行：V²⁺ 氧化为 V³⁺，VO₂⁺ 还原为 VO²⁺'
+          : '充电强迫逆转：V³⁺ 还原为 V²⁺，VO²⁺ 氧化为 VO₂⁺',
+        cellType: isDischarge ? 'galvanic' : 'electrolytic',
+        leftElectrode: isDischarge ? dischargeLeft : chargeLeft,
+        rightElectrode: isDischarge ? dischargeRight : chargeRight,
+        overallReaction: isDischarge
+          ? '\\text{V}^{2+} + \\text{VO}_2^+ + 2\\text{H}^+ = \\text{V}^{3+} + \\text{VO}^{2+} + \\text{H}_2\\text{O}'
+          : '\\text{V}^{3+} + \\text{VO}^{2+} + \\text{H}_2\\text{O} \\xrightarrow{\\text{充电}} \\text{V}^{2+} + \\text{VO}_2^+ + 2\\text{H}^+',
+        energyConversion: isDischarge ? '化学能 \\rightarrow 电能' : '电能 \\rightarrow 化学能',
+        electrolyteInfo: '酸性钒盐溶液 (0.5 mol/L H₂SO₄ 介质)',
+        membraneFunction: isDischarge
+          ? '质子交换膜：H⁺ 向正极区移动（放电“阳往正”）'
+          : '质子交换膜：H⁺ 向阴极区移动（充电“阳往阴”）',
+        secondaryTitle: isDischarge
+          ? '全钒液流电池 - 充电态 (电解池·接直流电源)'
+          : '全钒液流电池 - 放电态 (原电池·接电流表/负载)',
+        secondaryLeftElectrode: isDischarge ? chargeLeft : dischargeLeft,
+        secondaryRightElectrode: isDischarge ? chargeRight : dischargeRight,
+        secondaryOverallReaction: isDischarge
+          ? '\\text{V}^{3+} + \\text{VO}^{2+} + \\text{H}_2\\text{O} \\xrightarrow{\\text{充电}} \\text{V}^{2+} + \\text{VO}_2^+ + 2\\text{H}^+'
+          : '\\text{V}^{2+} + \\text{VO}_2^+ + 2\\text{H}^+ = \\text{V}^{3+} + \\text{VO}^{2+} + \\text{H}_2\\text{O}',
+        secondaryEnergyConversion: isDischarge ? '电能 \\rightarrow 化学能' : '化学能 \\rightarrow 电能',
       }
     }
 
@@ -205,7 +236,7 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
         poleType: 'anode',
         reactionFormula: '4\\text{OH}^- - 4e^- \\rightarrow 2\\text{H}_2\\text{O} + \\text{O}_2\\uparrow',
         electronChange: `转移 ${quantResult.molesElectron} mol 电子`,
-        phenomenon: `析出 O₂ 体积 (标况)：${quantResult.gasVolumeRight} L`,
+        phenomenon: `析出 O₂ 体积 (标况)：${quantResult.gasVolumeLeft} L`,
       },
       rightElectrode: {
         name: '阴极 (接电源负极) - 还原反应',
