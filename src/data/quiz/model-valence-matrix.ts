@@ -26,7 +26,16 @@ export const modelValenceMatrix: ModelQuizData = {
       title: '【Ca 漂白粉失效】漂白粉变质失效过程方程式书写踩分点',
       type: 'keywords',
       questionText: '漂白粉露置在空气中失效涉及两步反应，写出第二步光照分解的化学方程式踩分点。',
-      correctAnswer: ['2HClO =光照= 2HCl + O2', '2HClO=光照=2HCl+O2'],
+      correctAnswer: [
+        '2HClO =光照= 2HCl + O2↑',
+        '2HClO =光照= 2HCl + O2',
+        '2HClO=光照=2HCl+O2↑',
+        '2HClO=光照=2HCl+O2',
+        '2hclo =光照= 2hcl + o₂↑',
+        '2hclo=光照=2hcl+o₂↑',
+        '2HClO',
+        'O2',
+      ],
       explanation: '踩分点：第一步吸收空气中 CO₂ 和水生成碳酸钙和次氯酸；第二步为不稳定酸的光照分解：2HClO =光照= 2HCl + O₂↑。',
     },
     {
@@ -184,7 +193,7 @@ export const modelValenceMatrix: ModelQuizData = {
       questionText: '下列关于氮元素价类二维转化反应的说法正确的是？',
       options: [
         { label: 'A', text: 'NH₃ 催化氧化生成 NO 的反应中，N 元素被还原', isCorrect: false },
-        { label: 'B', text: 'NO 转化为 NO₂ 属于自发氧化反应，体系气体颜色由无色变为红棕色', isCorrect: true },
+        { label: 'B', text: '常温下 NO 极易与 O₂ 反应生成 NO₂，体系气体颜色由无色变为红棕色', isCorrect: true },
         { label: 'C', text: 'NO₂ 通入水中发生歧化反应，HNO₃ 恰好为唯一产物', isCorrect: false },
         { label: 'D', text: '浓硝酸与铜反应生成 NO 气体', isCorrect: false },
       ],
@@ -204,7 +213,7 @@ export const modelValenceMatrix: ModelQuizData = {
       questionText: '下列关于铁及其化合物显色与价态转化的说法正确的是？',
       options: [
         { label: 'A', text: '向含有 Fe²⁺ 的溶液中加入 KSCN 溶液，立即变为血红色', isCorrect: false },
-        { label: 'B', text: 'Fe³⁺ 具有强还原性，能将 I⁻ 氧化为 I₂', isCorrect: false },
+        { label: 'B', text: 'Fe³⁺ 氧化性弱于 I₂，在水溶液中无法将 I⁻ 氧化为 I₂', isCorrect: false },
         { label: 'C', text: '向待测液中先加 KSCN 溶液无明显现象，再加新制氯水变血红色，证明原溶液含 Fe²⁺', isCorrect: true },
         { label: 'D', text: '常温下铁与浓硫酸剧烈反应生成大量 H₂ 气体', isCorrect: false },
       ],
