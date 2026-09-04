@@ -3,6 +3,7 @@ import { ChevronDown, Award, AlertTriangle, AlertCircle, Info, BookOpen, FlaskCo
 import { KatexFormula } from './KatexFormula'
 import { colors } from '@/theme'
 import { useTimedPulse } from '@/hooks/useTimedPulse'
+import { formatChemicalEquation } from '@/utils/chemicalEquationFormatter'
 
 // ─── 类型定义 ──────────────────────────────────────────────
 
@@ -212,7 +213,7 @@ export function FormulaSection({ formulas }: { formulas: Formula[] }) {
   if (formulas.length === 0) return null
 
   return (
-    <div>
+    <div className="w-full max-w-full min-w-0">
       <button
         className="flex items-center gap-2 w-full text-sm font-semibold py-1.5"
         style={{ color: colors.neutral[800] }}
@@ -226,14 +227,15 @@ export function FormulaSection({ formulas }: { formulas: Formula[] }) {
         />
       </button>
       {expanded && (
-        <div className="space-y-2 pl-1">
+        <div className="space-y-2 pl-1 w-full max-w-full min-w-0">
           {formulas.map((f, i) => {
             const level = f.level ?? 'important'
             const style = FORMULA_LEVEL_STYLES[level] ?? FORMULA_LEVEL_STYLES.important
+            const formattedLatex = formatChemicalEquation(f.latex, 24)
             return (
               <div
                 key={i}
-                className="rounded-md px-2 py-2"
+                className="rounded-md px-2.5 py-2 w-full max-w-full min-w-0"
                 style={{ backgroundColor: style.bg, borderLeft: `3px solid ${style.border}` }}
               >
                 <div className="flex items-center gap-2 mb-1">
@@ -245,7 +247,7 @@ export function FormulaSection({ formulas }: { formulas: Formula[] }) {
                   </span>
                   <span className="text-sm font-medium" style={{ color: colors.neutral[700] }}>{f.name}</span>
                 </div>
-                <KatexFormula formula={f.latex} mode="block" className="!my-1 !bg-transparent !px-0 !py-0" />
+                <KatexFormula formula={formattedLatex} mode="block" className="!my-1 !bg-transparent !px-0 !py-0" />
                 {f.condition && (
                   <div className="text-xs mt-1" style={{ color: colors.neutral[500] }}>
                     条件：{f.condition.includes('\\') ? (

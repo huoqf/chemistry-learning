@@ -90,7 +90,7 @@ export function FlashCardSvgScene({
                 生成 SO₂ 气泡↑
               </text>
               <text x="260" y="210" fill="#475569" fontSize={font(12)}>
-                2Fe + 6H₂SO₄(浓) ⇌ Fe₂(SO₄)₃ + 3SO₂↑ + 6H₂O
+                2Fe + 6H₂SO₄(浓) = Fe₂(SO₄)₃ + 3SO₂↑ + 6H₂O (加热)
               </text>
               <path d="M 130 420 Q 150 360 150 380 Q 170 360 170 420 Z" fill="#EA580C" className="animate-pulse" />
             </>
@@ -98,7 +98,7 @@ export function FlashCardSvgScene({
             <>
               <rect x="128" y="120" width="44" height="180" rx="4" fill="none" stroke="#2563EB" strokeWidth="3" strokeDasharray="4 2" />
               <text x="260" y="180" fill="#2563EB" fontSize={font(14)} fontWeight="bold">
-                致密 Fe₃O₄ 钝化膜
+                致密氧化物薄膜 (钝化保护层)
               </text>
               <text x="260" y="210" fill="#475569" fontSize={font(12)}>
                 阻止内部 Fe 继续反应 (无气泡产生)

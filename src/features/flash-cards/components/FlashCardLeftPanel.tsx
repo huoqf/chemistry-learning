@@ -103,7 +103,7 @@ export function FlashCardLeftPanel({
                 className="w-full"
               >
                 <Flame className="w-4 h-4 mr-1" />
-                {isHeating ? '停止加热 (恢复常温)' : '开启酒精灯加热 试验现象'}
+                {isHeating ? '停止加热 (恢复常温)' : '开启酒精灯加热 (观察现象)'}
               </Button>
             </LeftPanelSection>
           )}

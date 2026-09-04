@@ -18,6 +18,7 @@ export interface FlashCard {
   correctOption: 'A' | 'B'
   explanation: string
   chemicalEquations: string[]
+  templateSteps?: Array<{ step: number; title: string; desc: string }>
   warningTip: string
   examPoint: string
   relatedKnowledgeIds: string[]

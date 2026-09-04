@@ -185,3 +185,21 @@
 ::-webkit-scrollbar-thumb:hover {
   background-color: rgba(100, 116, 139, 0.75);
 }
+
+/* ─── KaTeX 数学与化学公式规范排版（支持 aligned 多行对齐，保护分子式原子性） ─── */
+.katex-wrap {
+  text-align: left !important;
+}
+
+.katex-wrap .katex-display {
+  margin: 0.25rem 0 !important;
+  text-align: left !important;
+}
+
+.katex-wrap .katex-display > .katex {
+  text-align: left !important;
+}
+
+.katex-wrap .mtable {
+  text-align: left !important;
+}
