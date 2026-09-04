@@ -46,7 +46,7 @@ export const HessLawCanvas: React.FC = () => {
   }
 
   return (
-    <div className="w-full h-screen flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden select-none">
+    <div className="w-full h-full flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden select-none">
       {/* 统一 Header */}
       <GaokaoToolHeader modelId={modelId} viewMode={viewMode} onViewModeChange={setViewMode} />
 

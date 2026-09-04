@@ -31,7 +31,7 @@ export const GaokaoToolPlaceholderCanvas: React.FC<GaokaoToolPlaceholderCanvasPr
 
   if (!model) {
     return (
-      <div className="w-full h-screen flex flex-col items-center justify-center gap-4 bg-slate-50">
+      <div className="w-full h-full flex flex-col items-center justify-center gap-4 bg-slate-50">
         <h2 className="text-xl font-bold text-slate-800">未找到该高考提分工具</h2>
         <button
           onClick={() => navigate('/?view=gaokao')}
@@ -194,7 +194,7 @@ export const GaokaoToolPlaceholderCanvas: React.FC<GaokaoToolPlaceholderCanvasPr
   )
 
   return (
-    <div className="w-full h-screen flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden select-none">
+    <div className="w-full h-full flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden select-none">
       {/* 统一 Header */}
       <GaokaoToolHeader
         model={model}

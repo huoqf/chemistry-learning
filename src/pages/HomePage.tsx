@@ -1,5 +1,9 @@
 import { KnowledgeTreeHome } from '@/features/home'
 
 export default function HomePage() {
-  return <KnowledgeTreeHome />
+  return (
+    <div className="w-full h-full overflow-y-auto overscroll-contain">
+      <KnowledgeTreeHome />
+    </div>
+  )
 }

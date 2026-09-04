@@ -13,7 +13,7 @@ import {
   ControlPanel,
   ChemistryPanel,
 } from '@/components/UI'
-import { LAYOUT, duration, easing } from '@/theme'
+import { duration, easing } from '@/theme'
 import { ThreePanel } from '@/components/Layout'
 import { AnimationLayoutContext } from '@/context/AnimationLayoutContext'
 import { isConditionVisible } from '@/utils/controlVisibility'
@@ -98,8 +98,8 @@ export default function AnimationPage() {
   }
 
   return (
-    <div className="flex flex-col bg-neutral-50" style={{ height: `calc(100vh - ${LAYOUT.topBarHeight}px)` }}>
-      <div className="flex items-center gap-4 px-6 h-14 bg-white shadow-sm border-b border-neutral-200">
+    <div className="w-full h-full flex flex-col overflow-hidden bg-neutral-50">
+      <div className="flex items-center gap-4 px-6 h-14 shrink-0 bg-white shadow-sm border-b border-neutral-200">
         <button
           onClick={() => navigate('/')}
           className="flex items-center gap-2 text-neutral-500 hover:text-neutral-800 active:scale-[0.97]"
@@ -129,92 +129,94 @@ export default function AnimationPage() {
         )}
       </div>
 
-      <ThreePanel
-        left={(paramControlParams.length > 0 || controlMeta.length > 0) ? (
-          <LeftPanel>
-            {paramControlParams.length > 0 && (
-              <div className="shrink-0">
-                <ParamControl
-                  params={paramControlParams}
-                  onParamChange={handleParamControlChange}
-                  onReset={() => {
-                    if (config) setParams(config.defaultParams)
-                    handleReset()
+      <div className="flex-1 min-h-0 overflow-hidden">
+        <ThreePanel
+          left={(paramControlParams.length > 0 || controlMeta.length > 0) ? (
+            <LeftPanel>
+              {paramControlParams.length > 0 && (
+                <div className="shrink-0">
+                  <ParamControl
+                    params={paramControlParams}
+                    onParamChange={handleParamControlChange}
+                    onReset={() => {
+                      if (config) setParams(config.defaultParams)
+                      handleReset()
+                    }}
+                  />
+                </div>
+              )}
+              {controlMeta.length > 0 && (
+                <ControlPanel
+                  controls={controlMeta}
+                  params={params}
+                  defaultParams={config.defaultParams}
+                  updateParam={updateParam}
+                  setParams={setParams}
+                  resetAnimation={handleReset}
+                  restartAnimation={() => {
+                    setTime(0)
+                    setIsPlaying(true)
+                  }}
+                  setDirection={(d) => setDirection(d)}
+                  toggleVectors={() => toggleVectors()}
+                  toggleTimeSlices={() => toggleTimeSlices()}
+                  toggleDualObjects={() => toggleDualObjects()}
+                  storeStates={{
+                    showVectors,
+                    showTimeSlices,
+                    showDualObjects,
                   }}
                 />
+              )}
+            </LeftPanel>
+          ) : undefined}
+          center={
+            <div className="flex flex-col h-full p-1.5 gap-2">
+              <div
+                className="w-full flex-1 min-h-0 bg-white rounded-xl shadow-md overflow-hidden"
+                style={{
+                  transition: `opacity ${duration.normal}ms ${easing.standard}`,
+                  opacity: canvasDimmed ? 0.95 : 1,
+                }}
+              >
+                <ErrorBoundary resetKey={config.id}>
+                  <Suspense
+                    fallback={<div className="w-full h-full flex items-center justify-center text-neutral-400">加载中...</div>}
+                  >
+                    <AnimationLayoutContext.Provider value={config.sceneLayout}>
+                      <AnimationComponent />
+                    </AnimationLayoutContext.Provider>
+                  </Suspense>
+                </ErrorBoundary>
               </div>
-            )}
-            {controlMeta.length > 0 && (
-              <ControlPanel
-                controls={controlMeta}
-                params={params}
-                defaultParams={config.defaultParams}
-                updateParam={updateParam}
-                setParams={setParams}
-                resetAnimation={handleReset}
-                restartAnimation={() => {
-                  setTime(0)
-                  setIsPlaying(true)
-                }}
-                setDirection={(d) => setDirection(d)}
-                toggleVectors={() => toggleVectors()}
-                toggleTimeSlices={() => toggleTimeSlices()}
-                toggleDualObjects={() => toggleDualObjects()}
-                storeStates={{
-                  showVectors,
-                  showTimeSlices,
-                  showDualObjects,
-                }}
-              />
-            )}
-          </LeftPanel>
-        ) : undefined}
-        center={
-          <div className="flex flex-col h-full p-1.5 gap-2">
-            <div
-              className="w-full flex-1 min-h-0 bg-white rounded-xl shadow-md overflow-hidden"
-              style={{
-                transition: `opacity ${duration.normal}ms ${easing.standard}`,
-                opacity: canvasDimmed ? 0.95 : 1,
-              }}
-            >
-              <ErrorBoundary resetKey={config.id}>
-                <Suspense
-                  fallback={<div className="w-full h-full flex items-center justify-center text-neutral-400">加载中...</div>}
-                >
-                  <AnimationLayoutContext.Provider value={config.sceneLayout}>
-                    <AnimationComponent />
-                  </AnimationLayoutContext.Provider>
-                </Suspense>
-              </ErrorBoundary>
+              <div className="px-2 pb-2 pt-1 shrink-0">
+                <AnimationControls
+                  isPlaying={isPlaying}
+                  speed={speed}
+                  time={time}
+                  maxTime={maxTime}
+                  onPlayPause={() => setIsPlaying(!isPlaying)}
+                  onReset={handleReset}
+                  onSpeedChange={setSpeed}
+                  onTimeChange={setTime}
+                  controlsMode={effectiveControlsMode}
+                  equilibriumReached={equilibriumReached}
+                />
+              </div>
             </div>
-            <div className="px-2 pb-2 pt-1 shrink-0">
-              <AnimationControls
-                isPlaying={isPlaying}
-                speed={speed}
-                time={time}
-                maxTime={maxTime}
-                onPlayPause={() => setIsPlaying(!isPlaying)}
-                onReset={handleReset}
-                onSpeedChange={setSpeed}
-                onTimeChange={setTime}
-                controlsMode={effectiveControlsMode}
-                equilibriumReached={equilibriumReached}
+          }
+          right={
+            <div className="p-2 h-full flex flex-col">
+              <ChemistryPanel
+                quantities={chemistryQuantities}
+                formulas={typeof config?.formulas === 'function' ? config.formulas(params) : (config?.formulas ?? [])}
+                gaokaoPoints={typeof config?.gaokaoPoints === 'function' ? config.gaokaoPoints(params) : (config?.gaokaoPoints ?? [])}
+                warnings={config?.warnings ?? []}
               />
             </div>
-          </div>
-        }
-        right={
-          <div className="p-2 h-full flex flex-col">
-            <ChemistryPanel
-              quantities={chemistryQuantities}
-              formulas={typeof config?.formulas === 'function' ? config.formulas(params) : (config?.formulas ?? [])}
-              gaokaoPoints={typeof config?.gaokaoPoints === 'function' ? config.gaokaoPoints(params) : (config?.gaokaoPoints ?? [])}
-              warnings={config?.warnings ?? []}
-            />
-          </div>
-        }
-      />
+          }
+        />
+      </div>
     </div>
   )
 }

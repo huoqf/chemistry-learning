@@ -52,7 +52,7 @@ export const Crystal3DSplitCanvas: React.FC = () => {
   )
 
   return (
-    <div className="w-full h-screen flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden select-none">
+    <div className="w-full h-full flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden select-none">
       {/* 统一黑金 Header 导航与右侧视角 Tabs */}
       <GaokaoToolHeader
         modelId={modelId}

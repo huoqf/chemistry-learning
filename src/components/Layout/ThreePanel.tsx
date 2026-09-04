@@ -65,7 +65,7 @@ export const ThreePanel: React.FC<ThreePanelProps> = ({
             )}
 
             <div
-              className="absolute top-0 left-0 z-30 h-full bg-neutral-50 border-r border-neutral-200 overflow-y-auto shadow-xl"
+              className="absolute top-0 left-0 z-30 h-full bg-neutral-50 border-r border-neutral-200 overflow-y-auto shadow-xl overscroll-contain"
               style={{
                 width: leftW,
                 transform: drawerOpen ? 'translateX(0)' : 'translateX(-100%)',
@@ -77,7 +77,7 @@ export const ThreePanel: React.FC<ThreePanelProps> = ({
           </>
         ) : (
           <div
-            className="flex-shrink-0 bg-neutral-50 border-r border-neutral-200 overflow-y-auto overflow-x-hidden"
+            className="flex-shrink-0 bg-neutral-50 border-r border-neutral-200 overflow-y-auto overflow-x-hidden overscroll-contain"
             style={{ width: leftW }}
           >
             {left}
@@ -95,14 +95,14 @@ export const ThreePanel: React.FC<ThreePanelProps> = ({
       {right && (
         rightBelow ? (
           <div
-            className="flex-shrink-0 bg-neutral-50 border-t border-neutral-200 overflow-y-auto overflow-x-hidden"
+            className="flex-shrink-0 bg-neutral-50 border-t border-neutral-200 overflow-y-auto overflow-x-hidden overscroll-contain"
             style={{ maxHeight: '40vh' }}
           >
             {right}
           </div>
         ) : (
           <div
-            className="flex-shrink-0 bg-neutral-50 border-l border-neutral-200 overflow-y-auto overflow-x-hidden"
+            className="flex-shrink-0 bg-neutral-50 border-l border-neutral-200 overflow-y-auto overflow-x-hidden overscroll-contain"
             style={{ width: rightW }}
           >
             {right}

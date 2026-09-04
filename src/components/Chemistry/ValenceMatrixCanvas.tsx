@@ -590,7 +590,7 @@ export function ValenceMatrixCanvas({
 
   // 组装标准 ThreePanel
   return (
-    <div className="w-full h-screen flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden select-none">
+    <div className="w-full h-full flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden select-none">
       <GaokaoToolHeader
         modelId="model-valence-matrix"
         viewMode={mainView === 'matrix' ? 0 : mainView === 'scoring' ? 1 : 2}

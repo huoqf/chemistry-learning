@@ -87,7 +87,7 @@ export default function Layout() {
           </Link>
         </nav>
       </header>
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 min-h-0 overflow-hidden relative">
         <Outlet />
       </main>
     </div>

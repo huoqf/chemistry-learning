@@ -83,7 +83,7 @@ export function IndustrialFlowCanvas() {
   )
 
   return (
-    <div className="w-full h-screen flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden">
+    <div className="w-full h-full flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden">
       {/* 统一 Header */}
       <GaokaoToolHeader
         modelId="model-industrial-flow"

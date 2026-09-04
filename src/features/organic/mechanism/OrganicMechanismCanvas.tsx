@@ -210,7 +210,7 @@ export function OrganicMechanismCanvas() {
   )
 
   return (
-    <div className="w-full h-screen flex flex-col font-sans text-neutral-900 bg-neutral-100 overflow-hidden">
+    <div className="w-full h-full flex flex-col font-sans text-neutral-900 bg-neutral-100 overflow-hidden">
       {/* 统一 Header */}
       <GaokaoToolHeader
         modelId="model-organic-mechanism"
