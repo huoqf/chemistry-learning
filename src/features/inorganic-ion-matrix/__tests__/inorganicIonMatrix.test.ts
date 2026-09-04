@@ -140,4 +140,52 @@ describe('无机离子特征检验与共存排斥矩阵数据审计', () => {
     expect(s2o3Step2.hasPrecipitate).toBe(true)
     expect(s2o3Step2.hasGas).toBe(true)
   })
+
+  it('必须完全符合高中化学教材科学事实：萃取无沉淀、淀粉无沉淀、偏铝酸根两性相变与焰色试验物理场景', async () => {
+    const { computeStepChemistry } = await import('../components/IonMatrixChemistry')
+
+    // 1. Br- 萃取分层：下层显特征橙红色，物理液体萃取绝对无沉淀
+    const brStep = computeStepChemistry('Br-', 'br-cl2-ccl4', 1, 'rgba(254, 243, 199, 0.6)')
+    expect(brStep.hasPrecipitate).toBe(false)
+    expect(brStep.fillColor).toContain('234, 88, 12')
+
+    // 2. I- 遇淀粉形成包合物溶液：瞬间显深蓝色，绝对无沉淀
+    const iStep = computeStepChemistry('I-', 'i-cl2-starch', 1, 'rgba(254, 249, 195, 0.6)')
+    expect(iStep.hasPrecipitate).toBe(false)
+    expect(iStep.fillColor).toContain('30, 58, 138')
+
+    // 3. AlO2- 偏铝酸根加强酸：少量析出白沉淀 -> 过量沉淀完全溶解生成澄清 Al3+
+    const alo2Step1 = computeStepChemistry('AlO2-', 'alo2-hcl-drop', 1, 'rgba(241, 245, 249, 0.6)')
+    expect(alo2Step1.hasPrecipitate).toBe(true)
+    const alo2Step2 = computeStepChemistry('AlO2-', 'alo2-hcl-drop', 2, 'rgba(241, 245, 249, 0.6)')
+    expect(alo2Step2.hasPrecipitate).toBe(false) // 过量酸沉淀溶解
+
+    // 4. CO32- vs HCO3- 区分：
+    // CO32-：先加 CaCl2 生成白色沉淀 -> 再加盐酸沉淀溶解并剧烈冒气泡
+    const co3Step1 = computeStepChemistry('CO32-', 'co3-cacl2-hcl-lime', 1, 'rgba(248, 250, 252, 0.6)')
+    expect(co3Step1.hasPrecipitate).toBe(true)
+    const co3Step2 = computeStepChemistry('CO32-', 'co3-cacl2-hcl-lime', 2, 'rgba(248, 250, 252, 0.6)')
+    expect(co3Step2.hasPrecipitate).toBe(false)
+    expect(co3Step2.hasGas).toBe(true)
+
+    // HCO3-：先加 CaCl2 绝对无沉淀 -> 再加盐酸剧烈冒气泡
+    const hco3Step1 = computeStepChemistry('HCO3-', 'hco3-cacl2-hcl', 1, 'rgba(248, 250, 252, 0.6)')
+    expect(hco3Step1.hasPrecipitate).toBe(false)
+    const hco3Step2 = computeStepChemistry('HCO3-', 'hco3-cacl2-hcl', 2, 'rgba(248, 250, 252, 0.6)')
+    expect(hco3Step2.hasGas).toBe(true)
+
+    // 5. F- 陷阱：AgF 易溶，加 AgNO3 绝对无沉淀
+    const fTrapStep = computeStepChemistry('F-', 'f-agno3', 1, 'rgba(241, 245, 249, 0.6)')
+    expect(fTrapStep.hasPrecipitate).toBe(false)
+
+    // 6. 焰色试验物理场景激活
+    const naFlame = computeStepChemistry('Na+', 'na-flame', 1, 'rgba(254, 240, 138, 0.6)')
+    expect(naFlame.isFlameTest).toBe(true)
+    expect(naFlame.flameColor).toContain('#eab308')
+
+    const kFlame = computeStepChemistry('K+', 'k-flame-cobalt', 1, 'rgba(192, 132, 252, 0.6)')
+    expect(kFlame.isFlameTest).toBe(true)
+    expect(kFlame.hasCobaltGlass).toBe(true)
+  })
 })
+

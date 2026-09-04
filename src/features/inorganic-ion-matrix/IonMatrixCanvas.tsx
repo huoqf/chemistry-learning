@@ -118,6 +118,7 @@ export const IonMatrixCanvas: React.FC = () => {
               selectedReagentId={selectedReagentId}
               coexistenceSelectedIons={coexistenceSelectedIons}
               dropCount={dropCount}
+              selectedMatrixPair={selectedMatrixPair}
               onSelectMode={setInquiryMode}
               onSelectIon={handleSelectIon}
               onSelectReagent={handleSelectReagent}
@@ -129,7 +130,7 @@ export const IonMatrixCanvas: React.FC = () => {
             />
           }
           center={
-            <div className="w-full h-full flex flex-col overflow-hidden bg-slate-50">
+            <div className="w-full h-full flex flex-col overflow-hidden">
               {viewMode === 0 && (
                 inquiryMode === 'coexistence-matrix' ? (
                   <IonCoexistenceMatrixView

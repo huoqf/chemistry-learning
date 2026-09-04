@@ -14,6 +14,7 @@ interface IonLeftPanelProps {
   selectedReagentId?: string
   coexistenceSelectedIons: string[]
   dropCount: number
+  selectedMatrixPair?: { cationId: string; anionId: string }
   onSelectMode: (mode: InquiryMode) => void
   onSelectIon: (id: string) => void
   onSelectReagent?: (reagentId: string) => void
@@ -30,6 +31,7 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
   selectedReagentId,
   coexistenceSelectedIons,
   dropCount,
+  selectedMatrixPair,
   onSelectMode,
   onSelectIon,
   onSelectReagent,
@@ -277,87 +279,165 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
 
       {inquiryMode === 'coexistence-matrix' && (
         <>
-          {/* 全景大表模式：高频母题组合快速定位 */}
+          {/* 高考高频互斥母题矩阵（按高考四大本质反应结构化分组） */}
           <LeftPanelSection title="高考高频互斥母题">
-            <div className="space-y-1.5">
+            <div className="space-y-2.5">
               {[
                 {
-                  title: '泡沫灭火器彻底双水解',
-                  pair: ['Al3+', 'HCO3-'],
-                  tag: '双水解',
-                  tagColor: 'bg-rose-100 text-rose-800',
+                  categoryName: '彻底双水解专题 (沉淀+气体)',
+                  items: [
+                    {
+                      title: '泡沫灭火器彻底双水解',
+                      pair: ['Al3+', 'HCO3-'],
+                      tag: 'Al³⁺+HCO₃⁻',
+                      tagColor: 'bg-rose-100 text-rose-800 border-rose-200',
+                    },
+                    {
+                      title: '铝离子与硫离子完全双水解',
+                      pair: ['Al3+', 'S2-'],
+                      tag: 'Al³⁺+S²⁻',
+                      tagColor: 'bg-rose-100 text-rose-800 border-rose-200',
+                    },
+                    {
+                      title: '铁离子与碳酸根剧烈双水解',
+                      pair: ['Fe3+', 'CO32-'],
+                      tag: 'Fe³⁺+CO₃²⁻',
+                      tagColor: 'bg-rose-100 text-rose-800 border-rose-200',
+                    },
+                  ],
                 },
                 {
-                  title: '酸性硝酸根氧化亚铁',
-                  pair: ['Fe2+', 'NO3-'],
-                  tag: '酸性氧化',
-                  tagColor: 'bg-orange-100 text-orange-800',
+                  categoryName: '氧化还原与酸化陷阱专题',
+                  items: [
+                    {
+                      title: '酸性硝酸根氧化亚铁 (隐蔽陷阱)',
+                      pair: ['Fe2+', 'NO3-'],
+                      tag: 'Fe²⁺+NO₃⁻(H⁺)',
+                      tagColor: 'bg-orange-100 text-orange-800 border-orange-200',
+                    },
+                    {
+                      title: '三价铁氧化还原碘离子',
+                      pair: ['Fe3+', 'I-'],
+                      tag: 'Fe³⁺+I⁻',
+                      tagColor: 'bg-purple-100 text-purple-800 border-purple-200',
+                    },
+                    {
+                      title: '高锰酸根强氧化亚铁褪色',
+                      pair: ['Fe2+', 'MnO4-'],
+                      tag: 'Fe²⁺+MnO₄⁻',
+                      tagColor: 'bg-purple-100 text-purple-800 border-purple-200',
+                    },
+                  ],
                 },
                 {
-                  title: '铁离子氧化碘离子',
-                  pair: ['Fe3+', 'I-'],
-                  tag: '氧化还原',
-                  tagColor: 'bg-purple-100 text-purple-800',
+                  categoryName: '沉淀转化与工业前驱体专题',
+                  items: [
+                    {
+                      title: '新高考电池前驱体沉淀(工业)',
+                      pair: ['Fe2+', 'HCO3-'],
+                      tag: 'Fe²⁺+HCO₃⁻',
+                      tagColor: 'bg-blue-100 text-blue-800 border-blue-200',
+                    },
+                    {
+                      title: '硫酸钡特征沉淀检测试验',
+                      pair: ['Ba2+', 'SO42-'],
+                      tag: 'Ba²⁺+SO₄²⁻',
+                      tagColor: 'bg-blue-100 text-blue-800 border-blue-200',
+                    },
+                    {
+                      title: '银离子遇卤素沉淀转化',
+                      pair: ['Ag+', 'Cl-'],
+                      tag: 'Ag⁺+Cl⁻',
+                      tagColor: 'bg-blue-100 text-blue-800 border-blue-200',
+                    },
+                    {
+                      title: '钙离子与硫酸根微溶陷阱',
+                      pair: ['Ca2+', 'SO42-'],
+                      tag: 'Ca²⁺+SO₄²⁻',
+                      tagColor: 'bg-amber-100 text-amber-800 border-amber-200',
+                    },
+                  ],
                 },
                 {
-                  title: '硫酸钡特征沉淀',
-                  pair: ['Ba2+', 'SO42-'],
-                  tag: '难溶沉淀',
-                  tagColor: 'bg-blue-100 text-blue-800',
+                  categoryName: '气体逸出与弱电解质专题',
+                  items: [
+                    {
+                      title: '硫代硫酸根酸性歧化产气',
+                      pair: ['H+', 'S2O32-'],
+                      tag: 'H⁺+S₂O₃²⁻',
+                      tagColor: 'bg-amber-100 text-amber-800 border-amber-200',
+                    },
+                    {
+                      title: '铵盐与强碱共热逸出氨气',
+                      pair: ['NH4+', 'OH-'],
+                      tag: 'NH₄⁺+OH⁻',
+                      tagColor: 'bg-amber-100 text-amber-800 border-amber-200',
+                    },
+                  ],
                 },
-                {
-                  title: '硫代硫酸根酸性歧化',
-                  pair: ['H+', 'S2O32-'],
-                  tag: '歧化产气沉',
-                  tagColor: 'bg-amber-100 text-amber-800',
-                },
-                {
-                  title: '高锰酸根强氧化亚铁',
-                  pair: ['Fe2+', 'MnO4-'],
-                  tag: '强氧化褪色',
-                  tagColor: 'bg-purple-100 text-purple-800',
-                },
-                {
-                  title: '次氯酸根氧化亚铁',
-                  pair: ['Fe2+', 'ClO-'],
-                  tag: '强氧化',
-                  tagColor: 'bg-purple-100 text-purple-800',
-                },
-                {
-                  title: '弱碱挥发逸氨',
-                  pair: ['NH4+', 'OH-'],
-                  tag: '气体弱碱',
-                  tagColor: 'bg-amber-100 text-amber-800',
-                },
-              ].map((item) => (
-                <button
-                  key={item.title}
-                  type="button"
-                  onClick={() => onLoadPresetPair?.(item.pair[0], item.pair[1])}
-                  className="w-full p-2 rounded-xl bg-white border border-slate-200 hover:bg-blue-50/60 hover:border-blue-300 transition-all text-left flex items-center justify-between cursor-pointer"
-                >
-                  <div>
-                    <div className="text-xs font-bold text-slate-900">{item.title}</div>
-                    <div className="text-[10px] text-slate-500 font-mono">
-                      {item.pair[0]} + {item.pair[1]}
-                    </div>
+              ].map((group) => (
+                <div key={group.categoryName} className="space-y-1">
+                  <div className="text-[10.5px] font-extrabold text-slate-500 px-0.5">
+                    {group.categoryName}
                   </div>
-                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${item.tagColor}`}>
-                    {item.tag}
-                  </span>
-                </button>
+                  <div className="space-y-1">
+                    {group.items.map((item) => {
+                      const isSelected =
+                        selectedMatrixPair?.cationId === item.pair[0] &&
+                        selectedMatrixPair?.anionId === item.pair[1]
+
+                      return (
+                        <button
+                          key={item.title}
+                          type="button"
+                          onClick={() => onLoadPresetPair?.(item.pair[0], item.pair[1])}
+                          className={`w-full p-2 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer ${
+                            isSelected
+                              ? 'bg-blue-50/90 border-blue-400 ring-2 ring-blue-300 shadow-xs'
+                              : 'bg-white border-slate-200/90 hover:bg-blue-50/50 hover:border-blue-300'
+                          }`}
+                        >
+                          <div className="min-w-0 pr-1">
+                            <div className="flex items-center gap-1">
+                              <span
+                                className={`text-[11px] font-bold truncate ${
+                                  isSelected ? 'text-blue-950' : 'text-slate-900'
+                                }`}
+                              >
+                                {item.title}
+                              </span>
+                              {isSelected && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-blue-600 shrink-0 animate-pulse" />
+                              )}
+                            </div>
+                            <div className="text-[10px] text-slate-500 font-mono">
+                              {item.pair[0]} × {item.pair[1]}
+                            </div>
+                          </div>
+                          <span
+                            className={`text-[9.5px] font-bold px-1.5 py-0.5 rounded border shrink-0 font-mono ${item.tagColor}`}
+                          >
+                            {item.tag}
+                          </span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
               ))}
             </div>
           </LeftPanelSection>
 
-          <LeftPanelSection title="大表使用指引">
-            <div className="p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/70 space-y-1 text-[11px] text-blue-900 leading-relaxed">
+          {/* 3. 全景大表研读指南 (同步方案 A 零滚动自适应) */}
+          <LeftPanelSection title="全景检索指南">
+            <div className="p-2 rounded-xl bg-blue-50/70 border border-blue-200/70 space-y-1 text-[11px] text-blue-950 leading-relaxed">
               <div className="font-bold flex items-center gap-1">
                 <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-                全景检索建议：
+                全景大表研读指南：
               </div>
-              <p>• 点击上方机制标签可快速筛选同类互斥反应。</p>
-              <p>• 点击大表内任意单元格，底部即时展示离子反应方程式与避坑指南。</p>
+              <p>• 14 阳 × 18 阴全集自适应 100% 满屏呈现，绝对零滚动条。</p>
+              <p>• 点击中屏顶部全景高亮快筛，可一触点亮整张试卷的对应机理分布。</p>
+              <p>• 点击上方任意母题，全景大表自动十字轴准星锁定并展开机理。</p>
             </div>
           </LeftPanelSection>
         </>
