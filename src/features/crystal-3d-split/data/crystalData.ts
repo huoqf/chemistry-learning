@@ -15,13 +15,12 @@ export const CRYSTAL_DATA_MAP: Record<CrystalTypeId, CrystalTypeData> = {
     defaultEdgeLengthPm: 564,
     molarMass: 58.5,
     tangentFormulaLatex: '2(r(\\text{Na}^+) + r(\\text{Cl}^-)) = a',
-    tangentDescription: 'Na⁺ 与 Cl⁻ 沿晶胞棱边相切，面对角线由 Cl⁻ 相切。',
+    tangentDescription: 'Na⁺ 与 Cl⁻ 沿晶胞棱边相切，2(r(Na⁺)+r(Cl⁻)) = a；由于阳离子较大，面对角线上的 Cl⁻ 彼此不接触。',
     coordNumberDescription: 'Na⁺ 与 Cl⁻ 的配位数均为 6 (八面体空隙包围)。',
     tangentRadii: { 'Cl⁻': 0.31, 'Na⁺': 0.19 },
     tangentLines: [
       { startFrac: [0, 0, 0], endFrac: [1, 0, 0], label: '棱边接触 2(r₊+r₋)=a' },
       { startFrac: [0, 0, 0], endFrac: [0, 1, 0] },
-      { startFrac: [0, 0, 0], endFrac: [1, 1, 0], label: '面对角线 Cl⁻-Cl⁻' },
     ],
     atoms: [
       // Cl⁻ 顶点 8个
@@ -362,7 +361,7 @@ export const CRYSTAL_DATA_MAP: Record<CrystalTypeId, CrystalTypeData> = {
     molarMass: 136,
     tangentFormulaLatex: 'r(\\text{Ti}^{4+}) + r(\\text{O}^{2-}) = \\frac{a}{2}',
     tangentDescription: 'Ti⁴⁺ 与 O²⁻ 沿晶胞棱长二分之一处相切。',
-    coordNumberDescription: 'Ca²⁺ 的配位数为 12，Ti⁴⁺ 的配位数为 6，O²⁻ 的配位数为 2。',
+    coordNumberDescription: 'Ca²⁺ 的配位数为 12，Ti⁴⁺ 的配位数为 6；每个 O²⁻ 紧邻 2 个 Ti⁴⁺ 和 4 个 Ca²⁺ (配位数为 6)。',
     tangentRadii: { 'Ca²⁺': 0.32, 'Ti⁴⁺': 0.2, 'O²⁻': 0.3 },
     tangentLines: [
       { startFrac: [0, 0, 0], endFrac: [0.5, 0, 0], label: '棱边相切 r(Ti)+r(O)=a/2' },
