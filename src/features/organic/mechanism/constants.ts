@@ -81,28 +81,28 @@ export const MECHANISM_DETAILS: Record<
 
 export const CONTRAST_MATRICES = [
   {
-    title: '溶剂竞争：消去 vs 取代',
-    reactionA: '2-溴丁烷 + NaOH 醇溶液加热 → 2-丁烯 (消去)',
-    reactionB: '2-溴丁烷 + NaOH 水溶液加热 → 2-丁醇 (取代)',
-    memoryTip: '口诀：“醇出双键 (消去)，水出醇 (取代)”。醇溶液强碱性促进 β-H 消除。',
+    title: '溶剂竞争：消去反应 vs 水解取代',
+    reactionA: '消去：2-溴丁烷 + NaOH 醇溶液加热 → 2-丁烯 (主产物) + NaBr + H₂O',
+    reactionB: '取代：2-溴丁烷 + NaOH 水溶液加热 → 2-丁醇 + NaBr',
+    memoryTip: '口诀：“醇出双键水出醇”。醇溶液强碱促消去，扎伊采夫少氢脱氢。',
   },
   {
-    title: '断键位点：酯化 vs 酯水解',
-    reactionA: '酯化：酸脱 -OH 醇脱 -H (生成水分子与新酯键)',
-    reactionB: '水解：切断 C-O 单键 (而非 C=O)，加水恢复羧酸与醇',
-    memoryTip: '口诀：“水断单键还原醇，18O 标记定去向”。',
+    title: '断键位点：酯化脱水 vs 酯基水解',
+    reactionA: '酯化：酸脱羟基 (-OH) 醇脱氢 (-H)，切断羧基 C-O 键生成酯与水',
+    reactionB: '水解：酸性或碱性切断酯基 C-O 单键 (非 C=O)，加水还原为酸与醇',
+    memoryTip: '口诀：“酸脱羟基醇脱氢，水断单键定去向”。¹⁸O 示踪进入酯基醚氧位。',
   },
   {
-    title: '氧化前提：伯/仲醇 vs 叔醇',
-    reactionA: '伯醇 (-CH₂OH) → 醛；仲醇 (-CHOH-) → 酮',
-    reactionB: '叔醇 (-COH) 碳上无 H，Cu/Δ 条件下不被催化氧化',
-    memoryTip: '口诀：“相连碳上找氢原子，无 α-H 则难氧化”。',
+    title: '氧化前提：伯醇/仲醇 vs 叔醇',
+    reactionA: '能氧化：伯醇 (-CH₂OH) 氧化为醛；仲醇 (-CH(OH)-) 氧化为酮',
+    reactionB: '不氧化：叔醇 (—C(OH)R₂ / 连羟基碳上无 H)，催化加热不被氧化',
+    memoryTip: '口诀：“相连碳上找氢原子，双氢成醛单氢酮，无氢不反应”。',
   },
   {
-    title: '新高考拓展：经典马氏 vs 反马氏信息题',
-    reactionA: '常规亲电加成：H 加在含 H 多的碳上 (中间体仲碳正离子稳定)',
-    reactionB: '过氧化物存在：自由基机理，Br 加在含 H 多的碳上 (反马氏)',
-    memoryTip: '口诀：“无氧马氏 H 多多，有氧反马 Br 换位”。',
+    title: '新高考拓展：马氏加成 vs 反马氏信息题',
+    reactionA: '经典亲电加成：H 加在含 H 多的双键碳上 (仲碳正离子中间体稳定)',
+    reactionB: '过氧化物存在：自由基机理，Br 加在含 H 多的双键碳上 (反马氏)',
+    memoryTip: '口诀：“无氧马氏 H 多多，有氧反马 Br 换位”。高考高频信息转化题。',
   },
 ]
 

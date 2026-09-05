@@ -298,45 +298,62 @@ export function OrganicMechanismCanvas() {
       />
 
       {/* 易混反应双向对比矩阵 */}
-      <div className="p-3 bg-white rounded-xl border border-neutral-200 flex flex-col gap-2 shadow-2xs">
-        <h4 className="font-bold text-neutral-800 text-xs flex items-center gap-1.5 pb-1 border-b border-neutral-100">
-          <GitCompare className="w-4 h-4 text-emerald-600" />
-          高考易混反应对比矩阵 (4组对照)
+      <div className="p-3.5 bg-white rounded-xl border border-neutral-200/80 flex flex-col gap-2.5 shadow-2xs">
+        <h4 className="font-bold text-neutral-800 text-sm flex items-center justify-between pb-1.5 border-b border-neutral-100">
+          <span className="flex items-center gap-1.5">
+            <GitCompare className="w-4 h-4 text-emerald-600" />
+            高考易混反应对比矩阵 (4组对照)
+          </span>
+          <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+            高频失分点
+          </span>
         </h4>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2.5">
           {CONTRAST_MATRICES.map((matrix, idx) => (
-            <div key={idx} className="p-2 rounded-lg bg-emerald-50/40 border border-emerald-100/80 flex flex-col gap-1">
-              <span className="text-[11px] font-bold text-emerald-900 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <div key={idx} className="p-2.5 rounded-lg bg-emerald-50/40 border border-emerald-100/90 flex flex-col gap-1.5">
+              <span className="text-xs font-bold text-emerald-950 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
                 {matrix.title}
               </span>
-              <div className="text-[10px] text-neutral-700 flex flex-col gap-0.5 font-mono">
-                <span className="text-emerald-800">A: {matrix.reactionA}</span>
-                <span className="text-teal-800">B: {matrix.reactionB}</span>
+              <div className="text-xs text-neutral-800 flex flex-col gap-1 font-mono">
+                <div className="p-1.5 rounded bg-white/80 border border-emerald-100/60 text-emerald-900 leading-relaxed">
+                  {matrix.reactionA}
+                </div>
+                <div className="p-1.5 rounded bg-white/80 border border-teal-100/60 text-teal-900 leading-relaxed">
+                  {matrix.reactionB}
+                </div>
               </div>
-              <span className="text-[10px] text-emerald-900/90 font-medium bg-emerald-100/60 px-1.5 py-0.5 rounded mt-0.5">
-                {matrix.memoryTip}
-              </span>
+              <div className="text-xs text-emerald-900 font-medium bg-emerald-100/80 px-2 py-1 rounded-md leading-relaxed">
+                💡 <span className="font-semibold text-emerald-950">速记口诀：</span>{matrix.memoryTip}
+              </div>
             </div>
           ))}
         </div>
       </div>
 
       {/* 新高考提分通法 */}
-      <div className="p-3 bg-white rounded-xl border border-neutral-200 flex flex-col gap-2 shadow-2xs">
-        <h4 className="font-bold text-neutral-800 text-xs flex items-center gap-1.5 pb-1 border-b border-neutral-100">
-          <Compass className="w-4 h-4 text-indigo-600" />
-          新高考压轴题型破译通法
+      <div className="p-3.5 bg-white rounded-xl border border-neutral-200/80 flex flex-col gap-2.5 shadow-2xs">
+        <h4 className="font-bold text-neutral-800 text-sm flex items-center justify-between pb-1.5 border-b border-neutral-100">
+          <span className="flex items-center gap-1.5">
+            <Compass className="w-4 h-4 text-indigo-600" />
+            新高考压轴题型破译通法
+          </span>
+          <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/60">
+            压轴题破局
+          </span>
         </h4>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2.5">
           {GAOKAO_ADVANCED_TIPS.map((tip, idx) => (
-            <div key={idx} className="p-2 rounded-lg bg-indigo-50/40 border border-indigo-100 flex flex-col gap-1">
-              <span className="text-[11px] font-bold text-indigo-950">{tip.title}</span>
-              <div className="flex flex-col gap-0.5">
+            <div key={idx} className="p-3 rounded-lg bg-indigo-50/40 border border-indigo-100 flex flex-col gap-2">
+              <span className="text-xs font-bold text-indigo-950 flex items-center gap-1.5">
+                <span className="w-1.5 h-3.5 rounded-full bg-indigo-600 shrink-0" />
+                {tip.title}
+              </span>
+              <div className="flex flex-col gap-1.5">
                 {tip.points.map((pt, pIdx) => (
-                  <span key={pIdx} className="text-[10px] text-indigo-900 leading-snug">
+                  <div key={pIdx} className="text-xs text-indigo-950/90 leading-relaxed p-1.5 rounded bg-white/80 border border-indigo-100/50">
                     {pt}
-                  </span>
+                  </div>
                 ))}
               </div>
             </div>
