@@ -16,6 +16,8 @@ export interface EquilibriumChartProps {
   yDomain?: [number, number]
   /** 达成化学平衡时刻 t1 (时间) */
   equilibriumTime?: number
+  /** 自定义参考线 / 标记点 */
+  markers?: RelationMarker[]
   /** 当前时间游标 cursorX */
   currentTime?: number
   /** X 轴标签，默认 "时间 t / s" */
@@ -44,6 +46,7 @@ export function EquilibriumChart({
   xDomain,
   yDomain,
   equilibriumTime,
+  markers: customMarkers,
   currentTime,
   xLabel = '时间 t / s',
   yLabel = '反应速率 v / (mol·L⁻¹·s⁻¹)',
@@ -62,18 +65,22 @@ export function EquilibriumChart({
     ]
   }, [reversePoints])
 
-  // 平衡点 marker
+  // 平衡点 marker 与外部自定义 marker 合并
   const markers = useMemo((): RelationMarker[] => {
-    if (equilibriumTime == null) return []
-    return [
-      {
+    const list: RelationMarker[] = []
+    if (equilibriumTime != null) {
+      list.push({
         x: equilibriumTime,
         axis: 'vertical',
         label: '已达平衡 (t1)',
         color: RATE_CHART_COLORS.equilibrium,
-      },
-    ]
-  }, [equilibriumTime])
+      })
+    }
+    if (customMarkers && customMarkers.length > 0) {
+      list.push(...customMarkers)
+    }
+    return list
+  }, [equilibriumTime, customMarkers])
 
   return (
     <RelationChart

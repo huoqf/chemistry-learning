@@ -47,6 +47,22 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
           unit: 'kJ/mol',
           color: '#8B5CF6',
         },
+        ...(chemistry.isMultistep && chemistry.stepBarriers?.length > 1
+          ? [
+              {
+                label: '第1步能垒 ΔEa1',
+                value: chemistry.stepBarriers[0].ea,
+                unit: 'kJ/mol',
+                color: '#3B82F6',
+              },
+              {
+                label: '第2步能垒 ΔEa2 (决速步)',
+                value: chemistry.stepBarriers[1].ea,
+                unit: 'kJ/mol',
+                color: '#EF4444',
+              },
+            ]
+          : []),
         ...baseQuantities,
         {
           label: '活化分子占比',
@@ -82,6 +98,31 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
       ]
     }
 
+    if (chartTab === 'alpha-tp') {
+      // 转化率 α-T-P：监控温度、压强、理论平衡转化率
+      return [
+        {
+          label: '体系温度 T',
+          value: params.temperature,
+          unit: 'K',
+          color: '#F59E0B',
+        },
+        {
+          label: '体系总压 P',
+          value: params.pressure,
+          unit: 'atm',
+          color: '#3B82F6',
+        },
+        ...baseQuantities,
+        {
+          label: '平衡转化率 α',
+          value: `${chemistry.alphaTpData?.currentAlpha ?? 50}%`,
+          unit: '',
+          color: '#10B981',
+        },
+      ]
+    }
+
     // lnK - 1/T 范特霍夫图：重点监控 1/T 与 ln K 线性参数
     const invT = +(1000 / params.temperature).toFixed(3)
     return [
@@ -100,12 +141,12 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
       },
       {
         label: '图像理论斜率 (-ΔH/R)',
-        value: +(-system.deltaH / 8.314).toFixed(2),
+        value: +((-system.deltaH * 1000) / 8.314).toFixed(0),
         unit: 'K',
         color: system.deltaH < 0 ? '#10B981' : '#EF4444',
       },
     ]
-  }, [chartTab, system.deltaH, eaForward, eaReverse, boltzmannData.activatedFraction, vantHoffData.currentKc, vantHoffData.currentLnK, params.temperature, params.pressure])
+  }, [chartTab, system.deltaH, eaForward, eaReverse, boltzmannData.activatedFraction, vantHoffData.currentKc, vantHoffData.currentLnK, params.temperature, params.pressure, chemistry.alphaTpData])
 
   // 2. 依当前 chartTab 动态提供核心公式
   const formulas = useMemo(() => {
@@ -126,9 +167,9 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
           level: 'core' as const,
         },
         {
-          name: '阿伦尼乌斯速率常数方程',
-          latex: 'k = A \\cdot e^{-\\frac{E_a}{R T}}',
-          note: '降低活化能 Ea 或升高温度 T，均使速率常数 k 指数级增大。',
+          name: '多步历程决速步判据',
+          latex: 'E_a(\\text{决速步}) = \\max(\\Delta E_{a1}, \\Delta E_{a2}, \\dots)',
+          note: '各基元反应中相对能垒最大（活化能最高）的一步决定全反应速率。',
           level: 'important' as const,
         },
       ]
@@ -152,6 +193,24 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
       ]
     }
 
+    if (chartTab === 'alpha-tp') {
+      return [
+        reactionFormula,
+        {
+          name: '平衡转化率定义式',
+          latex: '\\alpha(\\text{反应物}) = \\frac{\\Delta n(\\text{反应物})}{n_0(\\text{反应物})} \\times 100\\%',
+          note: '转化率直接反映平衡移动的限度；放热反应升温 α 减小。',
+          level: 'core' as const,
+        },
+        {
+          name: '定一议二作图判据',
+          latex: 'T_1 = T_2 \\implies \\alpha(P_2) > \\alpha(P_1) \\iff P_2 > P_1 \\;(\\Delta n_g < 0)',
+          note: '固定同一温度作垂线，纵坐标转化率大者对应压强更大。',
+          level: 'important' as const,
+        },
+      ]
+    }
+
     // lnK - 1/T 范特霍夫公式
     return [
       reactionFormula,
@@ -170,20 +229,20 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
     ]
   }, [chartTab, system])
 
-  // 3. 依当前 chartTab 动态提供高考要点
+  // 3. 依当前 chartTab 动态提供高考要点与答题三段论模板
   const gaokaoPoints = useMemo(() => {
     if (chartTab === 'energy-profile') {
       return [
         {
-          text: '催化剂双向等效性：催化剂能改变反应途径，同等程度降低 Ea(正) 与 Ea(逆)，但不改变 ΔH 与平衡常数 K。',
+          text: '【答题模板·催化剂本质】：催化剂改变反应历程，同等程度降低 Ea(正) 与 Ea(逆)，同等程度增大正逆反应速率，故平衡不移动，ΔH 与平衡常数 K 不变。',
           importance: 'gaokao' as const,
         },
         {
-          text: '多步反应决速步原理：在多基元步骤催化反应中，能垒最高（活化能最大）的步骤是全反应的决速步。',
+          text: '【决速步避坑】：在多步基元反应中，决速步由相对能垒 ΔEa = E(TS) - E(底物/中间体) 决定，绝非绝对最高势能点！',
           importance: 'core' as const,
         },
         {
-          text: '温度与活化分子：升高温度并不改变活化能 Ea，而是提高普通分子的能量，使活化分子百分数显著增大。',
+          text: '【玻尔兹曼升温 vs 催化】：升温使分子能量分布变宽右移，Ea 门槛不变；加入催化剂使能量分布完全不变，Ea 门槛向左平移。',
           importance: 'hard' as const,
         },
       ]
@@ -198,7 +257,7 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
 
       return [
         {
-          text: `温度影响：当前反应 ΔH = ${system.deltaH} kJ/mol (${system.deltaH < 0 ? '放热' : '吸热'})，升温正逆速率均增大，平衡向${system.deltaH < 0 ? '逆向' : '正向'}移动。`,
+          text: '【答题模板·升温移动三段论】：① 升高温度正逆反应速率均增大；② 但吸热方向增大幅度大于放热方向 (v逆 > v正)；③ 平衡向吸热反应方向移动。',
           importance: 'gaokao' as const,
         },
         {
@@ -207,6 +266,23 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
         },
         {
           text: inertPoint,
+          importance: 'hard' as const,
+        },
+      ]
+    }
+
+    if (chartTab === 'alpha-tp') {
+      return [
+        {
+          text: '【答题模板·定一议二破题】：作垂直于 T 轴的虚线（固定温度），读取不同压强曲线交点，结合正反应气体计量数判断 P 大小；作水平线（固定转化率）判断 T 与 P 相互制约。',
+          importance: 'gaokao' as const,
+        },
+        {
+          text: '【最佳催化温度】：实际化工生产中，升温虽使平衡转化率下降，但提高催化剂活性与反应速率，需在综合拐点确定最适宜温度。',
+          importance: 'core' as const,
+        },
+        {
+          text: '【两线相对高低】：加压使平衡向气体分子数缩小的方向移动，故高压线必定位于产物增加/转化率增大的上方。',
           importance: 'hard' as const,
         },
       ]
@@ -257,6 +333,19 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
       ]
     }
 
+    if (chartTab === 'alpha-tp') {
+      return [
+        {
+          text: '【警示 1】：横坐标温度升高时，切忌看错吸放热符号：放热反应 (ΔH < 0) 升温曲线必然向下走。',
+          level: 'danger' as const,
+        },
+        {
+          text: '【警示 2】：压强仅对有气体参与且两边气态化学计量数不相等的可逆反应有平衡移动效应。',
+          level: 'warning' as const,
+        },
+      ]
+    }
+
     // lnK - 1/T 警示
     return [
       {
@@ -282,3 +371,4 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
     </div>
   )
 }
+

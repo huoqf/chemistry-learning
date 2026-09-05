@@ -65,8 +65,14 @@ export function BaseChart({
   const axisFontSize = font(isMini ? FONT.small : FONT.axis)
   const rawLeft = px(isMini ? CHART_LAYOUT.miniMarginLeft : CHART_LAYOUT.marginLeft)
   const rawBottom = px(marginBottomVal)
-  // 左侧：Y 轴刻度文字(textAnchor="end") + Y 轴旋转标签所需空间
-  const autoLeft = Math.max(rawLeft, axisFontSize * 3.2 + px(5) + 4 + font(isMini ? 12 : 18))
+
+  // 估算 Y 轴刻度文字最大宽度（按 6 字符预估，并与 tickFormatY 对齐）
+  const estYTickWidth = Math.max(3.5 * axisFontSize, 32)
+  const tickGap = px(isMini ? 4 : 5)
+  // Y 轴旋转标签位于所有刻度文字最左侧，并留出额外清晰间距
+  const yLabelOffset = estYTickWidth + tickGap + font(isMini ? 10 : 14)
+  // 左侧边距：确保容纳旋转标签厚度 + 刻度文字 + 刻度线
+  const autoLeft = Math.max(rawLeft, yLabelOffset + font(isMini ? 12 : 16))
   // 底部：X 轴刻度文字高度 + 间距 + X 轴标签高度 + 底部留白（防止刻度与标签重叠）
   const autoBottom = Math.max(rawBottom, 2 * axisFontSize + px(8))
 
@@ -311,13 +317,13 @@ export function BaseChart({
 
       {/* Y 轴标签 */}
       <text
-        x={margin.left - font(isMini ? 12 : 18)}
+        x={margin.left - yLabelOffset}
         y={margin.top + plotH / 2}
         fontSize={font(isMini ? FONT.small : FONT.axis)}
         fill={CHART_COLORS.labelText}
         textAnchor='middle'
         fontWeight='bold'
-        transform={`rotate(-90, ${margin.left - font(isMini ? 12 : 18)}, ${margin.top + plotH / 2})`}
+        transform={`rotate(-90, ${margin.left - yLabelOffset}, ${margin.top + plotH / 2})`}
       >
         {yLabel}
       </text>

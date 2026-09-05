@@ -1,4 +1,4 @@
-export type ChartTabMode = 'energy-profile' | 'le-chatelier' | 'lnk-invt'
+export type ChartTabMode = 'energy-profile' | 'le-chatelier' | 'lnk-invt' | 'alpha-tp'
 
 export type SystemReactionId = 'no2-n2o4' | 'nh3-synthesis' | 'methanol-synthesis'
 
@@ -31,6 +31,19 @@ export interface EnergyProfilePoint {
   y: number
   label?: string
   isTS?: boolean
+  stepIndex?: number
+  stepEa?: number
+  isRDS?: boolean // 是否为决速步 (Rate-Determining Step)
+}
+
+export interface StepBarrierInfo {
+  stepIndex: number
+  fromLabel: string
+  toLabel: string
+  fromY: number
+  toY: number
+  ea: number
+  isRDS: boolean
 }
 
 export interface HistoryPoint {
@@ -40,3 +53,10 @@ export interface HistoryPoint {
   cReactant: number
   cProduct: number
 }
+
+export interface AlphaTpPoint {
+  temperature: number
+  alphaLowP: number // 较低压强下的平衡转化率 (%)
+  alphaHighP: number // 较高压强下的平衡转化率 (%)
+}
+

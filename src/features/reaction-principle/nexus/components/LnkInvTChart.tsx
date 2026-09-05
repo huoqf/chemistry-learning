@@ -18,9 +18,9 @@ export const LnkInvTChart: React.FC<LnkInvTChartProps> = ({
   deltaH,
   font = (v) => v,
 }) => {
-  const width = 540
-  const height = 320
-  const padding = { top: 40, right: 40, bottom: 50, left: 60 }
+  const width = 560
+  const height = 340
+  const padding = { top: 48, right: 65, bottom: 45, left: 65 }
 
   const chartWidth = width - padding.left - padding.right
   const chartHeight = height - padding.top - padding.bottom
@@ -52,6 +52,21 @@ export const LnkInvTChart: React.FC<LnkInvTChartProps> = ({
 
   return (
     <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full select-none">
+      {/* 定义轴箭头 */}
+      <defs>
+        <marker
+          id="lnkt-axis-arrow"
+          viewBox="0 0 10 10"
+          refX="6"
+          refY="5"
+          markerWidth="6"
+          markerHeight="6"
+          orient="auto-start-reverse"
+        >
+          <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill={colors.neutral[600]} />
+        </marker>
+      </defs>
+
       <line
         x1={padding.left}
         y1={toSvgY(0)}
@@ -61,54 +76,73 @@ export const LnkInvTChart: React.FC<LnkInvTChartProps> = ({
         strokeDasharray="4 4"
       />
 
+      {/* 坐标轴 (带正方向箭头) */}
       <line
         x1={padding.left}
         y1={padding.top + chartHeight}
-        x2={width - padding.right}
+        x2={width - padding.right + 15}
         y2={padding.top + chartHeight}
         stroke={colors.neutral[600]}
         strokeWidth={1.5}
+        markerEnd="url(#lnkt-axis-arrow)"
       />
       <line
         x1={padding.left}
-        y1={padding.top}
+        y1={padding.top + chartHeight}
         x2={padding.left}
-        y2={padding.top + chartHeight}
+        y2={padding.top - 15}
         stroke={colors.neutral[600]}
         strokeWidth={1.5}
+        markerEnd="url(#lnkt-axis-arrow)"
       />
 
+      {/* 安全坐标标签 */}
       <text
-        x={width - padding.right + 10}
-        y={padding.top + chartHeight + 4}
-        fontSize={font(11)}
-        fill={colors.neutral[600]}
-        fontWeight="bold"
-      >
-        (1/T) / K⁻¹
-      </text>
-      <text
-        x={padding.left - 10}
-        y={padding.top - 15}
-        fontSize={font(11)}
-        fill={colors.neutral[600]}
+        x={width - padding.right}
+        y={padding.top + chartHeight + 20}
+        fontSize={font(12)}
+        fill={colors.neutral[700]}
         fontWeight="bold"
         textAnchor="end"
       >
-        ln K
+        (1/T) / K⁻¹ →
       </text>
+      <text
+        x={padding.left}
+        y={padding.top - 16}
+        fontSize={font(12)}
+        fill={colors.neutral[700]}
+        fontWeight="bold"
+        textAnchor="start"
+      >
+        ↑ ln K
+      </text>
+
+      {/* 新高考核心横坐标防错标尺 */}
+      <g transform={`translate(${padding.left + chartWidth / 2}, ${padding.top + chartHeight + 24})`}>
+        <text
+          x={0}
+          y={0}
+          fontSize={font(11)}
+          fontWeight="bold"
+          fill={colors.primary[600]}
+          textAnchor="middle"
+        >
+          ← 升温 (T 增大，1/T 减小) ｜ 降温 (T 减小，1/T 增大) →
+        </text>
+      </g>
 
       <path
         d={lineD}
         fill="none"
         stroke={colors.primary[600]}
-        strokeWidth={2.5}
+        strokeWidth={2.8}
       />
 
       <circle
         cx={curX}
         cy={curY}
-        r={6}
+        r={6.5}
         fill={CHEMISTRY_COLORS.temperature}
         stroke="#fff"
         strokeWidth={2}
@@ -117,22 +151,37 @@ export const LnkInvTChart: React.FC<LnkInvTChartProps> = ({
       <text
         x={curX + 10}
         y={curY - 10}
-        fontSize={font(11)}
+        fontSize={font(12)}
         fontWeight="bold"
         fill={CHEMISTRY_COLORS.temperature}
+        paintOrder="stroke"
+        stroke="#fff"
+        strokeWidth={3}
       >
         T = {temperature} K (ln K = {vantHoffData.currentLnK}, Kc ≈ {vantHoffData.currentKc})
       </text>
 
-      <text
-        x={padding.left + 20}
-        y={padding.top + 30}
-        fontSize={font(12)}
-        fontWeight="bold"
-        fill={deltaH < 0 ? CHEMISTRY_COLORS.temperature : CHEMISTRY_COLORS.amount}
-      >
-        斜率 k = -ΔH/R ({deltaH < 0 ? 'k > 0 (放热反应)' : 'k < 0 (吸热反应)'})
-      </text>
+      {/* 斜率与吸放热直观判定 */}
+      <g transform={`translate(${padding.left + 20}, ${padding.top + 16})`}>
+        <rect
+          x={-8}
+          y={-6}
+          width={280}
+          height={32}
+          fill="rgba(255, 255, 255, 0.88)"
+          stroke="#cbd5e1"
+          rx={6}
+        />
+        <text
+          x={0}
+          y={15}
+          fontSize={font(11)}
+          fontWeight="bold"
+          fill={deltaH < 0 ? CHEMISTRY_COLORS.temperature : CHEMISTRY_COLORS.amount}
+        >
+          理论斜率 k = -ΔH/R ({deltaH < 0 ? '斜率 k > 0 ⇒ ΔH < 0 (放热)' : '斜率 k < 0 ⇒ ΔH > 0 (吸热)'})
+        </text>
+      </g>
     </svg>
   )
 }

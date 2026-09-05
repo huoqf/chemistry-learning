@@ -4,6 +4,7 @@ import { EquilibriumChart, RelationChart } from '@/components/Chart'
 import { EnergyProfileChart } from './EnergyProfileChart'
 import { BoltzmannDistributionChart } from './BoltzmannDistributionChart'
 import { LnkInvTChart } from './LnkInvTChart'
+import { AlphaTpChart } from './AlphaTpChart'
 import { CHART_COLORS } from '@/theme'
 import type { ModelQuizData } from '@/data/quiz/types'
 import type { NexusParams } from '../types'
@@ -63,25 +64,48 @@ export const ReactionPrincipleCenterView: React.FC<ReactionPrincipleCenterViewPr
   const reactantConcPoints = history.map((p: any) => ({ x: p.time, y: p.cReactant }))
   const productConcPoints = history.map((p: any) => ({ x: p.time, y: p.cProduct }))
 
+  const maxV = Math.max(
+    2.4,
+    ...forwardPoints.map((p: any) => p.y),
+    ...reversePoints.map((p: any) => p.y)
+  )
+  const maxC = Math.max(
+    2.8,
+    ...reactantConcPoints.map((p: any) => p.y),
+    ...productConcPoints.map((p: any) => p.y)
+  )
+
+  const perturbMarker = [
+    {
+      x: 4.0,
+      axis: 'vertical' as const,
+      label: 't₁ 改变条件',
+      color: '#f59e0b',
+    },
+  ]
+
+  const chartTitle =
+    params.chartTab === 'energy-profile'
+      ? '【法宝一：大能垒决速步】势能山峰 & 玻尔兹曼分布双图分屏'
+      : params.chartTab === 'le-chatelier'
+      ? '【法宝二：减弱但不抵消】勒夏特列移动 v-t 速率 & c-t 浓度双图联动'
+      : params.chartTab === 'lnk-invt'
+      ? '【法宝三：斜率定吸放热】范特霍夫 lnK - 1/T 热力学关系图谱'
+      : '【法宝四：定一议二判压强】平衡转化率 α - T - P 双因素图谱'
+
   return (
     <div className="w-full h-full flex flex-col overflow-hidden p-3">
       {/* 顶部探究图谱 Header */}
       <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-200 shrink-0">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-slate-800">
-            {params.chartTab === 'energy-profile'
-              ? '活化能势能山峰 & 玻尔兹曼能量分布 50%:50% 双图分屏'
-              : params.chartTab === 'le-chatelier'
-              ? '勒夏特列移动 v-t (速率) & c-t (浓度) 双图同步联动'
-              : '范特霍夫 lnK - 1/T 热力学关系图谱'}
-          </span>
+          <span className="text-xs font-bold text-slate-800">{chartTitle}</span>
           <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">
             {chemistry.system.name}
           </span>
         </div>
       </div>
 
-      {/* 主视图 50%:50% 分屏 Chart 区域 */}
+      {/* 主视图分屏 Chart 区域 */}
       <div className="flex-1 w-full min-h-0 relative overflow-hidden flex items-center justify-center">
         {params.chartTab === 'energy-profile' && (
           <div className="w-full h-full flex flex-col md:flex-row gap-3 min-h-0 overflow-hidden">
@@ -89,7 +113,7 @@ export const ReactionPrincipleCenterView: React.FC<ReactionPrincipleCenterViewPr
             <div className="flex-1 min-w-0 h-full flex flex-col overflow-hidden">
               <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center gap-1.5 shrink-0">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                反应势能山峰与过渡态 (Ea)
+                反应势能山峰与过渡态 (分步能垒标注)
               </div>
               <div className="flex-1 min-h-0 w-full relative">
                 <EnergyProfileChart
@@ -98,6 +122,8 @@ export const ReactionPrincipleCenterView: React.FC<ReactionPrincipleCenterViewPr
                   eaReverse={chemistry.eaReverse}
                   deltaH={chemistry.system.deltaH}
                   catalyst={params.catalyst}
+                  stepBarriers={chemistry.stepBarriers}
+                  rdsIndex={chemistry.rdsIndex}
                 />
               </div>
             </div>
@@ -109,7 +135,7 @@ export const ReactionPrincipleCenterView: React.FC<ReactionPrincipleCenterViewPr
             <div className="flex-1 min-w-0 h-full flex flex-col overflow-hidden">
               <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center gap-1.5 shrink-0">
                 <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
-                麦克斯韦-玻尔兹曼能量分布与活化分子比例
+                玻尔兹曼分布与活化分子比例 (基准态双线对照)
               </div>
               <div className="flex-1 min-h-0 w-full relative">
                 <BoltzmannDistributionChart
@@ -135,7 +161,9 @@ export const ReactionPrincipleCenterView: React.FC<ReactionPrincipleCenterViewPr
                   forwardPoints={forwardPoints}
                   reversePoints={reversePoints}
                   xDomain={[0, 10]}
+                  yDomain={[0, Math.ceil(maxV * 10) / 10]}
                   currentTime={10}
+                  markers={perturbMarker}
                   title={`${chemistry.system.name} v - t 突变图`}
                   xLabel="时间 t / s"
                   yLabel="反应速率 v / (mol·L⁻¹·s⁻¹)"
@@ -164,7 +192,9 @@ export const ReactionPrincipleCenterView: React.FC<ReactionPrincipleCenterViewPr
                     },
                   ]}
                   xDomain={[0, 10]}
+                  yDomain={[0, Math.ceil(maxC * 10) / 10]}
                   cursorX={10}
+                  markers={perturbMarker}
                   mainLabel="c(反应物)"
                   color={CHART_COLORS.primary}
                   title={`${chemistry.system.name} c - t 演化图`}
@@ -177,7 +207,7 @@ export const ReactionPrincipleCenterView: React.FC<ReactionPrincipleCenterViewPr
         )}
 
         {params.chartTab === 'lnk-invt' && (
-          <div className="w-full h-full min-h-0 relative">
+          <div className="w-full h-full max-w-4xl mx-auto min-h-0 relative flex items-center justify-center p-2">
             <LnkInvTChart
               vantHoffData={chemistry.vantHoffData}
               temperature={params.temperature}
@@ -185,9 +215,22 @@ export const ReactionPrincipleCenterView: React.FC<ReactionPrincipleCenterViewPr
             />
           </div>
         )}
+
+        {params.chartTab === 'alpha-tp' && (
+          <div className="w-full h-full max-w-4xl mx-auto min-h-0 relative flex items-center justify-center p-2">
+            <AlphaTpChart
+              alphaTpData={chemistry.alphaTpData}
+              temperature={params.temperature}
+              pressure={params.pressure}
+              deltaH={chemistry.system.deltaH}
+              gasMolesDiff={chemistry.system.gasMolesDiff}
+            />
+          </div>
+        )}
       </div>
     </div>
   )
 }
+
 
 

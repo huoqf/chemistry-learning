@@ -65,4 +65,47 @@ describe('useReactionPrincipleChemistry 化学逻辑核查与测试', () => {
       expect(perturbPoint.vReverse).toBeGreaterThan(perturbPoint.vForward)
     }
   })
+
+  it('6. 多步反应能垒与决速步判定: 步骤2能垒大于步骤1能垒 (ΔEa2 > ΔEa1)', () => {
+    const { result } = renderHook(() =>
+      useReactionPrincipleChemistry({ ...defaultParams, catalyst: 'catalyst-b' })
+    )
+    expect(result.current.isMultistep).toBe(true)
+    expect(result.current.stepBarriers.length).toBe(2)
+    expect(result.current.stepBarriers[1].ea).toBeGreaterThan(result.current.stepBarriers[0].ea)
+    expect(result.current.stepBarriers[1].isRDS).toBe(true)
+    expect(result.current.rdsIndex).toBe(2)
+  })
+
+  it('7. 玻尔兹曼基准态对照: 升高温度活化分子占比增大，活化能 Ea 恒定不变', () => {
+    const { result: lowT } = renderHook(() =>
+      useReactionPrincipleChemistry({ ...defaultParams, temperature: 298 })
+    )
+    const { result: highT } = renderHook(() =>
+      useReactionPrincipleChemistry({ ...defaultParams, temperature: 450 })
+    )
+
+    expect(highT.current.eaForward).toBe(lowT.current.eaForward)
+    expect(highT.current.boltzmannData.activatedFraction).toBeGreaterThan(
+      lowT.current.boltzmannData.activatedFraction
+    )
+    expect(highT.current.boltzmannData.baselineDistribution).toBeDefined()
+  })
+
+  it('8. alpha-tp 平衡转化率: 放热反应升温 α 下降，气体分子数减小反应加压 α 上升', () => {
+    const { result } = renderHook(() =>
+      useReactionPrincipleChemistry({ ...defaultParams, chartTab: 'alpha-tp' })
+    )
+    const points = result.current.alphaTpData.points
+    expect(points.length).toBeGreaterThan(5)
+
+    // 升温转化率单调递减
+    const firstPoint = points[0]
+    const lastPoint = points[points.length - 1]
+    expect(firstPoint.alphaLowP).toBeGreaterThan(lastPoint.alphaLowP)
+
+    // 同温下高压转化率高于低压 (P2 > P1)
+    expect(firstPoint.alphaHighP).toBeGreaterThan(firstPoint.alphaLowP)
+  })
 })
+

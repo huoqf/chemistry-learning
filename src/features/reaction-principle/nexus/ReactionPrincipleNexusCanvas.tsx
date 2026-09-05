@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { ThreePanel } from '@/components/Layout'
 import { GaokaoToolHeader } from '@/components/UI'
 import { getModelQuizData } from '@/data/quiz/index'
-import { useReactionPrincipleChemistry } from './hooks/useReactionPrincipleChemistry'
+import { REACTION_SYSTEMS, useReactionPrincipleChemistry } from './hooks/useReactionPrincipleChemistry'
 import { ReactionPrincipleLeftPanel } from './components/ReactionPrincipleLeftPanel'
 import { ReactionPrincipleCenterView } from './components/ReactionPrincipleCenterView'
 import { ReactionPrincipleRightPanel } from './components/ReactionPrincipleRightPanel'
@@ -30,16 +30,27 @@ export const ReactionPrincipleNexusCanvas: React.FC = () => {
   const chemistry = useReactionPrincipleChemistry(params)
 
   const handleUpdateParams = (updated: Partial<NexusParams>) => {
+    if (updated.reactionId && updated.reactionId !== params.reactionId) {
+      const nextSys = REACTION_SYSTEMS[updated.reactionId] || REACTION_SYSTEMS['no2-n2o4']
+      setParams((prev) => ({
+        ...prev,
+        ...updated,
+        temperature: nextSys.defaultTemp,
+        pressure: nextSys.defaultPressure,
+        addedReactant: 0,
+      }))
+      return
+    }
     setParams((prev) => ({ ...prev, ...updated }))
   }
 
   const handleReset = () => {
     setParams({
-      chartTab: 'energy-profile',
-      reactionId: 'no2-n2o4',
+      chartTab: params.chartTab,
+      reactionId: params.reactionId,
       catalyst: 'none',
-      temperature: 298,
-      pressure: 1.0,
+      temperature: chemistry.system.defaultTemp,
+      pressure: chemistry.system.defaultPressure,
       addedReactant: 0,
       inertGasMode: 'none',
     })
