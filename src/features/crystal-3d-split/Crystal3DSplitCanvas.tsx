@@ -6,7 +6,7 @@ import {
   GaokaoVariantQuiz,
 } from '@/components/UI'
 import { getModelQuizData } from '@/data/quiz'
-import type { CrystalTypeId, DisplayMode } from './types'
+import type { CrystalTypeId, DisplayMode, CalculationMode, ModelStyle, AtomLocationType } from './types'
 import { CRYSTAL_DATA_MAP } from './data/crystalData'
 import { useCrystalChemistry } from './hooks/useCrystalChemistry'
 import { Crystal3DScene } from './components/Crystal3DScene'
@@ -20,36 +20,25 @@ export const Crystal3DSplitCanvas: React.FC = () => {
   // 视角模式 (0: 图谱探究 | 1: 规范踩分 | 2: 真题研析)
   const [viewMode, setViewMode] = useState<number>(0)
 
-  // 晶胞选择与参数
+  // 晶胞选择与求解模式
   const [selectedTypeId, setSelectedTypeId] = useState<CrystalTypeId>('nacl')
+  const [modelStyle, setModelStyle] = useState<ModelStyle>('ball-stick')
   const [displayMode, setDisplayMode] = useState<DisplayMode>('default')
+  const [calculationMode, setCalculationMode] = useState<CalculationMode>('algebraic')
   const [highlightElement, setHighlightElement] = useState<string | null>(null)
+  const [selectedLocationType, setSelectedLocationType] = useState<AtomLocationType | null>(null)
 
   const currentCrystal = CRYSTAL_DATA_MAP[selectedTypeId]
 
-  // 自定义可调参数
-  const [customEdgeLengthPm, setCustomEdgeLengthPm] = useState<number>(
-    currentCrystal.defaultEdgeLengthPm
-  )
-  const [customMolarMass, setCustomMolarMass] = useState<number>(
-    currentCrystal.molarMass
-  )
-
-  // 切换晶胞时重置默认参数
+  // 切换晶胞时清空高亮与选中位点
   const handleSelectType = (newTypeId: CrystalTypeId) => {
     setSelectedTypeId(newTypeId)
-    const newCrystal = CRYSTAL_DATA_MAP[newTypeId]
-    setCustomEdgeLengthPm(newCrystal.defaultEdgeLengthPm)
-    setCustomMolarMass(newCrystal.molarMass)
     setHighlightElement(null)
+    setSelectedLocationType(null)
   }
 
-  // 纯化学导出计算 Hook
-  const calcResult = useCrystalChemistry(
-    currentCrystal,
-    customEdgeLengthPm,
-    customMolarMass
-  )
+  // 纯化学导出计算 Hook (双模：代数推导 vs 真实常数计算)
+  const calcResult = useCrystalChemistry(currentCrystal, calculationMode)
 
   return (
     <div className="w-full h-full flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden select-none">
@@ -68,12 +57,12 @@ export const Crystal3DSplitCanvas: React.FC = () => {
               <Crystal3DLeftPanel
                 selectedTypeId={selectedTypeId}
                 onSelectType={handleSelectType}
+                modelStyle={modelStyle}
+                onChangeModelStyle={setModelStyle}
                 displayMode={displayMode}
                 onChangeDisplayMode={setDisplayMode}
-                edgeLengthPm={customEdgeLengthPm}
-                onChangeEdgeLength={setCustomEdgeLengthPm}
-                molarMass={customMolarMass}
-                onChangeMolarMass={setCustomMolarMass}
+                calculationMode={calculationMode}
+                onChangeCalculationMode={setCalculationMode}
                 highlightElement={highlightElement}
                 onSelectHighlightElement={setHighlightElement}
               />
@@ -83,8 +72,10 @@ export const Crystal3DSplitCanvas: React.FC = () => {
                 <Crystal3DScene
                   crystalData={currentCrystal}
                   displayMode={displayMode}
+                  modelStyle={modelStyle}
                   highlightElement={highlightElement}
-                  edgeLengthPm={customEdgeLengthPm}
+                  edgeLengthPm={currentCrystal.defaultEdgeLengthPm}
+                  onSelectLocationType={setSelectedLocationType}
                 />
               </div>
             }
@@ -92,7 +83,7 @@ export const Crystal3DSplitCanvas: React.FC = () => {
               <Crystal3DRightPanel
                 crystalData={currentCrystal}
                 calcResult={calcResult}
-                edgeLengthPm={customEdgeLengthPm}
+                selectedLocationType={selectedLocationType}
               />
             }
           />

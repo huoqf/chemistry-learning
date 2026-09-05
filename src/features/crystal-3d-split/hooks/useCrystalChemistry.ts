@@ -3,17 +3,19 @@ import type {
   CrystalTypeData,
   ElementCountDetail,
   CrystalCalculationResult,
+  CalculationMode,
 } from '../types'
 
 const NA = 6.022e23 // 阿伏加德罗常数
 
 export function useCrystalChemistry(
   crystalData: CrystalTypeData,
-  edgeLengthPm: number,
-  molarMassInput?: number
+  calculationMode: CalculationMode = 'algebraic'
 ): CrystalCalculationResult {
   return useMemo(() => {
-    const M = molarMassInput && molarMassInput > 0 ? molarMassInput : crystalData.molarMass
+    const M = crystalData.molarMass
+    const aPm = crystalData.defaultEdgeLengthPm
+    const aCm = aPm * 1e-10
 
     // 1. 按元素归类统计均摊数
     const elementMap = new Map<string, ElementCountDetail>()
@@ -36,28 +38,43 @@ export function useCrystalChemistry(
       switch (atom.locationType) {
         case 'corner':
           detail.cornerCount += 1
-          detail.netCount += 1 / 8
+          detail.netCount += atom.sharingRatio
           break
         case 'edge':
           detail.edgeCount += 1
-          detail.netCount += 1 / 4
+          detail.netCount += atom.sharingRatio
           break
         case 'face':
           detail.faceCount += 1
-          detail.netCount += 1 / 2
+          detail.netCount += atom.sharingRatio
           break
         case 'body':
           detail.bodyCount += 1
-          detail.netCount += 1
+          detail.netCount += atom.sharingRatio
           break
         case 'internal':
           detail.internalCount += 1
-          detail.netCount += 1
+          detail.netCount += atom.sharingRatio
           break
       }
     }
 
-    const elementDetails = Array.from(elementMap.values())
+    const isHexagonal = crystalData.cellParams.gamma === 120
+
+    const elementDetails = Array.from(elementMap.values()).map((detail) => {
+      const normalizedNet = Math.round(detail.netCount * 1000) / 1000
+      let cornerFormula: string | undefined
+      if (detail.cornerCount > 0) {
+        cornerFormula = isHexagonal
+          ? '4×1/12 + 4×1/6'
+          : `${detail.cornerCount}×1/8`
+      }
+      return {
+        ...detail,
+        netCount: normalizedNet,
+        cornerDetailFormula: cornerFormula,
+      }
+    })
 
     // 2. 几何与原子净个数计算
     let totalZ = 1
@@ -81,6 +98,9 @@ export function useCrystalChemistry(
     } else if (crystalData.id === 'caf2') {
       totalZ = 4
       formulaRatioStr = 'Ca₄F₈ ➔ 4 CaF₂'
+    } else if (crystalData.id === 'zns') {
+      totalZ = 4
+      formulaRatioStr = 'Zn₄S₄ ➔ 4 ZnS'
     } else if (crystalData.id === 'catio3') {
       totalZ = 1
       formulaRatioStr = 'Ca₁Ti₁O₃ ➔ CaTiO₃'
@@ -91,30 +111,34 @@ export function useCrystalChemistry(
 
     // 3. 单个晶胞质量 (g)
     const cellMassGram = (totalZ * M) / NA
-    const cellMassLatex = `m_{\\text{cell}} = \\frac{N \\cdot M}{N_{\\text{A}}} = \\frac{${totalZ} \\cdot ${M}}{N_{\\text{A}}} \\text{ g}`
+    const cellMassLatex = `m_{\\text{cell}} = \\frac{Z \\cdot M}{N_{\\text{A}}} = \\frac{${totalZ} \\cdot ${M}}{N_{\\text{A}}} \\text{ g}`
 
-    // 4. 晶胞体积 (cm³) 与公式导出
-    const aCm = edgeLengthPm * 1e-10
+    // 4. 晶胞体积 (cm³) 与高考双模导出式
     let cellVolumeCm3 = 0
     let cellVolumeLatex = ''
-    let densityLatex = ''
+    let densityAlgebraicLatex = ''
+    let densityNumericalLatex = ''
+    let naReverseFormulaLatex = ''
 
     if (crystalData.id === 'hcp-mg') {
-      // 六方晶胞 V = a² * sin(60°) * c
-      const cPm = crystalData.defaultHeightPm || Math.sqrt(8 / 3) * edgeLengthPm
+      const cPm = crystalData.defaultHeightPm || Math.round(Math.sqrt(8 / 3) * aPm)
       const cCm = cPm * 1e-10
       cellVolumeCm3 = aCm * aCm * Math.sin(Math.PI / 3) * cCm
-      cellVolumeLatex = `V = a^2 c \\sin(60^\\circ) = (${edgeLengthPm} \\times 10^{-10})^2 \\cdot (${Math.round(cPm)} \\times 10^{-10}) \\cdot \\frac{\\sqrt{3}}{2} = ${edgeLengthPm}^2 \\cdot ${Math.round(cPm)} \\cdot \\frac{\\sqrt{3}}{2} \\cdot 10^{-30} \\text{ cm}^3`
-      densityLatex = `\\rho = \\frac{${totalZ} \\cdot M}{\\frac{\\sqrt{3}}{2} a^2 c \\cdot 10^{-30} \\cdot N_{\\text{A}}} \\text{ g/cm}^3`
+      cellVolumeLatex = `V = a^2 c \\sin 60^\\circ = \\frac{\\sqrt{3}}{2} a^2 c \\times 10^{-30} \\text{ cm}^3`
+      densityAlgebraicLatex = `\\rho = \\frac{${totalZ * 2}M}{\\sqrt{3} a^2 c \\cdot 10^{-30} \\cdot N_{\\text{A}}} \\text{ g/cm}^3`
+      densityNumericalLatex = `\\begin{aligned} \\rho &= \\frac{${totalZ} \\times ${M}}{\\frac{\\sqrt{3}}{2} \\times (${aPm} \\times 10^{-10})^2 \\times (${cPm} \\times 10^{-10}) \\times N_{\\text{A}}} \\\\[3pt] &= \\frac{${(totalZ * M).toFixed(1)}}{\\frac{\\sqrt{3}}{2} \\times ${aPm}^2 \\times ${cPm} \\times 10^{-30} \\times 6.02 \\times 10^{23}} \\text{ g/cm}^3 \\end{aligned}`
+      naReverseFormulaLatex = `N_{\\text{A}} = \\frac{${totalZ * 2}M}{\\sqrt{3} a^2 c \\rho \\cdot 10^{-30}}`
     } else {
-      // 立方晶胞 V = a³
       cellVolumeCm3 = Math.pow(aCm, 3)
-      cellVolumeLatex = `V = a^3 = (${edgeLengthPm} \\times 10^{-10})^3 = ${edgeLengthPm}^3 \\cdot 10^{-30} \\text{ cm}^3`
-      densityLatex = `\\rho = \\frac{${totalZ} \\cdot M}{a^3 \\cdot 10^{-30} \\cdot N_{\\text{A}}} = \\frac{${totalZ} \\cdot ${M}}{(${edgeLengthPm} \\times 10^{-10})^3 \\cdot N_{\\text{A}}} \\text{ g/cm}^3`
+      cellVolumeLatex = `V = a^3 = (${aPm} \\times 10^{-10})^3 = ${aPm}^3 \\times 10^{-30} \\text{ cm}^3`
+      densityAlgebraicLatex = `\\rho = \\frac{${totalZ} \\cdot M}{a^3 \\cdot 10^{-30} \\cdot N_{\\text{A}}} \\text{ g/cm}^3`
+      densityNumericalLatex = `\\begin{aligned} \\rho &= \\frac{${totalZ} \\times ${M}}{(${aPm} \\times 10^{-10})^3 \\times N_{\\text{A}}} \\\\[3pt] &= \\frac{${(totalZ * M).toFixed(1)}}{${aPm}^3 \\times 10^{-30} \\times 6.02 \\times 10^{23}} \\text{ g/cm}^3 \\end{aligned}`
+      naReverseFormulaLatex = `N_{\\text{A}} = \\frac{${totalZ}M}{\\rho \\cdot a^3 \\cdot 10^{-30}}`
     }
 
     // 5. 密度数值计算
     const densityValue = cellMassGram / cellVolumeCm3
+    const densityLatex = calculationMode === 'algebraic' ? densityAlgebraicLatex : densityNumericalLatex
 
     // 6. 空间利用率 % (针对常见单质金属与金刚石)
     let spaceOccupancyPercent: number | undefined
@@ -132,6 +156,7 @@ export function useCrystalChemistry(
     }
 
     return {
+      calculationMode,
       elementDetails,
       formulaRatioStr,
       totalZ,
@@ -141,8 +166,11 @@ export function useCrystalChemistry(
       cellVolumeLatex,
       densityValue,
       densityLatex,
+      densityAlgebraicLatex,
+      densityNumericalLatex,
+      naReverseFormulaLatex,
       spaceOccupancyPercent,
       spaceOccupancyLatex,
     }
-  }, [crystalData, edgeLengthPm, molarMassInput])
+  }, [crystalData, calculationMode])
 }

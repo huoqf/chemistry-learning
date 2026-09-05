@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Line } from '@react-three/drei'
 import {
@@ -9,13 +9,15 @@ import {
   isWebGLAvailable,
 } from '@/components/Chemistry3D'
 import { CANVAS_COLORS, CHEMISTRY_COLORS, SCENE_COLORS } from '@/theme'
-import type { CrystalTypeData, AtomSpec, DisplayMode } from '../types'
+import type { CrystalTypeData, AtomSpec, DisplayMode, ModelStyle, AtomLocationType } from '../types'
 
 interface Crystal3DSceneProps {
   crystalData: CrystalTypeData
   displayMode: DisplayMode
+  modelStyle?: ModelStyle
   highlightElement?: string | null
   edgeLengthPm: number
+  onSelectLocationType?: (loc: AtomLocationType | null) => void
   className?: string
 }
 
@@ -31,20 +33,44 @@ function WebGLFallback() {
   )
 }
 
+function formatFrac(n: number): string {
+  if (Math.abs(n - 0) < 1e-4) return '0'
+  if (Math.abs(n - 1) < 1e-4) return '1'
+  if (Math.abs(n - 0.5) < 1e-4) return '1/2'
+  if (Math.abs(n - 0.25) < 1e-4) return '1/4'
+  if (Math.abs(n - 0.75) < 1e-4) return '3/4'
+  if (Math.abs(n - 1 / 3) < 1e-4) return '1/3'
+  if (Math.abs(n - 2 / 3) < 1e-4) return '2/3'
+  return n.toFixed(2).replace(/\.?0+$/, '')
+}
+
 export function Crystal3DScene({
   crystalData,
   displayMode,
+  modelStyle = 'ball-stick',
   highlightElement,
   edgeLengthPm,
+  onSelectLocationType,
   className = '',
 }: Crystal3DSceneProps) {
   const [selectedAtomId, setSelectedAtomId] = useState<string | null>(null)
   const [isHovered, setIsHovered] = useState(false)
+  const [viewMode, setViewMode] = useState<'3d' | 'top'>('3d')
 
   const selectedAtom = useMemo(() => {
     if (!selectedAtomId) return null
     return crystalData.atoms.find((a) => a.id === selectedAtomId) || null
   }, [selectedAtomId, crystalData])
+
+  const handleSelectAtom = (id: string | null) => {
+    setSelectedAtomId(id)
+    if (!id) {
+      onSelectLocationType?.(null)
+    } else {
+      const atom = crystalData.atoms.find((a) => a.id === id)
+      onSelectLocationType?.(atom?.locationType ?? null)
+    }
+  }
 
   if (!isWebGLAvailable()) {
     return <WebGLFallback />
@@ -73,12 +99,39 @@ export function Crystal3DScene({
         <SceneContent
           crystalData={crystalData}
           displayMode={displayMode}
+          modelStyle={modelStyle}
+          viewMode={viewMode}
           highlightElement={highlightElement}
           selectedAtomId={selectedAtomId}
-          onSelectAtom={setSelectedAtomId}
+          onSelectAtom={handleSelectAtom}
           onHoverChange={setIsHovered}
         />
       </Canvas>
+
+      {/* 左上角高考投影视角切换器 */}
+      <div className="absolute top-3 left-3 z-10 flex items-center bg-white/95 backdrop-blur border border-slate-200 rounded-lg p-0.5 shadow-sm text-xs font-medium">
+        <button
+          onClick={() => setViewMode('3d')}
+          className={`px-2.5 py-1 rounded-md transition-colors ${
+            viewMode === '3d'
+              ? 'bg-blue-600 text-white shadow-xs'
+              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+          }`}
+        >
+          🧊 3D 透视
+        </button>
+        <button
+          onClick={() => setViewMode('top')}
+          className={`px-2.5 py-1 rounded-md transition-colors ${
+            viewMode === 'top'
+              ? 'bg-blue-600 text-white shadow-xs'
+              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+          }`}
+          title="高考常见解题视角：沿 c 轴向底面正交投影"
+        >
+          👁️ 沿 c 轴正交投影
+        </button>
+      </div>
 
       {/* 右上角 2D 晶胞边长与参数水滴标注 */}
       <div className="absolute top-3 right-3 pointer-events-none px-3 py-1.5 rounded-lg bg-white/95 backdrop-blur border border-slate-200 shadow-sm flex items-center gap-2 font-mono text-xs font-semibold text-slate-700">
@@ -102,22 +155,32 @@ export function Crystal3DScene({
                 {selectedAtom.sharingLabel}
               </span>
             </div>
+            <div className="text-slate-700 font-mono text-[11px] mt-0.5">
+              分数坐标: ({selectedAtom.fracPos.map(formatFrac).join(', ')})
+            </div>
             <div className="text-blue-600 font-semibold mt-0.5">
-              均摊贡献: {selectedAtom.sharingRatio} 个原子
+              均摊贡献: {
+                Math.abs(selectedAtom.sharingRatio - 1 / 8) < 0.001 ? '1/8 个 (0.125)' :
+                Math.abs(selectedAtom.sharingRatio - 1 / 4) < 0.001 ? '1/4 个 (0.25)' :
+                Math.abs(selectedAtom.sharingRatio - 1 / 2) < 0.001 ? '1/2 个 (0.5)' :
+                Math.abs(selectedAtom.sharingRatio - 1 / 12) < 0.001 ? '1/12 个 (约 0.083)' :
+                Math.abs(selectedAtom.sharingRatio - 1 / 6) < 0.001 ? '1/6 个 (约 0.167)' :
+                '1 个 (晶胞独占)'
+              }
             </div>
           </div>
           <button
-            onClick={() => setSelectedAtomId(null)}
+            onClick={() => handleSelectAtom(null)}
             className="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-500 text-[11px] font-medium transition-colors"
           >
-            取消高亮
+            取消
           </button>
         </div>
       )}
 
       {/* 底部 3D 操作提示 */}
       <div className="absolute bottom-3 left-3 pointer-events-none px-3 py-1.5 rounded-lg bg-white/95 backdrop-blur border border-slate-200 text-[11px] text-slate-600 shadow-sm flex items-center gap-2">
-        <span>💡 拖拽视角旋转 | 滚轮缩放 | 点击原子查看均摊份额</span>
+        <span>💡 拖拽旋转 | 滚轮缩放 | 点击原子右侧联动高亮均摊表格</span>
       </div>
     </div>
   )
@@ -126,6 +189,8 @@ export function Crystal3DScene({
 function SceneContent({
   crystalData,
   displayMode,
+  modelStyle = 'ball-stick',
+  viewMode,
   highlightElement,
   selectedAtomId,
   onSelectAtom,
@@ -133,6 +198,8 @@ function SceneContent({
 }: {
   crystalData: CrystalTypeData
   displayMode: DisplayMode
+  modelStyle?: ModelStyle
+  viewMode: '3d' | 'top'
   highlightElement?: string | null
   selectedAtomId: string | null
   onSelectAtom: (id: string | null) => void
@@ -141,6 +208,7 @@ function SceneContent({
   const cellParams = crystalData.cellParams
   const isExploded = displayMode === 'exploded'
   const explodeFactor = isExploded ? 0.38 : 0
+  const isSpaceFilling = modelStyle === 'space-filling'
 
   // 1. 计算每个原子的 3D 空间位置 (包含爆炸外扩)
   const atomPositions = useMemo(() => {
@@ -161,9 +229,31 @@ function SceneContent({
     })
   }, [crystalData, cellParams, explodeFactor])
 
-  // 2. 几何相切或晶格对角线辅助线 (geometry 模式)
+  // 2. 几何相切或晶格对角线辅助线 (各晶胞专属配置驱动)
   const diagonalLines = useMemo(() => {
     if (displayMode !== 'geometry') return null
+
+    if (crystalData.tangentLines && crystalData.tangentLines.length > 0) {
+      return (
+        <group>
+          {crystalData.tangentLines.map((line, idx) => {
+            const pFrom = fracToWorld(line.startFrac, cellParams)
+            const pTo = fracToWorld(line.endFrac, cellParams)
+            return (
+              <Line
+                key={`tangent-line-${idx}`}
+                points={[pFrom, pTo]}
+                color={line.color || CANVAS_COLORS.diagonalFace}
+                lineWidth={2.5}
+                dashed
+                dashSize={0.08}
+                gapSize={0.04}
+              />
+            )
+          })}
+        </group>
+      )
+    }
 
     const p000 = fracToWorld([0, 0, 0], cellParams)
     const p111 = fracToWorld([1, 1, 1], cellParams)
@@ -191,12 +281,28 @@ function SceneContent({
         />
       </group>
     )
-  }, [displayMode, cellParams])
+  }, [displayMode, cellParams, crystalData.tangentLines])
+
+  const controlsRef = useRef<any>(null)
+
+  useEffect(() => {
+    if (controlsRef.current) {
+      if (viewMode === 'top') {
+        controlsRef.current.object.position.set(0, 0, 8)
+        controlsRef.current.target.set(0, 0, 0)
+        controlsRef.current.update()
+      } else {
+        controlsRef.current.object.position.set(3.2, 2.6, 3.2)
+        controlsRef.current.target.set(0, 0, 0)
+        controlsRef.current.update()
+      }
+    }
+  }, [viewMode])
 
   return (
     <>
       {/* 3D 灯光设置 */}
-      <ambientLight intensity={0.7} />
+      <ambientLight intensity={0.75} />
       <directionalLight position={[6, 9, 6]} intensity={1.2} castShadow />
       <directionalLight position={[-6, -4, -6]} intensity={0.35} />
 
@@ -210,8 +316,8 @@ function SceneContent({
       {/* 相切对角线 */}
       {diagonalLines}
 
-      {/* 晶格与配位键连线 */}
-      {!isExploded &&
+      {/* 晶格与配位键连线（密堆积模式下隐藏以避免穿模） */}
+      {!isExploded && !isSpaceFilling &&
         crystalData.bonds.map((bond, i) => {
           const fromPos = atomPositions[bond.fromIndex]?.pos
           const toPos = atomPositions[bond.toIndex]?.pos
@@ -238,7 +344,15 @@ function SceneContent({
         const isFiltered = highlightElement ? atom.element === highlightElement : true
         const isCuttingMode = displayMode === 'cutting'
 
-        // 切割模式下按均摊比例透明度渲染
+        // 真实几何相切半径计算
+        const baseRadius = (isSpaceFilling || displayMode === 'geometry')
+          ? (crystalData.tangentRadii?.[atom.element] ?? atom.tangentRadius ?? atom.radius * 1.6)
+          : atom.radius
+
+        const finalRadius = isCuttingMode
+          ? baseRadius * (0.6 + atom.sharingRatio * 0.4)
+          : baseRadius
+
         const displayColor = isFiltered
           ? atom.color
           : SCENE_COLORS.materials.metal
@@ -249,7 +363,7 @@ function SceneContent({
             position={pos}
             element={atom.element}
             color={displayColor}
-            radius={isCuttingMode ? atom.radius * (0.6 + atom.sharingRatio * 0.4) : atom.radius}
+            radius={finalRadius}
             isSelected={isSelected}
             onSelect={() => onSelectAtom(isSelected ? null : atom.id)}
             onHoverChange={onHoverChange}
@@ -258,7 +372,7 @@ function SceneContent({
       })}
 
       {/* OrbitControls 手势旋转 (关闭 damping) */}
-      <OrbitControls enableDamping={false} makeDefault />
+      <OrbitControls ref={controlsRef} enableDamping={false} makeDefault />
     </>
   )
 }

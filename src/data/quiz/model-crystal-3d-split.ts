@@ -57,11 +57,6 @@ export const modelCrystal3dSplit: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查 3D 晶胞均摊切割（顶点 1/8、棱心 1/4、体心 1）与密度换算。',
       detailedExplanation: 'A 正确：O²⁻ 在 12 条棱心，个数为 12×1/4 = 3，Ti⁴⁺ 顶点 8×1/8 = 1，Ca²⁺ 体心 1，化学式 CaTiO₃。B 选项 Ca²⁺ 配位数为 12；C 选项缺失 10⁻³⁰ 换算系数；D 选项最近距离为 a/2。',
-      diagramType: 'titration-error-diagram',
-      diagramConfig: {
-        errorDiagramType: 'iodometry-purity',
-        title: '立方钙钛矿 (CaTiO₃) 3D 晶胞均摊切割 (顶点 1/8, 棱心 1/4, 体心 1) 原图',
-      },
     },
     {
       id: 'var-2',
@@ -78,11 +73,6 @@ export const modelCrystal3dSplit: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查 3D 切割与晶胞四面体内部节点距离推导。',
       detailedExplanation: '金刚石晶胞中 N = 8×1/8 + 6×1/2 + 4 = 8。内部 C 原子位于体对角线 1/4 处，键长 d = √3/4 a pm。空间利用率为 34%。',
-      diagramType: 'titration-error-diagram',
-      diagramConfig: {
-        errorDiagramType: 'permanganate-view-angle',
-        title: '金刚石面心立方 + 四面体空隙 (N=8) 晶胞结构示意图',
-      },
     },
     {
       id: 'var-3',
@@ -99,11 +89,6 @@ export const modelCrystal3dSplit: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查体心立方 (BCC: N=2, 配位数 8, 利用率 68%) 与面心立方 (FCC: N=4, 配位数 12, 利用率 74%) 基础晶胞几何对比。',
       detailedExplanation: 'Na(BCC) 晶胞净原子 N = 8×1/8 + 1 = 2，中心原子与 8 个顶点相切配位数为 8。A 项正确。FCC 净原子 N = 4，配位数为 12，利用率为 74%。',
-      diagramType: 'titration-error-diagram',
-      diagramConfig: {
-        errorDiagramType: 'cod-back-titration',
-        title: '体心立方 (BCC N=2) vs 面心立方 (FCC N=4) 晶胞结构对比图',
-      },
     },
     {
       id: 'var-4',
@@ -120,11 +105,6 @@ export const modelCrystal3dSplit: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：面心立方有 8 个四面体空隙，为了满足 ZnS 1:1 化学式，Zn²⁺ 仅填入其中 4 个四面体空隙（占 1/2）。',
       detailedExplanation: 'S²⁻ 在面心立方共有 4 个。面心立方中共有 8 个四面体空隙和 4 个八面体空隙，Zn²⁺ 仅填入其中的 4 个四面体空隙（占 1/2），使得 Zn:S = 4:4 = 1:1，化学式为 ZnS，Zn²⁺ 配位数为 4。',
-      diagramType: 'titration-error-diagram',
-      diagramConfig: {
-        errorDiagramType: 'iodometry-purity',
-        title: '闪锌矿 (ZnS) 面心 S²⁻ 堆积与 4 个 Zn²⁺ 四面体空隙填充图',
-      },
     },
     {
       id: 'var-5',
@@ -141,11 +121,6 @@ export const modelCrystal3dSplit: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：二维平面均摊法：每条 C-C 键由 2 个 C 原子共享，1 个 C 原子形成 3 条键，平均 1 个 C 占有 3 × 1/2 = 1.5 条 C-C 键。',
       detailedExplanation: '每个 C 原子向外伸出 3 条键，每条键由 2 个 C 原子共同形成，故 1 mol C 原子对应 3 × 1/2 = 1.5 mol C-C 键。',
-      diagramType: 'titration-error-diagram',
-      diagramConfig: {
-        errorDiagramType: 'permanganate-view-angle',
-        title: '石墨烯正六边形平面网状 (1个C分得 1.5个C-C键) 均摊示意图',
-      },
     },
   ],
 }

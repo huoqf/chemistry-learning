@@ -1,17 +1,17 @@
 import React from 'react'
-import { LeftPanel, LeftPanelSection, OptionButton, ParamControl, SegmentedControl } from '@/components/UI'
-import type { CrystalTypeId, DisplayMode } from '../types'
+import { LeftPanel, LeftPanelSection, OptionButton, SegmentedControl } from '@/components/UI'
+import type { CrystalTypeId, DisplayMode, CalculationMode, ModelStyle } from '../types'
 import { CRYSTAL_DATA_MAP } from '../data/crystalData'
 
 interface Crystal3DLeftPanelProps {
   selectedTypeId: CrystalTypeId
   onSelectType: (typeId: CrystalTypeId) => void
+  modelStyle: ModelStyle
+  onChangeModelStyle: (style: ModelStyle) => void
   displayMode: DisplayMode
   onChangeDisplayMode: (mode: DisplayMode) => void
-  edgeLengthPm: number
-  onChangeEdgeLength: (val: number) => void
-  molarMass: number
-  onChangeMolarMass: (val: number) => void
+  calculationMode: CalculationMode
+  onChangeCalculationMode: (mode: CalculationMode) => void
   highlightElement: string | null
   onSelectHighlightElement: (element: string | null) => void
 }
@@ -19,12 +19,12 @@ interface Crystal3DLeftPanelProps {
 export const Crystal3DLeftPanel: React.FC<Crystal3DLeftPanelProps> = ({
   selectedTypeId,
   onSelectType,
+  modelStyle,
+  onChangeModelStyle,
   displayMode,
   onChangeDisplayMode,
-  edgeLengthPm,
-  onChangeEdgeLength,
-  molarMass,
-  onChangeMolarMass,
+  calculationMode,
+  onChangeCalculationMode,
   highlightElement,
   onSelectHighlightElement,
 }) => {
@@ -37,17 +37,27 @@ export const Crystal3DLeftPanel: React.FC<Crystal3DLeftPanelProps> = ({
 
   const crystalList = Object.values(CRYSTAL_DATA_MAP)
 
+  const modelStyleOptions = [
+    { label: '晶格骨架 (点阵)', value: 'ball-stick' },
+    { label: '紧密堆积 (相切刚球)', value: 'space-filling' },
+  ]
+
   const displayModeOptions = [
-    { label: '🧊 完整晶胞', value: 'default' },
-    { label: '💥 爆炸外扩', value: 'exploded' },
-    { label: '✂️ 均摊切割', value: 'cutting' },
-    { label: '📐 相切几何', value: 'geometry' },
+    { label: '完整晶胞', value: 'default' },
+    { label: '爆炸外扩', value: 'exploded' },
+    { label: '均摊切割', value: 'cutting' },
+    { label: '相切几何', value: 'geometry' },
+  ]
+
+  const calculationModeOptions = [
+    { label: '字母代数推导', value: 'algebraic' },
+    { label: '实测数值代入', value: 'numerical' },
   ]
 
   return (
     <LeftPanel>
-      {/* 高考晶胞选择（使用 OptionButton 网格平铺，完全无下拉列表） */}
-      <LeftPanelSection title="1. 选择高考晶胞模型">
+      {/* 晶胞模型选择 */}
+      <LeftPanelSection title="晶胞模型">
         <div className="grid grid-cols-2 gap-1.5">
           {crystalList.map((c) => (
             <OptionButton
@@ -59,84 +69,71 @@ export const Crystal3DLeftPanel: React.FC<Crystal3DLeftPanelProps> = ({
             />
           ))}
         </div>
+      </LeftPanelSection>
 
-        {/* 当前选中晶胞要点说明卡片 */}
-        <div className="mt-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-700 leading-relaxed">
-          <div className="font-bold text-blue-700 mb-0.5 flex items-center gap-1">
-            <span>🔬</span> {currentCrystal.name}
+      {/* 晶胞外观风格与均摊剖面模式 */}
+      <LeftPanelSection title="外观与均摊剖面">
+        <div className="space-y-2">
+          <div>
+            <div className="text-[11px] font-semibold text-slate-500 mb-1">
+              模型呈现风格 (教材对照):
+            </div>
+            <SegmentedControl
+              options={modelStyleOptions}
+              value={modelStyle}
+              onChange={(val) => onChangeModelStyle(val as ModelStyle)}
+            />
           </div>
-          <div className="text-[11px] text-slate-600">
-            {currentCrystal.description}
+
+          <div>
+            <div className="text-[11px] font-semibold text-slate-500 mb-1">
+              微粒剖面与均摊动作:
+            </div>
+            <SegmentedControl
+              options={displayModeOptions}
+              value={displayMode}
+              onChange={(val) => onChangeDisplayMode(val as DisplayMode)}
+            />
           </div>
         </div>
       </LeftPanelSection>
 
-      {/* 均摊与切割剖面模式 */}
-      <LeftPanelSection title="2. 均摊与切割剖面模式">
-        <SegmentedControl
-          options={displayModeOptions}
-          value={displayMode}
-          onChange={(val) => onChangeDisplayMode(val as DisplayMode)}
-        />
-      </LeftPanelSection>
-
-      {/* 参数调控 */}
-      <LeftPanelSection title="3. 参数调控 (大题求解)">
-        <ParamControl
-          params={[
-            {
-              key: 'edgeLengthPm',
-              label: '晶胞边长 a',
-              value: edgeLengthPm,
-              min: 200,
-              max: 800,
-              step: 1,
-              unit: 'pm',
-            },
-            {
-              key: 'molarMass',
-              label: '摩尔质量 M',
-              value: molarMass,
-              min: 10,
-              max: 300,
-              step: 0.5,
-              unit: 'g/mol',
-            },
-          ]}
-          onParamChange={(key, val) => {
-            if (key === 'edgeLengthPm') onChangeEdgeLength(val)
-            if (key === 'molarMass') onChangeMolarMass(val)
-          }}
-        />
-      </LeftPanelSection>
-
-      {/* 元素独立分析 */}
-      <LeftPanelSection title="4. 元素独立分析">
+      {/* 微粒透视筛选 */}
+      <LeftPanelSection title="微粒透视筛选">
         <div className="flex flex-wrap gap-1.5">
           <button
             onClick={() => onSelectHighlightElement(null)}
-            className={`px-2.5 py-1 text-xs rounded-full border transition-all ${
+            className={`px-2.5 py-1 text-xs rounded-lg border transition-colors ${
               highlightElement === null
-                ? 'bg-slate-800 text-white border-slate-800 font-medium shadow-sm'
-                : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
+                ? 'bg-slate-800 text-white border-slate-800 font-medium shadow-xs'
+                : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
             }`}
           >
-            全部显示
+            全部微粒
           </button>
           {availableElements.map((el) => (
             <button
               key={el}
               onClick={() => onSelectHighlightElement(el)}
-              className={`px-2.5 py-1 text-xs rounded-full border transition-all ${
+              className={`px-2.5 py-1 text-xs rounded-lg border transition-colors ${
                 highlightElement === el
-                  ? 'bg-blue-600 text-white border-blue-600 font-medium shadow-sm'
-                  : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
+                  ? 'bg-blue-600 text-white border-blue-600 font-medium shadow-xs'
+                  : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
               }`}
             >
-              仅高亮 {el}
+              仅看 {el}
             </button>
           ))}
         </div>
+      </LeftPanelSection>
+
+      {/* 高考大题推导模式 */}
+      <LeftPanelSection title="大题推导模式">
+        <SegmentedControl
+          options={calculationModeOptions}
+          value={calculationMode}
+          onChange={(val) => onChangeCalculationMode(val as CalculationMode)}
+        />
       </LeftPanelSection>
     </LeftPanel>
   )
