@@ -110,6 +110,27 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
               <text x="255" y="65" fontSize="13" fill="#1E293B" fontWeight="bold" fontFamily="monospace">酚醛树脂</text>
             </g>
           )}
+
+          {mechType === 'catalytic-cycle' && (
+            <g>
+              <circle cx="170" cy="60" r="35" fill="none" stroke="#3B82F6" strokeWidth="1.5" strokeDasharray="3,3" />
+              <text x="170" y="55" fontSize="11" fill="#1E293B" fontWeight="bold" textAnchor="middle">Pd(0) 催化循环</text>
+              <text x="170" y="72" fontSize="9" fill="#2563EB" textAnchor="middle">氧化加成(RDS) → 还原消除</text>
+              <text x="65" y="60" fontSize="10" fill="#475569" textAnchor="middle">Ar-X 进</text>
+              <text x="275" y="60" fontSize="10" fill="#059669" textAnchor="middle">Ar-Ar 出</text>
+            </g>
+          )}
+
+          {mechType === 'diels-alder' && (
+            <g>
+              <text x="40" y="65" fontSize="12" fill="#1E293B" fontWeight="bold" fontFamily="monospace">双烯烃 + 亲双烯体</text>
+              <path d="M 185 60 L 225 60" stroke="#475569" strokeWidth="1.5" />
+              <polygon points="225,60 218,56 218,64" fill="#475569" />
+              <text x="205" y="50" fontSize="9" fill="#475569" textAnchor="middle">[4+2] 加成</text>
+              <text x="205" y="73" fontSize="9" fill="#475569" textAnchor="middle">Δ</text>
+              <text x="235" y="65" fontSize="12" fill="#059669" fontWeight="bold" fontFamily="monospace">环己烯衍生物</text>
+            </g>
+          )}
         </svg>
       </div>
     )

@@ -22,6 +22,9 @@ const ALLOWLIST = new Set([
   // organic-functional-matrix/constants.ts: 16大新高考官能团定性与定量转化全景静态数据字典，
   // 纯声明式静态数据，领域高度内聚闭环，拥有43项自动化测试全面守护，机械拆分收益不明显
   'src/features/organic-functional-matrix/constants.ts',
+  // GaokaoDiagram/index.tsx: 高考化学真题原图高保真复现组件库，纯声明式 SVG 图形渲染，
+  // 集中映射各种真题原图插图分支，无化学物理计算，拆分收益不明显
+  'src/components/Chemistry/GaokaoDiagram/index.tsx',
 ])
 
 function walk(dir) {

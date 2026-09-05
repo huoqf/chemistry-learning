@@ -124,6 +124,7 @@ export type ControlMeta =
       modes: Array<{ value: number; label: string | ReactNode; description: string }>
       label?: string | ReactNode
       cols?: number
+      showNumber?: boolean
       resetOnChange?: boolean
     })
   | (ControlCondition & {

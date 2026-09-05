@@ -39,4 +39,12 @@ export interface AlcoholOxidationSceneProps extends MechanismSceneProps {
   useTertiaryAlcohol: boolean
 }
 
+/**
+ * 消去反应场景额外参数
+ */
+export interface EliminationSceneProps extends MechanismSceneProps {
+  /** 反应溶剂条件：0=NaOH 醇溶液/消去成烯, 1=NaOH 水溶液/水解成醇 */
+  solventMode?: number
+}
+
 export interface OrganicMechanismCanvasProps {}

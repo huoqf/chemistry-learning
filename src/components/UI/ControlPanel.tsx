@@ -98,10 +98,14 @@ const ModeGridControl: React.FC<{
               key={mode.value}
               variant="mode"
               label={
-                <span className="inline-flex items-center gap-1">
-                  <span>{mode.value + 1}.</span>
-                  {mode.label}
-                </span>
+                control.showNumber ? (
+                  <span className="inline-flex items-center gap-1">
+                    <span>{mode.value + 1}.</span>
+                    {mode.label}
+                  </span>
+                ) : (
+                  mode.label
+                )
               }
               selected={mode.value === modeValue}
               disabled={disabled}

@@ -40,6 +40,8 @@ export interface GaokaoVariantItem {
       | 'haloalkane-elimination'
       | 'peptide-hydrolysis'
       | 'phenol-condensation'
+      | 'catalytic-cycle'
+      | 'diels-alder'
     errorDiagramType?: 'cod-back-titration' | 'permanganate-view-angle' | 'iodometry-purity'
     vEq?: number
     phJumpRange?: [number, number]

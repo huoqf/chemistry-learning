@@ -5,30 +5,33 @@ import type { EsterificationSceneProps } from '../types'
 export function EsterificationScene({ reactionStage, font, show18OTracing }: EsterificationSceneProps) {
   return (
     <g>
-      {/* 反应物标题 */}
-      <text
-        x={220}
-        y={55}
-        textAnchor="middle"
-        fill={colors.neutral[800]}
-        fontSize={font(FONT.title)}
-        fontWeight="bold"
-      >
-        乙酸 (CH₃COOH)
-      </text>
-      <text
-        x={620}
-        y={55}
-        textAnchor="middle"
-        fill={colors.neutral[800]}
-        fontSize={font(FONT.title)}
-        fontWeight="bold"
-      >
-        ¹⁸O-乙醇 (CH₃CH₂¹⁸OH)
-      </text>
+      {/* 阶段 0 与阶段 1：反应物与断键过渡态 */}
+      {reactionStage < 2 && (
+        <>
+          {/* 反应物标题 */}
+          <text
+            x={220}
+            y={55}
+            textAnchor="middle"
+            fill={colors.neutral[800]}
+            fontSize={font(FONT.title)}
+            fontWeight="bold"
+          >
+            乙酸 (CH₃COOH)
+          </text>
+          <text
+            x={620}
+            y={55}
+            textAnchor="middle"
+            fill={colors.neutral[800]}
+            fontSize={font(FONT.title)}
+            fontWeight="bold"
+          >
+            ¹⁸O-乙醇 (CH₃CH₂¹⁸OH)
+          </text>
 
-      {/* 反应物 1: 乙酸 (CH3-C(=O)-OH) */}
-      <g transform="translate(110, 130)">
+          {/* 反应物 1: 乙酸 (CH3-C(=O)-OH) */}
+          <g transform="translate(110, 130)">
         {/* CH3 */}
         <circle cx={40} cy={60} r={24} fill={ATOM_COLORS.carbon} />
         <text
@@ -61,6 +64,16 @@ export function EsterificationScene({ reactionStage, font, show18OTracing }: Est
         >
           C
         </text>
+        <text
+          x={108}
+          y={40}
+          textAnchor="middle"
+          fill={CHEMISTRY_COLORS.concentration}
+          fontSize={font(FONT.small)}
+          fontWeight="bold"
+        >
+          δ⁺
+        </text>
         {/* C=O 双键 */}
         <line
           x1={130}
@@ -80,6 +93,16 @@ export function EsterificationScene({ reactionStage, font, show18OTracing }: Est
           fontWeight="bold"
         >
           O
+        </text>
+        <text
+          x={130}
+          y={-32}
+          textAnchor="middle"
+          fill={CHEMISTRY_COLORS.temperature}
+          fontSize={font(FONT.small)}
+          fontWeight="bold"
+        >
+          δ⁻
         </text>
         {/* C-OH 键与羟基 OH */}
         <line
@@ -188,6 +211,16 @@ export function EsterificationScene({ reactionStage, font, show18OTracing }: Est
         >
           {show18OTracing ? '¹⁸O' : 'O'}
         </text>
+        <text
+          x={92}
+          y={25}
+          textAnchor="middle"
+          fill={CHEMISTRY_COLORS.temperature}
+          fontSize={font(FONT.small)}
+          fontWeight="bold"
+        >
+          δ⁻
+        </text>
 
         {/* O-CH2 键 */}
         <line
@@ -239,67 +272,132 @@ export function EsterificationScene({ reactionStage, font, show18OTracing }: Est
         )}
       </g>
 
-      {/* 中央反应箭头 */}
-      <g transform="translate(420, 290)">
-        <line
-          x1={-40}
-          y1={0}
-          x2={40}
-          y2={0}
-          stroke={CHEMISTRY_COLORS.concentration}
-          strokeWidth={3}
-        />
-        <polygon
-          points="40,-6 54,0 40,6"
-          fill={CHEMISTRY_COLORS.concentration}
-        />
-        <text
-          x={0}
-          y={-14}
-          textAnchor="middle"
-          fill={colors.neutral[600]}
-          fontSize={font(FONT.annotation)}
-        >
-          浓 H₂SO₄, Δ (可逆反应)
-        </text>
-      </g>
+          {/* 中央反应箭头 */}
+          <g transform="translate(420, 290)">
+            <line
+              x1={-40}
+              y1={0}
+              x2={40}
+              y2={0}
+              stroke={CHEMISTRY_COLORS.concentration}
+              strokeWidth={3}
+            />
+            <polygon
+              points="40,-6 54,0 40,6"
+              fill={CHEMISTRY_COLORS.concentration}
+            />
+            <text
+              x={0}
+              y={-14}
+              textAnchor="middle"
+              fill={colors.neutral[600]}
+              fontSize={font(FONT.annotation)}
+            >
+              浓 H₂SO₄, Δ (可逆反应)
+            </text>
+          </g>
+        </>
+      )}
 
-      {/* 阶段 2: 产物分子 (乙酸乙酯 + 水) */}
+      {/* 阶段 2: 生成物稳态 — 完整的乙酸乙酯 (CH3-CO-18O-CH2CH3) 与水微观分子模型 */}
       {reactionStage === 2 && (
-        <g transform="translate(200, 360)">
-          <rect
-            x={0}
-            y={0}
-            width={440}
-            height={80}
-            rx={12}
-            fill={withAlpha(CHEMISTRY_COLORS.pH, 0.08)}
-            stroke={CHEMISTRY_COLORS.pH}
-            strokeWidth={1.5}
+        <g transform="translate(130, 130)">
+          {/* 乙酸部分 CH3 */}
+          <circle cx={60} cy={120} r={26} fill={ATOM_COLORS.carbon} />
+          <text x={60} y={126} textAnchor="middle" fill="#FFF" fontSize={font(FONT.label)} fontWeight="bold">CH₃</text>
+
+          {/* C-C 单键 */}
+          <line x1={86} y1={120} x2={154} y2={120} stroke={colors.neutral[400]} strokeWidth={4} />
+
+          {/* 羰基碳 C */}
+          <circle cx={180} cy={120} r={28} fill={ATOM_COLORS.carbon} />
+          <text x={180} y={126} textAnchor="middle" fill="#FFF" fontSize={font(FONT.label)} fontWeight="bold">C</text>
+
+          {/* C=O 双键 */}
+          <line x1={174} y1={92} x2={174} y2={34} stroke={ATOM_COLORS.oxygen} strokeWidth={4} />
+          <line x1={186} y1={92} x2={186} y2={34} stroke={ATOM_COLORS.oxygen} strokeWidth={4} />
+          <circle cx={180} cy={12} r={24} fill={ATOM_COLORS.oxygen} />
+          <text x={180} y={18} textAnchor="middle" fill="#FFF" fontSize={font(FONT.axis)} fontWeight="bold">O</text>
+
+          {/* 关键新形成酯键 (C-18O 单键，粗绿线高亮连接) */}
+          <line x1={208} y1={120} x2={268} y2={120} stroke="#10B981" strokeWidth={5} />
+          <circle
+            cx={292}
+            cy={120}
+            r={26}
+            fill={show18OTracing ? '#BE185D' : ATOM_COLORS.oxygen}
           />
           <text
-            x={220}
-            y={32}
+            x={292}
+            y={126}
             textAnchor="middle"
-            fill={colors.neutral[900]}
-            fontSize={font(FONT.title)}
+            fill="#FFF"
+            fontSize={font(FONT.axis)}
             fontWeight="bold"
           >
-            生成物：CH₃CO
-            <tspan fill={show18OTracing ? '#BE185D' : undefined}>
-              {show18OTracing ? '¹⁸O' : 'O'}
-            </tspan>
-            CH₂CH₃ + H₂O
+            {show18OTracing ? '¹⁸O' : 'O'}
           </text>
-          <text
-            x={220}
-            y={58}
-            textAnchor="middle"
-            fill={CHEMISTRY_COLORS.pH}
-            fontSize={font(FONT.axis)}
-          >
-            ✓ 成功形成乙酸乙酯 (含 ¹⁸O) 与水分子 (酸脱 -OH + 醇脱 -H，水不含 ¹⁸O)
+          <text x={292} y={75} textAnchor="middle" fill={show18OTracing ? '#BE185D' : '#10B981'} fontSize={font(FONT.small)} fontWeight="bold">
+            新酯键 (来自醇)
           </text>
+
+          {/* C-O 单键 */}
+          <line x1={318} y1={120} x2={372} y2={120} stroke={colors.neutral[400]} strokeWidth={4} />
+
+          {/* 乙基 CH2 */}
+          <circle cx={398} cy={120} r={26} fill={ATOM_COLORS.carbon} />
+          <text x={398} y={126} textAnchor="middle" fill="#FFF" fontSize={font(FONT.label)} fontWeight="bold">CH₂</text>
+
+          {/* C-C 单键 */}
+          <line x1={424} y1={120} x2={474} y2={120} stroke={colors.neutral[400]} strokeWidth={4} />
+
+          {/* 乙基 CH3 */}
+          <circle cx={500} cy={120} r={26} fill={ATOM_COLORS.carbon} />
+          <text x={500} y={126} textAnchor="middle" fill="#FFF" fontSize={font(FONT.label)} fontWeight="bold">CH₃</text>
+
+          {/* 脱出的副产物水分子 H-OH */}
+          <g transform="translate(560, 95)">
+            <rect x={0} y={0} width={90} height={48} rx={8} fill={withAlpha(colors.neutral[300], 0.35)} stroke={colors.neutral[400]} strokeWidth={1} />
+            <text x={45} y={20} textAnchor="middle" fill={colors.neutral[600]} fontSize={font(FONT.annotation)}>副产物水</text>
+            <text x={45} y={38} textAnchor="middle" fill={colors.neutral[800]} fontSize={font(FONT.small)} fontWeight="bold">+ H₂O</text>
+          </g>
+
+          {/* 底部结构解析徽章卡片 (包含单元测试断言文本：✓ 成功形成乙酸乙酯) */}
+          <g transform="translate(10, 225)">
+            <rect
+              x={0}
+              y={0}
+              width={560}
+              height={76}
+              rx={12}
+              fill={withAlpha(CHEMISTRY_COLORS.pH, 0.08)}
+              stroke={CHEMISTRY_COLORS.pH}
+              strokeWidth={1.5}
+            />
+            <text
+              x={280}
+              y={28}
+              textAnchor="middle"
+              fill={colors.neutral[900]}
+              fontSize={font(FONT.title)}
+              fontWeight="bold"
+            >
+              生成物：CH₃CO
+              <tspan fill={show18OTracing ? '#BE185D' : undefined}>
+                {show18OTracing ? '¹⁸O' : 'O'}
+              </tspan>
+              CH₂CH₃ + H₂O
+            </text>
+            <text
+              x={280}
+              y={54}
+              textAnchor="middle"
+              fill={CHEMISTRY_COLORS.pH}
+              fontSize={font(FONT.axis)}
+            >
+              ✓ 成功形成乙酸乙酯 (含 ¹⁸O) 与水分子 (酸脱 -OH + 醇脱 -H，水不含 ¹⁸O)
+            </text>
+          </g>
         </g>
       )}
     </g>

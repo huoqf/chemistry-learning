@@ -9,12 +9,12 @@ import { PhenolFormaldehydeScene } from './PhenolFormaldehydeScene'
 export type SceneRenderer = React.FC<MechanismSceneProps & Record<string, unknown>>
 
 export const scenes: Record<number, SceneRenderer> = {
-  0: EsterificationScene as unknown as SceneRenderer,
-  1: AlkeneAdditionScene as SceneRenderer,
+  0: AlkeneAdditionScene as SceneRenderer,
+  1: EliminationScene as unknown as SceneRenderer,
   2: AlcoholOxidationScene as unknown as SceneRenderer,
-  3: EliminationScene as SceneRenderer,
-  4: PeptideBondScene as SceneRenderer,
-  5: PhenolFormaldehydeScene as SceneRenderer,
+  3: EsterificationScene as unknown as SceneRenderer,
+  4: PhenolFormaldehydeScene as SceneRenderer,
+  5: PeptideBondScene as SceneRenderer,
 }
 
 export { EsterificationScene, AlkeneAdditionScene, AlcoholOxidationScene, EliminationScene, PeptideBondScene, PhenolFormaldehydeScene }
