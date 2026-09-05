@@ -74,6 +74,21 @@ export const AlphaTpChart: React.FC<AlphaTpChartProps> = ({
       : prev
   )
 
+  // 严谨化学判据文案生成 (防护 Δng = 0 或 ΔH = 0 等边界考点)
+  const gasMolesHint =
+    gasMolesDiff < 0
+      ? '< 0，加压正移'
+      : gasMolesDiff > 0
+      ? '> 0，加压逆移'
+      : '= 0，加压不移动'
+
+  const deltaHHint =
+    deltaH < 0
+      ? '< 0，升温逆移'
+      : deltaH > 0
+      ? '> 0，升温正移'
+      : '= 0，升温无影响'
+
   return (
     <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full select-none">
       {/* 定义轴箭头 */}
@@ -188,7 +203,7 @@ export const AlphaTpChart: React.FC<AlphaTpChartProps> = ({
         fontWeight="bold"
         textAnchor="end"
       >
-        ★【定一议二法】：同温下加压 α 增大，故 P₂ &gt; P₁；升温 α 减小，故 ΔH &lt; 0
+        ★【定一议二法】：同温下加压 α {gasMolesDiff < 0 ? '增大 (P₂ > P₁)' : gasMolesDiff > 0 ? '减小 (P₂ < P₁)' : '不变'}；升温 α {deltaH < 0 ? '减小 (ΔH < 0)' : deltaH > 0 ? '增大 (ΔH > 0)' : '不变'}
       </text>
 
       {/* 定一议二辅助虚线：作 T 轴垂线贯穿两条压强线 */}
@@ -308,7 +323,7 @@ export const AlphaTpChart: React.FC<AlphaTpChartProps> = ({
         </text>
 
         <text x={0} y={52} fontSize={font(10)} fill={colors.neutral[600]}>
-          判据：Δng = {gasMolesDiff} &lt; 0，加压正移；ΔH = {deltaH} kJ/mol &lt; 0，升温逆移
+          判据：Δng = {gasMolesDiff} {gasMolesHint}；ΔH = {deltaH} kJ/mol {deltaHHint}
         </text>
       </g>
     </svg>
