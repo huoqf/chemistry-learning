@@ -358,7 +358,7 @@ export function getMechanismFormulas(
       } else if (stage === 1) {
         return [
           {
-            name: '断键过渡态机理 (亲核加成-消除)',
+            name: '断键过渡态机理 (酸脱羟基、醇脱氢)',
             latex: '\\begin{aligned} &\\mathrm{CH_3CO{-}OH + H{-}^{18}OCH_2CH_3} \\\\[2pt] &\\quad \\xrightarrow{\\text{酸脱羟基 醇脱氢}} \\mathrm{CH_3CO^{18}OCH_2CH_3 + H_2O} \\end{aligned}',
             condition: '酸脱羟基 (-OH) 醇脱氢 (-H)',
             note: '切断羧基中的 C-O 单键与醇中的 O-H 键，形成水分子前体。',
