@@ -271,7 +271,9 @@ export const BUTANOL_ISOMERS: IsomerNode[] = [
   },
 ]
 
-// 3. 羧酸 & 酯 C3H6O2 异构体预设数据
+// 3. C3H6O2 异构体预设数据（羧酸 / 酯 / 羟基醛 / 羟基酮 —— 高中范围内的官能团类别异构）
+//    注：C3H6O2 另存在 2 种超出高中范围的构造异构体（甲氧基乙醛 CH₃OCH₂CHO、1,3-二氧戊环），
+//    本体系按高中教学口径只枚举下列 6 种。
 export const ESTERS_ISOMERS: IsomerNode[] = [
   {
     id: 'propionic-acid',
@@ -339,8 +341,8 @@ export const ESTERS_ISOMERS: IsomerNode[] = [
     ],
   },
   {
-    id: 'hydroxy-propanal',
-    name: '2-羟基丙醛',
+    id: 'hydroxy-propanal-3',
+    name: '3-羟基丙醛',
     formula: 'C₃H₆O₂',
     iupacName: '3-羟基丙醛',
     equivalentHCount: 4,
@@ -361,6 +363,56 @@ export const ESTERS_ISOMERS: IsomerNode[] = [
       { fromId: 'o1', toId: 'c1' },
       { fromId: 'c1', toId: 'c2' },
       { fromId: 'c2', toId: 'c3' },
+    ],
+  },
+  {
+    id: 'hydroxy-propanal-2',
+    name: '2-羟基丙醛',
+    formula: 'C₃H₆O₂',
+    iupacName: '2-羟基丙醛',
+    equivalentHCount: 4,
+    // 注：该物质常压下受热易分解，文献沸点仅为估值（约 145 °C），故记为估算沸点
+    boilingPoint: 145.0,
+    hnmrPeaks: [
+      { group: 2, delta: 1.3, count: 3, multiplicity: '二重峰 (d, CH₃)' },
+      { group: 1, delta: 3.0, count: 1, multiplicity: '宽单峰 (-OH)' },
+      { group: 3, delta: 4.1, count: 1, multiplicity: '四重峰 (q, CH)' },
+      { group: 4, delta: 9.7, count: 1, multiplicity: '单峰 (-CHO, 与 CH 偶合弱)' },
+    ],
+    nodes: [
+      { id: 'c1', label: 'CH₃', x: 80, y: 240, equivalentHydrogenGroup: 2 },
+      { id: 'c2', label: 'CH', x: 185, y: 240, equivalentHydrogenGroup: 3 },
+      { id: 'c3', label: 'CHO', x: 295, y: 240, equivalentHydrogenGroup: 4 },
+      { id: 'o1', label: 'OH', x: 185, y: 150, equivalentHydrogenGroup: 1, isBranch: true },
+    ],
+    bonds: [
+      { fromId: 'c1', toId: 'c2' },
+      { fromId: 'c2', toId: 'c3' },
+      { fromId: 'c2', toId: 'o1' },
+    ],
+  },
+  {
+    id: 'hydroxy-acetone',
+    name: '羟基丙酮',
+    formula: 'C₃H₆O₂',
+    iupacName: '1-羟基丙-2-酮',
+    equivalentHCount: 3,
+    boilingPoint: 145.5,
+    hnmrPeaks: [
+      { group: 1, delta: 2.2, count: 3, multiplicity: '单峰 (CH₃CO)' },
+      { group: 3, delta: 3.4, count: 1, multiplicity: '宽单峰 (-OH)' },
+      { group: 2, delta: 4.2, count: 2, multiplicity: '单峰 (HOCH₂CO)' },
+    ],
+    nodes: [
+      { id: 'c1', label: 'CH₃', x: 70, y: 240, equivalentHydrogenGroup: 1 },
+      { id: 'c2', label: 'CO', x: 170, y: 240, equivalentHydrogenGroup: 1 },
+      { id: 'c3', label: 'CH₂', x: 270, y: 240, equivalentHydrogenGroup: 2 },
+      { id: 'o1', label: 'OH', x: 360, y: 240, equivalentHydrogenGroup: 3 },
+    ],
+    bonds: [
+      { fromId: 'c1', toId: 'c2' },
+      { fromId: 'c2', toId: 'c3' },
+      { fromId: 'c3', toId: 'o1' },
     ],
   },
 ]
@@ -478,7 +530,7 @@ export const AROMATIC_ISOMERS: IsomerNode[] = [
   },
 ]
 
-// 5. 丁烯 & 环烷 C4H8 异构体预设数据
+// 5. 丁烯 & 环烷 C4H8 异构体预设数据（完整枚举 6 种：1-丁烯 / 顺-2-丁烯 / 反-2-丁烯 / 异丁烯 + 环丁烷 / 甲基环丙烷）
 export const BUTENE_ISOMERS: IsomerNode[] = [
   {
     id: 'butene-1',
@@ -595,6 +647,31 @@ export const BUTENE_ISOMERS: IsomerNode[] = [
       { fromId: 'c2', toId: 'c3' },
       { fromId: 'c3', toId: 'c4' },
       { fromId: 'c4', toId: 'c1' },
+    ],
+  },
+  {
+    id: 'methylcyclopropane',
+    name: '甲基环丙烷',
+    formula: 'C₄H₈',
+    iupacName: '甲基环丙烷',
+    equivalentHCount: 3,
+    boilingPoint: 4.0,
+    hnmrPeaks: [
+      { group: 3, delta: 0.2, count: 4, multiplicity: '多重峰 (m, 环上 2×CH₂)' },
+      { group: 2, delta: 0.6, count: 1, multiplicity: '多重峰 (m, 环上 CH)' },
+      { group: 1, delta: 1.0, count: 3, multiplicity: '单峰 (s, CH₃)' },
+    ],
+    nodes: [
+      { id: 'c1', label: 'CH', x: 200, y: 180, equivalentHydrogenGroup: 2 },
+      { id: 'c2', label: 'CH₂', x: 110, y: 300, equivalentHydrogenGroup: 3 },
+      { id: 'c3', label: 'CH₂', x: 300, y: 300, equivalentHydrogenGroup: 3 },
+      { id: 'c4', label: 'CH₃', x: 200, y: 90, equivalentHydrogenGroup: 1, isBranch: true },
+    ],
+    bonds: [
+      { fromId: 'c1', toId: 'c2' },
+      { fromId: 'c2', toId: 'c3' },
+      { fromId: 'c3', toId: 'c1' },
+      { fromId: 'c1', toId: 'c4' },
     ],
   },
 ]

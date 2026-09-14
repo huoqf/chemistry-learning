@@ -204,11 +204,13 @@ export function useTitrationErrorChemistry(
       const vStdL = reagent2Vol / 1000
       nAliquot = reagent2Conc * vStdL
       nTotalSample = nAliquot * (solutionTotalVol / pipetteVol)
-      const M = 221.1 // g/mol 碱式碳酸铜 Cu₂(OH)₂CO₃ 含有2个 Cu²⁺，故 1mol 消耗 2mol S2O32-
+      // M(碱式碳酸铜 Cu₂(OH)₂CO₃) = 2×64 + 12 + 5×16 + 2×1 = 222 g/mol
+      // 采用高中常用相对原子质量 (Cu = 64)，与 model-titration-error-purity 题库口径一致
+      const M = 222 // g/mol 碱式碳酸铜 Cu₂(OH)₂CO₃ 含有2个 Cu²⁺，故 1mol 消耗 2mol S2O32-
       mPureProduct = (nTotalSample / 2) * M
       purityPct = Math.min(100, (mPureProduct / sampleMass) * 100)
       stoichiometryRatio = '1 Cu₂(OH)₂CO₃ ～ 2 Cu²⁺ ～ 2 S₂O₃²⁻'
-      calcStepsLatex = `w\\% = \\frac{0.5 \\times ${reagent2Conc.toFixed(2)} \\times ${(vStdL).toFixed(4)} \\times \\frac{${solutionTotalVol}}{${pipetteVol}} \\times 221.1}{${sampleMass.toFixed(2)}} \\times 100\\% = ${purityPct.toFixed(2)}\\%`
+      calcStepsLatex = `w\\% = \\frac{0.5 \\times ${reagent2Conc.toFixed(2)} \\times ${(vStdL).toFixed(4)} \\times \\frac{${solutionTotalVol}}{${pipetteVol}} \\times 222}{${sampleMass.toFixed(2)}} \\times 100\\% = ${purityPct.toFixed(2)}\\%`
     }
 
     const purityResult: PurityResult = {

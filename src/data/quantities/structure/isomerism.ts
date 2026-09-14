@@ -41,13 +41,18 @@ const ISOMER_DATA_SUMMARY: IsomerGroupSummary[] = [
     formulaLatex: 'C_n H_{2n+2} O',
   },
   {
-    name: '羧酸 & 酯 (C₃H₆O₂)',
-    totalIsomers: 4,
+    // 说明：本体系按高中教学口径枚举 6 种（羧酸 / 酯 / 羟基醛 / 羟基酮）。
+    // C₃H₆O₂ 另有 2 种超出高中范围的构造异构体（甲氧基乙醛、1,3-二氧戊环），不在本体系内。
+    // totalIsomers = 本体系枚举数，不宣称是化学上 C₃H₆O₂ 的全部同分异构体数。
+    name: 'C₃H₆O₂ 官能团异构',
+    totalIsomers: 6,
     isomers: [
-      { name: '丙酸', eqH: 3, ratio: 'CH₃CH₂COOH (弱酸)', bp: 141.2, iupac: '丙酸' },
-      { name: '甲酸乙酯', eqH: 3, ratio: 'HCOOCH₂CH₃ (能银镜)', bp: 54.0, iupac: '甲酸乙酯' },
+      { name: '丙酸', eqH: 3, ratio: 'CH₃CH₂COOH (羧酸)', bp: 141.2, iupac: '丙酸' },
+      { name: '甲酸乙酯', eqH: 3, ratio: 'HCOOCH₂CH₃ (酯·能银镜)', bp: 54.0, iupac: '甲酸乙酯' },
       { name: '乙酸甲酯', eqH: 2, ratio: 'CH₃COOCH₃ (酯类)', bp: 56.9, iupac: '乙酸甲酯' },
-      { name: '2-羟基丙醛', eqH: 4, ratio: 'HOCH₂CH₂CHO (羟基醛)', bp: 120.0, iupac: '3-羟基丙醛' },
+      { name: '3-羟基丙醛', eqH: 4, ratio: 'HOCH₂CH₂CHO (羟基醛)', bp: 120.0, iupac: '3-羟基丙醛' },
+      { name: '2-羟基丙醛', eqH: 4, ratio: 'CH₃CH(OH)CHO (羟基醛·估算沸点)', bp: 145.0, iupac: '2-羟基丙醛' },
+      { name: '羟基丙酮', eqH: 3, ratio: 'CH₃COCH₂OH (羟基酮)', bp: 145.5, iupac: '1-羟基丙-2-酮' },
     ],
     formulaLatex: 'C_n H_{2n} O_2',
   },
@@ -65,13 +70,15 @@ const ISOMER_DATA_SUMMARY: IsomerGroupSummary[] = [
   },
   {
     name: '丁烯 & 环烷 (C₄H₈)',
-    totalIsomers: 5,
+    // C₄H₈ 的构造异构体完整枚举为 6 种：4 种烯烃 + 2 种环烷烃
+    totalIsomers: 6,
     isomers: [
       { name: '1-丁烯', eqH: 4, ratio: 'CH₂=CH-CH₂-CH₃', bp: -6.3, iupac: '丁-1-烯' },
       { name: '顺-2-丁烯', eqH: 2, ratio: '顺式立体异构', bp: 3.7, iupac: '(Z)-丁-2-烯' },
       { name: '反-2-丁烯', eqH: 2, ratio: '反式立体异构', bp: 0.9, iupac: '(E)-丁-2-烯' },
       { name: '异丁烯', eqH: 2, ratio: 'CH₂=C(CH₃)₂', bp: -6.9, iupac: '2-甲基丙-1-烯' },
       { name: '环丁烷', eqH: 1, ratio: '对称环状饱和烃', bp: 12.5, iupac: '环丁烷' },
+      { name: '甲基环丙烷', eqH: 3, ratio: '环丙烷带甲基侧链', bp: 4.0, iupac: '甲基环丙烷' },
     ],
     formulaLatex: 'C_n H_{2n}',
   },

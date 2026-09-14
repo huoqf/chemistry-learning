@@ -60,7 +60,7 @@ export const modelReagentStep: ModelQuizData = {
       contextDescription: '向 100 mL 含有 Al³⁺ 与 Mg²⁺ 的混合溶液中逐滴加入 1 mol/L NaOH 溶液，沉淀质量与滴加体积关系如图所示。',
       questionText: '下列关于图像中特征节点与离子反应的说法正确的是？',
       options: [
-        { label: 'A', text: '滴加 NaOH 过程中，Al³⁺ 比 Mg²⁺ 先沉淀', isCorrect: false },
+        { label: 'A', text: '滴加 NaOH 过程中，Mg²⁺ 比 Al³⁺ 先沉淀', isCorrect: false },
         { label: 'B', text: '沉淀达到最大值后，继续滴加 NaOH，溶解的沉淀为 Al(OH)₃', isCorrect: true },
         { label: 'C', text: '向混合液中滴加过量氨水，沉淀部分溶解', isCorrect: false },
         { label: 'D', text: '反滴法 (向 NaOH 中滴加混合液) 初始阶段立即产生大量白色沉淀', isCorrect: false },

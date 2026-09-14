@@ -52,3 +52,14 @@ vite.config.d.ts
 
 # Scratch
 scratch/
+
+# 审查 / 分析过程产物（过程文件不入库，结论请落到 docs/ 或 TODO_deferred.md）
+/analysis_report.md
+/analysis_results.md
+/architecture_analysis.md
+
+# 本地校验临时文件（避免误提交）
+.chk_*.txt
+.chk_*.mjs
+.chk_*.js
+.probe_report.txt

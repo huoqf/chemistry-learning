@@ -166,10 +166,10 @@ export function EliminationScene({ reactionStage, font, solventMode = 0 }: Elimi
           />
         )}
         {!isSubstitution && (
-          <circle 
-            cx={260} 
-            cy={152} 
-            r={18} 
+          <circle
+            cx={260}
+            cy={152}
+            r={18}
             fill={ATOM_COLORS.hydrogen}
             stroke={reactionStage >= 1 ? BOND_COLORS.cleaved : undefined}
           />

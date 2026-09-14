@@ -54,7 +54,7 @@ export const NI_CONFIG: ElementValenceConfig = {
       colorText: '翠绿色晶体或溶液 (六水硫酸镍)',
       colorStyle: 'bg-emerald-50 text-emerald-900 border-emerald-300',
       rgbColor: PHENOMENON_COLORS.ni2Plus,
-      testReaction: '电镀镍主要主盐，遇丁二酮肟 (DMG) 在氨性条件下生成鲜红色螯合物沉淀（Ni²⁺ 专属灵敏定性检验）',
+      testReaction: '电镀镍主要主盐，遇丁二酮肟 (DMG) 在氨性条件下生成鲜红色螯合物沉淀（Ni²⁺ 专属灵敏定性检验；DMG 为大学分析化学试剂，属信息题素材）',
       equation: 'Ni²⁺ + 2DMG + 2NH₃ = Ni(DMG)₂↓ (鲜红色) + 2NH₄⁺',
       roleDescription: '电镀主盐，三元正极前驱体',
     },
@@ -114,7 +114,7 @@ export const NI_CONFIG: ElementValenceConfig = {
   ],
   examTips: [
     '【镍氢/镍镉可充电电池电极方程式】：正极放电反应：NiOOH + H₂O + e⁻ = Ni(OH)₂ + OH⁻；正极充电反应：Ni(OH)₂ + OH⁻ - e⁻ = NiOOH + H₂O。',
-    '【Ni²⁺ 专属显色反应】：丁二酮肟（二甲基乙二肟）在氨性溶液中与 Ni²⁺ 反应生成鲜红色配位沉淀，常用于定性定量检验镍。',
+    '【Ni²⁺ 专属显色反应】：丁二酮肟（二甲基乙二肟）在氨性溶液中与 Ni²⁺ 反应生成鲜红色配位沉淀，常用于定性定量检验镍。【层级】丁二酮肟为大学分析化学专属试剂，教材未作要求，高考若出现必以信息题给出。',
     '【三元锂电前驱体沉淀控制】：NCM（镍钴锰）正极材料前驱体共沉淀时，需通入 N₂ 保护气，防止低价态离子（特别是 Co²⁺、Mn²⁺）被空气氧化。',
   ],
 }

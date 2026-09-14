@@ -21,7 +21,7 @@ import { getElementFates, getReagentEvaluations } from './industrialFlowData'
  * - Mn(OH)₂: 1.9e-13 (对应开始沉淀 pH ≈ 8.1~8.3，与浸出率及 c₀ 动态关联)
  * - Cu(OH)₂: 2.2e-20
  * - Zn(OH)₂: 1.2e-17
- * - Mg(OH)₂: 1.8e-11
+ * - Mg(OH)₂: 5.6e-12
  * - Co(OH)₂: 1.0e-15
  * - Ni(OH)₂: 2.0e-15
  */
@@ -196,7 +196,7 @@ export function useIndustrialFlowChemistry(
           symbol: 'Mg²⁺',
           name: '镁离子',
           charge: 2,
-          ksp: 1.8e-11,
+          ksp: 5.6e-12,
           baseC0: 0.03,
           color: CHART_COLORS.compareC,
           precipitateFormula: 'Mg(OH)₂',
@@ -276,7 +276,7 @@ export function useIndustrialFlowChemistry(
           symbol: 'Mg²⁺',
           name: '镁离子',
           charge: 2,
-          ksp: 1.8e-11,
+          ksp: 5.6e-12,
           baseC0: 0.1,
           color: CHART_COLORS.primary,
           precipitateFormula: 'Mg(OH)₂',
@@ -638,6 +638,8 @@ export function useIndustrialFlowChemistry(
             ? '工序二：赤泥分离与精细脱硅'
             : systemId === 'li-fe-p'
             ? '工序二：铁磷沉淀分离槽'
+            : systemId === 'ni-co-li'
+            ? '工序二：还原酸浸与价态调控'
             : '工序二：氧化反应预处理',
         focusSubject:
           systemId === 'ti-fe'
@@ -646,6 +648,8 @@ export function useIndustrialFlowChemistry(
             ? '赤泥分离与水合铝硅酸钠析出'
             : systemId === 'li-fe-p'
             ? '生成电池级 FePO₄ 前驱体'
+            : systemId === 'ni-co-li'
+            ? 'H₂O₂ 还原高价钴，提高浸出率'
             : '氧化还原价态调控',
         coreReaction:
           systemId === 'ti-fe'
@@ -654,12 +658,16 @@ export function useIndustrialFlowChemistry(
             ? 'SiO₃²⁻ + 2[Al(OH)₄]⁻ = 难溶铝硅酸盐↓ + 2OH⁻'
             : systemId === 'li-fe-p'
             ? 'Fe³⁺ + PO₄³⁻ = FePO₄↓'
+            : systemId === 'ni-co-li'
+            ? '2LiCoO₂ + H₂O₂ + 3H₂SO₄ = 2CoSO₄ + Li₂SO₄ + O₂↑ + 4H₂O'
             : '2Fe²⁺ + H₂O₂ + 2H⁺ = 2Fe³⁺ + 2H₂O',
         coreQuestion:
           systemId === 'ti-fe'
             ? '【逆向思维考点】：为什么加入铁屑将 Fe³⁺ 还原为 Fe²⁺？'
             : systemId === 'li-fe-p'
             ? '【固液分离考点】：如何证明铁元素与锂元素在此工序实现彻底分离？'
+            : systemId === 'ni-co-li'
+            ? '【高考必考】：三元锂电池正极酸浸时为什么要加入 H₂O₂？它在此作氧化剂还是还原剂？'
             : '【高考必考】：为什么沉淀除铁前必须加入 H₂O₂ 将 Fe²⁺ 氧化为 Fe³⁺？',
         scoringAnswer:
           systemId === 'ti-fe'

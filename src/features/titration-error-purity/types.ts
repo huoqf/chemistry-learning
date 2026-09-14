@@ -23,28 +23,28 @@ export type PurityCalcMethod = 'direct' | 'back-titration' | 'multistep-redox'
 export interface TitrationErrorParams {
   mode: TitrationMode
   titrationType: TitrationType
-  
+
   // 误差分析模式参数
   errorOp: ErrorOperation
   viewAngle: number // -15° 到 +15° (0为平视, >0为仰视, <0为俯视)
   cStandardTrue: number // mol/L 真实浓度
   vSampleTrue: number // mL 待测液理论体积
   cSampleTrue: number // mol/L 待测液真实浓度
-  
+
   // 纯度与返滴定计算参数
   purityMethod: PurityCalcMethod
   sampleMass: number // g 粗样品质量
   solutionTotalVol: number // mL 样品配制总体积
   pipetteVol: number // mL 移取用于滴定的体积
-  
+
   // 返滴定已知过量试剂 1
   reagent1Conc: number // mol/L
   reagent1Vol: number // mL
-  
+
   // 标准滴定液 2
   reagent2Conc: number // mol/L
   reagent2Vol: number // mL 滴定消耗体积
-  
+
   // 产率计算参数
   rawMaterialMass: number // g 原料质量
   rawMaterialMolarMass: number // g/mol 原料摩尔质量（如 Fe=55.85, Cu=63.5, Al=27...）

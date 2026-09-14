@@ -171,7 +171,7 @@ export const modelOrganicRetrosynthesis: ModelQuizData = {
         { label: 'D', text: '合成路线步数越多，总产率越高', isCorrect: false },
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查逆合成切断策略：寻找策略键 (Strategic Bonds) 切断，优先切断杂原子键 (C-N, C-O) 和碳骨架交叉连接键，逆推至廉价易得的基础原料。',
-      detailedExplanation: '逆合成分析法在目标分子切断时优先寻找容易构建的杂原子键 (如酯键、酰胺键) 或通过格氏反应、Aldol 缩合切断 C-C 键。B 项正确。',
+      detailedExplanation: '逆合成分析法在目标分子切断时优先寻找容易构建的杂原子键 (如酯键、酰胺键) 或通过羟醛缩合断开 C-C 键；格氏反应亦属常见切断思路，但格氏试剂为信息题素材，教材未作要求，高考若用必给出信息。B 项正确。',
       diagramType: 'organic-mechanism-diagram',
       diagramConfig: {
         mechanismType: 'peptide-hydrolysis',

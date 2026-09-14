@@ -8,7 +8,30 @@ import type {
   RetrosynthesisModelId,
   SynthesisMode,
   RetrosynthesisModelData,
+  SyllabusTierLevel,
 } from '../types'
+
+/** 三层判别标签的展示口径（教材主线 / 信息题素材 / 超纲术语） */
+const SYLLABUS_TIER_META: Record<
+  SyllabusTierLevel,
+  { label: string; chip: string; text: string }
+> = {
+  textbook: {
+    label: '教材主线',
+    chip: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+    text: 'text-emerald-900',
+  },
+  'info-item': {
+    label: '信息题素材',
+    chip: 'bg-amber-100 text-amber-800 border-amber-300',
+    text: 'text-amber-900',
+  },
+  beyond: {
+    label: '超纲术语',
+    chip: 'bg-rose-100 text-rose-800 border-rose-300',
+    text: 'text-rose-900',
+  },
+}
 
 interface OrganicRetrosynthesisLeftPanelProps {
   modelId: RetrosynthesisModelId
@@ -33,7 +56,7 @@ export function OrganicRetrosynthesisLeftPanel({
   showCrashContrast,
   onToggleCrashContrast,
 }: OrganicRetrosynthesisLeftPanelProps) {
-  // 4 大高考核心母题模型列表
+  // 4 大有机合成探究模型（每个模型横跨教材主线 / 信息题素材 / 超纲术语三层，逐层标注见 syllabusTiers）
   const modelList: Array<{
     id: RetrosynthesisModelId
     name: string
@@ -75,8 +98,39 @@ export function OrganicRetrosynthesisLeftPanel({
   return (
     <LeftPanel className="p-3 gap-3 overflow-hidden w-full max-w-full">
       {/* 1. 探究模型选择 */}
-      <LeftPanelSection title="高考探究模型" className="p-3 overflow-hidden max-w-full">
+      <LeftPanelSection title="有机合成探究模型" className="p-3 overflow-hidden max-w-full">
         <div className="flex flex-col gap-1.5 w-full">
+          {/* ⚠️ 内容层级标注（三层判别，取代原笼统的"超纲"提示） */}
+          <div className="rounded-lg border border-amber-300 bg-amber-50 px-2.5 py-2 flex flex-col gap-1.5">
+            <div className="flex items-start gap-1.5">
+              <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
+              <span className="text-[10.5px] font-bold text-amber-800 leading-tight">
+                内容层级标注：分清哪些必学、哪些只需读懂信息
+              </span>
+            </div>
+            <div className="flex flex-col gap-1.5 pl-[18px]">
+              {currentModel.syllabusTiers.map((tier) => {
+                const meta = SYLLABUS_TIER_META[tier.level]
+                return (
+                  <div key={tier.level} className="flex flex-col gap-0.5">
+                    <div className="flex items-start gap-1">
+                      <span
+                        className={`text-[9px] px-1 py-px rounded border font-bold shrink-0 mt-px ${meta.chip}`}
+                      >
+                        {meta.label}
+                      </span>
+                      <span className={`text-[10px] leading-snug ${meta.text}`}>
+                        {tier.techniques.join(' · ')}
+                      </span>
+                    </div>
+                    <span className="text-[9px] text-slate-500 leading-snug pl-[3px]">
+                      {tier.basis}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
           {modelList.map((item) => {
             const isSelected = item.id === modelId
             return (

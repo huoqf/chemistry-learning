@@ -59,7 +59,7 @@ export function estimateVisualWidth(latex: string): number {
     .replace(/\\xrightarrow(?:\[.*?\])?\{(.*?)\}/g, '----($1)')
     .replace(/\\(uparrow|downarrow|Delta|circ|rightleftharpoons)/g, '__')
     .replace(/\\[a-zA-Z]+/g, ' ')
-    .replace(/[{}\^_]/g, '')
+    .replace(/[{}^_]/g, '')
   return simplified.length
 }
 

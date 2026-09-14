@@ -121,8 +121,8 @@ export const TETRAHEDRAL_MOLECULES: Record<string, VseprMolecule> = {
     electronGeometry: '正四面体',
     molecularGeometry: '三角锥形',
     hybridization: 'sp³',
-    bondAngleText: '107°',
-    description: 'NH₃ 含 1 对孤电子对，孤对-成键电子对排斥大于成键-成键，键角被压缩至 107°',
+    bondAngleText: '107.3°',
+    description: 'NH₃ 含 1 对孤电子对，孤对-成键电子对排斥大于成键-成键，键角被压缩至 107.3°',
     centralColor: '#3b82f6',
     ligandColor: ATOM_COLORS.H,
     ligands: [
@@ -135,7 +135,7 @@ export const TETRAHEDRAL_MOLECULES: Record<string, VseprMolecule> = {
     ],
     polyEdges: POLY_EDGES.tetrahedral,
     bondAngles: [
-      { p1: GEOMETRY_VERTICES.tetrahedral[1], p2: GEOMETRY_VERTICES.tetrahedral[2], angleText: '107°' },
+      { p1: GEOMETRY_VERTICES.tetrahedral[1], p2: GEOMETRY_VERTICES.tetrahedral[2], angleText: '107.3°' },
     ],
   },
 

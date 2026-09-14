@@ -13,10 +13,12 @@ export function buildLeChatelierQuantities(
   const K0 = 2.0
   const K = parseFloat((K0 * Math.exp(2000 * (1 / temp - 1 / T0))).toFixed(3))
 
-  const totalEquiv = (1.5 + addedNO2) * pressure
-  const a = K
+  // 物料守恒（N 原子）：c(NO₂) + 2·c(N₂O₄) = 总 N 当量（N₂O₄ 含 2 个 N 原子）
+  const totalN = (2.0 + addedNO2) * pressure
+  // 代入 c(N₂O₄) = K·c(NO₂)²，得 2K·c(NO₂)² + c(NO₂) − totalN = 0
+  const a = 2 * K
   const b = 1
-  const c = -totalEquiv
+  const c = -totalN
   const eqNO2 = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a)
   const eqN2O4 = K * eqNO2 * eqNO2
 

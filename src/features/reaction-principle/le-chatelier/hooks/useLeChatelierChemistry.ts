@@ -62,13 +62,13 @@ export function useLeChatelierChemistry({
 
     // 4. 计算最终到达新平衡时的平衡目标浓度 c_eq
     // 平衡条件：N2O4 / (NO2)^2 = K
-    // 设总 N 原子当量基数：
-    const totalEquiv = (1.5 + addedNO2) * pressure
-    // K * cNO2^2 + cNO2 - totalEquiv = 0
+    // 物料守恒（N 原子）：c(NO2) + 2*c(N2O4) = 总 N 当量；N2O4 含 2 个 N 原子
+    const totalN = (2.0 + addedNO2) * pressure
+    // 代入 c(N2O4) = K * c(NO2)^2，得 2K * cNO2^2 + cNO2 - totalN = 0
     // 一元二次方程解 cNO2
-    const a = K
+    const a = 2 * K
     const b = 1
-    const c = -totalEquiv
+    const c = -totalN
     const eqNO2 = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a)
     const eqN2O4 = K * eqNO2 * eqNO2
 

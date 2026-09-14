@@ -146,7 +146,7 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
         color: system.deltaH < 0 ? '#10B981' : '#EF4444',
       },
     ]
-  }, [chartTab, system.deltaH, eaForward, eaReverse, boltzmannData.activatedFraction, vantHoffData.currentKc, vantHoffData.currentLnK, params.temperature, params.pressure, chemistry.alphaTpData])
+  }, [chartTab, system.deltaH, eaForward, eaReverse, boltzmannData.activatedFraction, vantHoffData.currentKc, vantHoffData.currentLnK, params.temperature, params.pressure, chemistry.alphaTpData, chemistry.isMultistep, chemistry.stepBarriers])
 
   // 2. 依当前 chartTab 动态提供核心公式
   const formulas = useMemo(() => {

@@ -175,10 +175,15 @@ export const structureAnimations = defineAnimations({
           const safeIdx = Math.min(Math.max(0, Math.floor(rawIdx)), VSEPR_PRESET_KEYS.length - 1)
           const key = VSEPR_PRESET_KEYS[safeIdx] || 'co2'
           const mol = VSEPR_PRESETS[key] || VSEPR_PRESETS.co2
-          if (mol.lonePairCount > 0) {
-            return `【${mol.name} (${mol.formula})】：含 ${mol.lonePairCount} 对孤电子对！切换【孤电子对云泡】可对比“电子对构型(${mol.electronGeometry})”与“分子实际构型(${mol.molecularGeometry})”。`
+          const base =
+            mol.lonePairCount > 0
+              ? `【${mol.name} (${mol.formula})】：含 ${mol.lonePairCount} 对孤电子对！切换【孤电子对云泡】可对比“电子对构型(${mol.electronGeometry})”与“分子实际构型(${mol.molecularGeometry})”。`
+              : `【${mol.name} (${mol.formula})】：无孤电子对 (n=0)。电子对空间构型与分子实际构型完全重合 (${mol.molecularGeometry})。`
+          // 超价分子（价层电子对数 ≥ 5）：补充人教版口径说明，明确 d 轨道杂化属选必2 拓展而非必答
+          if (mol.totalPairs > 4) {
+            return `${base} 【口径说明】价层电子对数 ${mol.totalPairs} 属“超价”情形，人教版选择性必修2 正文以 VSEPR 电子域为主线解释；主流一轮资料常把传统标注的 ${mol.hybridization} 杂化列为选必2 拓展，信息题语境下可直接使用。`
           }
-          return `【${mol.name} (${mol.formula})】：无孤电子对 (n=0)。电子对空间构型与分子实际构型完全重合 (${mol.molecularGeometry})。`
+          return base
         },
       },
       {
@@ -427,14 +432,16 @@ export const structureAnimations = defineAnimations({
         type: 'segmented',
         key: 'selectedIndex',
         label: '异构体切换',
-        group: '羧酸 & 酯 C₃H₆O₂ 官能团类别异构',
+        group: 'C₃H₆O₂ 官能团异构 (羧酸 / 酯 / 羟基醛 / 羟基酮)',
         showIf: 'isomerType',
         showIfValue: 2,
         options: [
-          { label: '丙酸', value: 0, description: 'CH₃CH₂COOH (弱酸) · 3 种等效氢 · 141.2°C' },
+          { label: '丙酸', value: 0, description: 'CH₃CH₂COOH (羧酸) · 3 种等效氢 · 141.2°C' },
           { label: '甲酸乙酯', value: 1, description: 'HCOOCH₂CH₃ (能发生银镜反应) · 3 种等效氢 · 54.0°C' },
           { label: '乙酸甲酯', value: 2, description: 'CH₃COOCH₃ (普通酯) · 2 种等效氢 · 56.9°C' },
-          { label: '2-羟基丙醛', value: 3, description: 'HOCH₂CH₂CHO (羟基醛) · 4 种等效氢 · 120.0°C' },
+          { label: '3-羟基丙醛', value: 3, description: 'HOCH₂CH₂CHO (羟基醛) · 4 种等效氢 · 120.0°C' },
+          { label: '2-羟基丙醛', value: 4, description: 'CH₃CH(OH)CHO (羟基醛·易分解) · 4 种等效氢 · ≈145°C' },
+          { label: '羟基丙酮', value: 5, description: 'CH₃COCH₂OH (羟基酮) · 3 种等效氢 · 145.5°C' },
         ],
       },
       {
@@ -456,7 +463,7 @@ export const structureAnimations = defineAnimations({
         type: 'segmented',
         key: 'selectedIndex',
         label: '异构体切换',
-        group: '丁烯 & 环烷 C₄H₈ 烯烃与环状异构',
+        group: '丁烯 & 环烷 C₄H₈ 烯烃与环状异构 (完整 6 种)',
         showIf: 'isomerType',
         showIfValue: 4,
         options: [
@@ -465,6 +472,7 @@ export const structureAnimations = defineAnimations({
           { label: '反-2-丁烯', value: 2, description: '(E)-丁-2-烯 (反式立体) · 2 种等效氢 · 0.9°C' },
           { label: '异丁烯', value: 3, description: 'CH₂=C(CH₃)₂ · 2 种等效氢 · -6.9°C' },
           { label: '环丁烷', value: 4, description: '环状饱和烃 · 1 种等效氢 (全等) · 12.5°C' },
+          { label: '甲基环丙烷', value: 5, description: '环丙烷带甲基侧链 · 3 种等效氢 · 4.0°C' },
         ],
       },
       {

@@ -564,10 +564,10 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
       { id: 'a1', atom1Id: 'cl3', centerAtomId: 'p', atom2Id: 'cl4', angleDegree: 120, displayLabel: '赤道面 120°' },
       { id: 'a2', atom1Id: 'cl1', centerAtomId: 'p', atom2Id: 'cl3', angleDegree: 90, displayLabel: '轴向-赤道 90°' },
     ],
-    examNotes: '高考结构拓展考点：中心 P 原子打破八隅体规则（扩充八隅体），为 sp³d 杂化，呈现三角双锥几何构型，兼具 90° 与 120° 两种键角。',
+    examNotes: '高考结构拓展考点：中心 P 原子打破八隅体规则（扩充八隅体），价层电子对数为 5，呈现三角双锥几何构型，兼具 90° 与 120° 两种键角。【口径说明】人教版选择性必修2 正文以 VSEPR 电子域（价层电子对数 5）为主线，sp³d 属传统/拓展标注；主流一轮复习资料常把它列为选必2 拓展内容，信息题语境下可直接使用。',
   },
 
-  // 13. SF6 (超价分子拓展, sp3d2, 正八面体)
+  // 15. SF6 (超价分子拓展, sp3d2, 正八面体)
   {
     id: 'sf6',
     formula: 'SF₆',
@@ -609,7 +609,7 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     angles: [
       { id: 'a1', atom1Id: 'f1', centerAtomId: 's', atom2Id: 'f3', angleDegree: 90, displayLabel: '90°' },
     ],
-    examNotes: '超价分子典型代表。中心 S 原子为 sp³d² 杂化，价层电子对数为 6，呈极具对称性的正八面体构型，所有相邻 S-F 键角均为 90°。',
+    examNotes: '超价分子典型代表。中心 S 原子价层电子对数为 6，呈极具对称性的正八面体构型，所有相邻 S-F 键角均为 90°。【口径说明】人教版选择性必修2 正文以 VSEPR 电子域（价层电子对数 6）为主线，sp³d² 属传统/拓展标注；主流一轮资料常把它列为选必2 拓展内容，信息题语境下可直接使用。',
   },
 
   // 16. XeF2 (超价分子拓展, sp3d, 直线形 - 高考真题变式5对齐)
@@ -650,7 +650,7 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     angles: [
       { id: 'a1', atom1Id: 'f1', centerAtomId: 'xe', atom2Id: 'f2', angleDegree: 180, displayLabel: '180°' },
     ],
-    examNotes: '高考真题热点：中心 Xe 价电子数 8，价层电子对数 = 2 + (8 - 2×1)/2 = 5，为 sp³d 杂化。根据互斥理论，3 对孤电子对排布于排斥力最小的赤道平面，两个 F 位于两极轴向，分子实际空间构型为直线形 (键角 180°)。',
+    examNotes: '高考真题热点：中心 Xe 价电子数 8，价层电子对数 = 2 + (8 - 2×1)/2 = 5。根据互斥理论，3 对孤电子对排布于排斥力最小的赤道平面，两个 F 位于两极轴向，分子实际空间构型为直线形 (键角 180°)。【口径说明】人教版选择性必修2 正文以 VSEPR 电子域数 5 为主线，sp³d 属传统/拓展标注；主流一轮资料常列其为选必2 拓展，信息题语境下可直接使用。',
   },
 
   // 17. XeF4 (超价分子拓展, sp3d2, 平面正方形 - 高考真题变式5对齐)
@@ -694,7 +694,7 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     angles: [
       { id: 'a1', atom1Id: 'f1', centerAtomId: 'xe', atom2Id: 'f3', angleDegree: 90, displayLabel: '90°' },
     ],
-    examNotes: '高考真题热点：中心 Xe 价电子数 8，价层电子对数 = 4 + (8 - 4×1)/2 = 6，为 sp³d² 杂化。2 对孤电子对相互排斥处于八面体对位 (上下两极)，4 个 F 原子位于赤道平面，分子实际空间构型为平面正方形 (键角 90°)。',
+    examNotes: '高考真题热点：中心 Xe 价电子数 8，价层电子对数 = 4 + (8 - 4×1)/2 = 6。2 对孤电子对相互排斥处于八面体对位 (上下两极)，4 个 F 原子位于赤道平面，分子实际空间构型为平面正方形 (键角 90°)。【口径说明】人教版选择性必修2 正文以 VSEPR 电子域数 6 为主线，sp³d² 属传统/拓展标注；主流一轮资料常列其为选必2 拓展，信息题语境下可直接使用。',
   },
 ]
 

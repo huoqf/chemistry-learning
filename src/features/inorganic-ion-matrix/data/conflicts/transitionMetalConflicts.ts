@@ -454,7 +454,7 @@ export const TRANSITION_METAL_CONFLICTS: Record<string, IonPairCell> = {
     category: 'precipitate',
     badgeLabel: '络合/变色沉淀',
     productSummary: 'Ag₂S₂O₃ → Ag₂S↓',
-    equation: '2Ag^+ + S_2O_3^{2-} = Ag_2S_2O_3\\downarrow \\rightarrow Ag_2S\\downarrow (黑) + H_2SO_4',
+    equation: '2Ag^+ + S_2O_3^{2-} = Ag_2S_2O_3\\downarrow ; Ag_2S_2O_3 + H_2O = Ag_2S\\downarrow (黑) + H_2SO_4',
     phenomenon: '生成白色沉淀迅速转黄、棕、最终变黑 (Ag₂S)。',
     reason: '硫代硫酸银不稳定发生转化。',
   },

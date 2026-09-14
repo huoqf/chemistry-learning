@@ -101,7 +101,7 @@ export const CONTRAST_MATRICES = [
   {
     title: '新高考拓展：马氏加成 vs 反马氏信息题',
     reactionA: '经典亲电加成：H 加在含 H 多的双键碳上 (仲碳正离子中间体稳定)',
-    reactionB: '过氧化物存在：自由基机理，Br 加在含 H 多的双键碳上 (反马氏)',
+    reactionB: '过氧化物存在（仅 HBr）：自由基机理，Br 加在含 H 多的双键碳上 (反马氏)',
     memoryTip: '口诀：“无氧马氏 H 多多，有氧反马 Br 换位”。高考高频信息转化题。',
   },
 ]
@@ -260,7 +260,7 @@ export function getMechanismFormulas(
             name: '亲电加成总反应方程式',
             latex: '\\begin{aligned} &\\mathrm{CH_3{-}CH{=}CH_2 + HCl} \\longrightarrow \\\\[2pt] &\\quad \\mathrm{CH_3{-}CHCl{-}CH_3 \\quad (\\text{主产物 2-氯丙烷})} \\end{aligned}',
             condition: '主产物选择性 > 90%',
-            note: '遵循马氏规则，若在过氧化物催化下则发生反马氏加成生成 1-氯丙烷。',
+            note: '遵循马氏规则；过氧化物效应只适用于 HBr，HCl 无此效应，产物仍为 2-氯丙烷。',
           },
         ]
       }
@@ -451,7 +451,7 @@ export function getMechanismWarnings(
 
   if (mechanism === 0) {
     warnings.push({
-      text: '【马氏规则高考易错】：氢原子优先加到含氢较多的不饱和双键碳上；但在“过氧化物存在”的信息题中，会发生反马氏加成！',
+      text: '【马氏规则高考易错】：氢原子优先加到含氢较多的不饱和双键碳上；信息题中“过氧化物存在下反马氏加成”只适用于 HBr，HCl 无此效应！',
       level: 'warning',
     })
   } else if (mechanism === 1) {
@@ -514,7 +514,7 @@ export function getMechanismGaokaoPoints(mechanism: number) {
       return [
         { text: '马氏规则：不对称烯烃亲电加成，H⁺ 加在含 H 多的双键碳上，X 加在含 H 少的双键碳上。', importance: 'core' as const },
         { text: '微观动因：反应经过更稳定的仲碳正离子中间体 (超共轭与诱导效应稳定)。', importance: 'hard' as const },
-        { text: '信息反应警惕：过氧化物存在下发生自由基反马氏加成。', importance: 'gaokao' as const },
+        { text: '信息反应警惕：过氧化物存在下 HBr 发生自由基反马氏加成，HCl 无此效应。', importance: 'gaokao' as const },
       ]
     case 1:
       return [

@@ -194,6 +194,10 @@
 .katex-wrap .katex-display {
   margin: 0.25rem 0 !important;
   text-align: left !important;
+  /* 右屏公式区宽度有限（约 212px），长方程式/长推导式会整体溢出卡片，
+     并把整个右屏撑出横向滚动条。改为“公式卡片内横向滚动”，保证公式完整可读。 */
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .katex-wrap .katex-display > .katex {

@@ -6,7 +6,7 @@
     "scripts":  {
                     "dev":  "vite",
                     "build":  "tsc -b \u0026\u0026 vite build",
-                    "lint":  "node scripts/check-font-size.mjs \u0026\u0026 node scripts/check-no-raf.mjs \u0026\u0026 node scripts/check-no-marker.mjs \u0026\u0026 node scripts/check-large-files.mjs \u0026\u0026 node scripts/check-no-webgl-leak.mjs",
+                    "lint":  "node scripts/check-font-size.mjs \u0026\u0026 node scripts/check-no-raf.mjs \u0026\u0026 node scripts/check-no-marker.mjs \u0026\u0026 node scripts/check-large-files.mjs \u0026\u0026 node scripts/check-no-webgl-leak.mjs \u0026\u0026 node scripts/check-code-style.mjs",
                     "lint:ox":  "oxlint",
                     "preview":  "vite preview",
                     "check:font-size":  "node scripts/check-font-size.mjs",
@@ -14,14 +14,14 @@
                     "check:no-raf":  "node scripts/check-no-raf.mjs",
                     "check:no-marker":  "node scripts/check-no-marker.mjs",
                     "check:no-webgl-leak":  "node scripts/check-no-webgl-leak.mjs",
-                    "check:architecture":  "npm run check:font-size \u0026\u0026 npm run check:large-files \u0026\u0026 npm run check:no-raf \u0026\u0026 npm run check:no-marker \u0026\u0026 npm run check:no-webgl-leak",
+                    "check:code-style":  "node scripts/check-code-style.mjs",
+                    "check:architecture":  "npm run check:font-size \u0026\u0026 npm run check:large-files \u0026\u0026 npm run check:no-raf \u0026\u0026 npm run check:no-marker \u0026\u0026 npm run check:no-webgl-leak \u0026\u0026 npm run check:code-style",
                     "test":  "vitest",
                     "test:run":  "vitest --run",
                     "test:coverage":  "vitest --coverage",
                     "test:e2e":  "playwright test",
                     "test:e2e:ui":  "playwright test --ui",
-                    "ci":  "npm run lint \u0026\u0026 npm run test:run \u0026\u0026 npm run build",
-                    "lint:filesize":  "node scripts/check-file-size.cjs"
+                    "ci":  "npm run lint \u0026\u0026 npm run test:run \u0026\u0026 npm run build"
                 },
     "dependencies":  {
                          "@react-three/drei":  "^10.7.7",

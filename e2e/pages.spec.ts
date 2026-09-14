@@ -1,38 +1,22 @@
 import { test, expect } from '@playwright/test'
+import { gaokaoModels } from '../src/data/gaokaoModels'
+import { ANIMATION_PAGES, GAOKAO_TOOL_ANCHORS } from '../src/data/e2ePageCatalog'
 
-const ANIMATION_PAGES = [
-  { id: 'anim-le-chatelier', title: '勒夏特列原理与化学平衡移动' },
-  { id: 'anim-collision-theory', title: '碰撞理论与反应速率影响因素' },
-  { id: 'anim-hybrid-orbital', title: '杂化轨道理论' },
-  { id: 'anim-vsepr', title: 'VSEPR 模型' },
-  { id: 'anim-unit-cell-calculation', title: '晶胞结构与密度计算' },
-  { id: 'anim-chirality', title: '手性分子与立体异构' },
-  { id: 'anim-isomerism', title: '同分异构体分类与三维构型' },
-  { id: 'anim-primary-cell', title: '原电池工作原理' },
-  { id: 'anim-electrolytic-cell', title: '电解池工作原理' },
-  { id: 'anim-electrochemical-application', title: '电化学综合应用' },
-  { id: 'anim-extraction-distillation', title: '萃取分液与蒸馏实验' },
-  { id: 'anim-redox-electron-transfer', title: '电子转移与化合价' },
-]
-
-const GAOKAO_TOOL_ROUTES = [
-  'model-valence-matrix',
-  'model-reagent-step',
-  'model-flash-cards',
-  'model-titration-balance',
-  'model-electrochemical-twin',
-  'model-crystal-3d-split',
-  'model-reaction-principle-nexus',
-  'model-vsepr-hybrid-3d',
-  'model-gas-chain',
-  'model-industrial-flow',
-  'model-organic-mechanism',
-  'model-hess-law',
-  'model-element-periodic-property',
-  'model-avogadro-constant',
-  'model-titration-error-purity',
-  'model-organic-retrosynthesis',
-]
+/**
+ * 页面级渲染与考点锚点检查。
+ *
+ * 审查项 G5：原实现的 `GAOKAO_TOOL_ROUTES` 是**手写的 16 条枚举**，而
+ * `gaokaoModels` 注册了 18 个工具——缺 `model-ion-matrix`、`model-organic-matrix`
+ * （离子共存、官能团定量两大最高频考点所在的页面从未被端到端验证过）。
+ * 现改为**从 `gaokaoModels` 动态生成**，注册表新增母题会自动纳入覆盖。
+ * 动画清单同理，改为从 `e2ePageCatalog` 取（由单测保证与注册表一致）。
+ *
+ * 审查项 G6：原实现的内容检查形同虚设——`bodyText.includes('化学') ||
+ * includes('高考') || includes('母题') || includes('矩阵')`，
+ * 只要出现任一关键词即通过，“化学讲错了”也一律变绿。
+ * 现改为**考点锚点断言**：每个工具页必须出现其专属关键考点字符串
+ * （锚点表见 `src/data/e2ePageCatalog.ts`，并由单测保证覆盖全部母题）。
+ */
 
 test.describe('高中化学学习系统 - 页面基础渲染检查', () => {
   test('首页正常加载', async ({ page }) => {
@@ -98,22 +82,27 @@ test.describe('高中化学学习系统 - 页面基础渲染检查', () => {
   })
 
   for (const { id, title } of ANIMATION_PAGES) {
-    test(`右屏公式区无横向滚动条 — ${title}`, async ({ page }) => {
+    test(`右屏公式区不溢出卡片 — ${title}`, async ({ page }) => {
       await page.goto(`/#/animation/${id}`)
       await page.waitForLoadState('networkidle')
       await expect(page.locator('text=Loading...')).toHaveCount(0, { timeout: 10000 })
 
+      // 页面须渲染出正确的动画（标题锚点），而非白屏或落到别的动画
+      await expect(page.locator('body')).toContainText(title)
+
       // 等待 KaTeX 公式渲染完成
       await page.waitForSelector('.katex', { timeout: 10000 })
 
-      // 定位右屏公式区容器（ThreePanel 右侧 ChemistryPanel 中的公式卡片）
-      const formulaCards = page.locator('.katex').locator('..')
-      const cardCount = await formulaCards.count()
+      // 定位 block 公式的卡片内容层（.katex-wrap）。
+      // 说明：长公式不应把卡片撑宽、把整个右屏推成横向滚动；
+      // 应当由公式自身在卡片内横向滚动查看（见 index.css 的 `.katex-display { overflow-x: auto }`）。
+      const wraps = page.locator('.katex-wrap')
+      const cardCount = await wraps.count()
       expect(cardCount).toBeGreaterThan(0)
 
-      // 检查每个公式卡片的 scrollWidth 不超过 clientWidth + 滚动条宽度（避免垂直滚动条占位导致的误判）
-      const overflows = await formulaCards.evaluateAll((cards) =>
+      const overflows = await wraps.evaluateAll((cards) =>
         cards.map((card) => ({
+          thumb: (card.textContent ?? '').replace(/\s+/g, ' ').slice(0, 40),
           scrollWidth: card.scrollWidth,
           clientWidth: card.clientWidth,
           // 垂直滚动条通常占 12~17px，允许该范围内的差异
@@ -122,28 +111,38 @@ test.describe('高中化学学习系统 - 页面基础渲染检查', () => {
       )
 
       for (const info of overflows) {
-        expect(info.overflow, `公式卡片横向溢出: scrollWidth=${info.scrollWidth}, clientWidth=${info.clientWidth}`).toBe(false)
+        expect(
+          info.overflow,
+          `公式「${info.thumb}」溢出卡片: scrollWidth=${info.scrollWidth}, clientWidth=${info.clientWidth}`
+        ).toBe(false)
       }
     })
   }
 
-  for (const toolId of GAOKAO_TOOL_ROUTES) {
-    test(`高考工具路由 /gaokao-tool/${toolId} 正常加载`, async ({ page }) => {
-      await page.goto(`/#/gaokao-tool/${toolId}`)
+  // 路由列表从 gaokaoModels 动态生成（审查项 G5），避免手写枚举漏项
+  for (const model of gaokaoModels) {
+    const anchor = GAOKAO_TOOL_ANCHORS[model.id]
+
+    test(`高考工具 ${model.id} 正常加载且渲染关键考点锚点`, async ({ page }) => {
+      expect(anchor, `母题 ${model.id} 缺少 E2E 考点锚点`).toBeTruthy()
+
+      await page.goto(`/#${model.toolRoute}`)
       await page.waitForLoadState('networkidle')
       await expect(page.locator('text=Loading...')).toHaveCount(0, { timeout: 10000 })
 
-      // 页面主体须有内容，不为空（防止路由 404 或白屏）
       const bodyText = await page.locator('body').innerText()
+
+      // ① 页面主体须有内容，不为空（防止路由 404 或白屏）
       expect(bodyText.length).toBeGreaterThan(20)
 
-      // 页面须包含"化学"或工具标题相关关键词
-      const hasChemContent =
-        bodyText.includes('化学') ||
-        bodyText.includes('高考') ||
-        bodyText.includes('母题') ||
-        bodyText.includes('矩阵')
-      expect(hasChemContent, `工具 ${toolId} 页面内容缺少化学相关文字`).toBe(true)
+      // ② 必须渲染出对应母题的标题（证明挂载的是正确的工具，而不是兜底页面）
+      expect(bodyText, `工具 ${model.id} 未渲染其标题`).toContain(model.title)
+
+      // ③ 必须渲染该母题的关键考点锚点（审查项 G6：把“内容是否讲对”变成可执行断言）
+      expect(
+        bodyText,
+        `工具 ${model.id} 页面缺少关键考点锚点「${anchor}」`
+      ).toContain(anchor)
     })
   }
 })

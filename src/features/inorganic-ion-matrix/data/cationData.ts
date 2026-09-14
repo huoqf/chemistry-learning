@@ -639,7 +639,7 @@ export const CATION_DATA: IonItem[] = [
     type: 'cation',
     colorInSolution: '肉粉色 / 近无色',
     colorRgb: 'rgba(251, 207, 232, 0.6)',
-    testReagent: 'NaOH 溶液 (空气氧化) 或 酸性铋酸钠 (信息题拓展)',
+    testReagent: 'NaOH 溶液 (空气氧化) 或 酸性铋酸钠 (信息题素材)',
     testPhenomenon: '加 NaOH 生成白色沉淀 Mn(OH)₂，在空气中迅速被氧化变为棕褐色沉淀 MnO(OH)₂',
     testEquation: 'Mn^{2+} + 2OH^- = Mn(OH)_2\\downarrow ; 2Mn(OH)_2 + O_2 = 2MnO(OH)_2\\downarrow (棕褐色)',
     interference: 'Fe²⁺ 沉淀氧化为灰绿色后转红褐；Mn²⁺ 沉淀直接氧化为棕褐色',

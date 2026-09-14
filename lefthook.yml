@@ -15,6 +15,8 @@ pre-commit:
       run: node scripts/check-no-marker.mjs
     check-no-webgl-leak:
       run: node scripts/check-no-webgl-leak.mjs
+    check-code-style:
+      run: node scripts/check-code-style.mjs
 
 pre-push:
   commands:

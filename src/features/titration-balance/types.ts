@@ -41,29 +41,29 @@ export interface TitrationChemistryResult {
   cTitrant: number // 滴定剂浓度
   vEq: number // 计量点体积 (mL)
   vAdd: number // 已滴加体积 (mL)
-  
+
   // 各微粒浓度 (mol/L)
   ionConcs: IonConcentration[]
-  
+
   // 离子浓度排序 (如 c(Na⁺) > c(A⁻) > c(OH⁻) > c(H⁺))
   concOrderingLatex: string
   orderingExplanation: string
-  
+
   // 三大守恒
   chargeBalance: ConservationEquation
   massBalance: ConservationEquation
   protonBalance: ConservationEquation
-  
+
   // 滴定突跃信息
   jumpStartPH: number
   jumpEndPH: number
   isInJumpZone: boolean
-  
+
   // 指示剂状态
   indicatorColor: string
   indicatorName: string
   indicatorTip: string
-  
+
   // 全量 pH 滴定曲线
   curvePoints: TitrationCurvePoint[]
 }

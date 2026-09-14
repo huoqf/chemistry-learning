@@ -132,7 +132,7 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
 
   it('3D 空间球棍模型数据库应完整覆盖 16 大官能团与核心母题分子', async () => {
     const { ORGANIC_3D_MOLECULES, get3DModelForGroup } = await import('../data/organic3dData')
-    
+
     // 验证所有 16 大官能团均能正确获取 3D 模型
     for (const g of FUNCTIONAL_GROUPS) {
       const model = get3DModelForGroup(g.id)

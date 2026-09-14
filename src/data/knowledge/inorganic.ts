@@ -166,6 +166,8 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     prerequisites: ['redox-basic'],
     interactionTags: ['macro-experiment', 'valence-matrix'],
   },
+  // ── 选择性必修一：锰、铬高价化合物（MnO₄⁻/Cr₂O₇²⁻ 的强氧化性，人教版无专章，
+  //     相关考点落在选必1 第三章 氧化还原滴定与第二章 化学平衡移动）──
   {
     id: 'manganese-chromium',
     title: '锰、铬及其高价化合物',
@@ -176,7 +178,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     prerequisites: ['redox-basic'],
     interactionTags: ['macro-experiment', 'valence-matrix'],
   },
-  // ── 必修一：非金属及其化合物 ──
+  // ── 必修一：非金属及其化合物（必修第一册 第二章 海水中的重要元素——钠和氯）──
   {
     id: 'chlorine',
     title: '氯及其化合物',
@@ -187,10 +189,11 @@ export const inorganicKnowledge: KnowledgeNode[] = [
     prerequisites: ['redox-basic'],
     interactionTags: ['macro-experiment', 'valence-matrix'],
   },
+  // ── 必修二：非金属及其化合物（必修第二册 第五章 化工生产中的重要非金属元素）──
   {
     id: 'sulfur',
     title: '硫及其化合物',
-    chapter: '必修一',
+    chapter: '必修二',
     module: '无机化学',
     importance: 'gaokao',
     animationIds: [],
@@ -200,7 +203,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
   {
     id: 'nitrogen',
     title: '氮及其化合物',
-    chapter: '必修一',
+    chapter: '必修二',
     module: '无机化学',
     importance: 'gaokao',
     animationIds: [],
@@ -210,18 +213,18 @@ export const inorganicKnowledge: KnowledgeNode[] = [
   {
     id: 'silicon',
     title: '硅及其化合物',
-    chapter: '必修一',
+    chapter: '必修二',
     module: '无机化学',
     importance: 'basic',
     animationIds: [],
     prerequisites: [],
     interactionTags: ['macro-experiment', 'valence-matrix'],
   },
-  // ── 必修二：化学键 ──
+  // ── 必修一：化学键（必修第一册 第四章 物质结构 元素周期律）──
   {
     id: 'chemical-bond',
     title: '化学键',
-    chapter: '必修二',
+    chapter: '必修一',
     module: '无机化学',
     importance: 'core',
     animationIds: [],
@@ -231,7 +234,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
   {
     id: 'ionic-bond',
     title: '离子键',
-    chapter: '必修二',
+    chapter: '必修一',
     module: '无机化学',
     importance: 'core',
     animationIds: [],
@@ -241,7 +244,7 @@ export const inorganicKnowledge: KnowledgeNode[] = [
   {
     id: 'covalent-bond',
     title: '共价键',
-    chapter: '必修二',
+    chapter: '必修一',
     module: '无机化学',
     importance: 'core',
     animationIds: [],

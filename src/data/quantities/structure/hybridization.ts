@@ -65,7 +65,7 @@ export const HYBRID_PRESETS: Record<string, HybridPresetInfo> = {
     sRatio: 33.3,
     pRatio: 66.7,
     totalOrbitals: 3,
-    bondAngle: 119,
+    bondAngle: 119.5,
     description: 'S 原子采取 sp² 杂化，1 对孤电子对占据 1 个 sp² 轨道，使分子呈现 V 形。',
   },
   c2h4: {
@@ -110,7 +110,7 @@ export const HYBRID_PRESETS: Record<string, HybridPresetInfo> = {
     pRatio: 75,
     totalOrbitals: 4,
     bondAngle: 107,
-    description: 'N 原子采取 sp³ 杂化，1 对孤电子对占据 1 个 sp³ 轨道，由于排斥力较大使键角压缩至 107°。',
+    description: 'N 原子采取 sp³ 杂化，1 对孤电子对占据 1 个 sp³ 轨道，由于排斥力较大使键角压缩至 107.3°。',
   },
   h2o: {
     id: 'h2o',
@@ -121,7 +121,7 @@ export const HYBRID_PRESETS: Record<string, HybridPresetInfo> = {
     pRatio: 75,
     totalOrbitals: 4,
     bondAngle: 104.5,
-    description: 'O 原子采取 sp³ 杂化，2 对孤电子对占据 2 个 sp³ 轨道，使 C-O-H 键角进一步压缩至 104.5°。',
+    description: 'O 原子采取 sp³ 杂化，2 对孤电子对占据 2 个 sp³ 轨道，使 H-O-H 键角进一步压缩至 104.5°。',
   },
   nh4: {
     id: 'nh4',

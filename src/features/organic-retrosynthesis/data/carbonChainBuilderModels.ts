@@ -1,15 +1,29 @@
 import type { RetrosynthesisModelData } from '../types'
 
 /**
- * 碳链骨架构建模型四：高考推断 C-C 键构建 (羟醛缩合与逆合成切断)
+ * 碳链骨架构建模型四：C-C 键构建 (羟醛缩合与逆合成切断)
+ * 层级画像：羟醛缩合与逆合成切断属人教版选必3 §3.5 教材主线；
+ * 仅"合成子/FGI"术语属超纲表述（见 syllabusTiers）。
  */
 export const MODEL_CARBON_CARBON_BUILDER: RetrosynthesisModelData = {
   id: 'carbon-carbon-builder',
-  title: '模型四：高考推断 C-C 键构建 (羟醛缩合与逆合成切断)',
+  title: '模型四：C-C 键构建 (羟醛缩合与逆合成切断)',
   subtitle: 'α,β-不饱和酮双键切断与碱催化 Aldol 碳链增长',
   targetMolecule: '1,3-二苯基-2-丙烯-1-酮',
   targetFormula: 'C₁₅H₁₂O',
-  difficulty: '高考冲刺',
+  difficulty: '中等',
+  syllabusTiers: [
+    {
+      level: 'textbook',
+      techniques: ['羟醛缩合（碳链增长）', '逆合成切断 C=C 定位两个羰基前体'],
+      basis: '人教版选择性必修3 第三章第五节《有机合成》"碳链增长"',
+    },
+    {
+      level: 'beyond',
+      techniques: ['"合成子 (synthon)"、"FGI" 术语'],
+      basis: '大学有机合成学派表述，教材无此术语，仅作分析视角',
+    },
+  ],
   description:
     '高考有机推断常考 C-C 键切断与增长。通过逆合成切断法定位双键两侧 C-C 键，推断前体为苯甲醛与苯乙酮，在碱催化下发生羟醛缩合 (Aldol Condensation)。',
   coreStrategy:

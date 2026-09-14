@@ -4,5 +4,31 @@
   "rules": {
     "react/rules-of-hooks": "error",
     "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["src/chemistry/**/*.ts", "src/chemistry/**/*.tsx"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "react",
+                "message": "chemistry/ 禁止依赖 React（铁律2：纯函数可序列化）"
+              },
+              {
+                "name": "react-dom",
+                "message": "chemistry/ 禁止依赖 DOM（铁律2：纯函数可序列化）"
+              },
+              {
+                "name": "react-dom/server",
+                "message": "chemistry/ 禁止依赖 DOM（铁律2：纯函数可序列化）"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

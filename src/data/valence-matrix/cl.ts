@@ -116,7 +116,7 @@ export const CL_CONFIG: ElementValenceConfig = {
       colorStyle: 'bg-indigo-100 text-indigo-950 border-indigo-300',
       rgbColor: CHEMISTRY_COLORS.acid,
       testReaction: '向高氯酸稀溶液中滴加紫色石蕊试液，溶液瞬间变为鲜红色，体现无机含氧酸最强酸性',
-      equation: 'HClO₄ ⇌ H⁺ + ClO₄⁻',
+      equation: 'HClO₄ = H⁺ + ClO₄⁻',
       roleDescription: '最强无机酸',
       physicalState: 'solution',
       experimentType: 'drop-test',

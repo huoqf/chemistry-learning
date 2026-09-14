@@ -190,7 +190,7 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
     piBonds: [
       { startPos: [0, 0.1, 0], endPos: [1.6, -0.85, 0], dir: [0, 0, 0.9] },
     ],
-    description: 'S 原子采取 sp² 杂化，1 对孤电子对占据 1 个 sp² 轨道，使分子呈现 V 形 (键角约 119°)。',
+    description: 'S 原子采取 sp² 杂化，1 对孤电子对占据 1 个 sp² 轨道，使分子呈现 V 形 (键角约 119.5°)。',
   },
 
   c2h4: {
@@ -314,7 +314,7 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
       { pos: [-1.65, -0.65, 0.6], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
       { pos: [0, -0.65, -1.7], element: 'H', color: ATOM_COLORS.H, bondType: 'sigma' },
     ],
-    description: 'N 原子采取 sp³ 杂化，顶部 1 个 sp³ 轨道被孤电子对占据，产生排斥效应使键角压缩为 107°。',
+    description: 'N 原子采取 sp³ 杂化，顶部 1 个 sp³ 轨道被孤电子对占据，产生排斥效应使键角压缩为 107.3°。',
   },
 
   h2o: {

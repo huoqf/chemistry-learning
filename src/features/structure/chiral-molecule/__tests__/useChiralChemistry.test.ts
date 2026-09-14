@@ -6,7 +6,7 @@ import { CHIRAL_PRESETS } from '../data/chiralData'
 describe('useChiralChemistry 手性化学推导 Hook 测试', () => {
   it('预设数据集合合法性测试', () => {
     expect(CHIRAL_PRESETS.length).toBeGreaterThanOrEqual(7)
-    
+
     // 乳酸
     const lactic = CHIRAL_PRESETS[0]
     expect(lactic.id).toBe('lactic-acid')

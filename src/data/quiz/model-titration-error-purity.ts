@@ -142,7 +142,7 @@ export const modelTitrationErrorPurity: ModelQuizData = {
       diagramType: 'titration-error-diagram',
       diagramConfig: {
         errorDiagramType: 'iodometry-purity',
-        title: '间接碘量法 (ClO⁻ ➔ I₂ ➔ S₂O₃²⁻ 3.725%) 关系链图',
+        title: '间接碘量法 (Cu²⁺ ➔ I₂ ➔ S₂O₃²⁻) 定量关系链图',
       },
       options: [
         {

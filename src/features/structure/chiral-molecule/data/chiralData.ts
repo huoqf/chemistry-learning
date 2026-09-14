@@ -86,7 +86,7 @@ export const CHIRAL_PRESETS: ChiralMolecule[] = [
       { id: 'H-C2', element: 'H', pos: tet[0], groupLabel: '-H' },
       { id: 'O-OH', element: 'O', pos: tet[1], groupLabel: '-OH' },
       { id: 'H-OH', element: 'H', pos: [tet[1][0] + 0.5, tet[1][1] - 0.4, tet[1][2] + 0.3] },
-      
+
       // -CH3 基团
       { id: 'C1', element: 'C', pos: tet[2], groupLabel: '-CH₃' },
       { id: 'H-C1a', element: 'H', pos: [tet[2][0] - 0.5, tet[2][1] - 0.4, tet[2][2] + 0.5] },
@@ -103,7 +103,7 @@ export const CHIRAL_PRESETS: ChiralMolecule[] = [
       { start: [0, 0, 0], end: tet[0] },
       { start: [0, 0, 0], end: tet[1] },
       { start: tet[1], end: [tet[1][0] + 0.5, tet[1][1] - 0.4, tet[1][2] + 0.3] },
-      
+
       { start: [0, 0, 0], end: tet[2] },
       { start: tet[2], end: [tet[2][0] - 0.5, tet[2][1] - 0.4, tet[2][2] + 0.5] },
       { start: tet[2], end: [tet[2][0] - 0.4, tet[2][1] + 0.4, tet[2][2] + 0.5] },
@@ -137,7 +137,7 @@ export const CHIRAL_PRESETS: ChiralMolecule[] = [
       { id: 'C2', element: 'C', pos: [0, 0, 0], isChiralCenter: true, groupLabel: '*C' },
       { id: 'H-C2', element: 'H', pos: tet[0], groupLabel: '-H' },
       { id: 'Cl', element: 'Cl', pos: tet[1], groupLabel: '-Cl' },
-      
+
       // -CH3 (C1)
       { id: 'C1', element: 'C', pos: tet[2], groupLabel: '-CH₃' },
       { id: 'H1a', element: 'H', pos: [tet[2][0] - 0.5, tet[2][1] - 0.4, tet[2][2] + 0.4] },
@@ -333,7 +333,7 @@ export const CHIRAL_PRESETS: ChiralMolecule[] = [
       { id: 'C3', element: 'C', pos: [0.67, 0, 0], groupLabel: 'C3' },
       { id: 'H2', element: 'H', pos: [-1.2, -0.9, 0], groupLabel: '-H(顺)' },
       { id: 'H3', element: 'H', pos: [1.2, -0.9, 0], groupLabel: '-H(顺)' },
-      
+
       { id: 'C1', element: 'C', pos: [-1.35, 1.15, 0], groupLabel: '-CH₃(顺)' },
       { id: 'H1a', element: 'H', pos: [-2.1, 0.9, 0.5] },
       { id: 'H1b', element: 'H', pos: [-2.1, 0.9, -0.5] },
@@ -348,7 +348,7 @@ export const CHIRAL_PRESETS: ChiralMolecule[] = [
       { start: [-0.67, 0, 0], end: [0.67, 0, 0], type: 'double' },
       { start: [-0.67, 0, 0], end: [-1.2, -0.9, 0] },
       { start: [0.67, 0, 0], end: [1.2, -0.9, 0] },
-      
+
       { start: [-0.67, 0, 0], end: [-1.35, 1.15, 0] },
       { start: [-1.35, 1.15, 0], end: [-2.1, 0.9, 0.5] },
       { start: [-1.35, 1.15, 0], end: [-2.1, 0.9, -0.5] },
@@ -368,7 +368,7 @@ export const CHIRAL_PRESETS: ChiralMolecule[] = [
         { id: 'C3', element: 'C', pos: [0.67, 0, 0], groupLabel: 'C3' },
         { id: 'H2', element: 'H', pos: [-1.2, -0.9, 0], groupLabel: '-H(左下)' },
         { id: 'H3', element: 'H', pos: [1.2, 0.9, 0], groupLabel: '-H(右上)' },
-        
+
         { id: 'C1', element: 'C', pos: [-1.35, 1.15, 0], groupLabel: '-CH₃(左上)' },
         { id: 'H1a', element: 'H', pos: [-2.1, 0.9, 0.5] },
         { id: 'H1b', element: 'H', pos: [-2.1, 0.9, -0.5] },

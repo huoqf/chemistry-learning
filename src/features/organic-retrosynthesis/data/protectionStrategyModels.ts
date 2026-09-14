@@ -9,7 +9,24 @@ export const MODEL_ASPIRIN_BENORILATE: RetrosynthesisModelData = {
   subtitle: '双官能团选择性酰化与酯键/酰胺键切断策略',
   targetMolecule: '贝诺酯 (Benorilate)',
   targetFormula: 'C₁₇H₁₅NO₅',
-  difficulty: '高考冲刺',
+  difficulty: '中等',
+  syllabusTiers: [
+    {
+      level: 'textbook',
+      techniques: ['逆合成切断法定位酯键/酰胺键', '酚羟基乙酰化保护', '酯化缩合与酰胺键构建'],
+      basis: '人教版选择性必修3 第三章第五节《有机合成》',
+    },
+    {
+      level: 'info-item',
+      techniques: ['SOCl₂ 酰氯化两步法 / DCC 缩合', '"前体药物"体内酶解设计'],
+      basis: '教材未指定缩合剂与药理背景，高考常以信息给出来用',
+    },
+    {
+      level: 'beyond',
+      techniques: ['"合成子 (synthon)"、"FGI" 术语与 δ⁺/δ⁻ 电荷标注体系'],
+      basis: '大学有机合成学派表述，教材无此术语体系，仅作分析视角',
+    },
+  ],
   description:
     '贝诺酯是阿司匹林与对乙酰氨基酚解热镇痛药的协同酯化产物。分子中同时含有酚酯键与酰胺键，需通过逆合成切断法寻找切断点，并控制反应选择性。',
   coreStrategy:
@@ -279,7 +296,19 @@ export const MODEL_DIELS_ALDER_ACETAL: RetrosynthesisModelData = {
   subtitle: '高考新情境环加成与羰基耐碱/耐还原性缩醛保护',
   targetMolecule: '4-羟甲基-3-环己烯甲醛',
   targetFormula: 'C₈H₁₂O₂',
-  difficulty: '高考冲刺',
+  difficulty: '信息题拓展',
+  syllabusTiers: [
+    {
+      level: 'textbook',
+      techniques: ['Diels-Alder [4+2] 环加成（碳链成环）'],
+      basis: '人教版选择性必修3 第三章第五节《有机合成》"碳链成环"',
+    },
+    {
+      level: 'info-item',
+      techniques: ['乙二醇环状缩醛保护羰基', 'LiAlH₄ 选择性还原酯基'],
+      basis: '教材官能团保护清单不含羰基保护，试剂与选择性以信息题给出',
+    },
+  ],
   description:
     '目标分子含有碳碳双键与醛基、醇羟基。在利用 LiAlH₄ 强还原剂将酯还原为醇时，活泼醛基会被优先破坏还原为醇，需用乙二醇将其转化为环状缩醛进行保护。',
   coreStrategy:
@@ -526,7 +555,19 @@ export const MODEL_DOUBLE_BOND_PROTECTION: RetrosynthesisModelData = {
   subtitle: '双键抗氧化/强亲电试剂加成保护与 β-消去脱保护',
   targetMolecule: '4-甲氧基苯丙烯 (TM)',
   targetFormula: 'C₁₀H₁₂O',
-  difficulty: '高考冲刺',
+  difficulty: '信息题拓展',
+  syllabusTiers: [
+    {
+      level: 'textbook',
+      techniques: ['碳碳双键与 Br₂ 加成', '酚羟基成醚（威廉姆逊成醚）', '卤代烃 β-消去'],
+      basis: '人教版选择性必修3 烯烃加成、酚的性质、卤代烃消去',
+    },
+    {
+      level: 'info-item',
+      techniques: ['把 Br₂ 加成当作"保护"手段的合成策略', 'Zn / EtOH 脱溴复原双键'],
+      basis: '教材未要求以加溴保护双键，脱溴试剂与条件以信息题给出',
+    },
+  ],
   description:
     '目标分子中酚羟基需在强碱性条件下与卤代烃反应转化为甲基醚，但原料中含有活泼碳碳双键，若直接反应或氧化修饰易发生副反应。先加溴保护消除双键不饱和性，成醚后再用 Zn 粉脱溴复原。',
   coreStrategy:

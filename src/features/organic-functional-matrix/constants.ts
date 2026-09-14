@@ -43,7 +43,7 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
     structureSvg: 'C#C',
     category: 'hydrocarbon-derivative',
     testReagents: ['溴水', '酸性 KMnO₄ 溶液', '硝酸银氨溶液 (末端炔)'],
-    testPhenomenon: '溴水褪色；酸性 KMnO₄ 紫红色褪去；末端炔生成黄色/灰色炔银沉淀',
+    testPhenomenon: '溴水褪色；酸性 KMnO₄ 紫红色褪去；末端炔生成白色/灰白色炔银沉淀（黄色的为炔化亚铜 CuC≡CR，勿混）',
     testEquation: 'CH\\equiv CH + 2Br_2 \\rightarrow CHBr_2-CHBr_2',
     consumptions: {
       Na: 0,
@@ -108,8 +108,8 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
       NaOH: 1, // 1 mol 酚-OH 消耗 1 mol NaOH (弱酸性中和)
       NaHCO3: 0, // 酚不与 NaHCO3 反应！
       Na2CO3: 1, // 1 mol 酚-OH 消耗 1 mol Na2CO3 (反应生成 1 mol 酚钠 + 1 mol NaHCO3，不产生 CO2 气体)
-      Br2: 3, // 苯酚与浓溴水邻对位 3 处发生取代反应 (消耗 3 mol Br2)
-      H2: 0, // 酚羟基本身不加氢，苯环加 3 mol H2
+      Br2: 3, // 口径①：酚羟基活化苯环，故把“苯环邻对位 3 处取代”记在本官能团名下 (消耗 3 mol Br2)
+      H2: 0, // 口径②：H2 一栏只计“官能团自身的不饱和键”，苯环加氢统一不计 (见 notes 的口径说明)
     },
     qualitativeFeatures: {
       silverOrFehling: '不反应',
@@ -121,7 +121,7 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
       ir: '3200~3500 cm⁻¹ (酚 O-H 伸缩振动)；1200~1250 cm⁻¹ (Ar-O 伸缩)；1450~1600 cm⁻¹ (苯环骨架振动)',
       hnmr: '酚羟基氢 Ar-OH 化学位移偏低场 δ = 4.0~7.5 ppm；苯环氢在 δ = 6.5~8.0 ppm',
     },
-    notes: '酸性：R-COOH > H₂CO₃ > C₆H₅OH > HCO₃⁻ > R-OH。因此酚羟基与 NaOH、Na₂CO₃ 反应，但不与 NaHCO₃ 反应且不释放 CO₂ 气体！',
+    notes: '酸性：R-COOH > H₂CO₃ > C₆H₅OH > HCO₃⁻ > R-OH。因此酚羟基与 NaOH、Na₂CO₃ 反应，但不与 NaHCO₃ 反应且不释放 CO₂ 气体！【计量口径】Br₂ 一栏按“酚羟基活化苯环”计入苯环邻对位取代（3 mol）；H₂ 一栏只计官能团自身的不饱和键，苯环加氢不计入。两栏口径不同，比较数值时请注意。',
   },
   {
     id: 'aldehyde-cho',
@@ -334,7 +334,7 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
     category: 'nitrogen-containing',
     testReagents: ['稀盐酸', 'pH 试纸 / 红色石蕊试纸 (低级脂肪胺)'],
     testPhenomenon: '与稀盐酸反应成盐并溶解；低级脂肪胺水溶液显弱碱性，芳香胺碱性极弱',
-    testEquation: 'R-NH_2 + HCl \\rightarrow R-NH_3^+Cl^-',
+    testEquation: 'R-NH_2 + HCl \\rightarrow R-NH_3^+ + Cl^-',
     consumptions: {
       Na: 0,
       NaOH: 0, // 氨基呈碱性，不与 NaOH 反应！
@@ -483,7 +483,7 @@ export const PROTECTION_GROUPS: ProtectionGroupItem[] = [
     deprotectionCondition: 'H₂ / Pd-C 催化氢解还原',
     deprotectionEquation: 'Ar-O-CH_2C_6H_5 + H_2 \\xrightarrow{Pd-C} Ar-OH + C_6H_5CH_3',
     examSignificance:
-      '高考头号保护策略：防止酚羟基在后续的强氧化（如 KMnO₄）或格氏试剂/强碱性条件下发生副反应，合成后温和脱除。',
+      '防止酚羟基在后续强氧化（如 KMnO₄）或强碱性烷基化条件下发生副反应，合成后温和脱除。【层级】苄醚保护、Pd/C 氢解与格氏试剂均属信息题素材，教材未作要求。',
   },
   {
     id: 'amino-acetyl-protect',
@@ -505,7 +505,7 @@ export const PROTECTION_GROUPS: ProtectionGroupItem[] = [
     deprotectionCondition: '稀酸水溶液加热水解 (H₃O⁺ / Δ)',
     deprotectionEquation: 'R_2C(OCH_2CH_2O) + H_2O \\xrightarrow{H^+, \\Delta} R_2C=O + HO-CH_2CH_2-OH',
     examSignificance:
-      '防止羰基在格氏反应、LiAlH₄ 强还原其他羧酸酯基或强碱性烷基化过程中被优先加成破坏。',
+      '防止羰基在 LiAlH₄ 强还原、格氏反应或强碱性烷基化过程中被优先加成破坏。【层级】羰基缩醛保护、LiAlH₄ 与格氏试剂均属信息题素材，教材未作要求。',
   },
   {
     id: 'carboxyl-ester-protect',
@@ -516,7 +516,7 @@ export const PROTECTION_GROUPS: ProtectionGroupItem[] = [
     deprotectionCondition: '稀酸催化水解 (或稀 NaOH 水解后加酸酸化)',
     deprotectionEquation: 'R-COOCH_3 + H_2O \\xrightleftharpoons{H^+, \\Delta} R-COOH + CH_3OH',
     examSignificance:
-      '掩盖活泼酸性质子，防止羧基与有机金属试剂（如格氏试剂 RMgX）剧烈反应释放烷烃。',
+      '掩盖活泼酸性质子，防止羧基与有机金属试剂（如格氏试剂 RMgX）剧烈反应释放烷烃。【层级】有机金属试剂属信息题素材，教材未作要求。',
   },
 ]
 

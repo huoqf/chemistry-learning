@@ -68,7 +68,7 @@ export const FLASH_CARDS: FlashCard[] = [
     correctOption: 'A',
     explanation: '常温下浓硫酸、浓硝酸具有强氧化性，使 Fe、Al 表面立即氧化生成一层致密的钝化氧化膜（主要为 Fe₂O₃、Al₂O₃ 等），阻止反应继续进行。钝化是化学变化！',
     chemicalEquations: [
-      '2Fe + 6H_2SO_4(\\text{浓}) \\xrightarrow{\\text{常温}} \\text{致密钝化膜} (钝化阻断反应)',
+      '常温钝化：Fe、Al 表面迅速氧化生成致密氧化膜，反应随即停止（钝化是化学变化）',
       '2Fe + 6H_2SO_4(\\text{浓}) \\xrightarrow{\\Delta} Fe_2(SO_4)_3 + 3SO_2\\uparrow + 6H_2O (加热破膜剧烈反应)',
     ],
     warningTip: '高考避坑红线：钝化绝不是“不反应”，而是“剧烈反应生成致密膜后阻断”！可以用铝瓶装运常温浓硝酸。',

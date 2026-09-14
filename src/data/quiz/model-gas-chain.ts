@@ -118,7 +118,7 @@ export const modelGasChainQuiz: ModelQuizData = {
         },
         {
           label: 'C',
-          text: '收集 NH₃ 时采用向下排空气法，瓶口塞一团浸有稀硫酸的棉花',
+          text: '收集 NH₃ 时采用向下排空气法，试管口塞一团干燥的棉花，目的是吸收多余的 NH₃',
           isCorrect: false,
         },
         {
@@ -127,8 +127,8 @@ export const modelGasChainQuiz: ModelQuizData = {
           isCorrect: true,
         },
       ],
-      modelAlignmentAnalysis: '考查固体加热发生装置 (试管口微向下倾斜防冷凝水倒流)；NH₃ 干燥剂禁忌 (CaCl₂ 配合物)；向下排空气法瓶口棉花应浸水或湿润红色石蕊试纸；防倒吸倒置漏斗刚好下沿接触液面。',
-      detailedExplanation: '【解析】\n• 选项 A 错误：固体加热反应有水生成，试管口必须微向下倾斜，防止冷凝水倒流炸裂试管；\n• 选项 B 错误：无水 CaCl₂ 会与 NH₃ 发生络合反应生成 CaCl₂·8NH₃，不能干燥 NH₃；\n• 选项 C 错误：棉花应用水或湿润石蕊试纸，稀硫酸会与 NH₃ 反应阻碍空气排出；\n• 选项 D 正确：倒置漏斗刚好下沿接触液面是标准的极易溶气体防倒吸结构。',
+      modelAlignmentAnalysis: '考查固体加热发生装置 (试管口微向下倾斜防冷凝水倒流)；NH₃ 干燥剂禁忌 (CaCl₂ 配合物)；向下排空气法试管口棉花的作用辨析（干燥棉花减缓氨气与空气对流，蘸水或稀硫酸的棉花才能吸收多余 NH₃）；防倒吸倒置漏斗刚好下沿接触液面。',
+      detailedExplanation: '【解析】\n• 选项 A 错误：固体加热反应有水生成，试管口必须微向下倾斜，防止冷凝水倒流炸裂试管；\n• 选项 B 错误：无水 CaCl₂ 会与 NH₃ 发生络合反应生成 CaCl₂·8NH₃，不能干燥 NH₃；\n• 选项 C 错误：干燥的棉花只能减缓氨气与空气的对流，起不到吸收多余 NH₃ 的作用；要吸收多余 NH₃ 须用蘸有水或稀硫酸的棉花；\n• 选项 D 正确：倒置漏斗刚好下沿接触液面是标准的极易溶气体防倒吸结构。',
       diagramType: 'titration-error-diagram',
       diagramConfig: {
         errorDiagramType: 'cod-back-titration',

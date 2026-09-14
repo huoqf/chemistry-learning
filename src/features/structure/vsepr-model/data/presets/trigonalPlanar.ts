@@ -149,7 +149,7 @@ export const TRIGONAL_PLANAR_MOLECULES: Record<string, VseprMolecule> = {
     electronGeometry: '平面三角形',
     molecularGeometry: 'V形 (折线形)',
     hybridization: 'sp²',
-    bondAngleText: '119°',
+    bondAngleText: '119.5°',
     description: 'SO₂ 电子对为平面三角形，含 1 对孤电子对 (n=1)，孤对排斥使键角略小于 120°',
     centralColor: '#eab308',
     ligandColor: '#ef4444',
@@ -162,7 +162,7 @@ export const TRIGONAL_PLANAR_MOLECULES: Record<string, VseprMolecule> = {
     ],
     polyEdges: POLY_EDGES.trigonalPlanar,
     bondAngles: [
-      { p1: GEOMETRY_VERTICES.trigonalPlanar[1], p2: GEOMETRY_VERTICES.trigonalPlanar[2], angleText: '119°' },
+      { p1: GEOMETRY_VERTICES.trigonalPlanar[1], p2: GEOMETRY_VERTICES.trigonalPlanar[2], angleText: '119.5°' },
     ],
   },
 

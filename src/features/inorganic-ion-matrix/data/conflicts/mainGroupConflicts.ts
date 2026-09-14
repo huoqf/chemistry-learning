@@ -137,7 +137,7 @@ export const MAIN_GROUP_CONFLICTS: Record<string, IonPairCell> = {
     badgeLabel: '歧化/气',
     productSummary: 'HNO₂ / NO↑+NO₂',
     equation: '3NO_2^- + 2H^+ = NO_3^- + 2NO\\uparrow + H_2O',
-    phenomenon: '溶液呈淡蓝色，管口产生红棕色气体。',
+    phenomenon: '溶液无色，逸出无色 NO 气体，管口遇空气变为红棕色 NO₂。',
     reason: '亚硝酸酸性下不稳定迅速发生自身歧化。',
   },
 
@@ -172,7 +172,7 @@ export const MAIN_GROUP_CONFLICTS: Record<string, IonPairCell> = {
     category: 'double-hydrolysis',
     badgeLabel: '双水解沉淀',
     productSummary: 'H₂SiO₃↓+NH₃',
-    equation: '2NH_4^+ + SiO_3^{2-} = H_2SiO_3\\downarrow + 2NH_3\\cdot H_2O',
+    equation: '2NH_4^+ + SiO_3^{2-} = H_2SiO_3\\downarrow + 2NH_3\\uparrow',
     phenomenon: '产生白色硅酸沉淀并伴随弱氨味。',
     reason: '弱酸弱碱相互促进双水解。',
   },

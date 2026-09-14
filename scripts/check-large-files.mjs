@@ -42,10 +42,18 @@ function walk(dir) {
   return files
 }
 
+/**
+ * 统计「内容行数」。
+ *
+ * 注意：不能用 `text.split(/\r?\n/).length` —— 对以换行结尾的文件，该写法会多出
+ * 一个空的尾元素，导致「恰好 800 行」的合规文件被误报为 801 行而卡住门禁
+ * （off-by-one）。这里先剥掉末尾换行再切分，使阈值语义与「文件有多少行内容」一致。
+ */
 function lineCount(file) {
   const text = readFileSync(file, 'utf8')
   if (text.length === 0) return 0
-  return text.split(/\r?\n/).length
+  const body = text.endsWith('\n') ? text.slice(0, -1).replace(/\r$/, '') : text
+  return body.split(/\r?\n/).length
 }
 
 const allFiles = TARGET_DIRS.flatMap((dir) => walk(join(ROOT, dir)))
