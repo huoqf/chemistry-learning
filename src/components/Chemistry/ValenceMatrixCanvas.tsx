@@ -602,7 +602,14 @@ export function ValenceMatrixCanvas({
         <ThreePanel
           left={leftContent}
           center={centerContent}
-          right={<ValenceRightPanel currentConfig={currentConfig} selectedSubstance={selectedSubstance} />}
+          right={
+            <ValenceRightPanel
+              currentConfig={currentConfig}
+              selectedSubstance={selectedSubstance}
+              targetSubstance={targetSubstance}
+              activePairTransformation={activePairTransformation}
+            />
+          }
         />
       </div>
     </div>

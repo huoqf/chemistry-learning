@@ -294,7 +294,7 @@ export const MODEL_DIELS_ALDER_ACETAL: RetrosynthesisModelData = {
   id: 'diels-alder-acetal',
   title: '模型二：Diels-Alder 环加成与乙二醇羰基缩醛 Protection',
   subtitle: '高考新情境环加成与羰基耐碱/耐还原性缩醛保护',
-  targetMolecule: '4-羟甲基-3-环己烯甲醛',
+  targetMolecule: '6-羟甲基-3-环己烯甲醛',
   targetFormula: 'C₈H₁₂O₂',
   difficulty: '信息题拓展',
   syllabusTiers: [
@@ -477,7 +477,7 @@ export const MODEL_DIELS_ALDER_ACETAL: RetrosynthesisModelData = {
         { name: 'LiAlH₄ 还原剂与稀酸', formula: 'LiAlH₄ + H₃O⁺' },
       ],
       products: [
-        { name: '4-羟甲基-3-环己烯甲醛 (TM)', formula: 'C₈H₁₂O₂' },
+        { name: '6-羟甲基-3-环己烯甲醛 (TM)', formula: 'C₈H₁₂O₂' },
         { name: '乙二醇 (脱去回收)', formula: 'HO(CH₂)₂OH' },
       ],
       reagents: '1. LiAlH₄ / THF  2. 稀盐酸 / Δ 加热回流',
@@ -514,7 +514,7 @@ export const MODEL_DIELS_ALDER_ACETAL: RetrosynthesisModelData = {
         },
         {
           id: 'tm',
-          label: '4-羟甲基-3-环己烯甲醛 (TM)',
+          label: '6-羟甲基-3-环己烯甲醛 (TM)',
           formula: 'C₈H₁₂O₂',
           x: 420,
           y: 320,
@@ -652,8 +652,8 @@ export const MODEL_DOUBLE_BOND_PROTECTION: RetrosynthesisModelData = {
     },
     {
       stepIndex: 2,
-      title: '第 2 步：强碱下酚羟基甲基化 (威廉姆逊成醚反应)',
-      description: '在 K₂CO₃/NaOH 强碱作用下，酚羟基脱质子进攻碘甲烷 (CH₃I)，生成酚甲基醚。',
+      title: '第 2 步：弱碱下酚羟基甲基化 (威廉姆逊成醚反应)',
+      description: '在无水 K₂CO₃ 弱碱作用下，酚羟基选择性脱质子进攻碘甲烷 (CH₃I) 生成酚甲基醚，避免强碱引起二溴烷烃消去。',
       reactants: [
         { name: '二溴中间体', formula: 'C₉H₁₀Br₂O' },
         { name: '碘甲烷 (CH₃I)', formula: 'CH₃I' },
@@ -666,7 +666,7 @@ export const MODEL_DOUBLE_BOND_PROTECTION: RetrosynthesisModelData = {
       protectionStatus: {
         isProtected: true,
         protectedGroup: 'C=C 仍处于二溴代保护态',
-        reason: '酚羟基完成成醚转化，双键受到二溴保护不受强碱影响。',
+        reason: '无水 K₂CO₃ 弱碱条件下酚羟基完成成醚转化，二溴保护态双键不发生消去副反应。',
       },
       cutBond: null,
       atomEconomy: 70.6,
