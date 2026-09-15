@@ -184,6 +184,7 @@ export const IonMatrixCanvas: React.FC = () => {
               conflicts={coexistenceResult.conflicts}
               coexistenceIons={coexistenceResult.selectedIonObjects}
               selectedPair={selectedMatrixPair}
+              onNavigateToBeaker={handleNavigateToBeaker}
             />
           }
         />
