@@ -130,9 +130,9 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       reactionEquation = '\\text{Na}_2\\text{SO}_3 + \\text{H}_2\\text{SO}_4(70\\%) \\rightarrow \\text{Na}_2\\text{SO}_4 + \\text{SO}_2\\uparrow + \\text{H}_2\\text{O}'
     } else if (systemId === 'no-no2-chain' || targetGas === 'NO₂' || targetGas === 'NO') {
       if (targetGas === 'NO') {
-        reactionEquation = '3\\text{Cu} + 8\\text{HNO}_3(\\text{稀}) \\rightarrow 3\\text{Cu(NO}_3)_2 + 2\\text{NO}\\uparrow + 4\\text{H}_2\\text{O}'
+        reactionEquation = '3\\text{Cu} + 8\\text{HNO}_3(\\text{稀}) \\rightarrow 3\\mathrm{Cu(NO_3)_2} + 2\\text{NO}\\uparrow + 4\\text{H}_2\\text{O}'
       } else {
-        reactionEquation = '\\text{Cu} + 4\\text{HNO}_3(\\text{浓}) \\rightarrow \\text{Cu(NO}_3)_2 + 2\\text{NO}_2\\uparrow + 2\\text{H}_2\\text{O}'
+        reactionEquation = '\\text{Cu} + 4\\text{HNO}_3(\\text{浓}) \\rightarrow \\mathrm{Cu(NO_3)_2} + 2\\text{NO}_2\\uparrow + 2\\text{H}_2\\text{O}'
       }
     } else {
       reactionEquation = `\\text{CH}_3\\text{CH}_2\\text{OH} \\xrightarrow[${temp}^\\circ\\text{C}]{\\text{浓 H}_2\\text{SO}_4} \\text{CH}_2=\\text{CH}_2\\uparrow + \\text{H}_2\\text{O}`
@@ -143,15 +143,15 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
     if (washReagent === 'none') {
       purificationEquation = '\\text{未配置净化洗气瓶 (跳过洗气)}'
     } else if (washReagent === 'sat-nacl') {
-      purificationEquation = '\\text{HCl} + \\text{H}_2\\text{O} \\rightarrow \\text{HCl(aq)} \\quad (\\text{饱和 NaCl 吸 HCl 抑 Cl}_2)'
+      purificationEquation = '\\text{HCl} + \\text{H}_2\\text{O} \\rightarrow \\text{HCl(aq)} \\quad (\\text{饱和 NaCl 吸 HCl 抑 } \\text{Cl}_2)'
     } else if (washReagent === 'nahco3') {
-      purificationEquation = '\\text{NaHCO}_3 + \\text{HCl} = \\text{NaCl} + \\text{CO}_2\\uparrow + \\text{H}_2\\text{O} \\quad (\\text{除 HCl 增产 CO}_2)'
+      purificationEquation = '\\text{NaHCO}_3 + \\text{HCl} = \\text{NaCl} + \\text{CO}_2\\uparrow + \\text{H}_2\\text{O} \\quad (\\text{除 HCl 增产 } \\text{CO}_2)'
     } else if (washReagent === 'nahso3') {
-      purificationEquation = '\\text{NaHSO}_3 + \\text{HCl} = \\text{NaCl} + \\text{SO}_2\\uparrow + \\text{H}_2\\text{O} \\quad (\\text{除 HCl 抑 SO}_2)'
+      purificationEquation = '\\text{NaHSO}_3 + \\text{HCl} = \\text{NaCl} + \\text{SO}_2\\uparrow + \\text{H}_2\\text{O} \\quad (\\text{除 HCl 抑 } \\text{SO}_2)'
     } else if (washReagent === 'cuso4') {
-      purificationEquation = '\\text{CuSO}_4 + \\text{H}_2\\text{S} = \\text{CuS}\\downarrow + \\text{H}_2\\text{SO}_4 \\quad (\\text{除去恶臭剧毒 H}_2\\text{S})'
+      purificationEquation = '\\text{CuSO}_4 + \\text{H}_2\\text{S} = \\text{CuS}\\downarrow + \\text{H}_2\\text{SO}_4 \\quad (\\text{除去恶臭剧毒 } \\text{H}_2\\text{S})'
     } else if (washReagent === 'fuchsin') {
-      purificationEquation = '\\text{SO}_2 + \\text{品红} \\rightarrow \\text{无色加合物 (检验 SO}_2 \\text{漂白性)}'
+      purificationEquation = '\\text{SO}_2 + \\text{品红} \\rightleftharpoons \\text{无色不稳定物} \\quad (\\text{检验 SO}_2 \\text{ 漂白性})'
     } else if (washReagent === 'kmno4') {
       purificationEquation = '5\\text{SO}_2 + 2\\text{MnO}_4^- + 2\\text{H}_2\\text{O} = 5\\text{SO}_4^{2-} + 2\\text{Mn}^{2+} + 4\\text{H}^+'
     } else if (washReagent === 'naoh') {

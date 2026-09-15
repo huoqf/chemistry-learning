@@ -104,10 +104,11 @@ export function ReagentStepRightPanel({
     : ''
 
   return (
-    <div className="h-full flex flex-col overflow-hidden bg-white">
+    <div className="w-full flex flex-col bg-white">
       {/* 上半部分：标准 ChemistryPanel 展现区 (拆解、公式、要点、警示) */}
-      <div className="flex-1 min-h-0 overflow-y-auto border-b border-slate-200">
+      <div className="border-b border-slate-200">
         <ChemistryPanel
+          scrollable={false}
           title={`${currentScene.title}${modeBadge} · 高考规范拆解`}
           quantities={quantities}
           formulas={formulas}

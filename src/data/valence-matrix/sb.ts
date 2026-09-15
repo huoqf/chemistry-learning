@@ -5,7 +5,7 @@ export const SB_CONFIG: ElementValenceConfig = {
   id: 'Sb',
   name: '锑元素 (Sb)',
   symbol: 'Sb',
-  isCoreGaokao: true,
+  isCoreGaokao: false,
   elementCategory: 'main-group-metal',
   badgeText: '新高考工业辉锑矿冶炼·氯化氧锑沉淀与水解平衡',
   atomColor: ATOM_COLORS.Sb || '#7C3AED',

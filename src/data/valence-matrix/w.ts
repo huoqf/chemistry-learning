@@ -5,7 +5,7 @@ export const W_CONFIG: ElementValenceConfig = {
   id: 'W',
   name: '钨元素 (W)',
   symbol: 'W',
-  isCoreGaokao: true,
+  isCoreGaokao: false,
   elementCategory: 'transition-metal',
   badgeText: '新高考难熔金属冶炼·白钨矿与钨酸黄色沉淀',
   atomColor: ATOM_COLORS.W || '#475569',

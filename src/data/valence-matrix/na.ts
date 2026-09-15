@@ -130,7 +130,7 @@ export const NA_CONFIG: ElementValenceConfig = {
     },
   ],
   examTips: [
-    '【Na₂O₂ 晶体微粒个数比考点】：Na₂O₂ 中存在非极性共价键 (过氧键 O-O) 和离子键，阳离子为 Na⁺，阴离子为 O₂²⁻，阴阳离子个数比为 1:2。',
+    '【Na₂O₂ 晶体微粒个数比考点】：Na₂O₂ 中存在非极性共价键 (过氧键 O-O) 和离子键，阳离子为 Na⁺，阴离子为 O₂²⁻，阳离子与阴离子的个数比为 2:1（阴离子与阳离子个数比为 1:2）。',
     '【Na₂O₂ 与水/CO₂ 反应转移电子数手算】：2Na₂O₂ + 2H₂O = 4NaOH + O₂↑ 歧化反应中，每消耗 2 mol Na₂O₂ 产生 1 mol O₂，转移电子数为 2 mol（即每摩尔 Na₂O₂ 转移 1 mol e⁻）。',
     '【侯氏制碱法与反常析晶原理】：NaHCO₃ 的溶解度显著小于 Na₂CO₃，向饱和 Na₂CO₃ 溶液中持续通入 CO₂ 会析出 NaHCO₃ 结晶（Na₂CO₃ + CO₂ + H₂O = 2NaHCO₃↓）。',
   ],

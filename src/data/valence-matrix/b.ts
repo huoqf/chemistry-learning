@@ -5,7 +5,7 @@ export const B_CONFIG: ElementValenceConfig = {
   id: 'B',
   name: '硼元素 (B)',
   symbol: 'B',
-  isCoreGaokao: true,
+  isCoreGaokao: false,
   elementCategory: 'non-metal',
   badgeText: '新高考缺电子原子·硼酸一元弱酸与硼氢化物',
   atomColor: ATOM_COLORS.B,

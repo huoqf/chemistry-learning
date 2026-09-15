@@ -34,7 +34,7 @@ export const ElementPeriodicRightPanel: React.FC<ElementPeriodicRightPanelProps>
         return [
           {
             name: '第一电离能反常排序 (IIA/IIIA, VA/VIA)',
-            latex: 'I_1(\\text{Be}) > I_1(\\text{B}), \\quad I_1(\\text{N}) > I_1(\\text{O}); \\quad I_1(\\text{Mg}) > I_1(\\text{Al}), \\quad I_1(\\text{P}) > I_1(\\text{S})',
+            latex: '\\begin{aligned} &\\text{第二周期: } I_1(\\text{Be}) > I_1(\\text{B}),\\; I_1(\\text{N}) > I_1(\\text{O}) \\\\ &\\text{第三周期: } I_1(\\text{Mg}) > I_1(\\text{Al}),\\; I_1(\\text{P}) > I_1(\\text{S}) \\end{aligned}',
             condition: '同周期第一电离能总体增大，但全充满/半充满状态能量稳定出现反常折角',
           },
         ]
@@ -50,7 +50,7 @@ export const ElementPeriodicRightPanel: React.FC<ElementPeriodicRightPanelProps>
         return [
           {
             name: '等电子体微粒半径比较律',
-            latex: 'r(\\text{O}^{2-}) > r(\\text{F}^-) > r(\\text{Na}^+) > r(\\text{Mg}^{2+}) > r(\\text{Al}^{3+})',
+            latex: '\\begin{aligned} r(\\text{O}^{2-}) &> r(\\text{F}^-) > r(\\text{Na}^+) \\\\ &> r(\\text{Mg}^{2+}) > r(\\text{Al}^{3+}) \\end{aligned}',
             condition: '电子层结构相同时，核电荷数 Z 越大，有效核电荷吸引越强，半径越小',
           },
         ]
@@ -58,7 +58,7 @@ export const ElementPeriodicRightPanel: React.FC<ElementPeriodicRightPanelProps>
         return [
           {
             name: '位-构-性三角演绎关系',
-            latex: '\\text{位置 (周期/族)} \\iff \\text{结构 (价电子排布)} \\iff \\text{性质 (电离能/电负性/半径)}',
+            latex: '\\begin{aligned} &\\text{位置 (周期/族)} \\iff \\text{结构 (价电子排布)} \\\\ &\\qquad\\qquad\\quad\\; \\iff \\text{性质 (电离能/电负性/半径)} \\end{aligned}',
             condition: '高考压轴大题逻辑核心：由特征条件推出结构与元素身份，进而演绎性质',
           },
         ]
@@ -197,12 +197,15 @@ export const ElementPeriodicRightPanel: React.FC<ElementPeriodicRightPanelProps>
   }, [currentElement, stepIonizationAnalysis])
 
   return (
-    <ChemistryPanel
-      title="位-构-性与电子排布剖析"
-      formulas={dynamicFormulas}
-      gaokaoPoints={dynamicGaokaoPoints}
-      warnings={dynamicWarnings}
-      quantities={quantities}
-    />
+    <div className="w-full p-2">
+      <ChemistryPanel
+        scrollable={false}
+        title="位-构-性与电子排布剖析"
+        formulas={dynamicFormulas}
+        gaokaoPoints={dynamicGaokaoPoints}
+        warnings={dynamicWarnings}
+        quantities={quantities}
+      />
+    </div>
   )
 }

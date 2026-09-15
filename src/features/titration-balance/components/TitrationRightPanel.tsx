@@ -19,7 +19,7 @@ export function TitrationRightPanel({ chemistry, model }: TitrationRightPanelPro
   const navigate = useNavigate()
 
   return (
-    <div className="flex flex-col gap-3 p-4 h-full overflow-y-auto bg-white font-sans text-slate-900 border-l border-slate-200">
+    <div className="flex flex-col gap-3 p-4 w-full bg-white font-sans text-slate-900 border-l border-slate-200">
       {/* 1. 实时离子浓度排序与微粒对比 */}
       <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex flex-col gap-2.5 shadow-2xs">
         <h4 className="font-bold text-slate-800 text-xs flex items-center gap-1.5 border-b border-slate-200 pb-1.5">
@@ -28,7 +28,7 @@ export function TitrationRightPanel({ chemistry, model }: TitrationRightPanelPro
         </h4>
 
         {/* 规范 Katex 渲染离子浓度排序 */}
-        <div className="p-2.5 bg-indigo-50/80 border border-indigo-200 rounded-lg text-xs font-bold text-indigo-950 leading-relaxed overflow-x-auto flex justify-center items-center">
+        <div className="p-2 bg-indigo-50/80 border border-indigo-200 rounded-lg text-xs font-bold text-indigo-950 leading-relaxed overflow-hidden flex justify-center items-center">
           <KatexFormula formula={chemistry.concOrderingLatex} mode="inline" />
         </div>
 
@@ -74,7 +74,7 @@ export function TitrationRightPanel({ chemistry, model }: TitrationRightPanelPro
           {/* 电荷守恒 */}
           <div className="p-2 bg-white rounded border border-slate-200 flex flex-col gap-1">
             <span className="font-bold text-indigo-900 text-[11px]">{chemistry.chargeBalance.title}</span>
-            <div className="bg-slate-50 p-1.5 rounded border border-slate-100 overflow-x-auto flex justify-start items-center">
+            <div className="bg-slate-50 p-1.5 rounded border border-slate-100 overflow-hidden flex justify-start items-center">
               <KatexFormula formula={chemistry.chargeBalance.equationLatex} mode="inline" />
             </div>
             <span className="text-[10px] text-slate-500">{chemistry.chargeBalance.explanation}</span>
@@ -83,7 +83,7 @@ export function TitrationRightPanel({ chemistry, model }: TitrationRightPanelPro
           {/* 物料守恒 */}
           <div className="p-2 bg-white rounded border border-slate-200 flex flex-col gap-1">
             <span className="font-bold text-indigo-900 text-[11px]">{chemistry.massBalance.title}</span>
-            <div className="bg-slate-50 p-1.5 rounded border border-slate-100 overflow-x-auto flex justify-start items-center">
+            <div className="bg-slate-50 p-1.5 rounded border border-slate-100 overflow-hidden flex justify-start items-center">
               <KatexFormula formula={chemistry.massBalance.equationLatex} mode="inline" />
             </div>
             <span className="text-[10px] text-slate-500">{chemistry.massBalance.explanation}</span>
@@ -92,7 +92,7 @@ export function TitrationRightPanel({ chemistry, model }: TitrationRightPanelPro
           {/* 质子守恒 */}
           <div className="p-2 bg-white rounded border border-slate-200 flex flex-col gap-1">
             <span className="font-bold text-indigo-900 text-[11px]">{chemistry.protonBalance.title}</span>
-            <div className="bg-slate-50 p-1.5 rounded border border-slate-100 overflow-x-auto flex justify-start items-center">
+            <div className="bg-slate-50 p-1.5 rounded border border-slate-100 overflow-hidden flex justify-start items-center">
               <KatexFormula formula={chemistry.protonBalance.equationLatex} mode="inline" />
             </div>
             <span className="text-[10px] text-slate-500">{chemistry.protonBalance.explanation}</span>

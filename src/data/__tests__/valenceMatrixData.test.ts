@@ -39,12 +39,21 @@ describe('Valence Matrix Data Integrity & Chemical Scientificity (新高考 40 �
       expect(config.name).toContain(key)
       expect(config.atomColor).toBeTruthy()
       expect(config.badgeText).toBeTruthy()
-      expect(config.isCoreGaokao).toBe(true)
+      expect(typeof config.isCoreGaokao).toBe('boolean')
       expect(config.valences.length).toBeGreaterThan(0)
       expect(config.categories.length).toBeGreaterThan(0)
       expect(config.items.length).toBeGreaterThan(0)
       expect(config.examTips.length).toBeGreaterThanOrEqual(2)
     })
+
+    // 验证 30 种高考主干核心元素与 10 种工业流程/信息拓展元素分级
+    const coreElements = Object.values(VALENCE_MATRIX_DATA).filter(e => e.isCoreGaokao)
+    const extendedElements = Object.values(VALENCE_MATRIX_DATA).filter(e => !e.isCoreGaokao)
+    expect(coreElements).toHaveLength(30)
+    expect(extendedElements).toHaveLength(10)
+    expect(extendedElements.map(e => e.id)).toEqual(
+      expect.arrayContaining(['B', 'As', 'Se', 'Be', 'Ga', 'Ge', 'Sb', 'Bi', 'Mo', 'W'])
+    )
   })
 
   it('should strictly validate all substance nodes for chemical validity and valence/category alignment', () => {

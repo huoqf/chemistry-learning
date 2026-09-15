@@ -360,8 +360,9 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
   }, [chartTab])
 
   return (
-    <div className="w-full h-full p-2 overflow-y-auto">
+    <div className="w-full p-2">
       <ChemistryPanel
+        scrollable={false}
         title={`反应原理大题图谱：${system.name}`}
         quantities={quantities}
         formulas={formulas}

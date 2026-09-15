@@ -107,13 +107,13 @@ export const HessLawRightPanel: React.FC<HessLawRightPanelProps> = ({
       {
         name: '微观键能计算公式',
         latex: '\\Delta H = \\sum E_{\\text{断(反应物)}} - \\sum E_{\\text{成(生成物)}}',
-        condition: '断键吸收能量 Q_{吸} > 0，成键释放能量 Q_{放} > 0',
+        condition: '断键吸收能量 Q(吸) > 0，成键释放能量 Q(放) > 0',
         level: 'important' as const,
       },
       {
         name: '反应活化能与 ΔH 关系',
         latex: '\\Delta H = E_{a(\\text{正})} - E_{a(\\text{逆})}',
-        condition: '催化剂同等降低 E_{a(正)} 与 E_{a(逆)}，不改变 \\Delta H',
+        condition: '催化剂同等降低 Ea(正) 与 Ea(逆)，不改变 ΔH',
         level: 'derived' as const,
       },
     ]
@@ -156,8 +156,9 @@ export const HessLawRightPanel: React.FC<HessLawRightPanelProps> = ({
   }, [])
 
   return (
-    <div className="h-full bg-white border-l border-slate-200">
+    <div className="w-full bg-white border-l border-slate-200">
       <ChemistryPanel
+        scrollable={false}
         title="母题九：热化学与盖斯定律理论解析"
         quantities={quantities}
         formulas={formulas}

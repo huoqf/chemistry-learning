@@ -5,7 +5,7 @@ export const GA_CONFIG: ElementValenceConfig = {
   id: 'Ga',
   name: '镓元素 (Ga)',
   symbol: 'Ga',
-  isCoreGaokao: true,
+  isCoreGaokao: false,
   elementCategory: 'main-group-metal',
   badgeText: '新高考第三代半导体氮化镓·两性铝族金属',
   atomColor: ATOM_COLORS.Ga || '#94A3B8',

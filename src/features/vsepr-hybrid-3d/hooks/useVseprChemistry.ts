@@ -28,7 +28,7 @@ export function useVseprChemistry(molecule: VseprMoleculeData): VseprChemistryRe
     const chargeDesc = charge === 0 ? '' : charge < 0 ? ` (阴离子加 ${Math.abs(charge)} 个电子)` : ` (阳离子减 ${charge} 个电子)`
 
     // 1. 标准 KaTeX 公式字符串 (严格遵循高中选必2课标: 价层电子对数 = x + (a ± q - xb) / 2)
-    const vseprFormulaText = `\\text{价层对数} = x + \\frac{a - xb ${chargeLatex}}{2} = ${x} + \\frac{${a} - ${x} \\times ${b}${chargeLatex}}{2} = ${vseprPairs}`
+    const vseprFormulaText = `\\begin{aligned} \\text{价层对数} &= x + \\frac{a - xb ${chargeLatex}}{2} \\\\[2pt] &= ${x} + \\frac{${a} - ${x} \\times ${b}${chargeLatex}}{2} = ${vseprPairs} \\end{aligned}`
 
     // 2. 构造高考阅卷分步踩分推导步骤
     const vseprCalculationSteps = `

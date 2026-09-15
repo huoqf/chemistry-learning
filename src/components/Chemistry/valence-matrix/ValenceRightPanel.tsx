@@ -107,7 +107,7 @@ export const ValenceRightPanel: React.FC<ValenceRightPanelProps> = ({
   const totalTransformCount = upwardOxidations.length + downwardReductions.length + otherTransformations.length
 
   return (
-    <div className="w-full h-full flex flex-col gap-3 p-2.5 bg-slate-50/50 overflow-y-auto font-sans min-w-0">
+    <div className="w-full flex flex-col gap-3 p-2.5 bg-slate-50/50 font-sans min-w-0">
       {/* ─────────────────────────────────────────────────────────────────── */}
       {/* 状态 A：双选推演深度联动置顶卡片 */}
       {/* ─────────────────────────────────────────────────────────────────── */}

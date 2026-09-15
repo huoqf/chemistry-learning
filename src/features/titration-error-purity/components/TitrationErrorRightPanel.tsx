@@ -117,12 +117,15 @@ export const TitrationErrorRightPanel: React.FC<TitrationErrorRightPanelProps> =
   ]
 
   return (
-    <ChemistryPanel
-      title="高考定量滴定误差与纯度产率解析"
-      quantities={quantities}
-      formulas={formulas}
-      gaokaoPoints={gaokaoPoints}
-      warnings={warnings}
-    />
+    <div className="w-full p-2">
+      <ChemistryPanel
+        scrollable={false}
+        title="高考定量滴定误差与纯度产率解析"
+        quantities={quantities}
+        formulas={formulas}
+        gaokaoPoints={gaokaoPoints}
+        warnings={warnings}
+      />
+    </div>
   )
 }

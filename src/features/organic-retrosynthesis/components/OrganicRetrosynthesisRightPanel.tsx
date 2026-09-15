@@ -56,7 +56,7 @@ export function OrganicRetrosynthesisRightPanel({
           },
           {
             name: '酯键逆向切断与合成子 (Synthons)',
-            latex: '\\begin{aligned} &\\mathrm{Ar\\text{-}COO\\text{-}Ar\' (贝诺酯)} \\\\[2pt] &\\quad \\Downarrow \\text{ ✂ 切断 C-O 键} \\\\[2pt] &\\mathrm{[Ar\\text{-}CO]^+ + [Ar\'\\text{-}O]^-} \\end{aligned}',
+            latex: '\\begin{aligned} &\\mathrm{Ar\\text{-}COO\\text{-}Ar\'} \\; (\\text{贝诺酯}) \\\\[2pt] &\\quad \\Downarrow \\text{ [切断 C-O 键]} \\\\[2pt] &\\mathrm{[Ar\\text{-}CO]^+ + [Ar\'\\text{-}O]^-} \\end{aligned}',
             condition: '切断 C-O 酯单键',
             note: '亲电等价物为乙酰水杨酸，亲核等价物为对乙酰氨基酚。',
           },
@@ -272,8 +272,9 @@ export function OrganicRetrosynthesisRightPanel({
   }
 
   return (
-    <div className="w-full h-full overflow-y-auto overflow-x-hidden max-w-full select-none">
+    <div className="w-full max-w-full select-none p-1">
       <ChemistryPanel
+        scrollable={false}
         quantities={quantities}
         formulas={getModelSpecificFormulas()}
         gaokaoPoints={getModelSpecificGaokaoPoints()}

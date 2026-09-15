@@ -133,7 +133,7 @@ export const modelFlashCards: ModelQuizData = {
       options: [
         { label: 'A', text: 'Na₂O₂ 晶体中含有的阴离子为 O²⁻', isCorrect: false },
         { label: 'B', text: '每反应 1 mol Na₂O₂ 转移 2 mol 电子', isCorrect: false },
-        { label: 'C', text: 'Na₂O₂ 中存在共价键与离子键，1 mol Na₂O₂ 中阴阳离子个数比为 1:2', isCorrect: true },
+        { label: 'C', text: 'Na₂O₂ 中存在共价键与离子键，1 mol Na₂O₂ 中阳离子与阴离子个数比为 2:1', isCorrect: true },
         { label: 'D', text: 'CO₂ 在反应中作还原剂被氧化', isCorrect: false },
       ],
       modelAlignmentAnalysis: '母题陷阱对比：Na₂O₂ 的阴离子为过氧根 [O-O]²⁻ 整体；2Na₂O₂ 歧化反应中 -1 价 O 一半升至 0 价 O₂，一半降至 -2 价 Na₂CO₃，1 mol Na₂O₂ 转移 1 mol 电子。',

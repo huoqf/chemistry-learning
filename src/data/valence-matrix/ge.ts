@@ -5,7 +5,7 @@ export const GE_CONFIG: ElementValenceConfig = {
   id: 'Ge',
   name: '锗元素 (Ge)',
   symbol: 'Ge',
-  isCoreGaokao: true,
+  isCoreGaokao: false,
   elementCategory: 'main-group-metal',
   badgeText: '新高考半导体与光纤材料·四氯化锗挥发提纯',
   atomColor: ATOM_COLORS.Ge || '#64748B',

@@ -488,16 +488,16 @@ export function calculateStructureBondsTrap(
         physicalState: '固态',
         vmValue: 22.4,
         particleStats: [
-          { label: '阴离子数 (O₂²⁻)', theoreticalMoles: molesNa2O2 * 2, actualMoles: molesNa2O2, unit: 'N_A', isTrap: true, trapExplanation: '错把 O₂²⁻ 拆成 2 个 O⁻ 阴离子！1 mol Na₂O₂ 仅含 1 mol O₂²⁻ 阴离子 (阴阳比 1:2)。' },
+          { label: '阴离子数 (O₂²⁻)', theoreticalMoles: molesNa2O2 * 2, actualMoles: molesNa2O2, unit: 'N_A', isTrap: true, trapExplanation: '错把 O₂²⁻ 拆成 2 个 O⁻ 阴离子！1 mol Na₂O₂ 仅含 1 mol O₂²⁻ 阴离子 (阳:阴 = 2:1，阴:阳 = 1:2)。' },
           { label: 'O-O 共价键数', theoreticalMoles: molesNa2O2 * 2, actualMoles: molesNa2O2, unit: 'N_A', isTrap: false },
           { label: '阳离子数 (Na⁺)', theoreticalMoles: molesNa2O2 * 2, actualMoles: molesNa2O2 * 2, unit: 'N_A', isTrap: false },
         ],
         trapType: '过氧化物阴阳离子配比与键数陷阱',
-        trapBadge: '阴阳离子比 1:2',
+        trapBadge: '阳:阴 2:1 (阴:阳 1:2)',
         trapLevel: 'high',
         keyPointAnalysis: [
           'Na₂O₂ 是离子晶体，由 Na⁺ 和 O₂²⁻ 构成。',
-          '1 mol Na₂O₂ 含有 2 mol Na⁺ 阳离子，1 mol O₂²⁻ 阴离子（阴阳离子个数比为 1:2）。',
+          '1 mol Na₂O₂ 含有 2 mol Na⁺ 阳离子，1 mol O₂²⁻ 阴离子（阳离子与阴离子个数比为 2:1，阴离子与阳离子个数比为 1:2）。',
           'O₂²⁻ 过氧根离子内部存在 1 mol O-O 非极性共价键。',
         ],
         formulaLatex: '1 \\text{ mol Na}_2\\text{O}_2 \\implies 2 \\text{ mol Na}^+ + 1 \\text{ mol O}_2^{2-} \\text{ (含 1 mol O-O 键)}',
@@ -505,7 +505,7 @@ export function calculateStructureBondsTrap(
         stepByStepMatrix: [
           { stepName: '一审环境', checkTarget: '环境', pass: true, finding: '固态' },
           { stepName: '二审状态', checkTarget: '晶体', pass: true, finding: '离子晶体' },
-          { stepName: '三审结构', checkTarget: '过氧根离子整体性', pass: false, finding: 'O₂²⁻ 为整体阴离子 ➔ 阴阳离子比 1:2！' },
+          { stepName: '三审结构', checkTarget: '过氧根离子整体性', pass: false, finding: 'O₂²⁻ 为整体阴离子 ➔ 阳:阴=2:1（阴:阳=1:2）！' },
           { stepName: '四审过程', checkTarget: '变化', pass: true, finding: '无' },
           { stepName: '五审电子', checkTarget: '电子', pass: true, finding: '38 mol 电子/mol Na₂O₂' },
         ],

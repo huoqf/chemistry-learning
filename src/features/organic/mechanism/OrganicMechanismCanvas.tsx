@@ -286,7 +286,7 @@ export function OrganicMechanismCanvas() {
   )
 
   const rightContent = (
-    <div className="flex flex-col gap-3 p-3 min-h-full overflow-y-auto">
+    <div className="flex flex-col gap-3 p-3 w-full">
       {/* 规范 ChemistryPanel：集成化学量看板、随 stage 联动的动态公式、考点与警示 */}
       <ChemistryPanel
         quantities={quantities}

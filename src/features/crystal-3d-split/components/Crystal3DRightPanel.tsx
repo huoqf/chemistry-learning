@@ -19,7 +19,7 @@ export const Crystal3DRightPanel: React.FC<Crystal3DRightPanelProps> = ({
   const isBodyOrInternalSelected = selectedLocationType === 'body' || selectedLocationType === 'internal'
 
   return (
-    <div className="w-full h-full p-4 bg-white overflow-y-auto overflow-x-hidden font-sans flex flex-col gap-4">
+    <div className="w-full p-4 bg-white overflow-x-hidden font-sans flex flex-col gap-4">
       {/* 标题与化学式卡片 */}
       <div className="p-3.5 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 shadow-sm flex flex-col gap-2">
         <div className="flex items-center justify-between gap-2">

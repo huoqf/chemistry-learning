@@ -388,12 +388,15 @@ export const ElectrochemicalTwinRightPanel: React.FC<Props> = ({ params, cellDet
   }, [mode])
 
   return (
-    <ChemistryPanel
-      title={cellDetails.title}
-      quantities={quantities}
-      formulas={formulas}
-      gaokaoPoints={gaokaoPoints}
-      warnings={warnings}
-    />
+    <div className="w-full p-2">
+      <ChemistryPanel
+        scrollable={false}
+        title={cellDetails.title}
+        quantities={quantities}
+        formulas={formulas}
+        gaokaoPoints={gaokaoPoints}
+        warnings={warnings}
+      />
+    </div>
   )
 }

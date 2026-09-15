@@ -196,7 +196,7 @@ export function getUnitCellFormulas(params: Record<string, number>) {
         },
         {
           name: '空间利用率与配位数',
-          latex: '\\eta = \\frac{8 \\times \\frac{4}{3}\\pi r^3}{a^3} = \\frac{8 \\times \\frac{4}{3}\\pi (\\frac{\\sqrt{3}}{8}a)^3}{a^3} = \\frac{\\pi\\sqrt{3}}{16} \\approx 34\\%, \\quad CN = 4',
+          latex: '\\begin{aligned} \\eta &= \\frac{8 \\times \\frac{4}{3}\\pi r^3}{a^3} = \\frac{8 \\times \\frac{4}{3}\\pi (\\frac{\\sqrt{3}}{8}a)^3}{a^3} \\\\ &= \\frac{\\pi\\sqrt{3}}{16} \\approx 34\\% \\quad (CN = 4) \\end{aligned}',
           level: 'important' as const,
           condition: '将 r = (√3/8)a 代入球体积公式化简',
         },

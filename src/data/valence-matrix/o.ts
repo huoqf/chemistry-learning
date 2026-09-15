@@ -54,7 +54,7 @@ export const O_CONFIG: ElementValenceConfig = {
       colorText: '淡黄色固体粉末',
       colorStyle: 'bg-yellow-100 text-amber-950 border-amber-300',
       rgbColor: PHENOMENON_COLORS.na2o2Solid,
-      testReaction: '含有过氧键 [-O-O-]²⁻（1mol Na₂O₂含1mol过氧根，阴阳离子数之比1:2），与 H₂O/CO₂ 歧化产生 O₂',
+      testReaction: '含有过氧键 [-O-O-]²⁻（1mol Na₂O₂含1mol过氧根，阳离子与阴离子个数比为2:1），与 H₂O/CO₂ 歧化产生 O₂',
       equation: '2Na₂O₂ + 2CO₂ = 2Na₂CO₃ + O₂',
       roleDescription: '供氧剂、强氧化剂与漂白剂',
       isOxidant: true,
@@ -135,7 +135,7 @@ export const O_CONFIG: ElementValenceConfig = {
     },
   ],
   examTips: [
-    '【过氧化钠物质的量陷阱】：Na₂O₂ 由 Na⁺ 与 O₂²⁻ 构成，阴阳离子个数比为 1:2。1 mol Na₂O₂ 与足量 CO₂ 或 H₂O 反应时转移电子为 1 mol。',
+    '【过氧化钠物质的量陷阱】：Na₂O₂ 由 Na⁺ 与 O₂²⁻ 构成，阳离子与阴离子个数比为 2:1（阴离子与阳离子个数比为 1:2）。1 mol Na₂O₂ 与足量 CO₂ 或 H₂O 反应时转移电子为 1 mol。',
     '【双氧水双向性质】：H₂O₂ 中 O 为 -1 价（处于中间价态），遇强还原剂（Fe²⁺、SO₂、I⁻）表现强氧化性（自身降为 H₂O）；遇强氧化剂（酸性 KMnO₄、酸性 K₂Cr₂O₇）表现还原性（自身升为 O₂）。',
     '【Na₂O₂ 的漂白本质】：Na₂O₂ 遇水生成具有强氧化性的 H₂O₂，导致酚酞变红后迅速褪色，属于永久性氧化漂白。',
   ],

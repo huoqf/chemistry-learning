@@ -62,7 +62,7 @@ export function getRedoxFormulas(params: Record<string, number>) {
     return [
       {
         name: '实验室制氯气方程式',
-        latex: '\\text{MnO}_2 + 4\\text{HCl}(\\text{浓}) \\xlongequal{\\Delta} \\text{MnCl}_2 + \\text{Cl}_2\\uparrow + 2\\text{H}_2\\O',
+        latex: '\\text{MnO}_2 + 4\\text{HCl}(\\text{浓}) \\xlongequal{\\Delta} \\text{MnCl}_2 + \\text{Cl}_2\\uparrow + 2\\text{H}_2\\text{O}',
         level: 'core' as const,
         condition: '高考极高频：浓盐酸既表现还原性又表现酸性',
       },

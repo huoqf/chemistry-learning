@@ -102,13 +102,13 @@ export const experimentAnimations = defineAnimations({
           {
             name: '萃取分配定律 (能斯特分配定律)',
             latex: 'K = \\frac{c_{\\text{org}}}{c_{\\text{aq}}} = \\text{Const}',
-            description: '一定温度和压强下，溶质在互不相溶的两种溶剂中的溶解平衡分配系数',
+            note: '一定温度和压强下，溶质在互不相溶的两种溶剂中的溶解平衡分配系数',
             level: 'core' as const,
           },
           {
             name: '多次萃取残留率公式',
             latex: 'w_n = \\left( \\frac{V_{\\text{aq}}}{V_{\\text{aq}} + K \\cdot V_{\\text{org}}} \\right)^n',
-            description: '相同萃取剂总体积下，少量多次萃取效率显著高于一次性大体积萃取',
+            note: '相同萃取剂总体积下，少量多次萃取效率显著高于一次性大体积萃取',
             level: 'important' as const,
           },
         ]
@@ -117,13 +117,13 @@ export const experimentAnimations = defineAnimations({
           {
             name: '蒸馏气液相平衡 (拉乌尔-道尔顿定律)',
             latex: 'p_i = p_i^* \\cdot x_i = y_i \\cdot P_{\\text{total}}',
-            description: '低沸点组分蒸气压大优先汽化进入气相，利用沸点差异分离互溶液体',
+            note: '低沸点组分蒸气压大优先汽化进入气相，利用沸点差异分离互溶液体',
             level: 'core' as const,
           },
           {
             name: '逆流热交换传热方程',
             latex: '\\Phi = K_{\\text{heat}} \\cdot A \\cdot \\Delta T_m = c_w \\cdot q_{m,w} \\cdot (T_{\\text{out}} - T_{\\text{in}})',
-            description: '直形冷凝管下进上出实现逆流高效热交换并确保套管 100% 满水',
+            note: '直形冷凝管下进上出实现逆流高效热交换并确保套管 100% 满水',
             level: 'important' as const,
           },
         ]

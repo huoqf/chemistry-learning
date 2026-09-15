@@ -5,7 +5,7 @@ export const BI_CONFIG: ElementValenceConfig = {
   id: 'Bi',
   name: '铋元素 (Bi)',
   symbol: 'Bi',
-  isCoreGaokao: true,
+  isCoreGaokao: false,
   elementCategory: 'main-group-metal',
   badgeText: '新高考超强氧化剂铋酸钠·氯化氧铋水解沉淀与胃药',
   atomColor: ATOM_COLORS.Bi || '#E11D48',

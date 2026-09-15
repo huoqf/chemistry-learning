@@ -197,7 +197,7 @@ export const AvogadroRightPanel: React.FC<AvogadroRightPanelProps> = ({
       if (structureItem === 'Na2O2') {
         return [
           {
-            text: '【离子晶体陷阱】Na₂O₂ 由 Na⁺ 和 O₂²⁻ 构成，阴阳离子个数比为 1:2（非 2:2！）。',
+            text: '【离子晶体陷阱】Na₂O₂ 由 Na⁺ 和 O₂²⁻ 构成，阳离子与阴离子个数比为 2:1（阴:阳 = 1:2，非 2:2！）。',
             level: 'danger' as const,
           },
           {
@@ -351,8 +351,9 @@ export const AvogadroRightPanel: React.FC<AvogadroRightPanelProps> = ({
   }, [chemistry.substanceWarnings, trapCategory, stateItem, structureItem, electrolyteItem, redoxItem])
 
   return (
-    <div className="w-full h-full p-2 overflow-y-auto">
+    <div className="w-full p-2">
       <ChemistryPanel
+        scrollable={false}
         title={renderNaText('阿伏加德罗常数 (N_A) 解题秘籍与粒子统计面板') as any}
         quantities={quantities}
         formulas={dynamicFormulas}

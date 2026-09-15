@@ -206,8 +206,9 @@ export default function AnimationPage() {
             </div>
           }
           right={
-            <div className="p-2 h-full flex flex-col">
+            <div className="p-2 w-full">
               <ChemistryPanel
+                scrollable={false}
                 quantities={chemistryQuantities}
                 formulas={typeof config?.formulas === 'function' ? config.formulas(params) : (config?.formulas ?? [])}
                 gaokaoPoints={typeof config?.gaokaoPoints === 'function' ? config.gaokaoPoints(params) : (config?.gaokaoPoints ?? [])}

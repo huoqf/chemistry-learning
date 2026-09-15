@@ -146,8 +146,9 @@ export const GasChainRightPanel: React.FC<GasChainRightPanelProps> = ({
   })
 
   return (
-    <div className="w-full h-full p-4 overflow-y-auto bg-white border-l border-slate-200">
+    <div className="w-full p-4 bg-white border-l border-slate-200">
       <ChemistryPanel
+        scrollable={false}
         title="气体制备装置链化学指标与踩分面板"
         quantities={quantities}
         formulas={formulas}

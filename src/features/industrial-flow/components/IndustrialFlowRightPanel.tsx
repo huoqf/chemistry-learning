@@ -213,7 +213,7 @@ export const IndustrialFlowRightPanel: React.FC<IndustrialFlowRightPanelProps> =
                 ? 'CuO + 2H^+ = Cu^{2+} + H_2O'
                 : reagent === 'MgO'
                 ? 'MgO + 2H^+ = Mg^{2+} + H_2O'
-                : `${reagent} + 2H^+ = 阳离子 + H_2O`,
+                : `${reagent} + 2H^+ = \\text{阳离子} + H_2O`,
             note: `选用含主产品的试剂消耗 H⁺ 促使水解沉淀，引入阳离子即为主产物阳离子，不增新杂质。`,
           },
         ]
@@ -227,7 +227,7 @@ export const IndustrialFlowRightPanel: React.FC<IndustrialFlowRightPanelProps> =
             : params.systemId === 'al-fe-si'
             ? {
                 name: '氢氧化铝高温煅烧脱水方程式',
-                latex: '2Al(OH)_3 \\xlongequal{高温} Al_2O_3 + 3H_2O',
+                latex: '2Al(OH)_3 \\xlongequal{\\text{高温}} Al_2O_3 + 3H_2O',
                 note: '高温热分解脱水，得到耐高温陶瓷与电解铝级 α-Al₂O₃ 原料。',
               }
             : params.systemId === 'fe-cu-zn'
@@ -355,7 +355,7 @@ export const IndustrialFlowRightPanel: React.FC<IndustrialFlowRightPanelProps> =
   ]
 
   return (
-    <div className="w-full h-full p-3.5 overflow-y-auto bg-white border-l border-slate-200 flex flex-col gap-3">
+    <div className="w-full p-3.5 bg-white border-l border-slate-200 flex flex-col gap-3">
       {/* 元素走向追踪矩阵 (高考工艺流程核心思维模型，恒定顶置锚点) */}
       <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 shadow-xs">
         <div className="flex items-center justify-between mb-2">

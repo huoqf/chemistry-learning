@@ -5,7 +5,7 @@ export const MO_CONFIG: ElementValenceConfig = {
   id: 'Mo',
   name: '钼元素 (Mo)',
   symbol: 'Mo',
-  isCoreGaokao: true,
+  isCoreGaokao: false,
   elementCategory: 'transition-metal',
   badgeText: '新高考工业辉钼矿焙烧·钼酸铵与多酸催化',
   atomColor: ATOM_COLORS.Mo || '#0284C7',

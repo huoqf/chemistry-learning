@@ -5,7 +5,7 @@ export const AS_CONFIG: ElementValenceConfig = {
   id: 'As',
   name: '砷元素 (As)',
   symbol: 'As',
-  isCoreGaokao: true,
+  isCoreGaokao: false,
   elementCategory: 'non-metal',
   badgeText: '新高考工业除砷流程压轴·砒霜与亚砷酸',
   atomColor: ATOM_COLORS.As || '#D97706',

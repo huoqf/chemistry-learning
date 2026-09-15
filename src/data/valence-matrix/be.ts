@@ -5,7 +5,7 @@ export const BE_CONFIG: ElementValenceConfig = {
   id: 'Be',
   name: '铍元素 (Be)',
   symbol: 'Be',
-  isCoreGaokao: true,
+  isCoreGaokao: false,
   elementCategory: 'main-group-metal',
   badgeText: '新高考对角线规则·类铝两性性质与铍酸盐',
   atomColor: ATOM_COLORS.Be,

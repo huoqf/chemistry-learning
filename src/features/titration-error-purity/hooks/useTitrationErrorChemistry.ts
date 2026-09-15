@@ -39,7 +39,7 @@ export function useTitrationErrorChemistry(
     let constantOffset = 0.0
     let effectDirection: 'high' | 'low' | 'none' = 'none'
     let description = '标准规范操作，无误差。'
-    let equationExplanation = 'c(待) = c(标) × V(标) / V(待) = 准确真值'
+    let equationExplanation = 'c_{\\text{待}} = \\frac{c_{\\text{标}} \\times V_{\\text{标}}}{V_{\\text{待}}} = \\text{准确真值}'
 
     switch (errorOp) {
       case 'unrinsed-burette':
@@ -48,7 +48,7 @@ export function useTitrationErrorChemistry(
         description =
           '滴定管装液前未用标准液润洗，管内残余蒸馏水稀释了标准液，达到终点需要消耗更大体积标准液。'
         equationExplanation =
-          'V(标) 测量偏大 → c(待) = [c(标) × V(标)↑] / V(待) → 偏高'
+          'V_{\\text{标}}\\text{ 测量偏大} \\implies c_{\\text{待}} = \\frac{c_{\\text{标}} \\times V_{\\text{标}}\\uparrow}{V_{\\text{待}}} \\implies \\text{偏高}'
         break
       case 'unrinsed-flask':
         opFactor = 1.15
@@ -56,7 +56,7 @@ export function useTitrationErrorChemistry(
         description =
           '锥形瓶用待测液润洗，导致瓶内待测溶质 n(待) 增多，需消耗额外标准液。'
         equationExplanation =
-          'n(待) 实际增加 → V(标) 偏大 → 计算 c(待) = c(标)V(标)↑/V(待) → 偏高'
+          'n_{\\text{待}}\\text{ 实际增加} \\implies V_{\\text{标}}\\text{ 偏大} \\implies c_{\\text{待}}\\text{ 偏高}'
         break
       case 'wet-flask':
         opFactor = 1.0
@@ -64,7 +64,7 @@ export function useTitrationErrorChemistry(
         description =
           '锥形瓶用蒸馏水洗净后未干燥（有水滴），不改变瓶内待测溶质的总物质的量 n(待)。'
         equationExplanation =
-          'n(待) 保持不变 → V(标) 准确无误 → c(待) 无误差'
+          'n_{\\text{待}}\\text{ 保持不变} \\implies V_{\\text{标}}\\text{ 准确无误} \\implies c_{\\text{待}}\\text{ 无误差}'
         break
       case 'view-start-up-end-down':
         constantOffset = -0.6
@@ -72,7 +72,7 @@ export function useTitrationErrorChemistry(
         description =
           '始仰（起点读数偏大）终俯（终点读数偏小），导致读取体积 ΔV = V(终) - V(始) 严重小于实际耗液量。'
         equationExplanation =
-          'V(始)↑, V(终)↓ → ΔV(标)↓↓ → c(待) = c(标)ΔV(标)↓/V(待) → 偏低'
+          'V_{\\text{始}}\\uparrow,\\, V_{\\text{终}}\\downarrow \\implies \\Delta V_{\\text{标}}\\downarrow \\implies c_{\\text{待}}\\text{ 偏低}'
         break
       case 'view-start-down-end-up':
         constantOffset = +0.6
@@ -80,7 +80,7 @@ export function useTitrationErrorChemistry(
         description =
           '始俯（起点读数偏小）终仰（终点读数偏大），导致读取体积 ΔV = V(终) - V(始) 严重大于实际耗液量。'
         equationExplanation =
-          'V(始)↓, V(终)↑ → ΔV(标)↑↑ → c(待) = c(标)ΔV(标)↑/V(待) → 偏高'
+          'V_{\\text{始}}\\downarrow,\\, V_{\\text{终}}\\uparrow \\implies \\Delta V_{\\text{标}}\\uparrow \\implies c_{\\text{待}}\\text{ 偏高}'
         break
       case 'bubble-start':
         constantOffset = +0.4
@@ -88,7 +88,7 @@ export function useTitrationErrorChemistry(
         description =
           '滴定前滴定管尖嘴有气泡，滴定后气泡消失。排出气泡的液体体积被误计入标准液消耗量。'
         equationExplanation =
-          'V(标)包含气泡体积 → V(标)↑ → c(待) = c(标)V(标)↑/V(待) → 偏高'
+          'V_{\\text{标}}\\text{ 含气泡体积}\\uparrow \\implies c_{\\text{待}} = \\frac{c_{\\text{标}} \\times V_{\\text{标}}\\uparrow}{V_{\\text{待}}} \\implies \\text{偏高}'
         break
       case 'bubble-end':
         constantOffset = -0.3
@@ -96,7 +96,7 @@ export function useTitrationErrorChemistry(
         description =
           '滴定前无气泡，滴定后尖嘴产生气泡。终点读数偏小。'
         equationExplanation =
-          'V(终)↓ → V(标)↓ → c(待) = c(标)V(标)↓/V(待) → 偏低'
+          'V_{\\text{终}}\\downarrow \\implies V_{\\text{标}}\\downarrow \\implies c_{\\text{待}}\\text{ 偏低}'
         break
       case 'hanging-drop':
         constantOffset = +0.05
@@ -104,7 +104,7 @@ export function useTitrationErrorChemistry(
         description =
           '滴定终点时滴定管尖嘴外悬挂一滴标准液未下落入瓶内。此滴液体已离开滴定管被计入读数，但未参与反应。'
         equationExplanation =
-          'V(标) 计入悬滴 → V(标)↑ → c(待) 偏高'
+          'V_{\\text{标}}\\text{ 计入悬滴}\\uparrow \\implies c_{\\text{待}}\\text{ 偏高}'
         break
       case 'indicator-early':
         opFactor = 0.92
@@ -112,7 +112,7 @@ export function useTitrationErrorChemistry(
         description =
           '指示剂选择不当（如强碱滴定弱酸误选甲基橙），终点变色过早，反应未完全。'
         equationExplanation =
-          '滴定终点提前 → V(标)↓ → c(待) 偏低'
+          '\\text{终点提前} \\implies V_{\\text{标}}\\downarrow \\implies c_{\\text{待}}\\text{ 偏低}'
         break
       case 'indicator-late':
         opFactor = 1.08
@@ -120,7 +120,7 @@ export function useTitrationErrorChemistry(
         description =
           '滴定过快或指示剂变色过迟，终点过量滴入标准液。'
         equationExplanation =
-          '滴定过量 → V(标)↑ → c(待) 偏高'
+          '\\text{滴定过量} \\implies V_{\\text{标}}\\uparrow \\implies c_{\\text{待}}\\text{ 偏高}'
         break
       case 'volumetric-flask-down':
         opFactor = 0.90
@@ -128,7 +128,7 @@ export function useTitrationErrorChemistry(
         description =
           '配制标准溶液定容时俯视刻度线，水加少导致标准液实际浓度 c(标) 偏高。滴定时消耗体积 V(标) 偏小。'
         equationExplanation =
-          '实际 c(标)↑ → 滴定耗液 V(标)↓ → 若仍用原标注 c(标) 计算则 c(待) 偏低'
+          'c_{\\text{标}}\\text{ 实际}\\uparrow \\implies V_{\\text{标}}\\downarrow \\implies c_{\\text{待}}\\text{ 偏低}'
         break
       default:
         break
@@ -146,11 +146,11 @@ export function useTitrationErrorChemistry(
       if (viewAngle > 0) {
         effectDirection = 'high'
         description = '读数仰视视线向下斜穿刻度，刻度读数偏大。'
-        equationExplanation = 'V(终) 仰视偏大 → ΔV(标)↑ → c(待) 偏高'
+        equationExplanation = 'V_{\\text{终}}\\text{ 仰视偏大} \\implies \\Delta V_{\\text{标}}\\uparrow \\implies c_{\\text{待}}\\text{ 偏高}'
       } else {
         effectDirection = 'low'
         description = '读数俯视视线向上斜穿刻度，刻度读数偏小。'
-        equationExplanation = 'V(终) 俯视偏小 → ΔV(标)↓ → c(待) 偏低'
+        equationExplanation = 'V_{\\text{终}}\\text{ 俯视偏小} \\implies \\Delta V_{\\text{标}}\\downarrow \\implies c_{\\text{待}}\\text{ 偏低}'
       }
     }
 

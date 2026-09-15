@@ -20,7 +20,7 @@ export const VseprRightPanel: React.FC<VseprRightPanelProps> = ({ calcResult, di
   const { currentMolecule, vseprFormulaText, vseprCalculationSteps, lonePairRepulsionDescription } = calcResult
 
   return (
-    <div className="w-full h-full p-4 bg-white overflow-y-auto font-sans flex flex-col gap-4">
+    <div className="w-full p-4 bg-white font-sans flex flex-col gap-4">
       {/* 1. 顶部当前微粒元数据 Card (受 displayMode === 'hybrid_orbital' 联动高亮) */}
       <Card
         className={`p-3.5 border transition-all duration-300 ${
@@ -161,7 +161,7 @@ export const VseprRightPanel: React.FC<VseprRightPanelProps> = ({ calcResult, di
         </h4>
 
         <div
-          className={`p-3 rounded-xl overflow-x-auto transition-all duration-300 ${
+          className={`p-3 rounded-xl transition-all duration-300 ${
             displayMode === 'vsepr_cloud'
               ? 'bg-indigo-100 border-2 border-indigo-400 shadow-md ring-2 ring-indigo-300'
               : 'bg-indigo-50/70 border border-indigo-200'

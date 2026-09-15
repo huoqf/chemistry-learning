@@ -5,7 +5,7 @@ export const SE_CONFIG: ElementValenceConfig = {
   id: 'Se',
   name: '硒元素 (Se)',
   symbol: 'Se',
-  isCoreGaokao: true,
+  isCoreGaokao: false,
   elementCategory: 'non-metal',
   badgeText: '新高考氧族元素递变·光敏半导体与氧化脱氢',
   atomColor: ATOM_COLORS.Se || '#EA580C',
