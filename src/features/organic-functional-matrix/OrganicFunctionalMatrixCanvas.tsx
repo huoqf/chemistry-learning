@@ -145,6 +145,7 @@ export const OrganicFunctionalMatrixCanvas: React.FC = () => {
           }
           right={
             <OrganicRightPanel
+              panelMode={panelMode}
               groupCounts={groupCounts}
               selectedGroup={selectedGroup}
               consumption={consumption}

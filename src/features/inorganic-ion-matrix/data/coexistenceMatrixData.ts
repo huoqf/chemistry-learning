@@ -96,6 +96,13 @@ export const CONFLICT_CATEGORY_CONFIG: Record<
     borderColor: 'border-orange-200',
     description: '在中性/碱性条件下可共存，但在酸性介质（H⁺ 存在）下诱发剧烈氧化还原。',
   },
+  complex: {
+    label: '络合反应',
+    badgeBg: 'bg-sky-50 text-sky-700 border-sky-200',
+    badgeText: 'text-sky-700',
+    borderColor: 'border-sky-200',
+    description: '金属离子与配体（SCN⁻、NH₃、Cl⁻ 等）结合生成配离子，常伴随显著颜色变化（如 Fe³⁺+SCN⁻ 变血红）。',
+  },
 }
 
 // 基础默认共存格子生成器

@@ -89,6 +89,7 @@ export type MatrixConflictCategory =
   | 'double-hydrolysis' // 彻底双水解
   | 'gas-weak-acid' // 生成气体或弱酸/弱碱
   | 'acid-medium-trap' // 酸性介质诱发互斥陷阱
+  | 'complex' // 络合/配位反应（新高考选择性必修二高频，如 Fe³⁺+SCN⁻）
 
 export interface IonPairCell {
   cationId: string

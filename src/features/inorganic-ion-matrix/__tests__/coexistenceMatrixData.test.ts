@@ -92,6 +92,6 @@ describe('coexistenceMatrixData 离子共存互斥数据矩阵测试', () => {
 
   it('四大高考口诀卡与分类配置应完整', () => {
     expect(COEXISTENCE_RULE_CARDS.length).toBe(4)
-    expect(Object.keys(CONFLICT_CATEGORY_CONFIG).length).toBe(6)
+    expect(Object.keys(CONFLICT_CATEGORY_CONFIG).length).toBe(7)
   })
 })

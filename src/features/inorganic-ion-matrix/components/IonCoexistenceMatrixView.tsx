@@ -77,6 +77,13 @@ const CATEGORY_COMPACT_BADGE: Record<
     textCol: 'text-orange-800',
     border: 'border-orange-200/80',
   },
+  complex: {
+    symbol: '◆',
+    text: '络合',
+    bg: 'bg-sky-50/95 hover:bg-sky-100',
+    textCol: 'text-sky-700',
+    border: 'border-sky-200/80',
+  },
 }
 
 export const IonCoexistenceMatrixView: React.FC<IonCoexistenceMatrixViewProps> = ({

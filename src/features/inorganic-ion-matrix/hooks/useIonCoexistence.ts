@@ -48,6 +48,7 @@ export function useIonCoexistence(selectedIonIds: string[]): IonCoexistenceResul
     const hasNO3 = selectedIonIds.includes('NO3-')
     const hasClO = selectedIonIds.includes('ClO-')
     const hasCl = selectedIonIds.includes('Cl-')
+    const hasMnO4 = selectedIonIds.includes('MnO4-')
 
     // 三元陷阱 A: H+ + NO3- + 还原剂 (如 Fe2+, I-, SO32-)
     if (hasH && hasNO3) {
@@ -84,6 +85,23 @@ export function useIonCoexistence(selectedIonIds: string[]): IonCoexistenceResul
           typeLabel: '酸性归中反应',
           reason: '在酸性条件下，ClO⁻ 与 Cl⁻ 发生剧烈归中反应生成有毒黄绿色 Cl₂ 气体 (84消毒液与洁厕灵混用原理)。',
           equation: 'ClO^- + Cl^- + 2H^+ = Cl_2\\uparrow + H_2O',
+        })
+      }
+    }
+
+    // 三元陷阱 C: H+ + MnO4- + Cl- 酸性下氧化氯离子生成 Cl2
+    if (hasH && hasMnO4 && hasCl) {
+      const trapId = 'trap-h-mno4-cl'
+      if (!seenConflictIds.has(trapId)) {
+        seenConflictIds.add(trapId)
+        activeConflicts.push({
+          id: trapId,
+          ionA: 'MnO4-',
+          ionB: 'Cl-',
+          type: 'redox',
+          typeLabel: '酸性介质氧化氯化物',
+          reason: '在酸性条件下，高锰酸根是极强的氧化剂，可将 Cl⁻（氯离子属弱还原性）氧化生成黄绿色——紫红色立即褪色并产生 Cl₂ 气体，不能大量共存。',
+          equation: '2MnO_4^- + 16H^+ + 10Cl^- = 2Mn^{2+} + 5Cl_2\\uparrow + 8H_2O',
         })
       }
     }
