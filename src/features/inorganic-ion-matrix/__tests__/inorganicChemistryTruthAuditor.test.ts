@@ -109,12 +109,13 @@ describe('无机离子与共存互斥矩阵 — 新高考化学真理性自动�
       })
     })
 
-    it('Al³⁺ 与 F⁻ 反应必须归入沉淀分类 precipitate 并生成 AlF₃↓', () => {
+    it('Al³⁺ 与 F⁻ 不发生沉淀互斥，应归类为络合共存 (生成可溶性 [AlF₆]³⁻)', () => {
       const alF = MAIN_GROUP_CONFLICTS['Al3+:F-']
       expect(alF).toBeDefined()
-      expect(alF.status).toBe('conflict')
-      expect(alF.category).toBe('precipitate')
-      expect(alF.equation).toContain('AlF_3\\downarrow')
+      expect(alF.status).toBe('coexist')
+      expect(alF.category).toBe('complex')
+      expect(alF.equation).toContain('[AlF_6]^{3-}')
+      expect(alF.reason).toMatch(/配离子|配位/)
     })
 
     it('酸性介质诱发的氧化还原陷阱必须标记为 acid-medium-trap 或 redox', () => {

@@ -27,7 +27,7 @@ export const MATRIX_CATIONS: MatrixIonItem[] = [
   { id: 'Mn2+', name: '锰离子', formula: 'Mn^{2+}', charge: 2, colorNote: '肉粉色/易氧化' },
 ]
 
-/** 高中化学 18 种核心阴离子矩阵维度 */
+/** 高中化学 19 种核心阴离子矩阵维度 */
 export const MATRIX_ANIONS: MatrixIonItem[] = [
   { id: 'OH-', name: '氢氧根', formula: 'OH^-', charge: -1, colorNote: '碱性介质' },
   { id: 'Cl-', name: '氯离子', formula: 'Cl^-', charge: -1, colorNote: '白沉淀' },
@@ -43,6 +43,7 @@ export const MATRIX_ANIONS: MatrixIonItem[] = [
   { id: 'SiO32-', name: '硅酸根', formula: 'SiO_3^{2-}', charge: -2, colorNote: '硅酸胶体沉淀' },
   { id: 'NO3-', name: '硝酸根', formula: 'NO_3^-', charge: -1, colorNote: '酸性强氧化' },
   { id: 'NO2-', name: '亚硝酸根', formula: 'NO_2^-', charge: -1, colorNote: '酸性氧化与歧化' },
+  { id: 'PO43-', name: '磷酸根', formula: 'PO_4^{3-}', charge: -3, colorNote: '多元弱酸根/磷酸盐多难溶' },
   { id: 'AlO2-', name: '偏铝酸根', formula: 'AlO_2^-', charge: -1, colorNote: '强碱性/双水解' },
   { id: 'ClO-', name: '次氯酸根', formula: 'ClO^-', charge: -1, colorNote: '强氧化/漂白性' },
   { id: 'MnO4-', name: '高锰酸根', formula: 'MnO_4^-', charge: -1, colorNote: '深紫红/强氧化' },

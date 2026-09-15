@@ -2,7 +2,7 @@
  * 分步连续滴加的真实化学相变计算（统一门面入口）。
  * 遵循铁律 10 领域内聚准则，按化学大类拆分为阳离子与阴离子相变子模块：
  * - cationStepChemistry.ts: 14 种阳离子（内聚金属显色、沉淀与焰色）
- * - anionStepChemistry.ts: 18 种阴离子（内聚酸根与卤素置换、产气与沉淀）
+ * - anionStepChemistry.ts: 19 种阴离子（内聚酸根与卤素置换、产气与沉淀）
  */
 import { computeCationStepChemistry } from './cationStepChemistry'
 import { computeAnionStepChemistry } from './anionStepChemistry'
@@ -54,7 +54,7 @@ export function computeStepChemistry(
     return cationResult
   }
 
-  // 2. 按阴离子领域计算 (18 种阴离子)
+  // 2. 按阴离子领域计算 (19 种阴离子)
   const anionResult = computeAnionStepChemistry(ionId, reagentId, dropCount, baseColor)
   if (anionResult) {
     return anionResult

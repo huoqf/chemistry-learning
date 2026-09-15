@@ -137,6 +137,7 @@ export const IonCoexistenceMatrixView: React.FC<IonCoexistenceMatrixViewProps> =
     let doubleHydrolysisCount = 0
     let gasWeakAcidCount = 0
     let acidTrapCount = 0
+    let complexCount = 0
 
     MATRIX_CATIONS.forEach((c) => {
       MATRIX_ANIONS.forEach((a) => {
@@ -148,6 +149,7 @@ export const IonCoexistenceMatrixView: React.FC<IonCoexistenceMatrixViewProps> =
         else if (cell.category === 'double-hydrolysis') doubleHydrolysisCount++
         else if (cell.category === 'gas-weak-acid') gasWeakAcidCount++
         else if (cell.category === 'acid-medium-trap') acidTrapCount++
+        else if (cell.category === 'complex') complexCount++
       })
     })
 
@@ -159,6 +161,7 @@ export const IonCoexistenceMatrixView: React.FC<IonCoexistenceMatrixViewProps> =
       doubleHydrolysisCount,
       gasWeakAcidCount,
       acidTrapCount,
+      complexCount,
     }
   }, [])
 
@@ -182,7 +185,7 @@ export const IonCoexistenceMatrixView: React.FC<IonCoexistenceMatrixViewProps> =
             离子共存互斥全景矩阵
           </span>
           <span className="text-[11px] font-bold text-slate-400 font-mono hidden sm:inline">
-            (14 阳 × 18 阴 = 252 组合)
+            (14 阳 × 19 阴 = 266 组合)
           </span>
 
           <button
@@ -299,6 +302,19 @@ export const IonCoexistenceMatrixView: React.FC<IonCoexistenceMatrixViewProps> =
               <span>· 共存</span>
               <span className="opacity-80">({stats.coexistCount})</span>
             </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveFilter(activeFilter === 'complex' ? 'all' : 'complex')}
+              className={`px-2 py-0.5 rounded-md text-xs font-bold border transition-all shrink-0 cursor-pointer flex items-center gap-0.5 ${
+                activeFilter === 'complex'
+                  ? 'bg-sky-600 text-white border-sky-600 shadow-2xs'
+                  : 'bg-sky-50/60 text-sky-700 border-sky-200 hover:bg-sky-100'
+              }`}
+            >
+              <span>◆ 络合</span>
+              <span className="opacity-80">({stats.complexCount})</span>
+            </button>
           </div>
 
           {/* 垂直分割线 */}
@@ -320,13 +336,13 @@ export const IonCoexistenceMatrixView: React.FC<IonCoexistenceMatrixViewProps> =
 
       {/* 2. 核心 100% 满屏自适应全景矩阵 (19列 × 15行，绝对零滚动条！) */}
       <div className="flex-1 min-h-0 w-full overflow-hidden rounded-xl border border-slate-200 bg-white p-1 flex flex-col shadow-2xs">
-        <div className="w-full h-full grid grid-cols-[46px_repeat(18,_minmax(0,_1fr))] grid-rows-[25px_repeat(14,_minmax(0,_1fr))] gap-0.5">
+        <div className="w-full h-full grid grid-cols-[46px_repeat(19,_minmax(0,_1fr))] grid-rows-[25px_repeat(14,_minmax(0,_1fr))] gap-0.5">
           {/* 左上角交叉头 */}
           <div className="bg-slate-100 border border-slate-200 rounded text-[10px] font-black text-slate-500 flex items-center justify-center">
             阳 \ 阴
           </div>
 
-          {/* 表头：18 种阴离子列 */}
+          {/* 表头：19 种阴离子列 */}
           {MATRIX_ANIONS.map((anion) => {
             const isColFocused = focusedAnion === anion.id
             return (
@@ -592,7 +608,7 @@ export const IonCoexistenceMatrixView: React.FC<IonCoexistenceMatrixViewProps> =
 
             {/* 全屏全景自适应矩阵 */}
             <div className="flex-1 min-h-0 w-full overflow-hidden rounded-xl border border-slate-200 bg-white p-1 flex flex-col">
-              <div className="w-full h-full grid grid-cols-[56px_repeat(18,_minmax(0,_1fr))] grid-rows-[30px_repeat(14,_minmax(0,_1fr))] gap-0.5">
+              <div className="w-full h-full grid grid-cols-[56px_repeat(19,_minmax(0,_1fr))] grid-rows-[30px_repeat(14,_minmax(0,_1fr))] gap-0.5">
                 <div className="bg-slate-100 border border-slate-200 rounded text-xs font-black text-slate-500 flex items-center justify-center">
                   阳 \ 阴
                 </div>

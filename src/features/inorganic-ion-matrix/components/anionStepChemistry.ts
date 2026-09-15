@@ -1,6 +1,6 @@
 import type { StepChemistryState } from './IonMatrixChemistry'
 
-/** 18 种核心阴离子连续滴加真实化学相变计算（内聚酸根与卤素置换、沉淀与产气机理） */
+/** 19 种核心阴离子连续滴加真实化学相变计算（内聚酸根与卤素置换、沉淀与产气机理） */
 export function computeAnionStepChemistry(
   ionId: string,
   reagentId: string,
@@ -573,6 +573,73 @@ export function computeAnionStepChemistry(
       litmusChange: false,
       annotation: '【碱性指示】：碱性介质促使酚酞显色，溶液瞬间变为鲜艳粉红色/红色',
       stepTitle: '滴加无色酚酞试液 (变红)',
+    }
+  }
+
+  // ── 33. PO43- (磷酸根) ──
+  if (ionId === 'PO43-') {
+    if (reagentId.includes('po4-agno3-hno3')) {
+      if (dropCount === 1) {
+        return {
+          fillLevel: 0.52,
+          fillColor: 'rgba(254, 240, 138, 0.7)',
+          hasPrecipitate: true,
+          precipitateLevel: 0.38,
+          precipitateColor: '#eab308',
+          hasGas: false,
+          litmusChange: false,
+          annotation: '【步骤一：滴加 AgNO₃】：3Ag⁺ + PO₄³⁻ = Ag₃PO₄↓ 生成特征黄色沉淀',
+          stepTitle: '步骤 1/2：滴加 AgNO₃ (生成黄色沉淀)',
+        }
+      }
+      return {
+        fillLevel: 0.68,
+        fillColor: 'rgba(248, 250, 252, 0.8)',
+        hasPrecipitate: false,
+        precipitateLevel: 0,
+        precipitateColor: '#eab308',
+        hasGas: false,
+        litmusChange: false,
+        annotation: '【步骤二：加稀硝酸酸化】：Ag₃PO₄ + 3H⁺ = 3Ag⁺ + H₃PO₄ 黄色沉淀完全溶解，与不溶于酸的卤化银彻底区分',
+        stepTitle: '步骤 2/2：加稀硝酸 (黄色沉淀溶解)',
+      }
+    }
+    if (reagentId.includes('po4-agno3-only')) {
+      return {
+        fillLevel: 0.52,
+        fillColor: 'rgba(254, 240, 138, 0.7)',
+        hasPrecipitate: true,
+        precipitateLevel: 0.38,
+        precipitateColor: '#eab308',
+        hasGas: false,
+        litmusChange: false,
+        annotation: '【未加酸陷阱】：直接加 AgNO₃ 虽有黄色沉淀，但无法排除碱性条件下 AgOH/Ag₂CO₃ 白色沉淀混杂假阳性！',
+        stepTitle: '直接加 AgNO₃ (缺乏加酸排除干扰)',
+      }
+    }
+    if (reagentId.includes('po4-bacl2')) {
+      return {
+        fillLevel: 0.52,
+        fillColor: 'rgba(248, 250, 252, 0.7)',
+        hasPrecipitate: true,
+        precipitateLevel: 0.35,
+        precipitateColor: '#ffffff',
+        hasGas: false,
+        litmusChange: false,
+        annotation: '【非特征试剂】：3Ba²⁺ + 2PO₄³⁻ = Ba₃(PO₄)₂↓ 产生白色沉淀，但与硫酸钡、碳酸钡无法区分，缺乏专属性',
+        stepTitle: '滴加 BaCl₂ (生成无特征白色沉淀)',
+      }
+    }
+    return {
+      fillLevel: 0.52,
+      fillColor: baseColor,
+      hasPrecipitate: false,
+      precipitateLevel: 0,
+      precipitateColor: '#ffffff',
+      hasGas: false,
+      litmusChange: false,
+      annotation: '【无明显变化】：无特征相变反应',
+      stepTitle: '滴加试剂 (无反应)',
     }
   }
 

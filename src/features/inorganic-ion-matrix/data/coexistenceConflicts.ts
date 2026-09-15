@@ -10,9 +10,10 @@ function mapCategoryToConflictType(category: string): ConflictType {
   return 'weak-electrolyte'
 }
 
-/** 由 CONFLICT_MAP 动态生成全量高考共存互斥规则条目 */
-export const COEXISTENCE_CONFLICTS: CoexistenceConflict[] = Object.entries(CONFLICT_MAP).map(
-  ([key, item]) => {
+/** 由 CONFLICT_MAP 动态生成全量高考共存互斥规则条目（严格仅包含 status === 'conflict' 的互斥对） */
+export const COEXISTENCE_CONFLICTS: CoexistenceConflict[] = Object.entries(CONFLICT_MAP)
+  .filter(([, item]) => item.status === 'conflict')
+  .map(([key, item]) => {
     return {
       id: `conflict-${key.replace(':', '-')}`,
       ionA: item.cationId,
@@ -22,5 +23,4 @@ export const COEXISTENCE_CONFLICTS: CoexistenceConflict[] = Object.entries(CONFL
       reason: item.reason,
       equation: item.equation || '',
     }
-  }
-)
+  })

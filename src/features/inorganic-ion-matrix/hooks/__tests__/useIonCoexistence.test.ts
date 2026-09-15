@@ -68,4 +68,16 @@ describe('useIonCoexistence', () => {
     expect(r2.current.canCoexist).toBe(false)
     expect(r2.current.conflicts.some((c) => c.type === 'redox')).toBe(true)
   })
+
+  it('Al3+ 与 F- 形成可溶性氟配离子、Ca2+ 与 AlO2- 特例均不应误判为硬互斥冲突', () => {
+    // Al3+ + F- 属于络合共存，不沉淀互斥
+    const { result: rAlF } = renderHook(() => useIonCoexistence(['Al3+', 'F-']))
+    expect(rAlF.current.canCoexist).toBe(true)
+    expect(rAlF.current.conflicts.length).toBe(0)
+
+    // Ca2+ + AlO2- 高考回避特例，不作为一票否决冲突
+    const { result: rCaAlO2 } = renderHook(() => useIonCoexistence(['Ca2+', 'AlO2-']))
+    expect(rCaAlO2.current.canCoexist).toBe(true)
+    expect(rCaAlO2.current.conflicts.length).toBe(0)
+  })
 })

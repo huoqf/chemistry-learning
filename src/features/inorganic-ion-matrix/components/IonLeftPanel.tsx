@@ -521,7 +521,7 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
 
           <LeftPanelSection title="全景检索指南">
             <div className="p-2 rounded-xl bg-blue-50/70 border border-blue-200/70 space-y-1 text-[11px] text-blue-950 leading-relaxed">
-              <p>• 14 阳 × 18 阴全集自适应单屏呈现，零滚动条。</p>
+              <p>• 14 阳 × 19 阴全集自适应单屏呈现，零滚动条。</p>
               <p>• 点击上方母题，全景大表自动十字准星锁定。</p>
             </div>
           </LeftPanelSection>

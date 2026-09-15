@@ -1,6 +1,6 @@
 import type { IonItem } from '../types'
 
-/** 高考核心含氧酸根与弱酸根阴离子数据库 (13种) */
+/** 高考核心含氧酸根与弱酸根阴离子数据库 (14种) */
 export const OXOACID_ANIONS: IonItem[] = [
   // ── 1. 硫酸根 SO42- ──
   {
@@ -635,6 +635,58 @@ export const OXOACID_ANIONS: IonItem[] = [
         feedback: '❌ 错误试剂：Ba(NO₂)₂ 易溶于水，无沉淀。',
         phenomenon: '无明显变化',
         resultColor: 'rgba(254, 249, 195, 0.5)',
+      },
+    ],
+  },
+  // ── 14. 磷酸根 PO43- ──
+  {
+    id: 'PO43-',
+    name: '磷酸根离子 (PO₄³⁻)',
+    formula: 'PO_4^{3-}',
+    charge: 3,
+    type: 'anion',
+    colorInSolution: '无色',
+    colorRgb: 'rgba(248, 250, 252, 0.6)',
+    testReagent: 'AgNO₃ 溶液（配合稀硝酸分辨）',
+    testPhenomenon: '滴加 AgNO₃ 溶液生成黄色沉淀 Ag₃PO₄；该沉淀溶于稀硝酸',
+    testEquation: '3Ag^+ + PO_4^{3-} = Ag_3PO_4\\downarrow (黄色，溶于稀硝酸)',
+    interference: 'Ag₃PO₄ 溶于稀硝酸，而 AgCl/AgBr/AgI 不溶——需用稀硝酸酸化区分磷酸银与卤化银；同时须先酸化排除 OH⁻/CO₃²⁻ 产生的白色 AgOH/Ag₂CO₃ 干扰。',
+    standardProcedure: '取样品滴加 AgNO₃ 溶液生成黄色沉淀，加入稀硝酸沉淀溶解，证明含 PO₄³⁻。',
+    examImportance: 'high',
+    reagentOptions: [
+      {
+        id: 'po4-agno3-hno3',
+        name: 'AgNO₃ + 稀硝酸',
+        isOptimal: true,
+        tag: 'optimal',
+        feedback: '✓ 满分答案！Ag₃PO₄ 黄色沉淀溶于稀硝酸，可与不溶于酸的 AgCl 等卤化银区分。',
+        phenomenon: '生成黄色沉淀，加入稀硝酸后溶解',
+        equation: '3Ag^+ + PO_4^{3-} = Ag_3PO_4\\downarrow',
+        resultColor: 'rgba(234, 179, 8, 0.8)',
+        precipitate: true,
+        precipitateColor: '#eab308',
+      },
+      {
+        id: 'po4-agno3-only',
+        name: '直接滴加 AgNO₃ (不加酸)',
+        isOptimal: false,
+        tag: 'trap',
+        feedback: '⚠ 高考陷阱：碱性或含 CO₃²⁻/OH⁻ 的溶液中，Ag⁺ 会生成白色 AgOH/Ag₂CO₃ 沉淀，与 Ag₃PO₄ 混淆，须先稀硝酸酸化。',
+        phenomenon: '生成沉淀（黄色/白色混杂，无法分辨）',
+        resultColor: 'rgba(234, 179, 8, 0.6)',
+        precipitate: true,
+        precipitateColor: '#eab308',
+      },
+      {
+        id: 'po4-bacl2',
+        name: 'BaCl₂ 溶液',
+        isOptimal: false,
+        tag: 'ineffective',
+        feedback: '❌ 非鉴别试剂：Ba₃(PO₄)₂、BaSO₄、BaCO₃ 均为白色沉淀，无法区分 PO₄³⁻ 与其他阴离子。',
+        phenomenon: '生成白色沉淀（缺乏选择性）',
+        resultColor: 'rgba(248, 250, 252, 0.6)',
+        precipitate: true,
+        precipitateColor: '#ffffff',
       },
     ],
   },

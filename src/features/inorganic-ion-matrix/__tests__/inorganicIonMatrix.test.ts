@@ -2,14 +2,14 @@ import { describe, it, expect } from 'vitest'
 import { ION_DATA, COEXISTENCE_CONFLICTS } from '../constants'
 
 describe('无机离子特征检验与共存排斥矩阵数据审计', () => {
-  it('应包含 32 种新高考核心阴阳离子全集 (14 阳离子 + 18 阴离子)', () => {
-    expect(ION_DATA.length).toBe(32)
+  it('应包含 33 种新高考核心阴阳离子全集 (14 阳离子 + 19 阴离子)', () => {
+    expect(ION_DATA.length).toBe(33)
 
     const cations = ION_DATA.filter((i) => i.type === 'cation')
     const anions = ION_DATA.filter((i) => i.type === 'anion')
 
     expect(cations.length).toBe(14)
-    expect(anions.length).toBe(18)
+    expect(anions.length).toBe(19)
 
     const cationIds = cations.map((i) => i.id)
     expect(cationIds).toEqual(
@@ -52,6 +52,7 @@ describe('无机离子特征检验与共存排斥矩阵数据审计', () => {
         'CH3COO-',
         'F-',
         'NO2-',
+        'PO43-',
       ])
     )
   })

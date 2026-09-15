@@ -8,9 +8,9 @@ import {
 } from '../data/coexistenceMatrixData'
 
 describe('coexistenceMatrixData 离子共存互斥数据矩阵测试', () => {
-  it('应包含完整的高中全集阳离子(14种)与阴离子(18种)，矩阵总数应为 252 个交叉单元格', () => {
+  it('应包含完整的高中全集阳离子(14种)与阴离子(19种)，矩阵总数应为 266 个交叉单元格', () => {
     expect(MATRIX_CATIONS.length).toBe(14)
-    expect(MATRIX_ANIONS.length).toBe(18)
+    expect(MATRIX_ANIONS.length).toBe(19)
 
     let cellCount = 0
     MATRIX_CATIONS.forEach((c) => {
@@ -24,7 +24,7 @@ describe('coexistenceMatrixData 离子共存互斥数据矩阵测试', () => {
       })
     })
 
-    expect(cellCount).toBe(252)
+    expect(cellCount).toBe(266)
   })
 
   it('应精确识别高考经典彻底双水解组合 (Al3+ + HCO3-, Fe3+ + CO32-, NH4+ + AlO2- 等)', () => {
