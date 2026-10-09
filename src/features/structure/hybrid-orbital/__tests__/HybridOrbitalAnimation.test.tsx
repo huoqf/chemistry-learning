@@ -19,6 +19,9 @@ describe('HybridOrbitalAnimation 降级与渲染守门测试', () => {
     // 降级后不应再渲染 R3F 画布
     expect(container.querySelector('canvas')).toBeNull()
 
+    // 边框守门：透传 WEBGL_FALLBACK_FRAME_CLASS 形成明确视觉边界
+    expect(container.querySelector('.border')?.classList.contains('rounded-xl')).toBe(true)
+
     // 铁律 1：fallback 容器禁止出现手写背景色类
     expect(container.querySelector('.bg-slate-50')).toBeNull()
     expect(container.querySelector('.bg-white')).toBeNull()

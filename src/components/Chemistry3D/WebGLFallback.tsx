@@ -20,8 +20,8 @@ export interface WebGLFallbackProps {
   description?: string
   /**
    * 尺寸档位：
-   * - `lg`（默认）整屏 3D 页面的中屏降级
-   * - `sm` 嵌在弹窗 / 分屏半区内的局部降级
+   * - `lg`（默认）整屏或主视区 3D 页面（大号图标、宽松留白）
+   * - `sm` 弹窗、侧边栏或分屏半区等紧凑视口（紧凑图标、较小字号与留白）
    */
   size?: 'lg' | 'sm'
   /** 附加类名。需要边框等视觉边界时透传 WEBGL_FALLBACK_FRAME_CLASS */
