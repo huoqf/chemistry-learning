@@ -143,7 +143,6 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     polarityReason: '平面正三角形高度对称，3 个 S-O 键偶极相互完全抵消。',
   },
 
-
   // 4. BF3 (AB3, sp2, 平面三角形)
   {
     id: 'bf3',

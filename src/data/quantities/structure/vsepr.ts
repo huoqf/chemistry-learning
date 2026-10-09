@@ -105,4 +105,3 @@ export function getVseprExamPoints(params: Record<string, number>) {
 
 export const vseprFormulas = getVseprFormulas
 export const vseprExamPoints = getVseprExamPoints
-

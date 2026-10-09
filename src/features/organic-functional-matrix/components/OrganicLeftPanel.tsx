@@ -366,8 +366,3 @@ export const OrganicLeftPanel: React.FC<OrganicLeftPanelProps> = ({
     </LeftPanel>
   )
 }
-
-
-
-
-

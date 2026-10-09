@@ -230,4 +230,3 @@ export function getHybridExamPoints(params: Record<string, number>) {
 
 export const hybridizationFormulas = getHybridFormulas
 export const hybridizationExamPoints = getHybridExamPoints
-

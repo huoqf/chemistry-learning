@@ -187,8 +187,6 @@ export function SolidHeatingGeneratorApparatus({
         </g>
       </g>
 
-
-
       {/* ── 4. 警告与提示标语 ── */}
       <g transform={`translate(${x}, ${y})`}>
         {isWrongGenerator ? (
@@ -242,4 +240,3 @@ export function SolidHeatingGeneratorApparatus({
     </g>
   )
 }
-

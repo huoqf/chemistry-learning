@@ -118,6 +118,3 @@ export interface PresetMoleculeDetail {
   keyEquations: string[]
   examTraps: string
 }
-
-
-

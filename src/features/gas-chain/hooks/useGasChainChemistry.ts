@@ -303,7 +303,6 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       })
     }
 
-
     // 4. NO / NO₂ 与极易溶气体防倒吸诊断
     const isHighlySoluble = ['NH₃', 'HCl', 'SO₂'].includes(targetGas) || systemId === 'nh3-prep'
     if (isHighlySoluble && (tailGas === 'naoh-absorber' || tailGas === 'direct-pipe')) {
@@ -327,7 +326,6 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
         examPoint: 'NO 与 NaOH 不反应 (牢记！)；只有 NO + NO₂ 等物质量混合气才可被 NaOH 吸收：NO + NO₂ + 2NaOH = 2NaNO₂ + H₂O。',
       })
     }
-
 
     // 倒置漏斗深深浸没失灵诊断
     if (tailGas === 'inverted-funnel' && params.funnelDepth === 'deep') {

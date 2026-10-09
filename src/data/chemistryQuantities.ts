@@ -61,11 +61,6 @@ registerQuantityBuilder('anim-isomerism', buildIsomerismQuantities)
 registerQuantityBuilder('anim-redox-electron-transfer', buildRedoxElectronTransferQuantities)
 registerQuantityBuilder('anim-extraction-distillation', buildExtractionDistillationQuantities)
 
-
-
-
-
-
 /** 获取化学量列表（右屏 ChemistryPanel 消费） */
 export function getChemistryQuantities(
   animationId: string,

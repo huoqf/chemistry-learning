@@ -183,7 +183,6 @@ export const AnimationControls: React.FC<AnimationControlsProps> = ({
           </button>
         </div>
 
-
         <SpeedSelector speed={speed} onSpeedChange={onSpeedChange} labelMinWidth="60px" />
 
         <div className="flex-1 flex items-center gap-3">

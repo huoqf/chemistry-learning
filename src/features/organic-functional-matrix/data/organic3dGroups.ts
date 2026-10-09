@@ -693,5 +693,3 @@ export const FUNCTIONAL_GROUP_3D_MOLECULES: Record<string, Organic3DMolecule> = 
     ],
   },
 }
-
-

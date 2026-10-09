@@ -152,4 +152,3 @@ describe('高考化工流程核心设备组件 (Equipment)', () => {
     expect(container.querySelector('text')?.textContent).toBe('失 2e⁻')
   })
 })
-

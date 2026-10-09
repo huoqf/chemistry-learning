@@ -231,6 +231,3 @@ export const ReactionPrincipleCenterView: React.FC<ReactionPrincipleCenterViewPr
     </div>
   )
 }
-
-
-

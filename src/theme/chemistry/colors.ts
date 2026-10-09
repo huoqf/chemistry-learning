@@ -283,4 +283,3 @@ export const INDICATOR_COLORS = {
     iodineAbsence: 'rgba(255, 255, 255, 0)', // 终点蓝色褪去无色
   },
 } as const
-

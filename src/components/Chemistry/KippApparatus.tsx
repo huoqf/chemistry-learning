@@ -313,6 +313,3 @@ export function KippApparatus({
     </g>
   )
 }
-
-
-

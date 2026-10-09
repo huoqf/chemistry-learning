@@ -359,6 +359,3 @@ export const OrganicMatrixScene: React.FC<OrganicMatrixSceneProps> = ({
     </g>
   )
 }
-
-
-

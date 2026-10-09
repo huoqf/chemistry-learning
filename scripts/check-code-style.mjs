@@ -11,10 +11,12 @@
  * 因此 prettier 不能作为本项目格式门禁，全量 `--write` 会破坏可读性。
  * 详见 docs/agent-rules/process/FORMATTING_POLICY.md。
  *
- * ── 本脚本只做三件「可机械判定、不破坏手工排版」的检查 ──
+ * ── 本脚本只做「可机械判定、不破坏手工排版」的检查 ──
  *   1) 行尾多余空白
  *   2) 文件末尾缺少换行（POSIX 文本文件约定）
- *   3) 同一文件内混用 CRLF 与 LF（跨平台 diff 噪声来源）
+ *   3) 文件末尾多余空行（末尾应为单一换行符）
+ *   4) 连续空行（最多连续 1 个空行）
+ *   5) 同一文件内混用 CRLF 与 LF（跨平台 diff 噪声来源）
  *
  * 说明：不强制全文件统一为 LF 或 CRLF —— 那会产生整文件级 diff，
  * 收益低于风险，故只禁止「同一文件内混用」。
@@ -90,10 +92,17 @@ for (const file of files) {
     if (/[ \t]+$/.test(line)) {
       violations.push({ file: rel, line: n, rule: '行尾多余空白', text: line.trimEnd() })
     }
+    if (index > 0 && line.trim() === '' && lines[index - 1].trim() === '') {
+      violations.push({ file: rel, line: n, rule: '连续空行（最多允许 1 个空行）', text: '' })
+    }
   })
 
   if (raw.length > 0 && !raw.endsWith('\n')) {
     violations.push({ file: rel, line: lines.length, rule: '文件末尾缺少换行', text: '' })
+  }
+
+  if (raw.endsWith('\n\n') || raw.endsWith('\r\n\r\n')) {
+    violations.push({ file: rel, line: lines.length, rule: '文件末尾多余空行', text: '' })
   }
 
   const hasCrlf = raw.includes('\r\n')
@@ -122,5 +131,5 @@ if (violations.length > 0) {
 }
 
 console.log(
-  `✅ 代码风格检查通过：${files.length} 个文件无行尾空白、末尾换行规范、无混用换行符。`
+  `✅ 代码风格检查通过：${files.length} 个文件无行尾空白、末尾单换行规范、无连续空行、无混用换行符。`
 )

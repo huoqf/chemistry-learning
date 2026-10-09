@@ -512,8 +512,3 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
     expect(aldehyde?.notes).toContain('1 mol HCHO 产生 4 mol Ag')
   })
 })
-
-
-
-
-

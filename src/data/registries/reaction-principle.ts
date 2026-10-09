@@ -6,7 +6,6 @@ import { electrochemicalFormulas, electrochemicalExamPoints } from '../quantitie
 import { primaryCellFormulas, primaryCellExamPoints } from '../quantities/reaction-principle/primaryCell'
 import { electrolyticCellFormulas, electrolyticCellExamPoints } from '../quantities/reaction-principle/electrolyticCell'
 
-
 export const reactionPrincipleAnimations = defineAnimations({
   'anim-le-chatelier': {
     title: '勒夏特列原理与化学平衡移动',
@@ -378,4 +377,3 @@ export const reactionPrincipleAnimations = defineAnimations({
     },
   },
 })
-

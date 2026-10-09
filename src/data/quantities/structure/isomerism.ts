@@ -192,4 +192,3 @@ export const isomerismExamPoints = [
     importance: 'hard' as const,
   },
 ]
-

@@ -401,4 +401,3 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
     </div>
   )
 }
-

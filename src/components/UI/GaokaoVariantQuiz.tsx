@@ -221,4 +221,3 @@ export const GaokaoVariantQuiz: React.FC<GaokaoVariantQuizProps> = ({ quizzes = 
     </div>
   )
 }
-

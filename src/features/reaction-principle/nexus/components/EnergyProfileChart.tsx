@@ -379,4 +379,3 @@ export const EnergyProfileChart: React.FC<EnergyProfileChartProps> = ({
     </svg>
   )
 }
-

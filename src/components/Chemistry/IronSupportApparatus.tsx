@@ -210,4 +210,3 @@ export function IronSupportApparatus({
     </g>
   )
 }
-

@@ -94,4 +94,3 @@ export function useCanvasSize(
 
   return [containerRef, size]
 }
-

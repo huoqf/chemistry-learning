@@ -115,4 +115,3 @@ export function createHcpMgData(): CrystalTypeData {
     description: '六方最密堆积平行六面体晶胞：4 个 120° 顶角 (4×1/6) + 4 个 60° 顶角 (4×1/12) + 1 体内 Mg (独占 1)，Z=2，配位数 12，空间利用率 74%',
   }
 }
-

@@ -67,4 +67,3 @@ export interface AlphaTpPoint {
   alphaLowP: number // 较低压强下的平衡转化率 (%)
   alphaHighP: number // 较高压强下的平衡转化率 (%)
 }
-

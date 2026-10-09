@@ -82,7 +82,6 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
   const baseY = 480
   const isEthylene = systemId === 'c2h4-prep' || targetGas === 'C₂H₄'
 
-
   // 3. 布局引擎：单一事实来源 (SSOT)
   const layout = solvePhysicalChainLayout({
     generator,

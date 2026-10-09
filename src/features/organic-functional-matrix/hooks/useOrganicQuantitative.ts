@@ -196,4 +196,3 @@ export function useOrganicQuantitative(
     }
   }, [groupCounts, presetId])
 }
-

@@ -164,4 +164,3 @@ export const GAOKAO_3D_MOLECULES: Record<string, Organic3DMolecule> = {
     ],
   },
 }
-

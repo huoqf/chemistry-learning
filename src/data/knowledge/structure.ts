@@ -173,5 +173,3 @@ export const structureKnowledge: KnowledgeNode[] = [
     interactionTags: ['crystal-cell', 'chart-analysis'],
   },
 ]
-
-

@@ -201,8 +201,6 @@ export const LiquidHeatingGeneratorApparatus: React.FC<LiquidHeatingGeneratorApp
         />
       </g>
 
-
-
       {/* 6. 上部：乙烯用温度计 (170°C 水银球完全浸没在反应液中央，距离烧瓶底悬空 10.4px)，常规用分液漏斗 */}
       {isEthylene ? (
         <g transform={`translate(${flaskPorts.topNeckPort.x}, ${flaskPorts.topNeckPort.y - 56})`}>

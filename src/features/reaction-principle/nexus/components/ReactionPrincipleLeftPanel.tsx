@@ -255,5 +255,3 @@ export const ReactionPrincipleLeftPanel: React.FC<ReactionPrincipleLeftPanelProp
     </LeftPanel>
   )
 }
-
-

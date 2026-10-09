@@ -307,5 +307,3 @@ export const BoltzmannDistributionChart: React.FC<BoltzmannDistributionChartProp
     </svg>
   )
 }
-
-
