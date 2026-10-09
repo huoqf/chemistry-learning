@@ -1,17 +1,25 @@
 import type { ChemistryQuantity } from '../../chemistryQuantities'
+import {
+  pHFromHydrogenMoles,
+  pHFromHydroxideMoles,
+  transferredElectronMoles,
+} from '@/chemistry'
 
 export function buildElectrochemicalApplicationQuantities(
   params: Record<string, number>,
   time: number
 ): ChemistryQuantity[] {
   const current = params.current ?? 1.5 // 电流 A
-  const c0 = params.c0 ?? 1.0 // 初始浓度 mol/L
+  // 注：本页量为恒流模型，转移电子量 n(e⁻) = I·t/F 唯一决定电极产物量与各室 pH，
+  //     不引入初始电解质浓度参数（pH 由 c = n/V 严格导出）。
+  //     原实现写成 pH = 14 + lg(1e-7 + ne × c0)：ne(mol) × c0(mol/L) 量纲为 mol²/L，已修。
   const mode = params.mode ?? 0 // 0: 盐桥原电池, 1: 膜电解池, 2: 串联池
   const membraneType = params.membraneType ?? 0 // 0: 阳离子膜, 1: 阴离子膜, 2: 质子膜
 
-  // 法拉第常数 F ≈ 96485 C/mol
-  const F = 96485
-  const ne = parseFloat(((current * time * 50) / F).toFixed(4))
+  // n(e⁻) = I·t·k / F，单一来源见 @/chemistry/electrochemical。
+  // neRaw 用于一切后续计算（与 hook 内部精度一致），ne 仅为展示值（4 位小数）。
+  const neRaw = transferredElectronMoles(current, time)
+  const ne = parseFloat(neRaw.toFixed(4))
 
   let anodeMassDelta = 0
   let cathodeMassDelta = 0
@@ -23,22 +31,22 @@ export function buildElectrochemicalApplicationQuantities(
     // 盐桥原电池 (Zn - Cu)
     anodeLabel = '池1负极 (Zn) 消耗 Δm'
     cathodeLabel = '池1正极 (Cu) 析出 Δm'
-    anodeMassDelta = -parseFloat((ne * 0.5 * 65.38).toFixed(3))
-    cathodeMassDelta = parseFloat((ne * 0.5 * 63.55).toFixed(3))
+    anodeMassDelta = -parseFloat((neRaw * 0.5 * 65.38).toFixed(3))
+    cathodeMassDelta = parseFloat((neRaw * 0.5 * 63.55).toFixed(3))
     pH = 7.0
   } else if (mode === 1) {
     // 膜电解池
     anodeLabel = membraneType === 0 ? '阳极 Cl₂ 释放量' : '阳极 O₂ 释放量'
     cathodeLabel = '阴极 H₂ 释放量'
-    anodeMassDelta = parseFloat((ne * (membraneType === 0 ? 0.5 * 70.9 : 0.25 * 32)).toFixed(3))
-    cathodeMassDelta = parseFloat((ne * 0.5 * 2.016).toFixed(3))
+    anodeMassDelta = parseFloat((neRaw * (membraneType === 0 ? 0.5 * 70.9 : 0.25 * 32)).toFixed(3))
+    cathodeMassDelta = parseFloat((neRaw * 0.5 * 2.016).toFixed(3))
 
     if (membraneType === 0) {
-      const cOH = Math.min(14, 1.0e-7 + ne * 0.5 * c0)
-      pH = parseFloat((14 + Math.log10(Math.max(1e-7, cOH))).toFixed(2))
+      // 阴极室 OH⁻ 积累，由 c = n(OH⁻)/V 严格导出（与初始浓度无关）
+      pH = parseFloat(pHFromHydroxideMoles(neRaw).toFixed(2))
     } else if (membraneType === 1) {
-      const cH = Math.min(14, 1.0e-7 + ne * 1.0 * c0)
-      pH = parseFloat((Math.max(1.0, 7.0 - Math.log10(1 + cH * 10))).toFixed(2))
+      // 阳极室 H⁺ 积累，由 c = n(H⁺)/V 严格导出（与初始浓度无关）
+      pH = parseFloat(pHFromHydrogenMoles(neRaw).toFixed(2))
     } else {
       pH = 7.0
     }
@@ -46,8 +54,8 @@ export function buildElectrochemicalApplicationQuantities(
     // 串联池 (池1 Zn-Cu 原电池 驱动 池2 Cu-Zn 电解池)
     anodeLabel = '池1负极 (Zn) 溶解量'
     cathodeLabel = '池2阴极 (Cu) 镀层量'
-    anodeMassDelta = -parseFloat((ne * 0.5 * 65.38).toFixed(3))
-    cathodeMassDelta = parseFloat((ne * 0.5 * 63.55).toFixed(3))
+    anodeMassDelta = -parseFloat((neRaw * 0.5 * 65.38).toFixed(3))
+    cathodeMassDelta = parseFloat((neRaw * 0.5 * 63.55).toFixed(3))
     pH = 7.0
   }
 

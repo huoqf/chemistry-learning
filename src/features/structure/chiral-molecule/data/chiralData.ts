@@ -283,38 +283,44 @@ export const CHIRAL_PRESETS: ChiralMolecule[] = [
     chiralCount: 0,
     stereoisomerCount: 1,
     isChiral: false,
+    // ── 坐标约定（P2-12 修复）──
+    // 中屏镜像演示固定以 x = 0 为镜像面（见 useChiralChemistry）。
+    // 因此「非手性分子镜像后完全重合」要能被看见，它的对称面就必须落在 x = 0 上：
+    // C2–H 与 C2–OH 位于该平面内，两个 CH₃ 互为镜像对（各自的 H 也一一成镜像）。
+    // 原数据的对称面是 z = 0 而不是 x = 0，导致 100% 重合时画面里两分子错位交叉，
+    // 与横幅结论「完全重合」矛盾。
     atoms: [
       { id: 'C2', element: 'C', pos: [0, 0, 0], groupLabel: 'C2(非手性)' },
-      { id: 'H-c2', element: 'H', pos: tet[0], groupLabel: '-H' },
-      { id: 'O-oh', element: 'O', pos: tet[1], groupLabel: '-OH' },
-      { id: 'H-oh', element: 'H', pos: [tet[1][0] + 0.4, tet[1][1] - 0.4, tet[1][2] + 0.3] },
+      { id: 'H-c2', element: 'H', pos: [0, 0.72169, 1.02062], groupLabel: '-H' },
+      { id: 'O-oh', element: 'O', pos: [0, 0.72169, -1.02062], groupLabel: '-OH' },
+      { id: 'H-oh', element: 'H', pos: [0, 0.00548, -1.24321] },
 
       // 基团1: -CH3
-      { id: 'C1', element: 'C', pos: tet[2], groupLabel: '-CH₃(A)' },
-      { id: 'H1a', element: 'H', pos: [tet[2][0] - 0.5, tet[2][1] - 0.4, tet[2][2] + 0.4] },
-      { id: 'H1b', element: 'H', pos: [tet[2][0] - 0.3, tet[2][1] + 0.5, tet[2][2] + 0.4] },
-      { id: 'H1c', element: 'H', pos: [tet[2][0] + 0.3, tet[2][1] - 0.4, tet[2][2] + 0.5] },
+      { id: 'C1', element: 'C', pos: [1.02062, -0.72169, 0], groupLabel: '-CH₃(A)' },
+      { id: 'H1a', element: 'H', pos: [1.63299, -0.28868, 0] },
+      { id: 'H1b', element: 'H', pos: [1.02062, -1.1547, -0.61237] },
+      { id: 'H1c', element: 'H', pos: [1.02062, -1.1547, 0.61237] },
 
-      // 基团2: 相同 -CH3
-      { id: 'C3', element: 'C', pos: tet[3], groupLabel: '-CH₃(B)' },
-      { id: 'H3a', element: 'H', pos: [tet[3][0] - 0.4, tet[3][1] + 0.4, tet[3][2] - 0.4] },
-      { id: 'H3b', element: 'H', pos: [tet[3][0] + 0.4, tet[3][1] + 0.4, tet[3][2] - 0.4] },
-      { id: 'H3c', element: 'H', pos: [tet[3][0], tet[3][1] - 0.5, tet[3][2] - 0.5] },
+      // 基团2: 相同 -CH3（与基团1 关于 x = 0 严格互为镜像）
+      { id: 'C3', element: 'C', pos: [-1.02062, -0.72169, 0], groupLabel: '-CH₃(B)' },
+      { id: 'H3a', element: 'H', pos: [-1.63299, -0.28868, 0] },
+      { id: 'H3b', element: 'H', pos: [-1.02062, -1.1547, -0.61237] },
+      { id: 'H3c', element: 'H', pos: [-1.02062, -1.1547, 0.61237] },
     ],
     bonds: [
-      { start: [0, 0, 0], end: tet[0] },
-      { start: [0, 0, 0], end: tet[1] },
-      { start: tet[1], end: [tet[1][0] + 0.4, tet[1][1] - 0.4, tet[1][2] + 0.3] },
+      { start: [0, 0, 0], end: [0, 0.72169, 1.02062] },
+      { start: [0, 0, 0], end: [0, 0.72169, -1.02062] },
+      { start: [0, 0.72169, -1.02062], end: [0, 0.00548, -1.24321] },
 
-      { start: [0, 0, 0], end: tet[2] },
-      { start: tet[2], end: [tet[2][0] - 0.5, tet[2][1] - 0.4, tet[2][2] + 0.4] },
-      { start: tet[2], end: [tet[2][0] - 0.3, tet[2][1] + 0.5, tet[2][2] + 0.4] },
-      { start: tet[2], end: [tet[2][0] + 0.3, tet[2][1] - 0.4, tet[2][2] + 0.5] },
+      { start: [0, 0, 0], end: [1.02062, -0.72169, 0] },
+      { start: [1.02062, -0.72169, 0], end: [1.63299, -0.28868, 0] },
+      { start: [1.02062, -0.72169, 0], end: [1.02062, -1.1547, -0.61237] },
+      { start: [1.02062, -0.72169, 0], end: [1.02062, -1.1547, 0.61237] },
 
-      { start: [0, 0, 0], end: tet[3] },
-      { start: tet[3], end: [tet[3][0] - 0.4, tet[3][1] + 0.4, tet[3][2] - 0.4] },
-      { start: tet[3], end: [tet[3][0] + 0.4, tet[3][1] + 0.4, tet[3][2] - 0.4] },
-      { start: tet[3], end: [tet[3][0], tet[3][1] - 0.5, tet[3][2] - 0.5] },
+      { start: [0, 0, 0], end: [-1.02062, -0.72169, 0] },
+      { start: [-1.02062, -0.72169, 0], end: [-1.63299, -0.28868, 0] },
+      { start: [-1.02062, -0.72169, 0], end: [-1.02062, -1.1547, -0.61237] },
+      { start: [-1.02062, -0.72169, 0], end: [-1.02062, -1.1547, 0.61237] },
     ],
   },
 

@@ -87,7 +87,7 @@ export function TitrationCenterView({
 
   if (viewMode === 1 && quizData && quizData.scoringSteps.length > 0) {
     return (
-      <div className="w-full h-full p-4 overflow-y-auto bg-slate-50">
+      <div className="w-full h-full p-4 overflow-y-auto">
         <div className="flex items-center justify-between border-b pb-2 mb-3">
           <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2">
             <FileCheck className="w-4 h-4 text-emerald-600" />
@@ -104,7 +104,7 @@ export function TitrationCenterView({
 
   if (viewMode === 2 && quizData && quizData.variantQuizzes.length > 0) {
     return (
-      <div className="w-full h-full p-4 overflow-y-auto bg-slate-50">
+      <div className="w-full h-full p-4 overflow-y-auto">
         <div className="flex items-center justify-between border-b pb-2 mb-3">
           <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2">
             <HelpCircle className="w-4 h-4 text-amber-600" />
@@ -120,11 +120,11 @@ export function TitrationCenterView({
   }
 
   return (
-    <div className="w-full h-full flex flex-col overflow-hidden bg-white">
+    <div className="w-full h-full flex flex-col overflow-hidden">
       {/* 上半区：分屏模式 (左 280px 装置区 + 右 560px 滴定曲线与图表区，零外层滚动条) */}
       <div className="flex-1 min-h-0 w-full flex flex-row overflow-hidden border-b border-slate-200">
         {/* 左侧 280px 滴定装置与测定视口区 */}
-        <div className="w-[280px] h-full shrink-0 border-r border-slate-200/80 relative bg-slate-50/30">
+        <div className="w-[280px] h-full shrink-0 border-r border-slate-200/80 relative">
           {/* SVG 滴定装置场景 */}
           <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
             <defs>
@@ -196,7 +196,7 @@ export function TitrationCenterView({
         </div>
 
         {/* 右侧 560px 宽图表区 (上下弹性平分或大图表展示) */}
-        <div className="flex-1 h-full min-w-0 flex flex-col bg-white">
+        <div className="flex-1 h-full min-w-0 flex flex-col">
           {/* 上层：主 pH 滴定突跃曲线 */}
           <div className="flex-1 min-h-0 w-full p-2 border-b border-slate-200/60 relative flex flex-col">
             <div className="flex items-center justify-between mb-1 px-1 shrink-0">

@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { no2N2o4State } from '@/chemistry'
 
 export interface LeChatelierParams {
   temp: number       // 温度 K (如 298 ~ 398 K)
@@ -38,9 +39,20 @@ export interface LeChatelierChemistryResult {
   history: ChartPoint[]
 }
 
+/** 图表预计算的固定物理时间轴：0 → 10.0 s，50 步 */
+const CHART_TOTAL_DURATION = 10.0
+const CHART_STEPS = 50
+
 /**
  * 勒夏特列原理化学计算 Hook
  * 体系：2NO2 (g, 红棕色) <==> N2O4 (g, 无色) ΔH < 0
+ *
+ * ── 唯一来源 ──
+ * K(T)、物料守恒二次方程、弛豫演化、Qc 与正逆速率的温度依赖全部收敛在
+ * `@/chemistry/equilibrium`，本 hook 只负责「屏幕相关的派生量」：
+ * 活塞体积比、颜色强度、移动方向判定与图表时间轴。
+ * 量面板（data/quantities/reaction-principle/leChatelier.ts）调用同一函数，
+ * 保证同一组参数下两处数值完全一致。
  */
 export function useLeChatelierChemistry({
   temp,
@@ -49,74 +61,39 @@ export function useLeChatelierChemistry({
   time,
 }: LeChatelierParams): LeChatelierChemistryResult {
   return useMemo(() => {
-    // 1. 基准参数 (298 K, 1 atm)
-    const T0 = 298
-    const K0 = 2.0 // 298 K 下的基准 K
-    const deltaH_over_R = 2000 // ΔH/R 对应放热反应
-
-    // 2. 根据温度计算当前平衡常数 K(T) —— 放热反应 ΔH < 0，升温 K 减小
-    const K = parseFloat((K0 * Math.exp(deltaH_over_R * (1 / temp - 1 / T0))).toFixed(3))
-
-    // 3. 压强作用：压强倍率增大 -> 体积缩小为 1/pressure
+    // 1. 压强作用：压强倍率增大 -> 体积缩小为 1/pressure（仅用于中屏活塞几何）
     const volumeRatio = Math.max(0.35, Math.min(2.0, 1 / pressure))
 
-    // 4. 计算最终到达新平衡时的平衡目标浓度 c_eq
-    // 平衡条件：N2O4 / (NO2)^2 = K
-    // 物料守恒（N 原子）：c(NO2) + 2*c(N2O4) = 总 N 当量；N2O4 含 2 个 N 原子
-    const totalN = (2.0 + addedNO2) * pressure
-    // 代入 c(N2O4) = K * c(NO2)^2，得 2K * cNO2^2 + cNO2 - totalN = 0
-    // 一元二次方程解 cNO2
-    const a = 2 * K
-    const b = 1
-    const c = -totalN
-    const eqNO2 = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a)
-    const eqN2O4 = K * eqNO2 * eqNO2
+    // 2. 当前状态（含 K、浓度、Qc、正逆速率）—— 唯一来源
+    const { K, cNO2, cN2O4, Qc, vForward, vReverse } = no2N2o4State(
+      temp,
+      pressure,
+      addedNO2,
+      time
+    )
 
-    // 5. 干扰初态浓度
-    const initNO2 = (1.0 + addedNO2) * pressure
-    const initN2O4 = 0.5 * pressure
-
-    // 6. 随时间推进弛豫演化 (指数趋近平衡)
-    const kRelax = 0.6 // 弛豫速率常数
-    const alpha = Math.exp(-kRelax * time)
-
-    const cNO2 = Math.max(0.01, eqNO2 + (initNO2 - eqNO2) * alpha)
-    const cN2O4 = Math.max(0.01, eqN2O4 + (initN2O4 - eqN2O4) * alpha)
-
-    // 7. 计算浓度商 Qc 与正逆反应速率
-    const Qc = cN2O4 / (cNO2 * cNO2)
-    const kf = 0.8
-    const kr = kf / K
-    const vForward = kf * cNO2 * cNO2
-    const vReverse = kr * cN2O4
-
-    // 8. 判定平衡移动方向
+    // 3. 判定平衡移动方向
     let shiftDirection: 'forward' | 'reverse' | 'balanced' = 'balanced'
     if (Math.abs(vForward - vReverse) > 0.02) {
       shiftDirection = vForward > vReverse ? 'forward' : 'reverse'
     }
 
-    // 9. 颜色强度（基于 NO2 浓度，NO2 越高颜色越深）
+    // 4. 颜色强度（基于 NO2 浓度，NO2 越高颜色越深）
     const colorIntensity = Math.max(0.15, Math.min(1.0, cNO2 / 2.5))
 
-    // 10. 生成固定物理时间轴 (0 到 10.0s) 的恒定演化轨迹
+    // 5. 生成固定物理时间轴 (0 到 10.0s) 的恒定演化轨迹
+    //    每个采样点走同一条唯一来源，杜绝「图表用一份拟合式、面板用另一份」的老问题
     const history: ChartPoint[] = []
-    const totalDuration = 10.0
-    const steps = 50
-    const tStep = totalDuration / steps
-    for (let i = 0; i <= steps; i++) {
+    const tStep = CHART_TOTAL_DURATION / CHART_STEPS
+    for (let i = 0; i <= CHART_STEPS; i++) {
       const t = i * tStep
-      const a_t = Math.exp(-kRelax * t)
-      const cNO2_t = Math.max(0.01, eqNO2 + (initNO2 - eqNO2) * a_t)
-      const cN2O4_t = Math.max(0.01, eqN2O4 + (initN2O4 - eqN2O4) * a_t)
-      const vF_t = kf * cNO2_t * cNO2_t
-      const vR_t = kr * cN2O4_t
+      const s = no2N2o4State(temp, pressure, addedNO2, t)
       history.push({
         time: parseFloat(t.toFixed(2)),
-        cNO2: parseFloat(cNO2_t.toFixed(3)),
-        cN2O4: parseFloat(cN2O4_t.toFixed(3)),
-        vForward: parseFloat(vF_t.toFixed(3)),
-        vReverse: parseFloat(vR_t.toFixed(3)),
+        cNO2: parseFloat(s.cNO2.toFixed(3)),
+        cN2O4: parseFloat(s.cN2O4.toFixed(3)),
+        vForward: parseFloat(s.vForward.toFixed(3)),
+        vReverse: parseFloat(s.vReverse.toFixed(3)),
       })
     }
 

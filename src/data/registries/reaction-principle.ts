@@ -114,12 +114,13 @@ export const reactionPrincipleAnimations = defineAnimations({
       {
         key: 'activationEnergy',
         label: '正反应活化能 Ea1',
-        min: 30,
+        min: 45,
         max: 120,
         step: 5,
         unit: 'kJ/mol',
         group: '反应物特性',
-        description: '基元反应活化能，Ea 越低有效碰撞比例越大',
+        description:
+          '基元反应活化能，Ea 越低有效碰撞比例越大。下限受物理有效域约束：本页吸热模型取 ΔH = +40 kJ/mol，逆活化能 Ea2 = Ea1 − ΔH 必须为正，故 Ea1 不得低于 45 kJ/mol。',
       },
     ],
     controlMeta: [
@@ -168,7 +169,6 @@ export const reactionPrincipleAnimations = defineAnimations({
     controlsMode: 'timed',
     defaultParams: {
       current: 1.5,
-      c0: 1.0,
       mode: 0,
       membraneType: 0,
     } as const,
@@ -182,16 +182,6 @@ export const reactionPrincipleAnimations = defineAnimations({
         unit: 'A',
         group: '电路参数',
         description: '增大电流加快电子转移速率与电极反应',
-      },
-      {
-        key: 'c0',
-        label: '初始电解质浓度',
-        min: 0.2,
-        max: 2.0,
-        step: 0.1,
-        unit: 'mol/L',
-        group: '溶液参数',
-        description: '电解质浓度影响溶液导电性与产物生成速率',
       },
     ],
     controlMeta: [
@@ -265,7 +255,7 @@ export const reactionPrincipleAnimations = defineAnimations({
         group: '原电池模型选择',
         resetOnChange: true,
         options: [
-          { label: '经典单槽 (Zn-Cu)', value: 0 },
+          { label: '单槽 Zn-稀H₂SO₄ (0.76V)', value: 0 },
           { label: '盐桥双槽 (Zn-Cu)', value: 1 },
           { label: '氢氧燃料电池', value: 2 },
           { label: '铅蓄电池放电', value: 3 },

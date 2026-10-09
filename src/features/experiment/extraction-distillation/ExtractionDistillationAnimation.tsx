@@ -1,5 +1,5 @@
 import { useAnimationViewport, useSceneScale } from '@/hooks'
-import { CANVAS_PRESETS, CHEMISTRY_COLORS } from '@/theme'
+import { CANVAS_PRESETS, CHEMISTRY_COLORS, PHENOMENON_COLORS } from '@/theme'
 import { AnimationSvgCanvas } from '@/components/Layout'
 import { BaseChart, ChartLine } from '@/components/Chart'
 import { useAnimationStore } from '@/stores'
@@ -91,7 +91,7 @@ export default function ExtractionDistillationAnimation() {
               />
               <ChartLine
                 points={line2Points}
-                color={isExtraction ? '#9333EA' : CHEMISTRY_COLORS.concentration}
+                color={isExtraction ? PHENOMENON_COLORS.i2Ccl4 : CHEMISTRY_COLORS.concentration}
                 strokeWidth={2.5}
               />
             </BaseChart>

@@ -3,6 +3,7 @@
  */
 
 import type { ChemistryQuantity } from '@/data/chemistryQuantities'
+import { computeCollisionKinetics } from '@/chemistry/collision'
 
 /**
  * 碰撞理论动态化学量构建器 (供右屏 QuantitySection 展示)
@@ -15,13 +16,13 @@ export function buildCollisionTheoryQuantities(
   const activationEnergy = (params['activationEnergy'] as number) ?? 80
   const hasCatalyst = ((params['catalyst'] as number) ?? 0) > 0.5
 
-  const R = 8.314
-  const effectiveEa = hasCatalyst ? activationEnergy * 0.55 : activationEnergy
-  const f = Math.exp((-effectiveEa * 1000) / (R * temperature * 2.5))
-  const zTotal = 120 * concentration * Math.sqrt(temperature / 298)
-  const zEff = zTotal * f
-  const k = 100 * f
-  const v = k * concentration
+  const kinetics = computeCollisionKinetics({
+    temperature,
+    concentration,
+    activationEnergy,
+    hasCatalyst,
+  })
+  const { effectiveEa, activationFraction, effectiveCollisions, reactionRate } = kinetics
 
   return [
     {
@@ -51,7 +52,7 @@ export function buildCollisionTheoryQuantities(
     {
       key: 'activationFraction',
       label: '活化分子百分数 f',
-      value: f * 100,
+      value: activationFraction * 100,
       unit: '%',
       colorKey: 'activation',
       precision: 2,
@@ -59,7 +60,7 @@ export function buildCollisionTheoryQuantities(
     {
       key: 'effectiveCollisions',
       label: '有效碰撞频率 Z_eff',
-      value: zEff,
+      value: effectiveCollisions,
       unit: '次/(L·s)',
       colorKey: 'reactionRate',
       precision: 1,
@@ -67,7 +68,7 @@ export function buildCollisionTheoryQuantities(
     {
       key: 'reactionRate',
       label: '相对反应速率 v',
-      value: v,
+      value: reactionRate,
       unit: 'mol/(L·s)',
       colorKey: 'reactionRate',
       precision: 2,

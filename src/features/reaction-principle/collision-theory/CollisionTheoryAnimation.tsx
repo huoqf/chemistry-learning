@@ -86,7 +86,7 @@ export default function CollisionTheoryAnimation() {
   useSimulationFrame(step, { active: true, maxDeltaMs: 33 })
 
   return (
-    <div className="w-full h-full flex flex-row overflow-hidden bg-transparent select-none">
+    <div className="w-full h-full flex flex-row overflow-hidden select-none">
       {/* 左侧 280px 微观粒子碰撞大屏场景 */}
       <div className="w-[280px] shrink-0 h-full">
         <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
@@ -101,7 +101,7 @@ export default function CollisionTheoryAnimation() {
       </div>
 
       {/* 右侧 560px 势能图与玻尔兹曼能量分布图 */}
-      <div className="flex-1 min-w-0 h-full flex flex-col gap-1 p-1 overflow-hidden bg-transparent">
+      <div className="flex-1 min-w-0 h-full flex flex-col gap-1 p-1 overflow-hidden">
         {/* 上区：反应历程势能曲线图 */}
         <div className="flex-1 min-h-0 relative">
           <EnergyProfileChart

@@ -43,9 +43,9 @@ export default function LeChatelierAnimation() {
   const reversePoints = visibleHistory.map((p) => ({ x: p.time, y: p.vReverse }))
 
   return (
-    <div className="w-full h-full flex flex-row overflow-hidden bg-transparent rounded-lg border border-slate-200/80">
+    <div className="w-full h-full flex flex-row overflow-hidden rounded-lg border border-slate-200/80">
       {/* 左侧：装置动画 Canvas (280px 宽度 preset 约束) */}
-      <div className="w-[280px] h-full relative shrink-0 border-r border-slate-200/80 bg-transparent">
+      <div className="w-[280px] h-full relative shrink-0 border-r border-slate-200/80">
         <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
           <LeChatelierScene
             chemistry={chemistry}
@@ -58,7 +58,7 @@ export default function LeChatelierAnimation() {
       </div>
 
       {/* 右侧：高考化学专有 EquilibriumChart (560px 宽度) */}
-      <div className="flex-1 h-full p-3 flex flex-col justify-center bg-white min-w-0">
+      <div className="flex-1 h-full p-3 flex flex-col justify-center min-w-0">
         <EquilibriumChart
           forwardPoints={forwardPoints}
           reversePoints={reversePoints}

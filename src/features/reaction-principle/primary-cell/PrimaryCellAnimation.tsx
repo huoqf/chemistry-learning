@@ -81,7 +81,7 @@ export default function PrimaryCellAnimation() {
       </div>
 
       {/* 右侧 560px 图表展现区（两图表弹性平分，禁止手写固定高度） */}
-      <div className="flex-1 h-full min-w-0 flex flex-col bg-white">
+      <div className="flex-1 h-full min-w-0 flex flex-col">
         <div className="flex-1 min-h-0 w-full p-2 border-b border-slate-200/60">
           <BaseChart
             title="两极电极质量变化 Δm - 时间"

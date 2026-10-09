@@ -123,7 +123,7 @@ export function ReagentStepCenterView({
 
   if (viewMode === 'scoring' && quizData && quizData.scoringSteps.length > 0) {
     return (
-      <div className="w-full h-full p-4 overflow-y-auto bg-slate-50/50">
+      <div className="w-full h-full p-4 overflow-y-auto">
         <ScoringCardSection steps={quizData.scoringSteps} />
       </div>
     )
@@ -131,14 +131,14 @@ export function ReagentStepCenterView({
 
   if (viewMode === 'quiz' && quizData && quizData.variantQuizzes.length > 0) {
     return (
-      <div className="w-full h-full p-4 overflow-y-auto bg-slate-50/50">
+      <div className="w-full h-full p-4 overflow-y-auto">
         <GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />
       </div>
     )
   }
 
   return (
-    <div className="w-full h-full flex flex-col overflow-hidden bg-white">
+    <div className="w-full h-full flex flex-col overflow-hidden">
       {/* 上半区：完全参照原电池 280px 装置 + 560px 图表自适应分屏 (零外层滚动) */}
       <div className="flex-1 min-h-0 w-full flex flex-row overflow-hidden border-b border-slate-200">
         {/* 左侧 280px 试管装置视口区 */}
@@ -212,7 +212,7 @@ export function ReagentStepCenterView({
         </div>
 
         {/* 右侧 560px 定量图表区（两图表弹性平分，禁止手写固定高度） */}
-        <div className="flex-1 h-full min-w-0 flex flex-col bg-white">
+        <div className="flex-1 h-full min-w-0 flex flex-col">
           <div className="flex-1 min-h-0 w-full p-2 border-b border-slate-200/60">
             <BaseChart
               title="沉淀生成/溶解定量图像 n(沉淀) - V(滴加)"

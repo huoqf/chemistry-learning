@@ -1,5 +1,6 @@
 import { useAnimationStore } from '@/stores'
 import { useShallow } from 'zustand/react/shallow'
+import { isWebGLAvailable, WebGLFallback } from '@/components/Chemistry3D'
 import { useHybridChemistry } from './hooks/useHybridChemistry'
 import { HybridOrbitalScene } from './components/HybridOrbitalScene'
 
@@ -14,6 +15,10 @@ export default function HybridOrbitalAnimation() {
   const showPhases = Boolean(params.showPhases ?? 1)
 
   const { model } = useHybridChemistry({ presetIdx })
+
+  if (!isWebGLAvailable()) {
+    return <WebGLFallback />
+  }
 
   return (
     <div className="w-full h-full relative">

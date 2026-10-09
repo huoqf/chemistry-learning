@@ -1,8 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
-import { AtomMesh, BondMesh } from '@/components/Chemistry3D'
-import { isWebGLAvailable } from '@/components/Chemistry3D/utils/webgl'
+import { AtomMesh, BondMesh, WebGLFallback, isWebGLAvailable } from '@/components/Chemistry3D'
 import { SCENE_COLORS, CANVAS_COLORS, colors } from '@/theme'
 import type { IsomerNode } from '@/components/Chemistry'
 import { get3DModelForIsomer } from '../utils/isomer3dTransform'
@@ -10,18 +9,6 @@ import { get3DModelForIsomer } from '../utils/isomer3dTransform'
 // 3D 球棍模型在白色主屏上需要更柔和的光照，避免高光过曝
 const AMBIENT_INTENSITY = 0.95
 const DIRECTIONAL_INTENSITY = 0.9
-
-function WebGLFallback() {
-  return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 p-4 text-center rounded-xl border border-slate-200">
-      <span className="text-3xl mb-2">🔬</span>
-      <h4 className="text-sm font-bold text-slate-800 mb-1">3D 视图不可用</h4>
-      <p className="text-xs text-slate-500 max-w-xs">
-        当前环境未开启 WebGL 硬件加速，左侧 2D 碳骨架图可正常用于探究与学习。
-      </p>
-    </div>
-  )
-}
 
 export interface Isomer3DSceneProps {
   isomer?: IsomerNode | null
@@ -74,7 +61,12 @@ export function Isomer3DScene({ isomer, className = '' }: Isomer3DSceneProps) {
   }, [model3d.atoms])
 
   if (!isWebGLAvailable()) {
-    return <WebGLFallback />
+    return (
+      <WebGLFallback
+        size="sm"
+        description="当前环境未开启 WebGL 硬件加速，左侧 2D 碳骨架图仍可正常用于探究与学习。"
+      />
+    )
   }
 
   const isReady = containerSize.width > 0 && containerSize.height > 0

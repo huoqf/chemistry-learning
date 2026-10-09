@@ -91,7 +91,7 @@ export default function ElectrolyticCellAnimation() {
       </div>
 
       {/* 右侧 560px 图表展现区（两图表弹性平分 flex-1 min-h-0，无滚动条） */}
-      <div className="flex-1 h-full min-w-0 flex flex-col bg-white">
+      <div className="flex-1 h-full min-w-0 flex flex-col">
         {/* 上图表：电极质量变化 Δm 与气体体积 V */}
         <div className="flex-1 min-h-0 w-full p-2 border-b border-slate-200/60">
           <BaseChart

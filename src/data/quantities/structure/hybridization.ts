@@ -109,7 +109,7 @@ export const HYBRID_PRESETS: Record<string, HybridPresetInfo> = {
     sRatio: 25,
     pRatio: 75,
     totalOrbitals: 4,
-    bondAngle: 107,
+    bondAngle: 107.3,
     description: 'N 原子采取 sp³ 杂化，1 对孤电子对占据 1 个 sp³ 轨道，由于排斥力较大使键角压缩至 107.3°。',
   },
   h2o: {

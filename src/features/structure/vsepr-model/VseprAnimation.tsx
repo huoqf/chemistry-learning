@@ -1,5 +1,6 @@
 import { useAnimationStore } from '@/stores'
 import { useShallow } from 'zustand/react/shallow'
+import { isWebGLAvailable, WebGLFallback } from '@/components/Chemistry3D'
 import { useVseprChemistry } from './hooks/useVseprChemistry'
 import { VseprScene } from './components/VseprScene'
 
@@ -14,6 +15,10 @@ export default function VseprAnimation() {
   const showAngles = Boolean(params.showAngles ?? 1)
 
   const { molecule } = useVseprChemistry({ presetIdx })
+
+  if (!isWebGLAvailable()) {
+    return <WebGLFallback />
+  }
 
   return (
     <div className="w-full h-full relative">

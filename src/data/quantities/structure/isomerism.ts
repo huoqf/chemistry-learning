@@ -10,6 +10,16 @@ interface IsomerSummary {
 
 interface IsomerGroupSummary {
   name: string
+  /**
+   * 构造异构体数（constitutional isomers）
+   * —— 只看原子连接顺序，不计入顺反/对映等立体异构。
+   * 量面板「构造异构体数」取此值，严禁用 totalIsomers 冒充。
+   */
+  constitutionalIsomers: number
+  /**
+   * 计入立体异构后的同分异构体总数。
+   * 与 constitutionalIsomers 的差额即立体异构带来的额外个体数。
+   */
   totalIsomers: number
   isomers: IsomerSummary[]
   formulaLatex: string
@@ -18,6 +28,7 @@ interface IsomerGroupSummary {
 const ISOMER_DATA_SUMMARY: IsomerGroupSummary[] = [
   {
     name: '戊烷 (C₅H₁₂)',
+    constitutionalIsomers: 3,
     totalIsomers: 3,
     isomers: [
       { name: '正戊烷', eqH: 3, ratio: '6 : 4 : 2 (3:2:1)', bp: 36.1, iupac: '戊烷' },
@@ -28,6 +39,9 @@ const ISOMER_DATA_SUMMARY: IsomerGroupSummary[] = [
   },
   {
     name: '丁醇 & 丁醚 (C₄H₁₀O)',
+    // 7 种构造异构体均为连接方式不同；2-丁醇虽含手性碳（另存一对对映体），
+    // 但高中口径不展开对映异构，故此处不计入总数。
+    constitutionalIsomers: 7,
     totalIsomers: 7,
     isomers: [
       { name: '1-丁醇', eqH: 5, ratio: '1-OH (伯醇)', bp: 117.7, iupac: '丁-1-醇' },
@@ -45,6 +59,7 @@ const ISOMER_DATA_SUMMARY: IsomerGroupSummary[] = [
     // C₃H₆O₂ 另有 2 种超出高中范围的构造异构体（甲氧基乙醛、1,3-二氧戊环），不在本体系内。
     // totalIsomers = 本体系枚举数，不宣称是化学上 C₃H₆O₂ 的全部同分异构体数。
     name: 'C₃H₆O₂ 官能团异构',
+    constitutionalIsomers: 6,
     totalIsomers: 6,
     isomers: [
       { name: '丙酸', eqH: 3, ratio: 'CH₃CH₂COOH (羧酸)', bp: 141.2, iupac: '丙酸' },
@@ -58,6 +73,7 @@ const ISOMER_DATA_SUMMARY: IsomerGroupSummary[] = [
   },
   {
     name: '芳香族 C₇H₈O (酚/醇/醚)',
+    constitutionalIsomers: 5,
     totalIsomers: 5,
     isomers: [
       { name: '邻甲酚', eqH: 5, ratio: '邻位酚羟基 (FeCl₃紫)', bp: 191.0, iupac: '2-甲基苯酚' },
@@ -70,7 +86,11 @@ const ISOMER_DATA_SUMMARY: IsomerGroupSummary[] = [
   },
   {
     name: '丁烯 & 环烷 (C₄H₈)',
-    // C₄H₈ 的构造异构体完整枚举为 6 种：4 种烯烃 + 2 种环烷烃
+    // C₄H₈ 的**构造异构体**是 5 种：1-丁烯、2-丁烯、2-甲基丙烯（异丁烯）、环丁烷、甲基环丙烷。
+    // 2-丁烯因双键两端各连两个不同基团而另有顺/反两种立体异构，
+    // 故「含立体异构的同分异构体总数」为 5 + 1 = 6。
+    // 原实现直接把 6 填进「构造异构体数」，把立体异构混进了构造异构的计数——已修正。
+    constitutionalIsomers: 5,
     totalIsomers: 6,
     isomers: [
       { name: '1-丁烯', eqH: 4, ratio: 'CH₂=CH-CH₂-CH₃', bp: -6.3, iupac: '丁-1-烯' },
@@ -93,19 +113,19 @@ export function buildIsomerismQuantities(params: Record<string, number>): Chemis
 
   return [
     {
-      key: 'formula',
-      label: '分子体系',
-      value: group.totalIsomers,
-      unit: group.name,
-      colorKey: 'concentration',
+      key: 'isomerCount',
+      label: '构造异构体数',
+      value: group.constitutionalIsomers,
+      unit: '种',
+      colorKey: 'temperature',
       precision: 0,
     },
     {
-      key: 'isomerCount',
-      label: '构造异构体数',
+      key: 'totalIsomerCount',
+      label: '含立体异构总数',
       value: group.totalIsomers,
       unit: '种',
-      colorKey: 'temperature',
+      colorKey: 'concentration',
       precision: 0,
     },
     {

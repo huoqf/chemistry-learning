@@ -463,7 +463,7 @@ export const structureAnimations = defineAnimations({
         type: 'segmented',
         key: 'selectedIndex',
         label: '异构体切换',
-        group: '丁烯 & 环烷 C₄H₈ 烯烃与环状异构 (完整 6 种)',
+        group: '丁烯 & 环烷 C₄H₈ (构造异构 5 种 / 含顺反立体异构共 6 种)',
         showIf: 'isomerType',
         showIfValue: 4,
         options: [

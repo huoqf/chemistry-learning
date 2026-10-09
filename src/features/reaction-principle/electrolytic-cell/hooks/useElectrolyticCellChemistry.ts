@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react'
+import { electrolysisState, transferredElectronMoles } from '@/chemistry'
 
 export interface UseElectrolyticCellChemistryParams {
   cellType: number // 0: CuCl2, 1: CuSO4, 2: NaCl(氯碱), 3: Cu精炼, 4: Al2O3熔融
@@ -49,79 +50,22 @@ export function useElectrolyticCellChemistry({
   current,
   time,
 }: UseElectrolyticCellChemistryParams): ElectrolyticCellChemistryResult {
-  const F = 96485
-
-  // 计算单一时间点下各种量
+  // 计算单一时间点下各种量。
+  // 与右屏量面板共用 @/chemistry/electrolysis 的同一模型，禁止两处各写一份。
   const computeStateAtTime = useCallback((t: number) => {
-    const ne = parseFloat(((current * t * 50) / F).toFixed(4))
-    let anodeDeltaM = 0
-    let cathodeDeltaM = 0
-    let vAnodeGas = 0
-    let vCathodeGas = 0
-    let cMain = 1.0 // mol/L
-    let pH = 7.0
-
-    if (cellType === 0) {
-      // 0: CuCl2 电解
-      anodeDeltaM = 0
-      cathodeDeltaM = parseFloat((ne * 0.5 * 63.55).toFixed(3))
-      vAnodeGas = parseFloat((ne * 0.5 * 22.4).toFixed(3))
-      vCathodeGas = 0
-      cMain = Math.max(0.05, parseFloat((1.0 - ne * 0.5).toFixed(3)))
-      pH = 7.0
-    } else if (cellType === 1) {
-      // 1: CuSO4 电解
-      if (anodeMaterial === 0) {
-        // 惰性石墨
-        anodeDeltaM = 0
-        vAnodeGas = parseFloat((ne * 0.25 * 22.4).toFixed(3))
-        cathodeDeltaM = parseFloat((ne * 0.5 * 63.55).toFixed(3))
-        cMain = Math.max(0.05, parseFloat((1.0 - ne * 0.5).toFixed(3)))
-        pH = Math.max(1.0, parseFloat((7.0 - ne * 2.5).toFixed(2)))
-      } else {
-        // 活性铜
-        anodeDeltaM = -parseFloat((ne * 0.5 * 63.55).toFixed(3))
-        cathodeDeltaM = parseFloat((ne * 0.5 * 63.55).toFixed(3))
-        vAnodeGas = 0
-        vCathodeGas = 0
-        cMain = 1.0
-        pH = 7.0
-      }
-    } else if (cellType === 2) {
-      // 2: 饱和食盐水 (氯碱)
-      anodeDeltaM = 0
-      cathodeDeltaM = 0
-      vAnodeGas = parseFloat((ne * 0.5 * 22.4).toFixed(3))
-      vCathodeGas = parseFloat((ne * 0.5 * 22.4).toFixed(3))
-      cMain = Math.max(0.1, parseFloat((1.0 - ne * 0.5).toFixed(3)))
-      pH = Math.min(13.8, parseFloat((7.0 + ne * 3.0).toFixed(2)))
-    } else if (cellType === 3) {
-      // 3: 粗铜精炼
-      anodeDeltaM = -parseFloat((ne * 0.5 * 63.55 * 1.05).toFixed(3))
-      cathodeDeltaM = parseFloat((ne * 0.5 * 63.55).toFixed(3))
-      vAnodeGas = 0
-      vCathodeGas = 0
-      cMain = 1.0
-      pH = 4.5
-    } else {
-      // 4: 熔融 Al2O3
-      anodeDeltaM = -parseFloat((ne * 0.25 * 12.0).toFixed(3)) // C阳极消耗
-      cathodeDeltaM = parseFloat((ne * (1 / 3) * 27.0).toFixed(3))
-      vAnodeGas = parseFloat((ne * 0.25 * 22.4).toFixed(3))
-      vCathodeGas = 0
-      cMain = Math.max(0.1, parseFloat((1.0 - ne * 0.2).toFixed(3)))
-      pH = 7.0
-    }
+    const neRaw = transferredElectronMoles(current, t)
+    const ne = parseFloat(neRaw.toFixed(4))
+    const state = electrolysisState(cellType, anodeMaterial, neRaw)
 
     return {
       time: t,
       ne,
-      anodeDeltaM,
-      cathodeDeltaM,
-      vAnodeGas,
-      vCathodeGas,
-      cMain,
-      pH,
+      anodeDeltaM: parseFloat(state.anodeMassDelta.toFixed(3)),
+      cathodeDeltaM: parseFloat(state.cathodeMassDelta.toFixed(3)),
+      vAnodeGas: parseFloat(state.anodeGasVolume.toFixed(3)),
+      vCathodeGas: parseFloat(state.cathodeGasVolume.toFixed(3)),
+      cMain: parseFloat(state.concentration.toFixed(4)),
+      pH: parseFloat(state.pH.toFixed(2)),
     }
   }, [cellType, anodeMaterial, current])
 

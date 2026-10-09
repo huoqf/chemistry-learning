@@ -90,9 +90,9 @@ export const XxxCanvas: React.FC = () => {
             </LeftPanel>
           }
           center={
-            <div className="w-full h-full flex flex-col overflow-hidden bg-slate-50">
+            <div className="w-full h-full flex flex-col overflow-hidden">
               {viewMode === 0 && (
-                // 中屏自适应 SVG 画布（透出 Theme 背景，绝对不加深色/杂色 div）
+                // 中屏自适应 SVG 画布（透出 Theme 统一背景，严禁自写浅色/深色/杂色背景 div）
                 <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
                   <ChemistryVectorArrow
                     x1={0}
@@ -119,7 +119,7 @@ export const XxxCanvas: React.FC = () => {
             </div>
           }
           right={
-            <div className="w-full h-full p-4 bg-white overflow-y-auto">
+            <div className="w-full h-full p-4 overflow-y-auto">
               {/* 右屏统一展示化学量、公式与高考要点 */}
             </div>
           }

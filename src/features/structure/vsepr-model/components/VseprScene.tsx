@@ -151,7 +151,6 @@ export function VseprScene({
           near: 0.1,
           far: 100,
         }}
-        style={{ background: '#f8fafc' }}
       >
         <SceneContent
           molecule={molecule}

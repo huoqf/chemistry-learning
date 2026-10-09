@@ -51,7 +51,7 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
   // 视角 1: 规范踩分卡
   if (viewMode === 1) {
     return (
-      <div className="w-full h-full flex flex-col overflow-y-auto p-4 bg-slate-50 select-none">
+      <div className="w-full h-full flex flex-col overflow-y-auto p-4 select-none">
         {quizData && quizData.scoringSteps.length > 0 ? (
           <ScoringCardSection steps={quizData.scoringSteps} />
         ) : (
@@ -66,7 +66,7 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
   // 视角 2: 高考真题变式研析
   if (viewMode === 2) {
     return (
-      <div className="w-full h-full flex flex-col overflow-y-auto p-4 bg-slate-50 select-none">
+      <div className="w-full h-full flex flex-col overflow-y-auto p-4 select-none">
         {quizData && quizData.variantQuizzes.length > 0 ? (
           <GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />
         ) : (
@@ -80,11 +80,11 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
 
   // 视角 0: 交互图谱探究 (Light Theme 亮色风格 420x650 + 420x650 左右 1:1 分区)
   return (
-    <div className="w-full h-full flex flex-row overflow-hidden select-none bg-slate-100 p-2 gap-2">
+    <div className="w-full h-full flex flex-row overflow-hidden select-none p-2 gap-2">
       {/* ── 左侧 420px 视口区 (CANVAS_PRESETS.splitH 420x650) ── */}
       <div
         ref={containerRef}
-        className="w-1/2 h-full shrink-0 border border-slate-200/90 relative bg-white rounded-xl shadow-2xs overflow-hidden"
+        className="w-1/2 h-full shrink-0 border border-slate-200/90 relative rounded-xl shadow-2xs overflow-hidden"
       >
         <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
           <defs>
@@ -240,8 +240,8 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
               </p>
             </div>
 
-            {/* 复用 BaseChart 标准图表组件 */}
-            <div className="h-[260px] w-full p-2 bg-slate-50 rounded-lg border border-slate-200">
+            {/* 复用 BaseChart 标准图表组件（铁律 1：图表区包裹 div 不得手写背景色） */}
+            <div className="h-[260px] w-full p-2 rounded-lg border border-slate-200">
               <BaseChart
                 xDomain={[0.5, 8.5]}
                 yDomain={[400, 2400]}

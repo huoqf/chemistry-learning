@@ -1,20 +1,21 @@
 import type { ChemistryQuantity } from '../../chemistryQuantities'
+import { REACTION_MODELS } from '@/features/inorganic/redox-electron-transfer/hooks/useRedoxElectronTransferChemistry'
 
 export function buildRedoxElectronTransferQuantities(params: Record<string, number>): ChemistryQuantity[] {
-  const mole = params.moleAmount ?? 1.0
-  const reaction = params.reaction ?? 0
+  const n = params.moleAmount ?? 1.0
+  const reactionIdx = Math.max(0, Math.min(REACTION_MODELS.length - 1, Math.floor(params.reaction ?? 0)))
+  const model = REACTION_MODELS[reactionIdx]
 
-  let eTransferred = 2 * mole
-  if (reaction === 3) {
-    eTransferred = 10 * mole
-  }
+  const eTransferred = model.transferredElectrons * n
+  const oxidantMoles = model.stoichiometry.oxidant * n
+  const reductantMoles = model.stoichiometry.reductant * n
 
   return [
     {
       key: 'moleAmount',
-      label: '基准物质的量',
-      value: mole,
-      unit: 'mol',
+      label: '反应进程倍率 n',
+      value: n,
+      unit: '倍',
       colorKey: 'concentration',
       precision: 1,
     },
@@ -24,6 +25,22 @@ export function buildRedoxElectronTransferQuantities(params: Record<string, numb
       value: eTransferred,
       unit: 'mol',
       colorKey: 'reactionRate',
+      precision: 1,
+    },
+    {
+      key: 'oxidantMoles',
+      label: `消耗氧化剂 (${model.oxidant})`,
+      value: oxidantMoles,
+      unit: 'mol',
+      colorKey: 'current',
+      precision: 1,
+    },
+    {
+      key: 'reductantMoles',
+      label: `消耗还原剂 (${model.reductant})`,
+      value: reductantMoles,
+      unit: 'mol',
+      colorKey: 'temperature',
       precision: 1,
     },
     {

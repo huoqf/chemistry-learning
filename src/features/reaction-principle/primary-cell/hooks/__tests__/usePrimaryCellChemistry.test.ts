@@ -34,9 +34,11 @@ describe('usePrimaryCellChemistry — 原电池化学计算测试', () => {
       expect(result.current.anodeDeltaM).toBeLessThan(0)
       // 正极析氢 (2H⁺ + 2e⁻ = H₂↑), Cu 电极不溶解不增重, Δm(正) = 0
       expect(result.current.cathodeDeltaM).toBe(0)
-      // 电压 U ≈ 1.10 V
-      expect(result.current.voltage).toBe(1.10)
-      // H⁺ 反应消耗，浓度 cMain 下降 (< 1.0)
+      // 电压 U = 0.76 V —— 正极是 2H⁺ + 2e⁻ = H₂↑（析氢），
+      // E° = E°(H⁺/H₂) − E°(Zn²⁺/Zn) = 0.00 − (−0.76)；
+      // 1.10 V 是丹尼尔电池（Cu²⁺/Cu 正极）的值，不可混用
+      expect(result.current.voltage).toBe(0.76)
+      // H₂SO₄ 被消耗，浓度 cMain 下降 (< 1.0)
       expect(result.current.cMain).toBeLessThan(1.0)
     })
   })
@@ -84,21 +86,21 @@ describe('usePrimaryCellChemistry — 原电池化学计算测试', () => {
       expect(result.current.anodeDeltaM).toBe(0)
       expect(result.current.cathodeDeltaM).toBe(0)
       expect(result.current.voltage).toBe(1.23)
-      // 碱性介质 OH⁻ 循环，cMain 保持稳定
-      expect(result.current.cMain).toBe(1.0)
+      // 碱性介质 OH⁻ 在正负极间的消耗与生成恰好抵消，只余生成水的极微稀释
+      expect(result.current.cMain).toBeLessThanOrEqual(1.0)
+      expect(result.current.cMain).toBeGreaterThan(0.999)
     })
 
-    it('酸性介质生成水致电解质稀释，cMain 微弱下降', () => {
-      const { result } = renderHook(() =>
-        usePrimaryCellChemistry({
-          cellType: 2,
-          electrolyteType: 1, // 酸性
-          current: 2.0,
-          time: 8,
-        })
+    it('碱性 / 酸性两种介质给出完全相同的浓度（关键离子净变化均为 0）', () => {
+      const { result: basic } = renderHook(() =>
+        usePrimaryCellChemistry({ cellType: 2, electrolyteType: 0, current: 2.0, time: 8 })
+      )
+      const { result: acidic } = renderHook(() =>
+        usePrimaryCellChemistry({ cellType: 2, electrolyteType: 1, current: 2.0, time: 8 })
       )
 
-      expect(result.current.cMain).toBeLessThan(1.0)
+      // 原实现碱性写死 1.0、酸性按伪系数 ne×0.1 下降，凭空制造出介质差异——已修正
+      expect(basic.current.cMain).toBe(acidic.current.cMain)
     })
   })
 

@@ -5,7 +5,7 @@
  * 包含 A₂ + B₂ -> 2AB 取向碰撞、能量阈值判断、碰撞闪光及统计。
  */
 
-const R = 8.314 // J/(mol·K)
+import { computeCollisionKinetics } from '@/chemistry/collision'
 
 export type ParticleType = 'A2' | 'B2' | 'AB'
 
@@ -42,17 +42,16 @@ function makeParticles(
   width: number,
   height: number,
   temperature: number,
-  activationEnergy: number
+  activationFraction: number
 ): Particle[] {
   const baseSpeed = 40 * Math.sqrt(temperature / 298)
-  const f = Math.exp((-activationEnergy * 1000) / (R * temperature * 2.5))
 
   return Array.from({ length: count }, (_, i) => {
     const angle = Math.random() * Math.PI * 2
     const moveAngle = Math.random() * Math.PI * 2
     const speed = baseSpeed * (0.6 + Math.random() * 0.8)
     const energy = Math.random()
-    const isActivated = energy < Math.max(f * 2.5, 0.15)
+    const isActivated = energy < Math.max(activationFraction * 1.5, 0.15)
     // 前一半为 A2，后一半为 B2
     const type: ParticleType = i % 2 === 0 ? 'A2' : 'B2'
 
@@ -81,20 +80,24 @@ export function initCollisionWorld(
   hasCatalyst: boolean,
   activationEnergy: number = 80
 ): CollisionWorld {
-  const effectiveEa = hasCatalyst ? activationEnergy * 0.55 : activationEnergy
+  const kinetics = computeCollisionKinetics({
+    temperature,
+    concentration,
+    activationEnergy,
+    hasCatalyst,
+  })
   const baseCount = 14
   const count = Math.max(6, Math.round(baseCount * concentration))
-  const particles = makeParticles(count, width, height, temperature, effectiveEa)
-  const f = Math.exp((-effectiveEa * 1000) / (R * temperature * 2.5))
+  const particles = makeParticles(count, width, height, temperature, kinetics.activationFraction)
 
   return {
     particles,
     stats: {
       totalCollisions: 0,
       effectiveCollisions: 0,
-      activationFraction: f,
-      rateConstant: 100 * f,
-      reactionRate: 100 * f * concentration,
+      activationFraction: kinetics.activationFraction,
+      rateConstant: kinetics.rateConstant,
+      reactionRate: kinetics.reactionRate,
       producedABCount: 0,
     },
   }

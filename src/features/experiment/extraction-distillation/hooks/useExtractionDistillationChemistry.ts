@@ -1,5 +1,14 @@
 import { useMemo } from 'react'
-import { SCENE_COLORS, withAlpha } from '@/theme'
+import { PHENOMENON_COLORS, SCENE_COLORS, withAlpha } from '@/theme'
+import {
+  IODINE_PARTITION_BENZENE,
+  IODINE_PARTITION_CCL4,
+  IODINE_WATER_INITIAL_CONC,
+  IODINE_WATER_VOLUME_ML,
+  extractionEquilibrium,
+  extractionMixProgress,
+  miscibleUniformConcentration,
+} from '@/chemistry'
 
 export interface UseExtractionDistillationChemistryParams {
   experimentMode: number // 0: 萃取分液, 1: 蒸馏分馏
@@ -80,11 +89,13 @@ export function useExtractionDistillationChemistry({
     const isBenzene = solvent === 1
     const isEthanol = solvent === 2
 
-    // 基础试剂色彩
-    const iodineWaterColor = '#D97706' // 黄褐色碘水
-    const ccl4IodineColor = '#9333EA' // 深紫红色 CCl4 溶碘
-    const benzeneIodineColor = '#E11D48' // 鲜艳橙红色 苯溶碘
-    const ethanolMixedColor = '#B45309' // 乙醇与碘水互溶的均一棕黄色
+    // 基础试剂色彩 —— 一律取自 @/theme 的 PHENOMENON_COLORS（禁止组件内硬编码 hex）
+    // 显式标注 string：PHENOMENON_COLORS 为 as const 字面量，否则后续与 withAlpha()
+    // 产出的 rgba 字符串混用时会触发字面量类型不兼容
+    const iodineWaterColor: string = PHENOMENON_COLORS.i2Water // 棕黄色碘水
+    const ccl4IodineColor: string = PHENOMENON_COLORS.i2Ccl4 // 紫红色 CCl₄ 溶碘
+    const benzeneIodineColor: string = PHENOMENON_COLORS.i2Benzene // 紫红色 苯溶碘
+    const ethanolMixedColor: string = PHENOMENON_COLORS.i2Water // 乙醇与碘水互溶的均一棕黄色
     const fadedWaterColor = withAlpha(SCENE_COLORS.reagent.solution, 0.15) // 萃取后近无色透明水相
     const transparentOrganic = withAlpha(SCENE_COLORS.reagent.solution, 0.1) // 无色有机溶剂
 
@@ -369,13 +380,29 @@ export function useExtractionDistillationChemistry({
 
     for (let t = 0; t <= maxChartTime; t += 0.2) {
       if (experimentMode === 0) {
-        // 萃取 c-t: val1: c_aq (水相浓度 mol/L), val2: c_org (有机相浓度 mol/L)
+        // 萃取 c-t: val1: c(水相) mol/L, val2: c(有机相) mol/L
+        // 与量面板共用 @/chemistry/extraction 的平衡式与时间曲线，禁止两处各写一份
         if (isEthanol) {
-          chartHistory.push({ time: t, val1: 0.1, val2: 0 })
+          // 互溶体系：无独立有机相，碘只是被稀释
+          const cUniform = miscibleUniformConcentration(
+            IODINE_WATER_INITIAL_CONC,
+            IODINE_WATER_VOLUME_ML,
+            vSolvent
+          )
+          chartHistory.push({ time: t, val1: parseFloat(cUniform.toFixed(4)), val2: 0 })
         } else {
-          const p = Math.min(1, Math.max(0, (t - 2.0) / 3.2))
-          const cAq = Math.max(0.005, 0.10 - 0.092 * p * (vSolvent / 20))
-          const cOrg = (0.10 - cAq) * (20 / vSolvent)
+          const kPartition = isCCl4 ? IODINE_PARTITION_CCL4 : IODINE_PARTITION_BENZENE
+          const equilibrium = extractionEquilibrium(
+            IODINE_WATER_INITIAL_CONC,
+            IODINE_WATER_VOLUME_ML,
+            vSolvent,
+            kPartition
+          )
+          const p = extractionMixProgress(t)
+          const cAq =
+            IODINE_WATER_INITIAL_CONC + (equilibrium.aqueous - IODINE_WATER_INITIAL_CONC) * p
+          // 有机相浓度由物料守恒反推，保证 c(org)·V(org) + c(aq)·V(aq) 恒等于碘的总量
+          const cOrg = ((IODINE_WATER_INITIAL_CONC - cAq) * IODINE_WATER_VOLUME_ML) / vSolvent
           chartHistory.push({
             time: t,
             val1: parseFloat(cAq.toFixed(4)),

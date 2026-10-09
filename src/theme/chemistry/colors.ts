@@ -209,6 +209,7 @@ export const PHENOMENON_COLORS = {
   br2Ccl4:          '#C2410C', // 橙红色 Br2/CCl4 有机相
   i2Water:          '#B45309', // 棕黄色碘水
   i2Ccl4:           '#7E22CE', // 紫红色 I2/CCl4 有机相
+  i2Benzene:        '#E11D48', // 碘的苯溶液（紫红略偏玫瑰红，用于与 CCl₄ 相区分）
   fuchsinRed:       '#F43F5E', // SO2 检验品红溶液红色
   phenolFe3Violet:  '#6D28D9', // 苯酚与 Fe3+ 显紫罗兰色
 

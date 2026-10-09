@@ -1,8 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
-import { AtomMesh, BondMesh } from '@/components/Chemistry3D'
-import { isWebGLAvailable } from '@/components/Chemistry3D/utils/webgl'
+import { AtomMesh, BondMesh, WebGLFallback, isWebGLAvailable } from '@/components/Chemistry3D'
 import {
   ORGANIC_3D_MOLECULES,
   type Organic3DMolecule,
@@ -26,18 +25,6 @@ const DIRECTIONAL_INTENSITY = 0.85
 interface OrganicMolecule3DModalProps {
   molecule: Organic3DMolecule | null
   onClose: () => void
-}
-
-function WebGLFallback() {
-  return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 p-6 text-center rounded-xl border border-slate-200">
-      <span className="text-4xl mb-3">🔬</span>
-      <h4 className="text-sm font-bold text-slate-800 mb-1">3D 硬件加速未就绪</h4>
-      <p className="text-xs text-slate-500 max-w-xs leading-relaxed">
-        当前浏览器环境未启用 WebGL 硬件加速，建议使用现代 Chrome/Edge 浏览器获得最佳 3D 交互体验。
-      </p>
-    </div>
-  )
 }
 
 export const OrganicMolecule3DModal: React.FC<OrganicMolecule3DModalProps> = ({
@@ -211,7 +198,10 @@ export const OrganicMolecule3DModal: React.FC<OrganicMolecule3DModalProps> = ({
           {/* 画布主视窗 */}
           <div ref={containerRef} className="w-full flex-1 relative">
             {!isWebGL ? (
-              <WebGLFallback />
+              <WebGLFallback
+                size="sm"
+                description="当前环境未启用 WebGL 硬件加速，建议使用现代 Chrome / Edge 浏览器获得最佳 3D 交互体验。"
+              />
             ) : isReady ? (
               <Canvas
                 key={activeMolecule.id}

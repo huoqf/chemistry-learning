@@ -37,30 +37,30 @@ description: 新建 3D 场景页面 / 创建 React Three Fiber 场景 / 添加 3
 
 | 模式 | 布局 | 适用场景 |
 |------|------|---------|
-| 独立全屏 | 3D Canvas 占满 + 右侧信息面板 | 晶胞展示、分子构型 |
-| 2D/3D 混合 | 左侧 2D 图表 + 右侧 3D Canvas | 需要配合数据图表的场景 |
-| 嵌入式 | 3D Canvas 作为页面的一部分 | 未来扩展，当前不推荐 |
+| 三屏标准（全景 3D） | 中屏 3D Canvas 占满 (CANVAS_PRESETS.full) | 晶胞堆积、VSEPR 模型、杂化轨道空间叠加 |
+| 三屏标准（2D/3D 对照） | 中屏左侧 2D + 右侧 3D 对半 (CANVAS_PRESETS.splitH) | 同分异构体 (2D骨架+3D球棍)、手性分子镜像 |
+| 高考母题工具模式 | ThreePanel + GaokaoToolHeader 多视角切换 | 高考专属提分工具与晶胞微专题 |
 
-**默认选择独立全屏**：3D 交互范式（旋转/缩放）与 2D 三屏时间轴截然不同，不走 `AnimationPage` 的三屏布局。
+**标准架构**：所有 3D 页面均必须接入系统统一的 `ThreePanel` 架构（左屏参数控制 `ParamControl` / 模式开关 `ControlPanel`，中屏纯净 3D Canvas，右屏化学量与考点）。禁止跳出三屏系统自造单体外壳。
 
 ### 0C：路由策略
 
 | 策略 | 适用场景 |
 |------|---------|
-| 独立路由（推荐） | 晶胞、分子构型等独立 3D 页面 |
-| 复用 AnimationPage | 未来需要嵌入现有三屏布局时再考虑 |
+| 知识地图标准动画（推荐） | 在 `src/data/registries/structure.ts` 注册，知识树自动解析路由 `/#/animation/anim-<topic>` |
+| 高考解题母题工具 | 在 `src/data/gaokaoModels.ts` 注册，统一承载于 `/#/gaokao-tool/<model-id>` |
 
-**当前阶段统一用独立路由**，在 `App.tsx` 中注册。等出现需要嵌入 `AnimationPage` 的场景再抽象统一。
+**铁律**：严禁在 `App.tsx` 中直接硬编码手写散乱的新路由；所有 3D 页面通过 Registry 或 GaokaoModels 统一自动挂载。
 
 ---
 
 ## Step 1：文件结构（必须遵守）
 
-### 3D 页面（独立路由）
+### 3D 动画页面（标准三屏体系）
 
 ```
 src/features/<domain>/<topic>/
-├── <Topic>Page.tsx            <- 页面入口（WebGL 检测 + fallback + 数据加载）
+├── <Topic>Animation.tsx       <- 页面入口（Store 订阅 + 场景组装，零硬编码布局）
 ├── components/
 │   └── <Topic>Scene.tsx       <- R3F 3D 场景（Canvas + Camera + Controls + Mesh）
 ├── data/
@@ -85,51 +85,64 @@ src/components/Chemistry3D/
 
 | 类型 | 命名格式 | 示例 |
 |------|---------|------|
-| 3D 页面 | `<Topic>Page` | `UnitCellPage` `MoleculePage` |
-| 3D 场景组件 | `<Topic>Scene` | `UnitCellScene` `MoleculeScene` |
+| 3D 动画入口 | `<Topic>Animation` | `UnitCellCalculationAnimation` `VseprAnimation` |
+| 3D 场景组件 | `<Topic>Scene` | `UnitCellScene` `VseprScene` |
 | 3D 公共组件 | `<Name>Mesh` | `UnitCellMesh` `AtomMesh` |
-| 数据文件 | `<topic>Data` | `simpleCubicData` `naclData` |
+| 数据文件 | `<topic>Data` | `unitCellData` `vseprData` |
 | 转换函数 | `<topic>Transform` | `fracToWorld` |
 
 ---
 
 ## Step 2：骨架代码
 
-### 2A：页面入口（`<Topic>Page.tsx`）
+### 2A：页面入口（`<Topic>Animation.tsx`）
 
 ```tsx
 /**
- * <Topic>Page — 3D 场景页面入口
+ * <Topic>Animation — 3D 场景页面入口
  *
  * 职责：
- * - WebGL 可用性检测 + 降级 fallback
- * - 加载预设数据
+ * - 订阅 Store 状态
+ * - WebGL 可用性检测与降级 fallback (无手写背景色)
  * - 渲染 <Topic>Scene
  */
-import { isWebGLAvailable } from '../utils/webgl'
-import { DATA } from '../data/<topic>Data'
-import { <Topic>Scene } from '../components/<Topic>Scene'
+import { useAnimationStore } from '@/stores'
+import { useShallow } from 'zustand/react/shallow'
+import { isWebGLAvailable } from '@/components/Chemistry3D'
+import { <Topic>Scene } from './components/<Topic>Scene'
+import { use<Topic>Chemistry } from './hooks/use<Topic>Chemistry'
 
 function WebGLFallback() {
   return (
-    <div className="flex flex-col items-center justify-center h-full bg-slate-50 p-8 text-center">
+    // 铁律 1：中屏背景一律由系统 Light Theme 提供 —— fallback 容器同样
+    // 不得写 bg-transparent / bg-slate-50 / bg-white 等任何背景类
+    <div className="flex flex-col items-center justify-center h-full p-8 text-center border border-slate-200 rounded-xl">
       <div className="text-6xl mb-4">🔬</div>
       <h2 className="text-xl font-bold text-slate-800 mb-2">WebGL 不可用</h2>
       <p className="text-sm text-slate-500 max-w-md">
         当前浏览器不支持 WebGL，无法渲染 3D 模型。
         请使用 Chrome / Firefox / Safari 最新版本，或开启硬件加速。
       </p>
-      {/* 静态 fallback 信息 */}
     </div>
   )
 }
 
-export default function <Topic>Page() {
+export default function <Topic>Animation() {
+  const { params } = useAnimationStore(
+    useShallow((s) => ({ params: s.params }))
+  )
+
+  const chemistry = use<Topic>Chemistry(params)
+
   if (!isWebGLAvailable()) {
     return <WebGLFallback />
   }
 
-  return <Topic>Scene data={DATA} />
+  return (
+    <div className="w-full h-full relative overflow-hidden">
+      <<Topic>Scene chemistry={chemistry} />
+    </div>
+  )
 }
 ```
 
@@ -139,53 +152,45 @@ export default function <Topic>Page() {
 /**
  * <Topic>Scene — R3F 3D 场景
  *
- * 性能规范（铁律）：
+ * 性能与样式规范（铁律）：
  * - 静态场景必须 frameloop="demand"（只在交互时重绘）
  * - dpr={[1, 2]} 上限约束（避免高分屏过度渲染）
  * - enableDamping={false}（demand 模式下阻尼失效）
  * - 触摸容器必须 touch-action: none（避免滚动冲突）
+ * - 严禁在 Canvas 标签上手写 style={{ background: '#f8fafc' }} 等背景色，统一由系统 Light Theme 提供
  */
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Html, Line } from '@react-three/drei'
-import type { <Topic>Data } from '../data/<Topic>Data'
+import { OrbitControls } from '@react-three/drei'
+import type { <Topic>ChemistryResult } from '../hooks/use<Topic>Chemistry'
 
 interface <Topic>SceneProps {
-  data: <Topic>Data
+  chemistry: <Topic>ChemistryResult
   className?: string
 }
 
-export function <Topic>Scene({ data, className = '' }: <Topic>SceneProps) {
+export function <Topic>Scene({ chemistry, className = '' }: <Topic>SceneProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
   return (
-    <div className={`flex h-full ${className}`}>
-      {/* 左侧：3D Canvas */}
-      <div className="flex-1 min-w-0" style={{ touchAction: 'none' }}>
-        <Canvas
-          orthographic          // 或 perspective，取决于 Step 0A 决策
-          frameloop="demand"    // 静态场景必须 demand
-          dpr={[1, 2]}          // 高分屏上限约束
-          camera={{
-            zoom: 120,          // 正交相机缩放
-            position: [1.5, 1.2, 1.5],
-            near: -100,
-            far: 100,
-          }}
-          style={{ background: '#f8fafc' }}
-        >
-          <SceneContent
-            data={data}
-            selectedId={selectedId}
-            onSelect={setSelectedId}
-          />
-        </Canvas>
-      </div>
-
-      {/* 右侧：信息面板 */}
-      <div className="w-64 shrink-0 bg-white border-l border-slate-200 p-4 overflow-auto">
-        {/* 参数/Z值/详情面板 */}
-      </div>
+    <div className={`w-full h-full relative ${className}`} style={{ touchAction: 'none' }}>
+      <Canvas
+        orthographic          // 或 perspective，取决于 Step 0A 决策
+        frameloop="demand"    // 静态场景必须 demand
+        dpr={[1, 2]}          // 高分屏上限约束
+        camera={{
+          zoom: 120,          // 正交相机缩放
+          position: [2.5, 2.0, 3.8],
+          near: -100,
+          far: 100,
+        }}
+      >
+        <SceneContent
+          chemistry={chemistry}
+          selectedId={selectedId}
+          onSelect={setSelectedId}
+        />
+      </Canvas>
     </div>
   )
 }

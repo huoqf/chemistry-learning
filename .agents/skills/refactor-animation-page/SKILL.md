@@ -216,6 +216,8 @@ import { MiniChart } from '@/components/UI'
 - [ ] 废弃 preset 已迁移（wide/tall -> full/splitV/splitH/splitHw/square）
 - [ ] originPixel -> originDesign 已全部替换
 - [ ] 裸 requestAnimationFrame 已替换
+- [ ] 画布区及图表区任何包裹 div 绝不手写背景色（包括 bg-white、bg-slate-50 等，由 Light Theme 统一提供）
+- [ ] 物理化学计算与右屏化学量同源引用（优先复用 @/chemistry 纯函数，禁止两处分头实现导致数据脱节）
 
 ### 组件复用
 - [ ] 矢量箭头已替换（无 line+marker）

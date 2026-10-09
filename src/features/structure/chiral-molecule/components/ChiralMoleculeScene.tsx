@@ -168,7 +168,12 @@ function SceneContent({
   mirrorOverlapRatio,
 }: ChiralMoleculeSceneProps) {
   const [selectedAtomId, setSelectedAtomId] = useState<string | null>(null)
-  const mirrorPlaneX = 1.75 * (1 - mirrorOverlapRatio)
+  // 镜像面（虚线平面）必须画在实物与镜像两份坐标的真实分界面上：
+  //   实物组平移 −0.5·(1−ratio)，镜像原子坐标 = −x + 3.5·(1−ratio)，
+  //   两者的中分面恒为 x = 1.5·(1−ratio)（与分子的原子分布无关）。
+  // 原实现写成 1.75·(1−ratio)，比真实分界面偏右 0.25·(1−ratio)，
+  // 视觉上平面并不在两者正中。
+  const mirrorPlaneX = 1.5 * (1 - mirrorOverlapRatio)
 
   return (
     <group onPointerMissed={() => setSelectedAtomId(null)}>

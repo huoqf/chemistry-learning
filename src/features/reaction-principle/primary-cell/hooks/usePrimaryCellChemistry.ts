@@ -1,8 +1,14 @@
 import { useMemo } from 'react'
+import { transferredElectronMoles, galvanicCellState } from '@/chemistry'
 
 export interface PrimaryCellChemistryParams {
   cellType: number // 0: 单槽, 1: 盐桥双槽, 2: 氢氧燃料, 3: 铅蓄电池
-  electrolyteType: number // 0: 碱性, 1: 酸性
+  /**
+   * 0: 碱性, 1: 酸性 —— 仅由中屏场景消费（离子标注、电极方程式）。
+   * 本 hook 不再读它：燃料电池在两种介质下关键离子浓度同样「几乎不变」，
+   * 若只为介质分支而给出不同结果，等于凭空制造差异。
+   */
+  electrolyteType: number
   current: number // 电流 A
   time: number // 时间 s
 }
@@ -32,47 +38,23 @@ export interface PrimaryCellChemistryResult {
 }
 
 const MAX_TIME = 10
-const F = 96485
 
-function calculateStateAtTime(
-  cellType: number,
-  electrolyteType: number,
-  current: number,
-  t: number
-) {
-  const ne = parseFloat(((current * t * 50) / F).toFixed(4))
-  let anodeDeltaM = 0
-  let cathodeDeltaM = 0
-  let voltage = 1.10
-  let cMain = 1.0
-
-  if (cellType === 0) {
-    // 经典单槽 Zn-Cu
-    anodeDeltaM = -parseFloat((ne * 0.5 * 65.38).toFixed(3))
-    cathodeDeltaM = 0
-    voltage = 1.10
-    cMain = Math.max(0.05, parseFloat((1.0 - ne * 0.5).toFixed(3)))
-  } else if (cellType === 1) {
-    // 双槽盐桥 Zn-Cu
-    anodeDeltaM = -parseFloat((ne * 0.5 * 65.38).toFixed(3))
-    cathodeDeltaM = parseFloat((ne * 0.5 * 63.55).toFixed(3))
-    voltage = 1.10
-    cMain = Math.max(0.05, parseFloat((1.0 - ne * 0.5).toFixed(3)))
-  } else if (cellType === 2) {
-    // 氢氧燃料电池
-    anodeDeltaM = 0
-    cathodeDeltaM = 0
-    voltage = 1.23
-    cMain = electrolyteType === 0 ? 1.0 : Math.max(0.1, parseFloat((1.0 - ne * 0.1).toFixed(3)))
-  } else {
-    // 铅蓄电池
-    anodeDeltaM = parseFloat((ne * 0.5 * 96.1).toFixed(3))
-    cathodeDeltaM = parseFloat((ne * 0.5 * 64.1).toFixed(3))
-    voltage = 2.04
-    cMain = Math.max(0.1, parseFloat((1.0 - ne * 1.0).toFixed(3)))
+/**
+ * 当前时刻状态。
+ * 与右屏量面板共用 @/chemistry/galvanicCell 的同一模型，禁止两处各写一份。
+ * electrolyteType 只影响中屏的离子标注与电极方程式，不进入本计算。
+ */
+function calculateStateAtTime(cellType: number, current: number, t: number) {
+  const neRaw = transferredElectronMoles(current, t)
+  const ne = parseFloat(neRaw.toFixed(4))
+  const state = galvanicCellState(cellType, neRaw)
+  return {
+    ne,
+    anodeDeltaM: parseFloat(state.anodeMassDelta.toFixed(3)),
+    cathodeDeltaM: parseFloat(state.cathodeMassDelta.toFixed(3)),
+    voltage: state.voltage,
+    cMain: parseFloat(state.concentration.toFixed(3)),
   }
-
-  return { ne, anodeDeltaM, cathodeDeltaM, voltage, cMain }
 }
 
 /**
@@ -80,7 +62,6 @@ function calculateStateAtTime(
  */
 export function usePrimaryCellChemistry({
   cellType,
-  electrolyteType,
   current,
   time,
 }: PrimaryCellChemistryParams): PrimaryCellChemistryResult {
@@ -92,7 +73,7 @@ export function usePrimaryCellChemistry({
 
     for (let i = 0; i <= steps; i++) {
       const t = (i / steps) * MAX_TIME
-      const st = calculateStateAtTime(cellType, electrolyteType, current, t)
+      const st = calculateStateAtTime(cellType, current, t)
       massHist.push({
         time: parseFloat(t.toFixed(1)),
         anodeDeltaM: st.anodeDeltaM,
@@ -106,7 +87,7 @@ export function usePrimaryCellChemistry({
     }
 
     return { fullMassHistory: massHist, fullIonHistory: ionHist }
-  }, [cellType, electrolyteType, current])
+  }, [cellType, current])
 
   // 动态根据当前 time 揭示历史数据
   const massHistory = useMemo(
@@ -120,8 +101,8 @@ export function usePrimaryCellChemistry({
 
   // 当前时刻状态
   const currentState = useMemo(
-    () => calculateStateAtTime(cellType, electrolyteType, current, time),
-    [cellType, electrolyteType, current, time]
+    () => calculateStateAtTime(cellType, current, time),
+    [cellType, current, time]
   )
 
   return {

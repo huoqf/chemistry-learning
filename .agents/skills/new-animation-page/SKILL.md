@@ -47,14 +47,17 @@ description: 新建动画页面 / 创建新的化学动画组件 / 新增动画�
 ## Step 1：文件结构
 
 ```
+src/chemistry/<domain>.ts         ← 纯物理化学底层计算（统一来源，无 React 依赖）
 src/features/<domain>/<topic>/
 ├── <Topic>Animation.tsx          ← 薄编排层（store + 组件组合，零化学公式）
 ├── hooks/
-│   └── use<Topic>Chemistry.ts    ← 纯化学计算 hook（零 JSX，零副作用）
+│   └── use<Topic>Chemistry.ts    ← 化学计算 hook（引入 @/chemistry 纯计算，零 JSX，零副作用）
 ├── components/
 │   └── <Topic>Scene.tsx          ← SVG 渲染（零化学公式，零 store 访问）
 └── index.ts
 ```
+
+⚠️ **纯计算层唯一来源**：化学公式推导、平衡态演化、微观速率、电极转移电子数等核心计算必须在 `src/chemistry/` 集中收敛。Hook 与右屏 Quantities 构建器**100% 共同 import 同一纯函数**，严禁在两处各写一套导致数据脱节。
 
 如有 CenterExtra：根目录追加 `<Topic>CenterExtra.tsx`。
 
@@ -316,6 +319,8 @@ registerQuantityBuilder('anim-<topic>', build<Topic>Quantities)
 
 - [ ] **三屏**：主屏无教学文字；左屏走 paramMeta/controlMeta；右屏由框架渲染（见 AGENTS.md 三屏铁律）
 - [ ] **布局**：preset 正确；worldWidth 对应 SVG 实际宽度；多图表用 `flex-1 min-h-0`；无手写固定高度；无 `foreignObject`
+- [ ] **背景色**：画布区及图表区任何包裹 div 绝不手写背景色（包括 bg-white、bg-slate-50 等，由 Light Theme 统一提供）
+- [ ] **纯计算层**：复杂反应/平衡/动力学公式在 `src/chemistry/` 权威收敛，Hook 与右屏 Quantities 100% 同源引用
 - [ ] **时序图**：history 全量预计算 + `.filter(p => p.time <= time)`；图表显式传 `xDomain={[0, MAX_TIME]}`；stopCondition 用化学条件（非时间截断）；reset 路径同步清空衍生状态
 - [ ] **右屏**：`formulas`/`gaokaoPoints` 为动态函数形式（多模型页面必须）；LaTeX 中 `\text{}` 内中文 ≤ 6 字
 - [ ] **Registry**：5 个文件全部完成（注册表 as const + 化学量构建器 + 知识点 id 核对）

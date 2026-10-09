@@ -5,6 +5,7 @@ import {
   UnitCellMesh,
   AtomMesh,
   BondMesh,
+  WebGLFallback,
   fracToWorld,
   isWebGLAvailable,
 } from '@/components/Chemistry3D'
@@ -17,18 +18,6 @@ interface UnitCellSceneProps {
   showBonds?: boolean
   edgeLengthPm?: number
   className?: string
-}
-
-function WebGLFallback() {
-  return (
-    <div className="flex flex-col items-center justify-center h-full bg-slate-50 p-8 text-center border border-slate-200 rounded-xl">
-      <div className="text-5xl mb-4">🔬</div>
-      <h3 className="text-lg font-bold text-slate-800 mb-2">WebGL 不可用</h3>
-      <p className="text-sm text-slate-500 max-w-sm">
-        当前环境无法渲染 3D 晶胞场景。请启用 WebGL 硬件加速后重新加载。
-      </p>
-    </div>
-  )
 }
 
 export function UnitCellScene({
@@ -49,7 +38,7 @@ export function UnitCellScene({
   }, [selectedAtomId, crystalData])
 
   if (!isWebGLAvailable()) {
-    return <WebGLFallback />
+    return <WebGLFallback description="当前环境未启用 WebGL 硬件加速，无法渲染 3D 晶胞场景。请启用硬件加速后重新加载。" />
   }
 
   return (
@@ -70,7 +59,6 @@ export function UnitCellScene({
           near: -100,
           far: 100,
         }}
-        style={{ background: CANVAS_COLORS.objectFillNeutral }}
       >
         <SceneContent
           crystalData={crystalData}

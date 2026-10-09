@@ -16,12 +16,14 @@ export const inorganicAnimations = defineAnimations({
     paramMeta: [
       {
         key: 'moleAmount',
-        label: '反应基准物质的量',
+        label: '反应进程倍率 n',
         min: 0.1,
         max: 5.0,
         step: 0.1,
-        unit: 'mol',
+        unit: '倍',
         group: '反应化学量',
+        description:
+          '按方程式整体计量的倍数：n = 1 表示该方程式完整进行一次。各物质的量 = n × 方程式计量数，转移电子数 = n × 基准转移电子数。',
       },
     ],
     controlMeta: [

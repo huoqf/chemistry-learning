@@ -21,8 +21,15 @@ export function useChiralChemistry({
     return CHIRAL_PRESETS[validIdx]
   }, [presetIdx])
 
-  // 计算相对于镜像面 (x=0) 的镜像分子 3D 坐标
-  // 当 mirrorOverlapRatio > 0 时，镜像分子沿着 x 轴向原分子中心平移 (初始镜像偏移为 x + offset)
+  // 计算相对于镜像面 (x=0) 的镜像分子 3D 坐标。
+  // 当 mirrorOverlapRatio > 0 时，镜像分子沿 x 轴向原分子位置平移（x' = −x + 3.5·(1−ratio)）。
+  //
+  // ── 镜像面约定（P2-12）──
+  // 镜像面**固定取 x = 0**（即 yOz 平面）。因此数据侧必须保证：
+  //   · 非手性预设（isChiral === false）：分子自身的对称面就落在 x = 0 上，
+  //     如此才可能发生「平移后完全重合」，与画面结论一致；
+  //   · 手性预设：不存在任何对称面，故镜像必然错位。
+  // 该约定由 __tests__/useChiralChemistry.test.ts 的守门测试锁定。
   const mirroredMolecule = useMemo<MirroredMoleculeData>(() => {
     const mirrorOffset = 3.5 * (1 - mirrorOverlapRatio) // 从 x = +3.5 平移到 x = 0
 

@@ -2,7 +2,7 @@ import { useAnimationStore } from '@/stores'
 import { useShallow } from 'zustand/react/shallow'
 import { useChiralChemistry } from './hooks/useChiralChemistry'
 import { ChiralMoleculeScene } from './components/ChiralMoleculeScene'
-import { isWebGLAvailable } from '@/components/Chemistry3D'
+import { isWebGLAvailable, WebGLFallback } from '@/components/Chemistry3D'
 
 export default function ChiralMoleculeAnimation() {
   const { params, setParams } = useAnimationStore(
@@ -23,15 +23,8 @@ export default function ChiralMoleculeAnimation() {
   })
 
   if (!isWebGLAvailable()) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full bg-slate-900 text-slate-200 p-8 text-center">
-        <div className="text-6xl mb-4">🔬</div>
-        <h2 className="text-xl font-bold mb-2">WebGL 不可用</h2>
-        <p className="text-sm text-slate-400 max-w-md">
-          当前环境无法渲染 WebGL 3D 场景，请确保硬件加速开启或使用现代浏览器。
-        </p>
-      </div>
-    )
+    // 中屏 fallback 背景由系统 Light Theme 统一提供（铁律 1：禁止手写任何深浅色背景）
+    return <WebGLFallback />
   }
 
   return (

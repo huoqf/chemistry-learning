@@ -112,6 +112,75 @@ describe('computeEnergyProfile — 反应势能曲线', () => {
     const result = computeEnergyProfile('exothermic', 80)
     expect(result.peakNormal.y).toBeCloseTo(result.reactantsEnergy + result.ea1Normal, 5)
   })
+
+  // ── P1-10 回归锁：标注点必须精确落在自己生成的曲线上 ──
+  // 物理有效域：Ea1 > |ΔH|（否则逆活化能 Ea2 = Ea1 − ΔH ≤ 0，不是合法基元反应）
+  const VALID_CASES: Array<{ type: 'exothermic' | 'endothermic'; ea: number }> = [
+    { type: 'exothermic', ea: 30 },
+    { type: 'exothermic', ea: 80 },
+    { type: 'exothermic', ea: 120 },
+    { type: 'endothermic', ea: 45 },
+    { type: 'endothermic', ea: 80 },
+    { type: 'endothermic', ea: 120 },
+  ]
+
+  /** 断言锚点（标注点）在曲线上存在同 x 的采样点且 y 相同 */
+  function expectAnchorOnPath(path: { x: number; y: number }[], anchor: { x: number; y: number }) {
+    const hit = path.find((p) => p.x === anchor.x)
+    expect(hit).toBeDefined()
+    expect(hit!.y).toBeCloseTo(anchor.y, 10)
+  }
+
+  it.each(VALID_CASES)(
+    'P1-10：$type Ea=$ea 时曲线折线的极值点与 peakNormal 严格重合',
+    ({ type, ea }) => {
+      const result = computeEnergyProfile(type, ea)
+      expectAnchorOnPath(result.normalPath, result.peakNormal)
+
+      // 折线中不得存在比标注峰顶更高的点（否则峰顶与标注必然错位）
+      const maxY = Math.max(...result.normalPath.map((p) => p.y))
+      expect(maxY).toBeCloseTo(result.peakNormal.y, 10)
+    }
+  )
+
+  it.each(VALID_CASES)(
+    'P1-10：$type Ea=$ea 时催化剂路径的三个标注点全部落在曲线上',
+    ({ type, ea }) => {
+      const result = computeEnergyProfile(type, ea, true)
+      expectAnchorOnPath(result.catalystPath, result.peakCatalyst1)
+      expectAnchorOnPath(result.catalystPath, result.intermediate)
+      expectAnchorOnPath(result.catalystPath, result.peakCatalyst2)
+    }
+  )
+
+  it('P1-10：势能曲线两端严格等于反应物/生成物能级（曲线过首末锚点）', () => {
+    for (const { type, ea } of VALID_CASES) {
+      const result = computeEnergyProfile(type, ea)
+      expect(result.normalPath[0].y).toBeCloseTo(result.reactantsEnergy, 10)
+      expect(result.normalPath[result.normalPath.length - 1].y).toBeCloseTo(
+        result.productsEnergy,
+        10
+      )
+    }
+  })
+
+  it('物理有效域内逆活化能 Ea2 = Ea1 − ΔH 恒为正', () => {
+    for (const { type, ea } of VALID_CASES) {
+      const result = computeEnergyProfile(type, ea)
+      expect(result.ea2Normal).toBeGreaterThan(0)
+    }
+  })
+
+  it('催化剂不改变两个端点能级（只改变中间历程）', () => {
+    for (const { type, ea } of VALID_CASES) {
+      const result = computeEnergyProfile(type, ea, true)
+      expect(result.catalystPath[0].y).toBeCloseTo(result.reactantsEnergy, 10)
+      expect(result.catalystPath[result.catalystPath.length - 1].y).toBeCloseTo(
+        result.productsEnergy,
+        10
+      )
+    }
+  })
 })
 
 // ────────────────────────────────────────────────

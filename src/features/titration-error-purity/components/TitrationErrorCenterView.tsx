@@ -147,7 +147,7 @@ export const TitrationErrorCenterView: React.FC<TitrationErrorCenterViewProps> =
   // 如果处于 规范踩分 ('scoring') 视角，在 DOM 层条件渲染
   if (viewMode === 'scoring') {
     return (
-      <div className="w-full h-full p-4 overflow-y-auto bg-slate-50 select-none">
+      <div className="w-full h-full p-4 overflow-y-auto select-none">
         {quizData?.scoringSteps && quizData.scoringSteps.length > 0 ? (
           <ScoringCardSection steps={quizData.scoringSteps} />
         ) : (
@@ -162,7 +162,7 @@ export const TitrationErrorCenterView: React.FC<TitrationErrorCenterViewProps> =
   // 如果处于 真题研析 ('quiz') 视角，在 DOM 层条件渲染
   if (viewMode === 'quiz') {
     return (
-      <div className="w-full h-full p-4 overflow-y-auto bg-slate-50 select-none">
+      <div className="w-full h-full p-4 overflow-y-auto select-none">
         <GaokaoVariantQuiz quizzes={quizData?.variantQuizzes || []} />
       </div>
     )

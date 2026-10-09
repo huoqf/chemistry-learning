@@ -5,6 +5,7 @@ import {
   UnitCellMesh,
   AtomMesh,
   BondMesh,
+  WebGLFallback,
   fracToWorld,
   isWebGLAvailable,
 } from '@/components/Chemistry3D'
@@ -19,18 +20,6 @@ interface Crystal3DSceneProps {
   edgeLengthPm: number
   onSelectLocationType?: (loc: AtomLocationType | null) => void
   className?: string
-}
-
-function WebGLFallback() {
-  return (
-    <div className="flex flex-col items-center justify-center h-full p-8 text-center bg-slate-50 border border-slate-200 rounded-xl">
-      <div className="text-5xl mb-4">🔬</div>
-      <h3 className="text-lg font-bold text-slate-800 mb-2">WebGL 暂不可用</h3>
-      <p className="text-sm text-slate-500 max-w-sm">
-        当前浏览器环境未开启 WebGL 硬件加速，无法渲染 3D 晶胞场景。请检查浏览器设置。
-      </p>
-    </div>
-  )
 }
 
 function formatFrac(n: number): string {
@@ -73,7 +62,7 @@ export function Crystal3DScene({
   }
 
   if (!isWebGLAvailable()) {
-    return <WebGLFallback />
+    return <WebGLFallback description="当前环境未开启 WebGL 硬件加速，无法渲染 3D 晶胞场景。请检查浏览器设置。" />
   }
 
   return (

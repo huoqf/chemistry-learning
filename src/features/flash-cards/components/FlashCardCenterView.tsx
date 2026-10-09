@@ -103,8 +103,8 @@ export function FlashCardCenterView({
             )}
           </div>
 
-          {/* 现象对比 SVG 场景画布 */}
-          <div className="w-full flex-1 min-h-[320px] bg-slate-50 border border-slate-200 rounded-xl p-2 relative">
+          {/* 现象对比 SVG 场景画布（铁律 1：画布区包裹 div 不得手写背景色） */}
+          <div className="w-full flex-1 min-h-[320px] border border-slate-200 rounded-xl p-2 relative">
             <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
               <FlashCardSvgScene
                 card={card}

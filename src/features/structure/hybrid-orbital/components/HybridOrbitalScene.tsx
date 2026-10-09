@@ -74,7 +74,10 @@ function SceneContent({
           {model.ligands.map((lig, lIdx) => {
             const ligId = `ligand-${lIdx}`
             const isSelected = selectedId === ligId
-            const centerPos = model.centers[0]?.pos || [0, 0, 0]
+            // σ 键必须从「该配体实际连接的中心原子」起画。
+            // 多中心分子（C₂H₄ / C₂H₂）若一律用 centers[0]，属于第 2 个 C 的 H
+            // 会连出一条穿过 C–C 键的长线。
+            const centerPos = model.centers[lig.connectedCenterIdx ?? 0]?.pos ?? model.centers[0]?.pos ?? [0, 0, 0]
 
             return (
               <group key={ligId}>
@@ -187,7 +190,7 @@ export function HybridOrbitalScene({
         title: '配位原子',
         role: '成键配体',
         detail: '通过 s 或 p 轨道与中心原子的杂化轨道“头碰头”重叠形成 σ 键。',
-        color: '#A855F7',
+        color: CHEMISTRY_COLORS.reactionRate,
       }
     : null
 
@@ -202,7 +205,6 @@ export function HybridOrbitalScene({
           near: 0.1,
           far: 100,
         }}
-        style={{ background: '#f8fafc' }}
       >
         <SceneContent
           model={model}

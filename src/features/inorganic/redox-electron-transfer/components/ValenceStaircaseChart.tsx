@@ -123,12 +123,20 @@ function MoleBarChartContent({ chemistry }: { chemistry: RedoxChemistryResult })
   if (!ctx) return null
   const { toSvgX, toSvgY, font } = ctx
 
-  const { actualTransferredElectrons, actualOxidantMoles, actualOxProductMoles, progress } = chemistry
+  const {
+    actualTransferredElectrons,
+    actualOxidantMoles,
+    actualReductantMoles,
+    actualOxProductMoles,
+    progress,
+  } = chemistry
   const oxColor = CHEMISTRY_COLORS.reactionRate
   const redColor = CHEMISTRY_COLORS.concentration
 
+  // 注意：「还原剂」柱必须取 actualReductantMoles，与「氧化剂」柱是两个不同的量
+  // （如 2Na + Cl₂ 中还原剂 Na 为 2 mol、氧化剂 Cl₂ 为 1 mol；MnO₂ + 4HCl 中为 4 : 1）
   const moleData = [
-    { label: '还原剂', value: actualOxidantMoles, color: oxColor },
+    { label: '还原剂', value: actualReductantMoles, color: oxColor },
     { label: '氧化剂', value: actualOxidantMoles, color: redColor },
     { label: '氧化产物', value: actualOxProductMoles, color: oxColor },
     { label: '转移电子', value: actualTransferredElectrons, color: CHART_COLORS.primary },
@@ -179,8 +187,20 @@ function MoleBarChartContent({ chemistry }: { chemistry: RedoxChemistryResult })
  * 右区图表组件：100% 组合自 BaseChart 原子图表基座组件
  */
 export function ValenceStaircaseChart({ chemistry }: ValenceStaircaseChartProps) {
-  const { actualTransferredElectrons, actualOxidantMoles, actualOxProductMoles } = chemistry
-  const moleDataValues = [actualOxidantMoles, actualOxProductMoles, actualTransferredElectrons]
+  const {
+    actualTransferredElectrons,
+    actualOxidantMoles,
+    actualReductantMoles,
+    actualOxProductMoles,
+  } = chemistry
+  // y 轴上限必须覆盖 all 被绘制的柱，否则最大值柱会溢出画布被裁切
+  // （此前漏算 actualReductantMoles，而它常是全组最大值：如 MnO₂+4HCl 的 4n）
+  const moleDataValues = [
+    actualReductantMoles,
+    actualOxidantMoles,
+    actualOxProductMoles,
+    actualTransferredElectrons,
+  ]
   const maxMole = Math.max(...moleDataValues, 1.0) * 1.25
 
   return (

@@ -10,6 +10,26 @@ export interface ReactionModelInfo {
   oxProduct: string       // 氧化产物
   redProduct: string      // 还原产物
   transferredElectrons: number // 基准转移电子数 n(e-)
+  /**
+   * 方程式化学计量数（按最小整数配平比）。
+   *
+   * 为什么必须显式给出：此前各物质的量是用 `factor * 1.0` 与
+   * `factor * (elements.oxidized.count / 2)` 硬凑出来的——「÷2」隐含假设
+   * 「每个氧化产物分子含 2 个被氧化原子」，仅对 Cl₂ / O₂ 成立；
+   * 对 2Na + Cl₂ = 2NaCl（产物 NaCl 每分子只含 1 个 Na）会少算一半，
+   * 对 Zn + CuSO₄ = ZnSO₄ + Cu（每分子只含 1 个 Zn）同样少算一半。
+   * 现改为直接查表，任何模型都不再依赖启发式。
+   */
+  stoichiometry: {
+    /** 氧化剂计量数 */
+    oxidant: number
+    /** 还原剂计量数（被氧化部分与显酸/显其他性部分合计） */
+    reductant: number
+    /** 氧化产物计量数 */
+    oxProduct: number
+    /** 还原产物计量数 */
+    redProduct: number
+  }
   elements: {
     oxidized: {
       symbol: string
@@ -50,6 +70,8 @@ export const REACTION_MODELS: ReactionModelInfo[] = [
     oxProduct: 'NaCl (Na⁺)',
     redProduct: 'NaCl (Cl⁻)',
     transferredElectrons: 2,
+    // 2Na + Cl₂ = 2NaCl：氧化剂 Cl₂ 1 / 还原剂 Na 2 / 氧化产物 NaCl(Na⁺) 2 / 还原产物 NaCl(Cl⁻) 2
+    stoichiometry: { oxidant: 1, reductant: 2, oxProduct: 2, redProduct: 2 },
     elements: {
       oxidized: { symbol: 'Na', fromValence: 0, toValence: 1, delta: 1, count: 2 },
       reduced: { symbol: 'Cl', fromValence: 0, toValence: -1, delta: -1, count: 2 },
@@ -70,6 +92,8 @@ export const REACTION_MODELS: ReactionModelInfo[] = [
     oxProduct: 'ZnSO₄ (Zn²⁺)',
     redProduct: 'Cu',
     transferredElectrons: 2,
+    // Zn + CuSO₄ = ZnSO₄ + Cu：四者计量数均为 1
+    stoichiometry: { oxidant: 1, reductant: 1, oxProduct: 1, redProduct: 1 },
     elements: {
       oxidized: { symbol: 'Zn', fromValence: 0, toValence: 2, delta: 2, count: 1 },
       reduced: { symbol: 'Cu', fromValence: 2, toValence: 0, delta: -2, count: 1 },
@@ -80,13 +104,16 @@ export const REACTION_MODELS: ReactionModelInfo[] = [
   {
     id: 2,
     name: 'MnO₂与浓盐酸制Cl₂ (部分氧化还原)',
-    equationTex: '\\text{MnO}_2 + 4\\text{HCl}(\\text{浓}) \\xlongequal{\\Delta} \\text{MnCl}_2 + \\text{Cl}_2\\uparrow + 2\\text{H}_2\\O',
+    equationTex: '\\text{MnO}_2 + 4\\text{HCl}(\\text{浓}) \\xlongequal{\\Delta} \\text{MnCl}_2 + \\text{Cl}_2\\uparrow + 2\\text{H}_2\\text{O}',
     equationPlain: 'MnO₂ + 4HCl(浓) = MnCl₂ + Cl₂↑ + 2H₂O',
     oxidant: 'MnO₂',
     reductant: 'HCl (部分)',
     oxProduct: 'Cl₂',
     redProduct: 'MnCl₂',
     transferredElectrons: 2,
+    // MnO₂ + 4HCl(浓) = MnCl₂ + Cl₂↑ + 2H₂O
+    // 还原剂按投入量计为 4（其中 2 个 Cl⁻ 被氧化、2 个 Cl⁻ 显酸性），见 spectator
+    stoichiometry: { oxidant: 1, reductant: 4, oxProduct: 1, redProduct: 1 },
     elements: {
       oxidized: { symbol: 'Cl (被氧化)', fromValence: -1, toValence: 0, delta: 1, count: 2 },
       reduced: { symbol: 'Mn', fromValence: 4, toValence: 2, delta: -2, count: 1 },
@@ -104,6 +131,8 @@ export const REACTION_MODELS: ReactionModelInfo[] = [
     oxProduct: 'O₂',
     redProduct: 'MnSO₄',
     transferredElectrons: 10,
+    // 2KMnO₄ + 5H₂O₂ + 3H₂SO₄ = 2MnSO₄ + 5O₂↑ + K₂SO₄ + 8H₂O
+    stoichiometry: { oxidant: 2, reductant: 5, oxProduct: 5, redProduct: 2 },
     elements: {
       oxidized: { symbol: 'O (H₂O₂)', fromValence: -1, toValence: 0, delta: 1, count: 10 },
       reduced: { symbol: 'Mn', fromValence: 7, toValence: 2, delta: -5, count: 2 },
@@ -144,15 +173,16 @@ export function useRedoxElectronTransferChemistry({
     // 假设 3.0s 反应完成
     const progress = Math.min(1.0, Math.max(0.0, time / 3.0))
 
-    // 实际化学量计算 (以 moleAmount 为基础倍率)
+    // 实际化学量计算：factor = 方程式倍数 n（moleAmount）
     const factor = moleAmount
     const actualTransferredElectrons = model.transferredElectrons * factor
 
-    // 计算各物质实际消耗/生成 (以方程式标准系数换算)
-    const actualOxidantMoles = factor * 1.0
-    const actualReductantMoles = factor * 1.0
-    const actualOxProductMoles = factor * (model.elements.oxidized.count / 2)
-    const actualRedProductMoles = factor * (model.elements.reduced.count)
+    // 各物质实际消耗/生成量 = 方程式倍数 × 该物质的化学计量数（直接查表，不做启发式换算）
+    const { stoichiometry } = model
+    const actualOxidantMoles = factor * stoichiometry.oxidant
+    const actualReductantMoles = factor * stoichiometry.reductant
+    const actualOxProductMoles = factor * stoichiometry.oxProduct
+    const actualRedProductMoles = factor * stoichiometry.redProduct
 
     return {
       model,

@@ -59,4 +59,15 @@ describe('ElectrolyticCell Chemistry & Quantities', () => {
     expect(pHItem).toBeDefined()
     expect(pHItem?.value).toBeGreaterThan(7.0)
   })
+
+  it('正确反映粗铜精炼模式下电解液 c(Cu²⁺) 逐渐下降（活泼金属杂质溶解所致）', () => {
+    const { result: r0 } = renderHook(() =>
+      useElectrolyticCellChemistry({ cellType: 3, anodeMaterial: 0, current: 1.5, time: 0 })
+    )
+    const { result: r1 } = renderHook(() =>
+      useElectrolyticCellChemistry({ cellType: 3, anodeMaterial: 0, current: 1.5, time: 10 })
+    )
+    expect(r1.current.cMain).toBeLessThan(r0.current.cMain)
+    expect(Math.abs(r1.current.anodeDeltaM)).toBeGreaterThan(r1.current.cathodeDeltaM)
+  })
 })

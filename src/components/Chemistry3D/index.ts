@@ -21,6 +21,9 @@ export type { UnitCellMeshProps } from './UnitCellMesh'
 export { BondMesh } from './BondMesh'
 export type { BondMeshProps } from './BondMesh'
 
+// ── WebGL 降级提示（全库唯一实现，各 3D 页面不得再手写）──
+export { WebGLFallback } from './WebGLFallback'
+export type { WebGLFallbackProps } from './WebGLFallback'
 
 // ── 工具函数（barrel re-export）──
 export { isWebGLAvailable, resetWebGLCache } from './utils/webgl'

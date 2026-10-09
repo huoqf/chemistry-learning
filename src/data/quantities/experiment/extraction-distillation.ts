@@ -1,4 +1,13 @@
 import type { ChemistryQuantity } from '../../chemistryQuantities'
+import {
+  IODINE_PARTITION_BENZENE,
+  IODINE_PARTITION_CCL4,
+  IODINE_WATER_INITIAL_CONC,
+  IODINE_WATER_VOLUME_ML,
+  extractionEquilibrium,
+  extractionMixProgress,
+  miscibleUniformConcentration,
+} from '@/chemistry'
 
 /**
  * 萃取分液与蒸馏实验的化学量构建器
@@ -13,22 +22,34 @@ export function buildExtractionDistillationQuantities(
 
   if (mode === 0) {
     // ─── 萃取分液模式 ───
-    const solvent = params.solvent ?? 0 // 0: CCl4, 1: 苯
+    const solvent = params.solvent ?? 0 // 0: CCl4, 1: 苯, 2: 乙醇
     const vSolvent = params.vSolvent ?? 20 // mL
-    const vWater = 50 // mL 初始水相
-    const kPartition = solvent === 0 ? 85.0 : 65.0 // 分配系数 K (CCl4 vs 苯)
+    const vWater = IODINE_WATER_VOLUME_ML // mL 初始水相
+    const c0 = IODINE_WATER_INITIAL_CONC // mol/L 初始水相 I₂ 浓度
 
-    // 震荡进度 0 ~ 1
-    const progress = Math.min(1, time / 8)
-    const c0 = 0.1 // mol/L 初始水相 I2 浓度
-    // 达平衡时水相浓度: c_aq = c0 * V_aq / (V_aq + K * V_org)
-    const cAqEquil = (c0 * vWater) / (vWater + kPartition * vSolvent)
+    // 乙醇与水无限互溶 → 静置只有一相，分配系数与萃取率在该体系中均无定义。
+    // 严禁沿用 CCl₄/苯 的 K 算出一个「假萃取率」（原实现溶剂=2 时落入苯的 fallback）。
+    if (solvent === 2) {
+      const cUniform = miscibleUniformConcentration(c0, vWater, vSolvent)
+      return [
+        { key: 'phaseCount', label: '静置分层相数', value: 1, unit: '相', colorKey: 'concentration' },
+        { key: 'cUniform', label: '均一相 I₂ 浓度', value: parseFloat(cUniform.toFixed(4)), unit: 'mol/L', colorKey: 'concentration' },
+        { key: 'E', label: '单级萃取率（互溶体系不适用）', value: 0, unit: '%', colorKey: 'reactionRate' },
+        { key: 'vOrg', label: '乙醇体积', value: vSolvent, unit: 'mL', colorKey: 'molarMass' },
+      ]
+    }
 
-    const cAq = c0 - (c0 - cAqEquil) * progress
+    const kPartition = solvent === 0 ? IODINE_PARTITION_CCL4 : IODINE_PARTITION_BENZENE
+    // 与右屏图表共用同一时间曲线（振荡起于 2.0s、5.2s 达平衡），不再各写一条
+    const progress = extractionMixProgress(time)
+    const equilibrium = extractionEquilibrium(c0, vWater, vSolvent, kPartition)
+
+    const cAq = c0 - (c0 - equilibrium.aqueous) * progress
     const cOrg = ((c0 - cAq) * vWater) / vSolvent
     const extractionRate = ((c0 - cAq) / c0) * 100
 
     return [
+      { key: 'phaseCount', label: '静置分层相数', value: 2, unit: '相', colorKey: 'concentration' },
       { key: 'K', label: '分配系数 K', value: kPartition, unit: '', colorKey: 'concentration' },
       { key: 'cAq', label: '水相 I₂ 浓度', value: parseFloat(cAq.toFixed(4)), unit: 'mol/L', colorKey: 'concentration' },
       { key: 'cOrg', label: '有机相 I₂ 浓度', value: parseFloat(cOrg.toFixed(4)), unit: 'mol/L', colorKey: 'concentration' },
