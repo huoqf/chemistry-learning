@@ -1,13 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
-import {
-  AtomMesh,
-  BondMesh,
-  WebGLFallback,
-  WEBGL_FALLBACK_FRAME_CLASS,
-  isWebGLAvailable,
-} from '@/components/Chemistry3D'
+import { AtomMesh, BondMesh, WebGLFallback, isWebGLAvailable } from '@/components/Chemistry3D'
 import {
   ORGANIC_3D_MOLECULES,
   type Organic3DMolecule,
@@ -205,7 +199,7 @@ export const OrganicMolecule3DModal: React.FC<OrganicMolecule3DModalProps> = ({
           <div ref={containerRef} className="w-full flex-1 relative">
             {!isWebGL ? (
               <WebGLFallback
-                className={WEBGL_FALLBACK_FRAME_CLASS}
+                framed
                 size="sm"
                 description="当前环境未启用 WebGL 硬件加速，建议使用现代 Chrome / Edge 浏览器获得最佳 3D 交互体验。"
               />

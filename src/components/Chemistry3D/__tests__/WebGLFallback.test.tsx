@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
-import { WebGLFallback, WEBGL_FALLBACK_FRAME_CLASS } from '../index'
+import { WebGLFallback } from '../index'
 
 /** 收集容器内所有元素上的全部 class token */
 function collectClassTokens(container: HTMLElement): string[] {
@@ -8,6 +8,10 @@ function collectClassTokens(container: HTMLElement): string[] {
     Array.from(el.classList),
   )
 }
+
+/** 组件 props 中是否存在 className —— 按契约应恒为 false（边框规格不得外泄到调用点） */
+type Props = Parameters<typeof WebGLFallback>[0]
+type HasClassNameProp = 'className' extends keyof Props ? true : false
 
 describe('WebGLFallback 共享降级组件守门测试', () => {
   it('默认渲染统一标题与可执行的排查指引', () => {
@@ -32,19 +36,32 @@ describe('WebGLFallback 共享降级组件守门测试', () => {
     expect(screen.queryByText('WebGL 3D 环境不可用')).toBeNull()
   })
 
-  it('支持透传自定义 className', () => {
-    const { container } = render(<WebGLFallback className="custom-fallback-class" />)
-    expect(container.firstElementChild?.classList.contains('custom-fallback-class')).toBe(true)
+  it('framed 是边框的唯一入口：默认无边框，置 true 才带边框', () => {
+    const plain = render(<WebGLFallback />)
+    expect(plain.container.firstElementChild?.classList.contains('border')).toBe(false)
+    expect(plain.container.firstElementChild?.classList.contains('rounded-xl')).toBe(false)
+    plain.unmount()
+
+    const framed = render(<WebGLFallback framed />)
+    expect(framed.container.firstElementChild?.classList.contains('border')).toBe(true)
+    expect(framed.container.firstElementChild?.classList.contains('rounded-xl')).toBe(true)
+    framed.unmount()
   })
 
-  it('铁律 1：容器与公共边框常量均不得出现任何手写背景类', () => {
+  it('组件不得重新开放 className 逃生口（否则边框规格会重新散落到调用点）', () => {
+    // 这里的类型标注本身就是断言：一旦有人给 props 加回 className，
+    // HasClassNameProp 会变成 true，下面这行 `false` 赋值将在 tsc 阶段直接编译失败。
+    const hasClassNameProp: HasClassNameProp = false
+    expect(hasClassNameProp).toBe(false)
+  })
+
+  it('铁律 1：lg / sm × framed 各档位容器均不得出现任何手写背景类', () => {
     for (const size of ['lg', 'sm'] as const) {
-      const { container, unmount } = render(
-        <WebGLFallback size={size} className={WEBGL_FALLBACK_FRAME_CLASS} />,
-      )
-      expect(collectClassTokens(container).filter((c) => c.startsWith('bg-'))).toEqual([])
-      unmount()
+      for (const framed of [false, true]) {
+        const { container, unmount } = render(<WebGLFallback size={size} framed={framed} />)
+        expect(collectClassTokens(container).filter((c) => c.startsWith('bg-'))).toEqual([])
+        unmount()
+      }
     }
-    expect(WEBGL_FALLBACK_FRAME_CLASS.split(/\s+/).filter((c) => c.startsWith('bg-'))).toEqual([])
   })
 })

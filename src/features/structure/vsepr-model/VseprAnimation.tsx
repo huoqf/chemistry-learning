@@ -1,6 +1,6 @@
 import { useAnimationStore } from '@/stores'
 import { useShallow } from 'zustand/react/shallow'
-import { isWebGLAvailable, WebGLFallback, WEBGL_FALLBACK_FRAME_CLASS } from '@/components/Chemistry3D'
+import { isWebGLAvailable, WebGLFallback } from '@/components/Chemistry3D'
 import { useVseprChemistry } from './hooks/useVseprChemistry'
 import { VseprScene } from './components/VseprScene'
 
@@ -17,7 +17,7 @@ export default function VseprAnimation() {
   const { molecule } = useVseprChemistry({ presetIdx })
 
   if (!isWebGLAvailable()) {
-    return <WebGLFallback className={WEBGL_FALLBACK_FRAME_CLASS} />
+    return <WebGLFallback framed />
   }
 
   return (

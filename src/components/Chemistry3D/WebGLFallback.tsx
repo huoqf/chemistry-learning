@@ -24,18 +24,19 @@ export interface WebGLFallbackProps {
    * - `sm` 弹窗、侧边栏或分屏半区等紧凑视口（紧凑图标、较小字号与留白）
    */
   size?: 'lg' | 'sm'
-  /** 附加类名。需要边框等视觉边界时透传 WEBGL_FALLBACK_FRAME_CLASS */
-  className?: string
+  /**
+   * 是否加视觉边框。默认 `false`：整屏降级时背景已由 Light Theme 提供，边框画在面板边缘没有意义；
+   * 弹窗 / 侧边栏 / 分屏半区等需要与宿主划清界限的场景置 `true`。
+   *
+   * 刻意做成布尔开关而不是开放 `className`：边框规格原本在 6 个调用点各写一份，
+   * 若用类名透传，这份规格会重新散落到各页面。布尔开关让本文件成为唯一来源，
+   * 且「不得各自复述边框」由类型系统直接锁死，不依赖运行时断言。
+   */
+  framed?: boolean
 }
 
-/**
- * 需要视觉边界时透传的边框规格 —— 唯一来源。
- *
- * 为什么默认不带边框：整屏中屏降级时背景已由 Light Theme 提供，边框画在面板边缘没有意义；
- * 但弹窗内 / 分屏半区（size="sm"）等场景需要与宿主划清界限，此时透传本常量，
- * 避免「边框类在各调用点各写一份」重新退化成 8 处手写的老问题。
- */
-export const WEBGL_FALLBACK_FRAME_CLASS = 'border border-slate-200 rounded-xl'
+/** 边框规格 —— 全库唯一来源。调用点只能通过 `framed` 开关引用，不得各自复述 */
+const FRAME_CLASS = 'border border-slate-200 rounded-xl'
 
 /** 统一标题：4/8 处原本就用它，且点明原因便于用户自行排查 */
 const DEFAULT_TITLE = 'WebGL 3D 环境不可用'
@@ -44,14 +45,14 @@ const DEFAULT_TITLE = 'WebGL 3D 环境不可用'
 const DEFAULT_DESCRIPTION =
   '当前环境未启用 WebGL 硬件加速，无法渲染 3D 场景。请开启浏览器硬件加速，或换用现代 Chrome / Edge 浏览器。'
 
-export function WebGLFallback({ title, description, size = 'lg', className }: WebGLFallbackProps) {
+export function WebGLFallback({ title, description, size = 'lg', framed = false }: WebGLFallbackProps) {
   const compact = size === 'sm'
   const baseClasses = compact
     ? 'w-full h-full flex flex-col items-center justify-center p-4 text-center select-none'
     : 'flex flex-col items-center justify-center h-full p-8 text-center select-none'
 
   return (
-    <div className={className ? `${baseClasses} ${className}` : baseClasses}>
+    <div className={framed ? `${baseClasses} ${FRAME_CLASS}` : baseClasses}>
       <div className={compact ? 'text-3xl mb-2' : 'text-5xl mb-4'}>🔬</div>
       <h2
         className={

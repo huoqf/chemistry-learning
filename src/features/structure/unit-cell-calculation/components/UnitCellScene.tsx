@@ -6,7 +6,6 @@ import {
   AtomMesh,
   BondMesh,
   WebGLFallback,
-  WEBGL_FALLBACK_FRAME_CLASS,
   fracToWorld,
   isWebGLAvailable,
 } from '@/components/Chemistry3D'
@@ -41,7 +40,7 @@ export function UnitCellScene({
   if (!isWebGLAvailable()) {
     return (
       <WebGLFallback
-        className={WEBGL_FALLBACK_FRAME_CLASS}
+        framed
         description="当前环境未启用 WebGL 硬件加速，无法渲染 3D 晶胞场景。请启用硬件加速后重新加载。"
       />
     )

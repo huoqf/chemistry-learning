@@ -1,6 +1,6 @@
 import { useAnimationStore } from '@/stores'
 import { useShallow } from 'zustand/react/shallow'
-import { isWebGLAvailable, WebGLFallback, WEBGL_FALLBACK_FRAME_CLASS } from '@/components/Chemistry3D'
+import { isWebGLAvailable, WebGLFallback } from '@/components/Chemistry3D'
 import { useHybridChemistry } from './hooks/useHybridChemistry'
 import { HybridOrbitalScene } from './components/HybridOrbitalScene'
 
@@ -17,7 +17,7 @@ export default function HybridOrbitalAnimation() {
   const { model } = useHybridChemistry({ presetIdx })
 
   if (!isWebGLAvailable()) {
-    return <WebGLFallback className={WEBGL_FALLBACK_FRAME_CLASS} />
+    return <WebGLFallback framed />
   }
 
   return (
