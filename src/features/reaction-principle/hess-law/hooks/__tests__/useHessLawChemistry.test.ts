@@ -115,11 +115,57 @@ describe('useHessLawChemistry — 盖斯定律与键能计算测试', () => {
       expect(eaReverseUncat - eaForwardUncat).toBe(-deltaH)
     })
 
-    it('催化剂分步反应决速步活化能 maxCatEa < 无催化活化能', () => {
+    it('催化剂分步反应决速步活化能 maxCatEa < 无催化活化能，且多步历程精确自洽', () => {
       const { result } = renderHook(() => useHessLawChemistry(defaultParams))
-      const { eaForwardUncat, maxCatEa } = result.current.energyProfile
+      const {
+        reactantEnergy,
+        productEnergy,
+        deltaH,
+        uncatalyzedPeak,
+        eaForwardUncat,
+        catalyzedPeak1,
+        catalyzedPeak2,
+        intermediateEnergy,
+        eaForwardCatStep1,
+        eaForwardCatStep2,
+        maxCatEa,
+        apparentCatEa,
+      } = result.current.energyProfile
 
+      // 无催化活化能与能垒
+      expect(uncatalyzedPeak - reactantEnergy).toBe(eaForwardUncat)
+      expect(eaForwardUncat).toBe(90)
+
+      // 催化步骤 1: 150 -> 190 (Ea1 = 40)
+      expect(catalyzedPeak1 - reactantEnergy).toBe(eaForwardCatStep1)
+      expect(eaForwardCatStep1).toBe(40)
+
+      // 活性中间体: 160 (吸热活化中间体)
+      expect(intermediateEnergy).toBe(160)
+      expect(intermediateEnergy).toBeGreaterThan(reactantEnergy)
+
+      // 催化步骤 2 (决速步): 160 -> 215 (Ea2 = 55)
+      expect(catalyzedPeak2 - intermediateEnergy).toBe(eaForwardCatStep2)
+      expect(eaForwardCatStep2).toBe(55)
+
+      // 决速步活化能最大: Ea2 > Ea1
+      expect(eaForwardCatStep2).toBeGreaterThan(eaForwardCatStep1)
+      expect(maxCatEa).toBe(eaForwardCatStep2)
       expect(maxCatEa).toBeLessThan(eaForwardUncat)
+
+      // TS2 既是活化能最大步，也是催化路径视觉最高峰 (215 > 190)
+      expect(catalyzedPeak2).toBeGreaterThan(catalyzedPeak1)
+
+      // 表观活化能 = 最高过渡态 - 反应物基准 = 215 - 150 = 65 kJ/mol
+      // 注意与"决速步能垒 55（相对中间体 160）"参照基准不同，二者不可混用
+      expect(apparentCatEa).toBe(catalyzedPeak2 - reactantEnergy)
+      expect(apparentCatEa).toBe(65)
+      expect(apparentCatEa).toBeGreaterThan(eaForwardCatStep2)
+      expect(apparentCatEa).toBeLessThan(eaForwardUncat)
+
+      // 催化剂不改变反应热 ΔH
+      expect(productEnergy - reactantEnergy).toBe(deltaH)
+      expect(deltaH).toBe(-90)
     })
   })
 })

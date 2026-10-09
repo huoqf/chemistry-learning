@@ -230,8 +230,20 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
 
   // 3. 渲染反应历程与活化能高程 SVG 图景
   const renderEnergyProfileSvg = () => {
-    const { reactantEnergy, productEnergy, uncatalyzedPeak, catalyzedPeak1, catalyzedPeak2, intermediateEnergy, deltaH, eaForwardUncat, eaReverseUncat, maxCatEa } =
-      energyProfile
+    const {
+      reactantEnergy,
+      productEnergy,
+      uncatalyzedPeak,
+      catalyzedPeak1,
+      catalyzedPeak2,
+      intermediateEnergy,
+      deltaH,
+      eaForwardUncat,
+      eaReverseUncat,
+      eaForwardCatStep1,
+      eaForwardCatStep2,
+      apparentCatEa,
+    } = energyProfile
 
     // 坐标系转换 (Y 轴倒置，能量越高 Y 越小)
     const mapY = (e: number) => 460 - (e / 300) * 340
@@ -291,31 +303,63 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
         {/* 正反应活化能 Ea(正) 垂直线 */}
         <line x1={380} y1={yReactant} x2={380} y2={yUncatPeak} stroke="#EF4444" strokeWidth={2} />
         <text x={390} y={(yReactant + yUncatPeak) / 2} fontSize={font(12)} fontWeight="bold" fill="#DC2626">
-          Ea(正) = {eaForwardUncat} kJ/mol
+          无催化 Ea(正) = {eaForwardUncat} kJ/mol
         </text>
 
         {/* 逆反应活化能 Ea(逆) 垂直线 */}
-        <line x1={500} y1={yProduct} x2={500} y2={yUncatPeak} stroke="#8B5CF6" strokeWidth={2} />
-        <text x={510} y={(yProduct + yUncatPeak) / 2} fontSize={font(12)} fontWeight="bold" fill="#7C3AED">
+        <line x1={540} y1={yProduct} x2={540} y2={yUncatPeak} stroke="#8B5CF6" strokeWidth={2} />
+        <text x={550} y={(yProduct + yUncatPeak) / 2} fontSize={font(12)} fontWeight="bold" fill="#7C3AED">
           Ea(逆) = {eaReverseUncat} kJ/mol
         </text>
 
+        {/* 催化剂两步标注与决速步 */}
+        {params.hasCatalyst === 1 && (
+          <g>
+            {/* TS1 过渡态 */}
+            <circle cx={300} cy={yCatPeak1} r={4} fill="#F59E0B" />
+            <text x={300} y={yCatPeak1 - 8} fontSize={font(10)} fontWeight="bold" fill="#B45309" textAnchor="middle">
+              TS1 ({catalyzedPeak1})
+            </text>
+            <line x1={260} y1={yReactant} x2={260} y2={yCatPeak1} stroke="#F59E0B" strokeWidth={1.5} strokeDasharray="3,3" />
+            <text x={255} y={(yReactant + yCatPeak1) / 2} fontSize={font(10)} fontWeight="bold" fill="#D97706" textAnchor="end">
+              Ea1={eaForwardCatStep1}
+            </text>
+
+            {/* 中间体基准线与标注 */}
+            <circle cx={400} cy={yInter} r={4} fill="#F59E0B" />
+            <line x1={370} y1={yInter} x2={470} y2={yInter} stroke="#FDE68A" strokeWidth={1.5} strokeDasharray="3,2" />
+            <text x={400} y={yInter + 16} fontSize={font(10)} fontWeight="bold" fill="#B45309" textAnchor="middle">
+              中间体 ({intermediateEnergy})
+            </text>
+
+            {/* TS2 决速步过渡态 */}
+            <circle cx={510} cy={yCatPeak2} r={4} fill="#EF4444" />
+            <text x={510} y={yCatPeak2 - 8} fontSize={font(10)} fontWeight="bold" fill="#DC2626" textAnchor="middle">
+              TS2 ({catalyzedPeak2} 决速)
+            </text>
+            <line x1={470} y1={yInter} x2={470} y2={yCatPeak2} stroke="#DC2626" strokeWidth={1.5} strokeDasharray="3,3" />
+            <text x={475} y={(yInter + yCatPeak2) / 2} fontSize={font(10)} fontWeight="bold" fill="#DC2626" textAnchor="start">
+              Ea2={eaForwardCatStep2} (决速步)
+            </text>
+          </g>
+        )}
+
         {/* ΔH 标识线 */}
-        <line x1={640} y1={yReactant} x2={640} y2={yProduct} stroke="#10B981" strokeWidth={3} />
-        <text x={650} y={(yReactant + yProduct) / 2} fontSize={font(13)} fontWeight="bold" fill="#047857" className="font-mono">
+        <line x1={650} y1={yReactant} x2={650} y2={yProduct} stroke="#10B981" strokeWidth={3} />
+        <text x={660} y={(yReactant + yProduct) / 2} fontSize={font(13)} fontWeight="bold" fill="#047857" className="font-mono">
           ΔH = {deltaH} kJ/mol
         </text>
 
         {/* 底部考点总结框 */}
-        <g transform="translate(70, 495)">
-          <rect x={0} y={0} width={620} height={55} rx={8} fill="#F8FAFC" stroke="#E2E8F0" />
+        <g transform="translate(60, 495)">
+          <rect x={0} y={0} width={640} height={55} rx={8} fill="#F8FAFC" stroke="#E2E8F0" />
           <text x={15} y={22} fontSize={font(11)} fontWeight="bold" fill="#334155">
-            核心公式: ΔH = Ea(正) - Ea(逆) = {eaForwardUncat} - {eaReverseUncat} = {deltaH} kJ/mol
+            核心公式: ΔH = Ea(正) - Ea(逆) = {eaForwardUncat} - {eaReverseUncat} = {deltaH} kJ/mol (放热反应)
           </text>
           <text x={15} y={42} fontSize={font(11)} fill={params.hasCatalyst === 1 ? '#D97706' : '#64748B'} className="font-medium">
             {params.hasCatalyst === 1
-              ? `催化剂降低最大能垒能跃为 ${maxCatEa} kJ/mol (决速步)，但 ΔH 恒定仍为 ${deltaH} kJ/mol！`
-              : '未加催化剂，克服最大能垒需 90 kJ/mol。'}
+              ? `催化剂降低能垒：步骤1 Ea1=${eaForwardCatStep1} kJ/mol，步骤2 Ea2=${eaForwardCatStep2} kJ/mol（能垒最高，为决速步）；表观活化能 Ea(表观)=${apparentCatEa} kJ/mol；ΔH 恒定仍为 ${deltaH} kJ/mol！`
+              : `未加催化剂：克服单步高能垒 Ea(正)=${eaForwardUncat} kJ/mol，反应速率较慢。`}
           </text>
         </g>
       </g>
@@ -329,7 +373,7 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
               <Eye className="w-4 h-4 text-indigo-600" />
-              母题九矢量高程图与盖斯定律推导 (2D SVG)
+              母题七矢量高程图与盖斯定律推导 (2D SVG)
             </span>
             <span className="text-xs text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md font-mono font-bold border border-indigo-100">
               {params.mode === 'hess-overlay'

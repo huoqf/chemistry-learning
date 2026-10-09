@@ -1,6 +1,6 @@
 /**
  * src/features/industrial-flow/components/IndustrialFlowCenterView.tsx
- * 母题七：无机工艺流程与沉淀调 pH 工具 - 中屏平行视图 UI (高考标准规范版)
+ * 实验二：无机工艺流程与沉淀调 pH 工具 - 中屏平行视图 UI (高考标准规范版)
  * 方向 B：工序联动下钻，宏观工艺流程 ➔ 槽体微观机理深度穿透
  */
 
@@ -446,7 +446,7 @@ function SvgCurveRenderer({
         )
       })}
 
-      {/* Al(OH)3 两性溶解文字标注 */}
+      {/* Al(OH)₃ 两性溶解文字标注（高 pH 段为经验拟合的示意趋势，非严格热力学定量） */}
       {ions.some((i) => i.symbol === 'Al³⁺') && (
         <text
           x={toSvgX(12.3)}
@@ -456,7 +456,7 @@ function SvgCurveRenderer({
           fontWeight="bold"
           textAnchor="middle"
         >
-          Al(OH)₃ 溶解为 [Al(OH)₄]⁻ ➔
+          Al(OH)₃ 溶解为 [Al(OH)₄]⁻ (示意) ➔
         </text>
       )}
 

@@ -1,6 +1,6 @@
 /**
  * src/features/gas-chain/components/GasFullMatrixView.tsx
- * 母题六：气体制备/净化/尾气处理装置链 - 全景速查大表与多维专项决策矩阵
+ * 实验一：气体制备/净化/尾气处理装置链 - 全景速查大表与多维专项决策矩阵
  *
  * 遵循 Rule 规范：
  * 1. 严格采用系统 Light Theme 规范，杜绝突兀深黑/暗黑包裹；

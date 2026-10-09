@@ -139,15 +139,66 @@ export const VseprRightPanel: React.FC<VseprRightPanelProps> = ({ calcResult, di
           className={`flex justify-between items-center p-1.5 rounded transition-all duration-300 ${
             displayMode === 'repulsion_demo'
               ? 'bg-emerald-100 border border-emerald-300 font-bold'
-              : ''
+              : 'border-b border-slate-200'
           }`}
         >
           <span className="text-slate-600 font-semibold">
             实际键角：
           </span>
           <span className="font-bold text-emerald-700 font-mono text-xs">
-            {currentMolecule.actualAngle}° {currentMolecule.actualAngle !== currentMolecule.theoreticalAngle ? `(理想:${currentMolecule.theoreticalAngle}°)` : '(无孤对挤压)'}
+            {currentMolecule.angleDisplay ? (
+              currentMolecule.angleDisplay
+            ) : (
+              <>
+                {currentMolecule.actualAngle}°{' '}
+                {currentMolecule.lonePairs === 0
+                  ? '(无孤对挤压)'
+                  : currentMolecule.actualAngle !== currentMolecule.theoreticalAngle
+                  ? `(理想:${currentMolecule.theoreticalAngle}°)`
+                  : '(孤对占位，键角保持理想值)'}
+              </>
+            )}
           </span>
+        </div>
+
+        {/* 高考必考：σ 键与 π 键数目 */}
+        <div className="flex justify-between items-center p-1.5 border-b border-slate-200 text-xs">
+          <span className="text-slate-600 font-semibold">共价键类型与数目：</span>
+          <div className="flex items-center gap-1.5 font-mono text-xs">
+            <span className="px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 font-bold border border-indigo-200">
+              σ 键: {currentMolecule.sigmaBonds ?? currentMolecule.bondPairs} 个
+            </span>
+            <span className="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 font-bold border border-amber-200">
+              π 键: {currentMolecule.piBonds ?? 0} 个
+            </span>
+          </div>
+        </div>
+
+        {/* 高考必考：分子极性判定 */}
+        <div className="flex flex-col gap-1 p-1.5 text-xs">
+          <div className="flex justify-between items-center">
+            <span className="text-slate-600 font-semibold">分子极性判定：</span>
+            <span
+              className={`px-2 py-0.5 rounded font-bold text-xs ${
+                currentMolecule.polarity === 'nonpolar'
+                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  : 'bg-rose-50 text-rose-700 border border-rose-200'
+              }`}
+            >
+              {currentMolecule.category === 'Ion'
+                ? currentMolecule.polarity === 'nonpolar'
+                  ? '高度对称离子'
+                  : '非对称极性离子'
+                : currentMolecule.polarity === 'nonpolar'
+                ? '非极性分子'
+                : '极性分子'}
+            </span>
+          </div>
+          {currentMolecule.polarityReason && (
+            <span className="text-[10px] text-slate-500 leading-tight">
+              {currentMolecule.polarityReason}
+            </span>
+          )}
         </div>
       </Card>
 

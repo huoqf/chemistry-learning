@@ -41,7 +41,7 @@ export const GasChainRightPanel: React.FC<GasChainRightPanelProps> = ({
       value: `${gasPurity.toFixed(1)}`,
       unit: '%',
       color: gasPurity > 90 ? 'emerald' : 'amber',
-      description: '高考标准: 纯度 > 95% 方可集满使用',
+      description: '模型计算值；考场上判断「集满」的依据是验满操作（湿润试纸/燃着木条等），并非纯度阈值',
     },
     {
       label: '杂质气体残留率',

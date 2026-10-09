@@ -5,14 +5,19 @@
 
 import { useMemo } from 'react'
 import { useAnimationViewport } from '@/hooks/useAnimationViewport'
-import { CANVAS_PRESETS, SCENE_COLORS, FONT, CHART_COLORS, withAlpha } from '@/theme'
+import { CANVAS_PRESETS, SCENE_COLORS, FONT, withAlpha } from '@/theme'
 import { AnimationSvgCanvas } from '@/components/Layout'
 import { BuretteApparatus, PhMeterApparatus } from '@/components/Chemistry'
 import { TitrationCurveChart } from '@/components/Chart/TitrationCurveChart'
 import { BaseChart } from '@/components/Chart/BaseChart'
 import { ChartLine } from '@/components/Chart/ChartLine'
 import { ChartCursor } from '@/components/Chart/ChartCursor'
-import { TitrationControls, ScoringCardSection, GaokaoVariantQuiz } from '@/components/UI'
+import {
+  TitrationControls,
+  ScoringCardSection,
+  GaokaoVariantQuiz,
+  KatexFormula,
+} from '@/components/UI'
 import type { TitrationParams, TitrationChemistryResult } from '../types'
 import type { ModelQuizData } from '@/data/quiz/types'
 import { Eye, FileCheck, HelpCircle, Activity } from 'lucide-react'
@@ -57,24 +62,18 @@ export function TitrationCenterView({
     }))
   }, [chemistry.curvePoints])
 
-  // 微粒浓度演变图点集 (主要阳/阴离子与弱电解质)
-  const ionDistributionPoints = useMemo(() => {
-    return chemistry.curvePoints.map((pt) => {
-      const r = pt.vRatio
-      let cMain = 0.05
-      if (params.systemType === 'strongBaseWeakAcid') {
-        cMain = r <= 1.0 ? 0.1 * (1 - r) : 0.001 // HA 衰减
-      } else if (params.systemType === 'strongAcidWeakBase') {
-        cMain = r <= 1.0 ? 0.1 * (1 - r) : 0.001 // B 衰减
-      } else {
-        cMain = Math.abs(1 - r) * 0.05
-      }
-      return {
-        x: pt.vAdd,
-        y: Math.max(0.0001, cMain),
-      }
-    })
-  }, [chemistry.curvePoints, params.systemType])
+  // 微粒浓度演变图：直接使用 Hook 由「同源精确解」导出的物种曲线，杜绝拼凑曲线
+  const speciesCurves = chemistry.speciesCurves
+  const cursorPoints = useMemo(
+    () =>
+      chemistry.ionConcs
+        .filter((ion) => speciesCurves.some((c) => c.name === ion.name))
+        .map((ion) => ({
+          y: ion.conc,
+          label: `${ion.name}: ${ion.conc >= 1e-3 ? ion.conc.toFixed(3) : ion.conc.toExponential(1)} mol/L`,
+        })),
+    [chemistry.ionConcs, speciesCurves]
+  )
 
   // 滴定控制条的快跳特征节点 (0Veq, 0.5Veq, 1.0Veq, 1.5Veq)
   const stepsForControls = useMemo(() => {
@@ -228,33 +227,43 @@ export function TitrationCenterView({
             </div>
           </div>
 
-          {/* 下层：分子/离子电离平衡演变图 (BaseChart) */}
+          {/* 下层：微粒浓度演变图 (BaseChart，与右屏数值同源) */}
           <div className="flex-1 min-h-0 w-full p-2 relative flex flex-col">
             <div className="flex items-center justify-between mb-1 px-1 shrink-0">
               <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                 <Activity className="w-3.5 h-3.5 text-amber-600" />
-                弱电解质分子/离子浓度演变曲线 c - V(滴加)
+                微粒浓度演变曲线 c - V(滴加)
               </span>
-              <span className="text-[11px] text-slate-500">
-                半中和点: c(HA) ≈ c(A⁻)
-              </span>
+              <div className="flex items-center gap-2 text-[10px]">
+                {speciesCurves.map((curve) => (
+                  <span key={curve.key} className="flex items-center gap-1 text-slate-600">
+                    <span
+                      className="inline-block w-3 h-0.5 rounded-full"
+                      style={{ backgroundColor: curve.color }}
+                    />
+                    <KatexFormula formula={curve.labelLatex} mode="inline" />
+                  </span>
+                ))}
+              </div>
             </div>
 
             <div className="flex-1 min-h-0 relative">
               <BaseChart
                 title=""
-                xDomain={[0, 40]}
-                yDomain={[0, 0.1]}
+                xDomain={[0, chemistry.vEq * 2]}
+                yDomain={[0, Math.max(0.01, params.c0 * 1.05)]}
                 xLabel="V(滴加试剂) / mL"
                 yLabel="微粒浓度 c / (mol/L)"
               >
-                <ChartLine points={ionDistributionPoints} color={CHART_COLORS.primary} strokeWidth={2} />
-                <ChartCursor
-                  x={chemistry.vAdd}
-                  dataPoints={[
-                    { y: chemistry.ionConcs[2]?.conc || 0.01, label: `${chemistry.ionConcs[2]?.name || 'HA'}: ${(chemistry.ionConcs[2]?.conc || 0).toFixed(3)} M` },
-                  ]}
-                />
+                {speciesCurves.map((curve) => (
+                  <ChartLine
+                    key={curve.key}
+                    points={curve.points}
+                    color={curve.color}
+                    strokeWidth={2}
+                  />
+                ))}
+                <ChartCursor x={chemistry.vAdd} dataPoints={cursorPoints} />
               </BaseChart>
             </div>
           </div>

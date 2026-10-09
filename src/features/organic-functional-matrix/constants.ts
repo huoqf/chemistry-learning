@@ -250,7 +250,7 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
     testEquation: 'R-X + NaOH \\xrightarrow{H_2O, \\Delta} R-OH + NaX',
     consumptions: {
       Na: 0,
-      NaOH: 1, // 1 mol 卤代烃水解消耗 1 mol NaOH (若为卤代苯水解生成酚钠则消耗 2 mol NaOH)
+      NaOH: 1, // 1 mol 卤代烃(脂肪)水解消耗 1 mol NaOH。(卤代芳烃如氯苯水解条件苛刻、高中不作要求，属【超纲】，故本栏不作为考点计入)
       NaHCO3: 0,
       Na2CO3: 0,
       Br2: 0,
@@ -382,7 +382,7 @@ export const FUNCTIONAL_GROUPS: FunctionalGroupItem[] = [
       ir: '1500~1560 cm⁻¹ (不对称伸缩振动)；1340~1380 cm⁻¹ (对称伸缩振动特征强吸收峰)',
       hnmr: '硝基极强吸电子去屏蔽效应，使邻位苯环质子化学位移显著移向极低场 (δ = 8.1~8.3 ppm)',
     },
-    notes: '高考合成路线王牌前体：硝基经催化加氢 (耗 3 H₂) 或铁粉/稀盐酸 (Fe + 6HCl + Ar-NO₂ → Ar-NH₃Cl + 3FeCl₂ + 2H₂O，再加碱释放芳香胺) 定向还原为氨基 (-NH₂)。',
+    notes: '高考合成路线王牌前体：硝基经催化加氢 (耗 3 H₂) 或铁粉/稀盐酸定向还原为氨基 (-NH₂)：3Fe + 6HCl + Ar-NO₂ = Ar-NH₂ + 3FeCl₂ + 2H₂O（酸性介质中氨基以 -NH₃⁺ 形式存在，加碱即可游离出芳香胺）。',
   },
   {
     id: 'cyano-cn',
@@ -483,7 +483,7 @@ export const PROTECTION_GROUPS: ProtectionGroupItem[] = [
     deprotectionCondition: 'H₂ / Pd-C 催化氢解还原',
     deprotectionEquation: 'Ar-O-CH_2C_6H_5 + H_2 \\xrightarrow{Pd-C} Ar-OH + C_6H_5CH_3',
     examSignificance:
-      '防止酚羟基在后续强氧化（如 KMnO₄）或强碱性烷基化条件下发生副反应，合成后温和脱除。【层级】苄醚保护、Pd/C 氢解与格氏试剂均属信息题素材，教材未作要求。',
+      '防止酚羟基在后续强氧化（如 KMnO₄）或强碱性烷基化条件下发生副反应，合成后温和脱除。【层级】酚羟基保护策略本身属【教材主线】（选必3 §3.5 常见官能团保护）；具体的苄溴烷基化条件与 Pd/C 催化氢解试剂属【信息题素材】，教材未作要求。',
   },
   {
     id: 'amino-acetyl-protect',
@@ -494,7 +494,7 @@ export const PROTECTION_GROUPS: ProtectionGroupItem[] = [
     deprotectionCondition: 'NaOH 溶液或稀盐酸加热水解',
     deprotectionEquation: 'Ar-NHCOCH_3 + NaOH \\xrightarrow{\\Delta} Ar-NH_2 + CH_3COONa',
     examSignificance:
-      '苯胺硝化/卤代核心母题：苯胺直接硝化易被氧化破坏且生成多取代产物，通过乙酰化降低邻对位活化能力，定向对位取代后再水解脱保护。',
+      '苯胺硝化/卤代核心母题：苯胺直接硝化易被氧化破坏且生成多取代产物，通过乙酰化降低邻对位活化能力，定向对位取代后再水解脱保护。【层级】氨基乙酰化保护属【教材主线】（选必3 §3.5 常见官能团保护；苯胺硝化前必须先保护氨基，属正文要求）。',
   },
   {
     id: 'carbonyl-acetal-protect',
@@ -505,7 +505,7 @@ export const PROTECTION_GROUPS: ProtectionGroupItem[] = [
     deprotectionCondition: '稀酸水溶液加热水解 (H₃O⁺ / Δ)',
     deprotectionEquation: 'R_2C(OCH_2CH_2O) + H_2O \\xrightarrow{H^+, \\Delta} R_2C=O + HO-CH_2CH_2-OH',
     examSignificance:
-      '防止羰基在 LiAlH₄ 强还原、格氏反应或强碱性烷基化过程中被优先加成破坏。【层级】羰基缩醛保护、LiAlH₄ 与格氏试剂均属信息题素材，教材未作要求。',
+      '防止羰基在 LiAlH₄ 强还原、格氏反应或强碱性烷基化过程中被优先加成破坏。【层级】羰基保护策略本身属【教材主线】（选必3 §3.5 常见官能团保护）；缩醛/缩酮的具体制备条件与 LiAlH₄、格氏试剂属【信息题素材】，教材未作要求。',
   },
   {
     id: 'carboxyl-ester-protect',
@@ -516,7 +516,7 @@ export const PROTECTION_GROUPS: ProtectionGroupItem[] = [
     deprotectionCondition: '稀酸催化水解 (或稀 NaOH 水解后加酸酸化)',
     deprotectionEquation: 'R-COOCH_3 + H_2O \\xrightleftharpoons{H^+, \\Delta} R-COOH + CH_3OH',
     examSignificance:
-      '掩盖活泼酸性质子，防止羧基与有机金属试剂（如格氏试剂 RMgX）剧烈反应释放烷烃。【层级】有机金属试剂属信息题素材，教材未作要求。',
+      '掩盖活泼酸性质子，防止羧基与有机金属试剂（如格氏试剂 RMgX）剧烈反应释放烷烃。【层级】羧基保护策略本身属【教材主线】（选必3 §3.5 常见官能团保护）；甲酯化试剂与有机金属试剂（RMgX）属【信息题素材】，教材未作要求。',
   },
 ]
 

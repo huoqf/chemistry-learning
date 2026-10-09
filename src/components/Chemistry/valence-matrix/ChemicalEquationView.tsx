@@ -24,11 +24,11 @@ export const ChemicalEquationView: React.FC<ChemicalEquationViewProps> = ({
     // 匹配化学方程中的运算符与微粒项
     // 运算符: +, =, ➔, →, ⇌, <==>, ＋
     // 兼容可能存在的条件标注如 △ 或 (浓)
-    const tokens = equation.split(/(\s*[\+＋\=\➔\→\⇌]\s*)/g).filter(Boolean)
+    const tokens = equation.split(/(\s*[+＋=➔→⇌]\s*)/g).filter(Boolean)
 
     return tokens.map((token, index) => {
       const trimmed = token.trim()
-      const isOperator = /^[\+＋\=\➔\→\⇌]$/.test(trimmed)
+      const isOperator = /^[+＋=➔→⇌]$/.test(trimmed)
 
       return {
         id: `${index}-${trimmed}`,

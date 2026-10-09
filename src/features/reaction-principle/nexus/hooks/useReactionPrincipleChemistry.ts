@@ -14,9 +14,11 @@ export const REACTION_SYSTEMS: Record<string, ReactionSystemConfig> = {
     name: '2NO₂(g) ⇌ N₂O₄(g)',
     equation: '2NO_2(g) \\rightleftharpoons N_2O_4(g)',
     deltaH: -57.2,
+    deltaS: -175.8, // 298 K 文献值：304.4 - 2×240.1
     baseEaForward: 40.0,
     baseEaReverse: 97.2,
     gasMolesDiff: -1,
+    cProductPerCReactant: 0.5, // 2NO₂ → N₂O₄：反应物减 2 份，产物只增 1 份
     defaultTemp: 298,
     defaultPressure: 1.0,
   },
@@ -25,9 +27,11 @@ export const REACTION_SYSTEMS: Record<string, ReactionSystemConfig> = {
     name: 'N₂(g) + 3H₂(g) ⇌ 2NH₃(g)',
     equation: 'N_2(g) + 3H_2(g) \\rightleftharpoons 2NH_3(g)',
     deltaH: -92.4,
+    deltaS: -198.1, // 298 K 文献值：2×192.8 - (191.6 + 3×130.7)
     baseEaForward: 176.0,
     baseEaReverse: 268.4,
     gasMolesDiff: -2,
+    cProductPerCReactant: 2, // N₂ → 2NH₃：反应物(N₂)减 1 份，产物(NH₃)增 2 份
     defaultTemp: 400,
     defaultPressure: 2.0,
   },
@@ -36,9 +40,11 @@ export const REACTION_SYSTEMS: Record<string, ReactionSystemConfig> = {
     name: 'CO(g) + 2H₂(g) ⇌ CH₃OH(g)',
     equation: 'CO(g) + 2H_2(g) \\rightleftharpoons CH_3OH(g)',
     deltaH: -90.5,
+    deltaS: -219.3, // 298 K 文献值：239.8 - (197.7 + 2×130.7)
     baseEaForward: 110.0,
     baseEaReverse: 200.5,
     gasMolesDiff: -2,
+    cProductPerCReactant: 1, // CO → CH₃OH：反应物与产物按 1:1 变化
     defaultTemp: 350,
     defaultPressure: 1.5,
   },
@@ -56,8 +62,6 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
       forward *= 0.65
       reverse = forward - system.deltaH
     } else if (params.catalyst === 'catalyst-b') {
-      forward *= 0.5
-      reverse = forward - system.deltaH
       multi = true
     }
 
@@ -71,6 +75,7 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
         { x: 50, y: 100 + forward, label: 'TS (过渡态)', isTS: true, stepEa: forward, isRDS: true },
         { x: 90, y: 100 + system.deltaH, label: '产物' }
       )
+
       barriers.push({
         stepIndex: 1,
         fromLabel: '反应物',
@@ -82,12 +87,14 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
       })
     } else {
       // 催化剂 B: 两步反应
-      // 步1: 反应物 -> TS1 -> 中间体
-      // 步2: 中间体 -> TS2 -> 产物
-      const step1Ea = Math.round(forward * 0.65 * 10) / 10
-      const intermediateY = 100 + step1Ea - 28 // 中间体势能
-      const step2Ea = Math.round(forward * 1.15 * 10) / 10 // 步2活化能更大，设为决速步
+      // 步1: 反应物(100) -> TS1(113) -> 中间体(98)
+      // 步2: 中间体(98) -> TS2(121, 决速步最高峰) -> 产物
+      const step1Ea = Math.round(forward * 0.32 * 10) / 10 // 步1活化能较小 (约 13 kJ/mol)
+      const intermediateY = 98 // 活性中间体势能
+      const step2Ea = Math.round(forward * 0.58 * 10) / 10 // 步2活化能最大 (约 23 kJ/mol，决速步)
       const ts2Y = intermediateY + step2Ea
+      forward = ts2Y - 100 // 表观活化能精确等于最高峰与反应物能量差
+      reverse = forward - system.deltaH
       rds = 2
 
       points.push(
@@ -130,13 +137,16 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
     }
   }, [system, params.catalyst])
 
-  // 玻尔兹曼分布（当前态与基准态对照，能量尺度标定为 0 ~ 120 kJ/mol）
+  // 玻尔兹曼分布（当前态与基准态对照）
   const boltzmannData = useMemo(() => {
     const calcDistribution = (T: number, ea: number) => {
       const data: { energy: number; fraction: number; isActivated: boolean }[] = []
-      // 麦克斯韦-玻尔兹曼能量分布函数: f(E) ~ (E / (k*T)^1.5) * exp(-E / (k*T))
-      // 调节特征能量尺度 parameter kT 使其在 298K 时峰值位于约 25 kJ/mol
-      const kT = 0.085 * T // 298K 时 kT ≈ 25.3 kJ/mol; 450K 时 kT ≈ 38.2 kJ/mol
+      // 麦克斯韦-玻尔兹曼能量分布函数: f(E) ~ √(E/(kT)) · exp(-E/(kT))
+      // 注：为让曲线在 0~120 kJ/mol 的横轴上完整展开（真实 kT(298 K) ≈ 2.48 kJ/mol，
+      // 曲线会全部挤在 5 kJ/mol 以内而无法读图），此处 kT 采用**教学标定尺度** 0.085·T，
+      // 即 298 K → kT ≈ 25.3 kJ/mol。
+      // 该分布的极大值点严格在 E = kT/2 处：298 K 时 ≈ 12.7 kJ/mol（不是 25.3）。
+      const kT = 0.085 * T
       for (let e = 0; e <= 120; e += 1.5) {
         const x = e / kT
         const f = Math.sqrt(x) * Math.exp(-x) * 1.5
@@ -152,6 +162,8 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
       return {
         distribution: data,
         activatedFraction: Math.round(activatedFraction * 10) / 10,
+        // 分布峰值能量 E_peak = kT/2（可由 d/dE [√x·e^{-x}] = 0 ⇒ x = 1/2 严格导出）
+        peakEnergy: Math.round((kT / 2) * 10) / 10,
       }
     }
 
@@ -167,28 +179,32 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
     }
   }, [params.temperature, eaForward, system.baseEaForward])
 
-  // 范特霍夫方程数据
+  // 范特霍夫方程数据（lnK = -ΔH/(RT) + ΔS/R）
   const vantHoffData = useMemo(() => {
     const R = 8.314
     const deltaH_J = system.deltaH * 1000
+    // 截距 C = ΔS°/R：由 ΔG° = ΔH° - TΔS° 与 ΔG° = -RT·lnK 联立消去 ΔG° 得到，
+    // 故 lnK = -ΔH°/(RT) + ΔS°/R。此前硬编码 -12 与三体系真实 ΔS° 均不符，使 Kc 量级失真。
+    const intercept = system.deltaS / R
     const points: { invT: number; lnK: number; temp: number }[] = []
 
     for (let t = 273; t <= 600; t += 20) {
       const invT = 1 / t
-      const lnK = -deltaH_J / (R * t) - 12.0
+      const lnK = -deltaH_J / (R * t) + intercept
       points.push({
         invT: Math.round(invT * 10000) / 10000,
         lnK: Math.round(lnK * 100) / 100,
         temp: t,
       })
     }
-    const currentLnK = -deltaH_J / (R * params.temperature) - 12.0
+    const currentLnK = -deltaH_J / (R * params.temperature) + intercept
     const currentKc = Math.exp(currentLnK)
 
     return {
       points,
       currentLnK: Math.round(currentLnK * 100) / 100,
       currentKc: Math.round(currentKc * 1000) / 1000,
+      intercept: Math.round(intercept * 100) / 100,
     }
   }, [system, params.temperature])
 
@@ -197,17 +213,24 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
     const points: AlphaTpPoint[] = []
 
     // 计算理论平衡转化率 α (随温度升高，放热反应 α 单调降低；加压向分子数减少移动，α 增大)
-    // 经验热力学拟合模型: α(T, P) = 1 / [1 + exp((T - T_mid) / width) * (P_ref / P)^beta]
+    // 经验热力学拟合模型: α(T, P) = 100 / [1 + exp((T - T_mid) / width) · (P_ref / P)^β]
     const tMid = system.defaultTemp + 30
     const width = 60
+    const beta = 0.7
+    const P_REF = 1.0
+    // 两条对照曲线的压强：必须与 lowPressureLabel / highPressureLabel 一字对应（同一常量驱动，杜绝"标签与公式脱钩"）
+    const P_LOW = 1.0
+    const P_HIGH = 3.5
 
     for (let t = 250; t <= 600; t += 15) {
-      // 压强 P1 = 1.0 atm (低压), P2 = 3.5 atm (高压)
       // 正反应是气体减少反应 (gasMolesDiff < 0)，因此压强越高，转化率越大
+      // 采用统一物理模型：α(T, P) = 100 / [1 + exp((T - T_mid) / width) · (P_ref / P)^β]，杜绝当前点悬空
       const termT = (t - tMid) / width
-      const alphaLow = 100 / (1 + Math.exp(termT) * 1.5)
-      const alphaHigh = 100 / (1 + Math.exp(termT) * 0.5)
+      const alphaLow = 100 / (1 + Math.exp(termT) * Math.pow(P_REF / P_LOW, beta))
+      const alphaHigh = 100 / (1 + Math.exp(termT) * Math.pow(P_REF / P_HIGH, beta))
 
+      // clamp 只用于把曲线限制在坐标轴可视区内，不参与物理计算；
+      // 两条曲线的下限刻意不同（低压线可低至 2%，高压线最低 5%），以保留"同温下高压线更高"的可读区分度。
       points.push({
         temperature: t,
         alphaLowP: Math.round(Math.min(98, Math.max(2, alphaLow)) * 10) / 10,
@@ -215,16 +238,16 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
       })
     }
 
-    // 当前参数下的理论转化率
+    // 当前参数下的理论转化率（与上面两条曲线共用同一函数式，仅 P 取自滑块，故 P = P_LOW 时必与低压线重合）
     const termCurT = (params.temperature - tMid) / width
-    const pRatio = 1.0 / Math.max(0.2, params.pressure)
-    const curAlpha = 100 / (1 + Math.exp(termCurT) * Math.pow(pRatio, 0.7))
+    const pRatio = P_REF / Math.max(0.2, params.pressure)
+    const curAlpha = 100 / (1 + Math.exp(termCurT) * Math.pow(pRatio, beta))
 
     return {
       points,
       currentAlpha: Math.round(Math.min(99, Math.max(2, curAlpha)) * 10) / 10,
-      lowPressureLabel: 'P₁ = 1.0 atm (常压)',
-      highPressureLabel: 'P₂ = 3.5 atm (加压)',
+      lowPressureLabel: `P₁ = ${P_LOW.toFixed(1)} atm (常压)`,
+      highPressureLabel: `P₂ = ${P_HIGH.toFixed(1)} atm (加压)`,
     }
   }, [system, params.temperature, params.pressure])
 
@@ -274,18 +297,21 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
         }
       } else {
         const decay = Math.exp(-(timeRound - perturbTime) * 0.8)
+        // 浓度变化量之比 = 化学计量数之比：Δc(产物) = Δc(反应物) × ν(产物)/ν(反应物)
+        const dC = 0.05 * (1 - decay)
+        const stoichRatio = system.cProductPerCReactant
         if (vF > vR) {
           const gap = vF - vR
           vF -= gap * 0.2 * (1 - decay)
           vR += gap * 0.2 * (1 - decay)
-          cReactant -= 0.05 * (1 - decay)
-          cProduct += 0.05 * (1 - decay)
+          cReactant = Math.max(0, cReactant - dC)
+          cProduct += dC * stoichRatio
         } else if (vR > vF) {
           const gap = vR - vF
           vF += gap * 0.2 * (1 - decay)
           vR -= gap * 0.2 * (1 - decay)
-          cReactant += 0.05 * (1 - decay)
-          cProduct -= 0.05 * (1 - decay)
+          cReactant += dC
+          cProduct = Math.max(0, cProduct - dC * stoichRatio)
         }
       }
 

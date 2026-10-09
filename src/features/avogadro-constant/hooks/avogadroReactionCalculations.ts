@@ -86,14 +86,33 @@ export function calculateElectrolyteHydrolysisTrap(
         physicalState: '溶液',
         vmValue: 22.4,
         particleStats: [
-          { label: 'Fe(OH)₃ 胶体粒子数', theoreticalMoles: feMoles, actualMoles: feMoles * 0.001, unit: 'N_A', isTrap: true, trapExplanation: `胶粒是上百至上千个 Fe(OH)₃ 分子的聚集体，胶体粒子数远小于 ${feMoles.toFixed(2)} N_A！` },
-          { label: '溶液中 Fe³⁺ 离子数', theoreticalMoles: feMoles, actualMoles: feMoles * 0.95, unit: 'N_A', isTrap: true, trapExplanation: `Fe³⁺ 发生水解 Fe³⁺ + 3H₂O ⇌ Fe(OH)₃ + 3H⁺，Fe³⁺ 数目小于 ${feMoles.toFixed(2)} N_A。` },
+          {
+            label: 'Fe(OH)₃ 胶体粒子数',
+            theoreticalMoles: feMoles,
+            // 数量级依据：1 个胶粒约由 1000 个 Fe(OH)₃ 分子聚集而成 ⇒ 胶粒数 ≈ 投料 Fe 的 1/1000。
+            // 该值随制备条件（浓度、温度、陈化时间）在数十~数千倍间浮动，故标注为示意量。
+            actualMoles: feMoles * 0.001,
+            unit: 'N_A',
+            isTrap: true,
+            isIndicative: true,
+            trapExplanation: `胶粒是上百至上千个 Fe(OH)₃ 分子的聚集体（此处按 ~1000 个/胶粒估算数量级），胶体粒子数远小于 ${feMoles.toFixed(2)} N_A！该值随制备条件浮动，仅作数量级示意。`,
+          },
+          {
+            label: '溶液中 Fe³⁺ 离子数',
+            theoreticalMoles: feMoles,
+            // 常温下 Fe³⁺ 水解程度较小（通常仅百分之几），此处取"约 5% 水解"作示意
+            actualMoles: feMoles * 0.95,
+            unit: 'N_A',
+            isTrap: true,
+            isIndicative: true,
+            trapExplanation: `Fe³⁺ 发生水解 Fe³⁺ + 3H₂O ⇌ Fe(OH)₃(胶体) + 3H⁺，Fe³⁺ 数目小于 ${feMoles.toFixed(2)} N_A。水解程度随温度/浓度变化，图中按约 5% 水解作示意。`,
+          },
         ],
         trapType: '胶体粒子聚集与水解可逆陷阱',
         trapBadge: '胶粒数 ≪ n(Fe³⁺)',
         trapLevel: 'high',
         keyPointAnalysis: [
-          '向沸水中滴加饱和 FeCl₃ 溶液制备 Fe(OH)₃ 胶体：Fe³⁺ + 3H₂O ≜ Fe(OH)₃(胶体) + 3H⁺。',
+          '向沸水中滴加饱和 FeCl₃ 溶液制备 Fe(OH)₃ 胶体（加热条件下水解趋于完全，按教材写等号并标 Δ）：FeCl₃ + 3H₂O —Δ→ Fe(OH)₃(胶体) + 3HCl。',
           '胶体微粒是很多个（成百上千个）Fe(OH)₃ 分子的聚集体，因此胶粒数远小于投料的 Fe³⁺ 离子数。',
           '同时水解是可逆反应，Fe³⁺ 不能完全水解转化为 Fe(OH)₃。',
         ],
@@ -178,13 +197,28 @@ export function calculateElectrolyteHydrolysisTrap(
 
 /**
  * 4. 氧化还原电子转移数 (n_e) 陷阱计算逻辑
+ *
+ * 「按质量输入」时必须使用**本体系被审物质**的摩尔质量：
+ * 此前统一用 71（Cl₂ 的 M）会导致 NO₂(46)、SO₂(64) 等体系在输入 g 时得到错误摩尔数
+ * （例如 46 g NO₂ 会被算成 0.648 mol，正确应为 1.000 mol）。
  */
+const REDOX_MOLAR_MASS: Record<string, number> = {
+  'Cl2-NaOH': 71,
+  'Na2O2-H2O': 78,
+  'NO2-H2O': 46,
+  'NO2-N2O4-reversible': 46,
+  'SO2-O2-reversible': 64,
+  'Cu-S': 64,
+  'Fe-HNO3': 56,
+}
+
 export function calculateRedoxElectronTrap(
   item: 'Cl2-NaOH' | 'Na2O2-H2O' | 'NO2-H2O' | 'Cu-S' | 'SO2-O2-reversible' | 'NO2-N2O4-reversible' | 'Fe-HNO3',
   val: number,
   unit: 'mol' | 'L' | 'g'
 ): AvogadroResult {
-  const moles = unit === 'L' ? val / 22.4 : unit === 'mol' ? val : val / 71
+  const molarMass = REDOX_MOLAR_MASS[item]
+  const moles = unit === 'L' ? val / 22.4 : unit === 'mol' ? val : val / molarMass
 
   switch (item) {
     case 'Cu-S': {
@@ -205,8 +239,8 @@ export function calculateRedoxElectronTrap(
         trapLevel: 'high',
         keyPointAnalysis: [
           '单质 S 属于弱氧化剂，与变价金属反应只能生成低价态化合物：',
-          '2Cu + S ≜ Cu₂S（Cu 为 +1 价，1 mol Cu 转移 1 N_A 电子）；',
-          'Fe + S ≜ FeS（Fe 为 +2 价，1 mol Fe 转移 2 N_A 电子）。对比：Fe + 1.5 Cl₂ ➔ FeCl₃ 转移 3 N_A 电子！',
+          '2Cu + S =Δ= Cu₂S（Cu 为 +1 价，1 mol Cu 转移 1 N_A 电子）；',
+          'Fe + S =Δ= FeS（Fe 为 +2 价，1 mol Fe 转移 2 N_A 电子）。对比：2Fe + 3Cl₂ =Δ= 2FeCl₃（Fe 为 +3 价，1 mol Fe 转移 3 N_A 电子）！',
         ],
         formulaLatex: '2\\overset{0}{\\text{Cu}} + \\text{S} \\triangleq \\overset{+1}{\\text{Cu}}_2\\text{S} \\implies 1 \\text{ mol Cu } \\text{转移 1 mol } e^-',
         correctAnswerSummary: `1 mol Cu 与足量 S 反应转移 1 N_A 电子 (生成 Cu₂S)`,

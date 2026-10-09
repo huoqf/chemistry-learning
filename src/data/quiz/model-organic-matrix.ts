@@ -43,7 +43,7 @@ export const modelOrganicMatrix: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'quiz-1',
-      yearProvince: '高考全国甲卷',
+      yearProvince: '全国甲卷 · 情境变式',
       modelId: 'model-organic-matrix',
       title: '真题精选一：多官能团有机物结构推断与试剂消耗比',
       contextDescription: '某芳香族化合物 X 的分子式为 C₉H₈O₄。',
@@ -61,7 +61,7 @@ export const modelOrganicMatrix: ModelQuizData = {
     },
     {
       id: 'quiz-2',
-      yearProvince: '高考新课标卷',
+      yearProvince: '新课标卷 · 情境变式',
       modelId: 'model-organic-matrix',
       title: '真题精选二：双重特性甲酸酚酯水解产物银镜与耗碱模型',
       contextDescription: '有机物 Y 的分子式为 C₇H₆O₂，能发生银镜反应。',

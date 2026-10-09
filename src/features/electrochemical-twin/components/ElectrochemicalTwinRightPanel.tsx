@@ -129,9 +129,9 @@ export const ElectrochemicalTwinRightPanel: React.FC<Props> = ({ params, cellDet
         unit: 'mol',
       },
       {
-        label: '溶液 pH 理论估算偏移',
+        label: '阳极区 pH 降幅 ΔpH',
         value: quantResult.deltaPH,
-        unit: 'pH 单位',
+        unit: 'pH 单位 (按 1 L)',
       },
     ]
   }, [mode, params.currentAmp, params.timeSec, quantResult])
@@ -365,7 +365,7 @@ export const ElectrochemicalTwinRightPanel: React.FC<Props> = ({ params, cellDet
     if (mode === 2) {
       return [
         {
-          text: '【警示 1】：工业电解防副反应：若阳离子膜破损，阳极析出的 Cl₂ 会与阴极生成的 NaOH 反应生成 NaClO，导致纯碱减产。',
+          text: '【警示 1】：工业电解防副反应：若阳离子膜破损，阳极析出的 Cl₂ 会与阴极生成的 NaOH 反应生成 NaClO，导致烧碱（NaOH）减产。',
           level: 'danger' as const,
         },
         {

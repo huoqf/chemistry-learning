@@ -31,6 +31,7 @@ export {
   CANVAS_COLORS,
   PHENOMENON_COLORS,
   ATOM_COLORS,
+  INDICATOR_COLORS,
   FLAME_COLORS,
   withAlpha,
 } from './chemistry/colors'

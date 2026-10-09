@@ -1,6 +1,6 @@
 /**
  * src/features/industrial-flow/types.ts
- * 母题七：无机工艺流程与沉淀调 pH 工具 - 类型定义
+ * 实验二：无机工艺流程与沉淀调 pH 工具 - 类型定义
  */
 
 export type IndustrialFlowSystemId =

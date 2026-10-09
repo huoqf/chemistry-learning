@@ -15,7 +15,7 @@ export const CRYSTAL_DATA_MAP: Record<CrystalTypeId, CrystalTypeData> = {
     defaultEdgeLengthPm: 564,
     molarMass: 58.5,
     tangentFormulaLatex: '2(r(\\text{Na}^+) + r(\\text{Cl}^-)) = a',
-    tangentDescription: 'Na⁺ 与 Cl⁻ 沿晶胞棱边相切，2(r(Na⁺)+r(Cl⁻)) = a；由于阳离子较大，面对角线上的 Cl⁻ 彼此不接触。',
+    tangentDescription: 'Na⁺ 与 Cl⁻ 沿晶胞棱边相切，2(r(Na⁺)+r(Cl⁻)) = a。由于 r(Na⁺)/r(Cl⁻) ≈ 102/181 ≈ 0.56，大于临界值 0.414，半径较小的 Na⁺ 反而把 Cl⁻ 撑开，故面对角线上的 Cl⁻ 彼此不接触。',
     coordNumberDescription: 'Na⁺ 与 Cl⁻ 的配位数均为 6 (八面体空隙包围)。',
     tangentRadii: { 'Cl⁻': 0.31, 'Na⁺': 0.19 },
     tangentLines: [
@@ -72,7 +72,7 @@ export const CRYSTAL_DATA_MAP: Record<CrystalTypeId, CrystalTypeData> = {
     tangentFormulaLatex: 'r(\\text{Cs}^+) + r(\\text{Cl}^-) = \\frac{\\sqrt{3}}{2}a',
     tangentDescription: 'Cs⁺ 与 Cl⁻ 沿晶胞体对角线方向相切。',
     coordNumberDescription: 'Cs⁺ 与 Cl⁻ 的配位数均为 8 (立方体顶点与体心相互包围)。',
-    tangentRadii: { 'Cs⁺': 0.46, 'Cl⁻': 0.406 },
+    tangentRadii: { 'Cs⁺': 0.414, 'Cl⁻': 0.452 },
     tangentLines: [
       { startFrac: [0, 0, 0], endFrac: [1, 1, 1], label: '体对角线相切 2(r₊+r₋)=√3 a' },
       { startFrac: [1, 0, 0], endFrac: [0, 1, 1] },
@@ -362,7 +362,7 @@ export const CRYSTAL_DATA_MAP: Record<CrystalTypeId, CrystalTypeData> = {
     tangentFormulaLatex: 'r(\\text{Ti}^{4+}) + r(\\text{O}^{2-}) = \\frac{a}{2}',
     tangentDescription: 'Ti⁴⁺ 与 O²⁻ 沿晶胞棱长二分之一处相切。',
     coordNumberDescription: 'Ca²⁺ 的配位数为 12，Ti⁴⁺ 的配位数为 6；每个 O²⁻ 紧邻 2 个 Ti⁴⁺ 和 4 个 Ca²⁺ (配位数为 6)。',
-    tangentRadii: { 'Ca²⁺': 0.32, 'Ti⁴⁺': 0.2, 'O²⁻': 0.3 },
+    tangentRadii: { 'Ca²⁺': 0.29, 'Ti⁴⁺': 0.2, 'O²⁻': 0.3 },
     tangentLines: [
       { startFrac: [0, 0, 0], endFrac: [0.5, 0, 0], label: '棱边相切 r(Ti)+r(O)=a/2' },
       { startFrac: [0, 0, 0], endFrac: [0, 0.5, 0] },

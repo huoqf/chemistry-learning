@@ -68,10 +68,15 @@ export const AvogadroRightPanel: React.FC<AvogadroRightPanelProps> = ({
     chemistry.particleStats.forEach((stat) => {
       list.push({
         label: renderNaText(stat.label) as any,
-        value: stat.actualMoles >= 100 ? `${stat.actualMoles.toFixed(0)}+` : stat.actualMoles.toFixed(2),
+        value: `${stat.isIndicative ? '≈' : ''}${
+          stat.actualMoles >= 100 ? `${stat.actualMoles.toFixed(0)}+` : stat.actualMoles.toFixed(2)
+        }`,
         unit: (
           <span className="inline-flex items-baseline gap-1">
             {renderNaText(stat.unit)}
+            {stat.isIndicative && (
+              <span className="text-[11px] font-normal text-slate-500 ml-1">(示意量)</span>
+            )}
             {stat.isTrap && (
               <span className="text-[11px] font-normal text-rose-600 ml-1">
                 (错预估 {stat.theoreticalMoles.toFixed(2)} NA)

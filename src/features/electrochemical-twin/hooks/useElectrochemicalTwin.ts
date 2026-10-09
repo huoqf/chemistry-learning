@@ -68,8 +68,14 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
       molesMembraneIon = molesElectron
     }
 
-    // 溶液 pH 动态偏移估算 (按 1L 溶液)
-    const deltaPH = +(molesElectron * 0.5).toFixed(2)
+    // 溶液 pH 变化（按 1 L 溶液估算）：仅模式 3（电解 CuSO₄）在阳极产生净 H⁺ 增量，
+    // 阳极 2H₂O - 4e⁻ = O₂↑ + 4H⁺，故 n(H⁺) = n(e⁻)，与右屏「电解产生酸量」同源。
+    // 起始按近中性 pH ≈ 7 计，c(H⁺) ≈ n(e⁻)，则 pH 降幅 ΔpH = 7 - (-lg c(H⁺)) = 7 + lg n(e⁻)。
+    // 其余模式（原电池 / 液流电池 / 氯碱）均无净 H⁺ 增量，该量不参与展示，置 0。
+    const deltaPH =
+      mode === 3
+        ? +Math.min(7, Math.max(0, 7 + Math.log10(Math.max(molesElectron, 1e-14)))).toFixed(2)
+        : 0
 
     return {
       molesElectron: +molesElectron.toFixed(5),
@@ -201,6 +207,13 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
       if (membraneType === 2) membraneDesc = '阴离子交换膜（只透阴离子 $Cl^-$ / $SO_4^{2-}$）'
       if (membraneType === 3) membraneDesc = '双极膜 BPM（催化 $H_2O \\rightarrow H^+ + OH^-$）'
 
+      // membraneFunction 会被右屏「高考要点」当**纯文本**注脚渲染（同卡片已有 latex 字段承载公式），
+      // 因此必须另取一份不含 $…$ 数学定界符的表述，否则 $ 会字面显示在学生眼前。
+      let membranePlain = '无膜/普通隔膜'
+      if (membraneType === 1) membranePlain = '阳离子交换膜（只允许 Na⁺、H⁺ 等阳离子通过）'
+      if (membraneType === 2) membranePlain = '阴离子交换膜（只允许 Cl⁻、SO₄²⁻ 等阴离子通过）'
+      if (membraneType === 3) membranePlain = '双极膜 BPM（在电场作用下催化 H₂O 解离为 H⁺ 和 OH⁻）'
+
       return {
         title: '离子交换膜与多室电解池探究',
         subtitle: `当前隔膜：${membraneDesc}`,
@@ -217,12 +230,12 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
           poleType: 'cathode',
           reactionFormula: '2\\text{H}_2\\text{O} + 2e^- \\rightarrow \\text{H}_2\\uparrow + 2\\text{OH}^-',
           electronChange: '得到 2e⁻',
-          phenomenon: '阴极产生无色气体，pH 显著升高生成烧碱 $NaOH$',
+          phenomenon: '阴极产生无色气体，pH 显著升高生成烧碱 NaOH',
         },
         overallReaction: '2\\text{NaCl} + 2\\text{H}_2\\text{O} \\xrightarrow{\\text{电解}} 2\\text{NaOH} + \\text{H}_2\\uparrow + \\text{Cl}_2\\uparrow',
         energyConversion: '电能 \\rightarrow 化学能',
-        electrolyteInfo: '饱和食盐水 ($NaCl$ 溶液)',
-        membraneFunction: `隔膜阻隔 $Cl_2$ 与 $NaOH$ 反应，${membraneDesc}`,
+        electrolyteInfo: '饱和食盐水 (NaCl 溶液)',
+        membraneFunction: `隔膜阻隔 Cl₂ 与 NaOH 反应，${membranePlain}`,
       }
     }
 
@@ -248,7 +261,7 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
       overallReaction: '2\\text{CuSO}_4 + 2\\text{H}_2\\text{O} \\xrightarrow{\\text{电解}} 2\\text{Cu} + 2\\text{H}_2\\text{SO}_4 + \\text{O}_2\\uparrow',
       energyConversion: '电能 \\rightarrow 化学能',
       electrolyteInfo: `硫酸铜溶液 (c₀ = ${electrolyteConc} mol/L)`,
-      membraneFunction: '法拉第守恒：$n(e^-) = 2n(\\text{Cu}) = 4n(\\text{O}_2) = \\frac{I \\cdot t}{F}$',
+      membraneFunction: '法拉第守恒：n(e⁻) = 2n(Cu) = 4n(O₂) = I·t/F',
     }
   }, [mode, batteryState, membraneType, currentAmp, timeSec, electrolyteConc, quantResult])
 

@@ -25,6 +25,11 @@ const ALLOWLIST = new Set([
   // GaokaoDiagram/index.tsx: 高考化学真题原图高保真复现组件库，纯声明式 SVG 图形渲染，
   // 集中映射各种真题原图插图分支，无化学物理计算，拆分收益不明显
   'src/components/Chemistry/GaokaoDiagram/index.tsx',
+  // industrial-flow/hooks/useIndustrialFlowChemistry.ts: 无机工艺流程纯化学计算 hook
+  // （Ksp 沉淀 pH 计算 / 溶解度曲线 / 物料守恒），单一职责、无 JSX 混写，
+  // 由 industrialChemistryTruthAuditor 等自动化测试守护；示意标注注释为审查要求项，
+  // 机械拆分（抽出曲线数据生成）会打散同一套 Ksp/守恒口径的单一来源，收益不明显
+  'src/features/industrial-flow/hooks/useIndustrialFlowChemistry.ts',
 ])
 
 function walk(dir) {

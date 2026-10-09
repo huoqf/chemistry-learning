@@ -17,7 +17,8 @@ export function calculateStateVolumeTrap(
       const isGas = false
       const physState = '固态' // 标况 0℃ 下 SO3 熔点 16.8℃，完全为固态/晶体
       const molesGiven = unit === 'L' ? val / 22.4 : unit === 'mol' ? val : val / 80
-      const actualMoles = unit === 'L' ? (val * 1.92) / 80 : molesGiven
+      // 密度 1.92 的单位是 g/cm³ = 1920 g/L，val 单位为 L，必须 ×1000 换算
+      const actualMoles = unit === 'L' ? (val * 1920) / 80 : molesGiven
 
       return {
         title: 'SO₃ (三氧化硫) 标况状态陷阱',
@@ -29,7 +30,7 @@ export function calculateStateVolumeTrap(
           {
             label: 'SO₃ 分子数',
             theoreticalMoles: unit === 'L' ? val / 22.4 : molesGiven,
-            actualMoles: unit === 'L' ? Math.min(100, actualMoles) : molesGiven,
+            actualMoles: unit === 'L' ? actualMoles : molesGiven,
             unit: '$N_{\\text{A}}$',
             isTrap: unit === 'L',
             trapExplanation: unit === 'L' ? '错按气体摩尔体积 V_m = 22.4 L/mol 计算！实际 22.4 L 固态 SO₃ 摩尔数远大于 1 mol (约 537 N_A)' : undefined,
@@ -68,7 +69,7 @@ export function calculateStateVolumeTrap(
           {
             label: 'H₂O 分子数',
             theoreticalMoles: unit === 'L' ? val / 22.4 : molesGiven,
-            actualMoles: unit === 'L' ? Math.min(100, actualMoles) : molesGiven,
+            actualMoles: unit === 'L' ? actualMoles : molesGiven,
             unit: '$N_{\\text{A}}$',
             isTrap: unit === 'L',
             trapExplanation: 'H₂O 标况下为冰水混合物，常温下为液体！绝对禁止套用 V_m = 22.4 L/mol！',
@@ -108,7 +109,7 @@ export function calculateStateVolumeTrap(
           {
             label: 'CH₃OH 分子数',
             theoreticalMoles: unit === 'L' ? val / 22.4 : molesGiven,
-            actualMoles: unit === 'L' ? Math.min(100, actualMoles) : molesGiven,
+            actualMoles: unit === 'L' ? actualMoles : molesGiven,
             unit: '$N_{\\text{A}}$',
             isTrap: unit === 'L',
             trapExplanation: '甲醇标况下为液体，绝对不能套用 22.4 L/mol！',
@@ -184,7 +185,7 @@ export function calculateStateVolumeTrap(
           {
             label: 'CCl₄ 分子数',
             theoreticalMoles: unit === 'L' ? val / 22.4 : molesGiven,
-            actualMoles: unit === 'L' ? Math.min(100, actualMoles) : molesGiven,
+            actualMoles: unit === 'L' ? actualMoles : molesGiven,
             unit: '$N_{\\text{A}}$',
             isTrap: unit === 'L',
             trapExplanation: unit === 'L' ? '错把液体 CCl₄ 当作气体使用 22.4 L/mol，实际 22.4 L CCl₄ 约为 231 mol！' : undefined,
@@ -515,7 +516,8 @@ export function calculateStructureBondsTrap(
     case 'NH4Cl': {
       // 1 mol NH4Cl 含 1 mol NH4+ 和 1 mol Cl- (离子键 1 mol)
       // NH4+ 内含 3 mol N-H 极性共价键，1 mol N->H 配位键 (共价键共 4 mol)
-      const molesNH4Cl = unit === 'g' ? val / 53.5 : val
+      // 与其余 case 统一使用 effectiveUnit（unit === 'L' 时兜底按 mol 计），避免口径不一
+      const molesNH4Cl = effectiveUnit === 'g' ? val / 53.5 : val
       return {
         title: 'NH₄Cl (氯化铵) 化学键类型拆解',
         subtitle: '1 mol NH₄Cl 含有 4 mol 共价键 (含 1 mol 配位键) 和 1 mol 离子键',
@@ -535,7 +537,7 @@ export function calculateStructureBondsTrap(
           'NH₄⁺ 内部含有 3 个 N-H 极性共价键和 1 个 N➔H 配位键（共价键总数为 4 N_A）。',
         ],
         formulaLatex: '1 \\text{ mol NH}_4\\text{Cl} \\implies 4 \\text{ mol 共价键 (含 1 mol 配位键)} + 1 \\text{ mol 离子键}',
-        correctAnswerSummary: `1 mol NH₄Cl 含有 4 N_A 个共价键 (含 1 N_A 配位键) 和 1 N_A 离子键`,
+        correctAnswerSummary: `${val} ${effectiveUnit} NH₄Cl 含有 ${(molesNH4Cl * 4).toFixed(2)} N_A 个共价键 (含 ${molesNH4Cl.toFixed(2)} N_A 配位键) 和 ${molesNH4Cl.toFixed(2)} N_A 离子键`,
         stepByStepMatrix: [
           { stepName: '一审环境', checkTarget: '环境', pass: true, finding: '固态' },
           { stepName: '二审状态', checkTarget: '晶体', pass: true, finding: '离子晶体' },

@@ -196,7 +196,7 @@ export function computeCationStepChemistry(
         precipitateColor: '#ffffff',
         hasGas: false,
         litmusChange: false,
-        annotation: '【继续滴加过量氨水】：Zn(OH)₂ + 4NH₃ = [Zn(NH₃)₄]²⁺ + 2OH⁻ 沉淀完全溶解 (与 Al³⁺ 严格区分)',
+        annotation: '【继续滴加过量氨水】：Zn(OH)₂ + 4NH₃·H₂O = [Zn(NH₃)₄]²⁺ + 2OH⁻ + 4H₂O 沉淀完全溶解 (与 Al³⁺ 严格区分)',
         stepTitle: '阶段 2/2：过量氨水 (生成配离子完全溶解)',
       }
     }
@@ -265,7 +265,7 @@ export function computeCationStepChemistry(
         precipitateColor: '#ffffff',
         hasGas: false,
         litmusChange: false,
-        annotation: '【继续滴加浓氨水】：Cu(OH)₂ + 4NH₃ = [Cu(NH₃)₄]²⁺ + 2OH⁻ 沉淀溶解生成深蓝色澄清络溶液',
+        annotation: '【继续滴加浓氨水】：Cu(OH)₂ + 4NH₃·H₂O = [Cu(NH₃)₄]²⁺ + 2OH⁻ + 4H₂O 沉淀溶解生成深蓝色澄清络溶液',
         stepTitle: '过量浓氨水 (沉淀溶解为深蓝澄清液)',
       }
     }
@@ -306,7 +306,7 @@ export function computeCationStepChemistry(
         precipitateColor: '#ffffff',
         hasGas: false,
         litmusChange: false,
-        annotation: '【滴加过量氨水】：AgCl + 2NH₃ = [Ag(NH₃)₂]⁺ + Cl⁻ 沉淀溶解为澄清银氨溶液',
+        annotation: '【滴加过量氨水】：AgCl + 2NH₃·H₂O = [Ag(NH₃)₂]⁺ + Cl⁻ + 2H₂O 沉淀溶解为澄清银氨溶液',
         stepTitle: '步骤 2/2：滴加氨水 (沉淀完全溶解澄清)',
       }
     }

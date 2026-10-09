@@ -158,8 +158,8 @@ export function ValenceMatrixCanvas({
   const leftContent = (
     <LeftPanel>
       <LeftPanelSection
-        title="高考 40 种核心元素"
-        subtitle="非金属(14) · 主族金属(14) · 过渡金属(12)"
+        title="价类二维图元素库 (40 种)"
+        subtitle="30 种高考核心 + 10 种工业/信息拓展 · 非金属(14) · 主族金属(14) · 过渡金属(12)"
       >
         <div className="flex flex-col gap-2.5 pt-1">
           {/* A. 主族非金属 */}

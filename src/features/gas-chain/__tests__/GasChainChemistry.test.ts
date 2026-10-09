@@ -1,9 +1,11 @@
 import { describe, it, expect } from 'vitest'
 import { renderHook } from '@testing-library/react'
 import { useGasChainChemistry } from '../hooks/useGasChainChemistry'
+import { GAS_MATRIX_ITEMS } from '../data/gasMatrixItems'
+import { COLLECTION_DECISION_RULES } from '../data/gasDecisionModels'
 import type { GasChainParams } from '../types'
 
-describe('GasChainChemistry — 母题六 气体制备装置链化学核查测试', () => {
+describe('GasChainChemistry — 实验一 气体制备装置链化学核查测试', () => {
   // 1. NH3 体系测试
   describe('NH₃ 制备与防倒吸体系', () => {
     const defaultParams: GasChainParams = {
@@ -158,7 +160,7 @@ describe('GasChainChemistry — 母题六 气体制备装置链化学核查测�
       expect(result.current.issues.some((i) => i.id === 'c2h4-kmno4-wrong')).toBe(true)
     })
 
-    it('C2H4 误用浓硫酸干燥触发氧化加成警告与阻断', () => {
+    it('C2H4 误用浓硫酸干燥触发氧化加成破坏警告', () => {
       const h2so4Params: GasChainParams = {
         ...c2h4Params,
         washingSteps: [
@@ -168,8 +170,47 @@ describe('GasChainChemistry — 母题六 气体制备装置链化学核查测�
       }
       const { result } = renderHook(() => useGasChainChemistry(h2so4Params))
       expect(result.current.hasDangerAlert).toBe(true)
-      expect(result.current.dangerType).toBe('clogging')
+      // 乙烯遇浓硫酸为化学副反应破坏，非管道结晶堵塞
+      expect(result.current.dangerType).not.toBe('clogging')
       expect(result.current.issues.some((i) => i.id === 'dryer-c2h4-h2so4-wrong')).toBe(true)
+    })
+
+    it('Cl2 误用排纯水法收集触发排饱和食盐水考点警示', () => {
+      const cl2WaterParams: GasChainParams = {
+        viewMode: 0,
+        systemId: 'cl2-prep',
+        targetGas: 'Cl₂',
+        generator: 'flask-heat',
+        washingSteps: [],
+        collection: 'water-displacement',
+        tailGas: 'naoh-absorber',
+        flowRate: 50,
+        temp: 25,
+        heating: true,
+      }
+      const { result } = renderHook(() => useGasChainChemistry(cl2WaterParams))
+      expect(result.current.issues.some((i) => i.id === 'collect-cl2-water-warning')).toBe(true)
+      const cl2Issue = result.current.issues.find((i) => i.id === 'collect-cl2-water-warning')
+      expect(cl2Issue?.description).toContain('排饱和食盐水法')
+    })
+
+    it('NH3 向上排空气法触发密度小于空气警告，且不产生管道堵塞', () => {
+      const nh3UpParams: GasChainParams = {
+        viewMode: 0,
+        systemId: 'nh3-prep',
+        targetGas: 'NH₃',
+        generator: 'testtube-heat',
+        washingSteps: [],
+        collection: 'upward-air',
+        tailGas: 'inverted-funnel',
+        flowRate: 50,
+        temp: 25,
+        heating: true,
+      }
+      const { result } = renderHook(() => useGasChainChemistry(nh3UpParams))
+      expect(result.current.hasDangerAlert).toBe(true)
+      expect(result.current.dangerType).not.toBe('clogging')
+      expect(result.current.issues.some((i) => i.id === 'collect-nh3-upward-wrong')).toBe(true)
     })
   })
 
@@ -284,6 +325,77 @@ describe('GasChainChemistry — 母题六 气体制备装置链化学核查测�
       const { result } = renderHook(() => useGasChainChemistry(params))
       expect(result.current.hasDangerAlert).toBe(true)
       expect(result.current.issues.some((i) => i.id === 'so2-naoh-wrong')).toBe(true)
+    })
+  })
+
+  // ── 复审问题回归守卫（P1-G1 / P1-G2 / P1-G3 与两项 P2） ──
+  describe('数据一致性与错误分类回归守卫', () => {
+    const c2h4Params: GasChainParams = {
+      viewMode: 0,
+      systemId: 'c2h4-prep',
+      targetGas: 'C₂H₄',
+      generator: 'testtube-heat',
+      washingSteps: [{ id: 's1', device: 'wash-bottle', reagent: 'naoh', role: 'purify' }],
+      collection: 'water-displacement',
+      tailGas: 'none',
+      flowRate: 50,
+      temp: 25,
+      heating: false,
+    }
+
+    it('G1：乙烯遇浓硫酸属"目标气体被化学破坏"，不得归类为 clogging，也不得断流', () => {
+      const params: GasChainParams = {
+        ...c2h4Params,
+        washingSteps: [{ id: 's1', device: 'dry-tube', reagent: 'conc-h2so4', role: 'dry' }],
+      }
+      const { result } = renderHook(() => useGasChainChemistry(params))
+
+      // 必须仍然报警（危险确实存在），且被归入 danger 级 → hasDangerAlert 为真
+      expect(result.current.issues.some((i) => i.id === 'dryer-c2h4-h2so4-wrong')).toBe(true)
+      expect(result.current.hasDangerAlert).toBe(true)
+      // 但机理是化学破坏（加成/碳化），不是物理堵塞；更不能把气路判成 0 流量。
+      // dangerType 描述"气路物理失效模式"，浓硫酸破坏乙烯属化学层面，不得落入 clogging；
+      // 气路本身未被堵塞，flowRateOut 必须保持 > 0（流出物只是不再是乙烯）。
+      expect(result.current.dangerType).not.toBe('clogging')
+      expect(result.current.flowRateOut).toBeGreaterThan(0)
+    })
+
+    it('G2：Cl₂ 溶解性必须为"能溶于水 (1:2)"，且排水法白名单覆盖 CO/CH₄/C₂H₂', () => {
+      const cl2 = GAS_MATRIX_ITEMS.find((g) => g.formula === 'Cl₂')
+      expect(cl2).toBeDefined()
+      expect(cl2!.collectionReason).toContain('1:2')
+      expect(cl2!.collectionReason).not.toContain('微溶于水')
+
+      const waterDisplacement = COLLECTION_DECISION_RULES.find((m) => m.method.includes('排水'))
+      expect(waterDisplacement).toBeDefined()
+      for (const gas of ['CO', 'CH₄', 'C₂H₂']) {
+        expect(
+          waterDisplacement!.typicalGases.some((t) => t.includes(gas)),
+          `排水法白名单漏了 ${gas}`
+        ).toBe(true)
+      }
+    })
+
+    it('G3：SO₂ 净化文案不得出现杂质清单以外的 HCl', () => {
+      const so2 = GAS_MATRIX_ITEMS.find((g) => g.formula === 'SO₂')
+      expect(so2).toBeDefined()
+      expect(so2!.purifyReagent).not.toContain('HCl')
+      // 净化目标必须落在杂质清单内（SO₃ / 水蒸气）
+      expect(so2!.purifyReagent).toContain('SO₃')
+    })
+
+    it('P2：C₂H₂ 除 PH₃ 必须给出化学依据（Cu₃P₂ 难溶沉淀方程式）', () => {
+      const c2h2 = GAS_MATRIX_ITEMS.find((g) => g.formula === 'C₂H₂')
+      expect(c2h2).toBeDefined()
+      expect(c2h2!.purifyPrinciple).toContain('PH₃')
+      expect(c2h2!.purifyPrinciple).toContain('Cu₃P₂')
+      expect(c2h2!.purifyPrinciple).toContain('NaOH')
+    })
+
+    it('P2：Cl₂ 净化说明必须点明"抑制 Cl₂ 与水反应"的平衡依据', () => {
+      const cl2 = GAS_MATRIX_ITEMS.find((g) => g.formula === 'Cl₂')
+      expect(cl2!.purifyPrinciple).toContain('同离子效应')
+      expect(cl2!.purifyPrinciple).toContain('Cl₂ + H₂O')
     })
   })
 })

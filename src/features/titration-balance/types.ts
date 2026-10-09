@@ -36,6 +36,15 @@ export interface TitrationCurvePoint {
   pH: number
 }
 
+/** c-V 演变曲线中的单个物种（与右屏微粒浓度同源，杜绝「图与数不一致」） */
+export interface TitrationSpeciesCurve {
+  key: string // 微粒代号 (Na / A / HA / Cl / BH / B / H / OH)
+  name: string // 展示名，如 'HA'
+  labelLatex: string // KaTeX 标签，如 'c(\\text{HA})'
+  color: string // 曲线颜色 token
+  points: Array<{ x: number; y: number }> // x = V_add (mL)，y = c (mol/L)
+}
+
 export interface TitrationChemistryResult {
   pH: number
   cTitrant: number // 滴定剂浓度
@@ -44,6 +53,10 @@ export interface TitrationChemistryResult {
 
   // 各微粒浓度 (mol/L)
   ionConcs: IonConcentration[]
+
+  // 当前点 c(H⁺) / c(OH⁻) (mol/L)，由同一组精确解导出
+  cH: number
+  cOH: number
 
   // 离子浓度排序 (如 c(Na⁺) > c(A⁻) > c(OH⁻) > c(H⁺))
   concOrderingLatex: string
@@ -66,4 +79,7 @@ export interface TitrationChemistryResult {
 
   // 全量 pH 滴定曲线
   curvePoints: TitrationCurvePoint[]
+
+  // 全量 c-V 微粒浓度演变曲线 (与 ionConcs 同源)
+  speciesCurves: TitrationSpeciesCurve[]
 }

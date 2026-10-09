@@ -381,7 +381,7 @@ export const AvogadroScene: React.FC<AvogadroSceneProps> = ({
                 O<tspan dy="2" fontSize="0.75em">2</tspan><tspan dy="-5" fontSize="0.75em">2−</tspan><tspan dy="3" fontSize="1em"></tspan>
               </text>
               <text x="0" y="70" fill="#1e293b" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">
-                Na<tspan dy="2" fontSize="0.75em">2</tspan><tspan dy="-2" fontSize="1em">O</tspan><tspan dy="2" fontSize="0.75em">2</tspan><tspan dy="-2" fontSize="1em">：阴阳离子比 1:2 (含 1 mol O-O 键)</tspan>
+                Na<tspan dy="2" fontSize="0.75em">2</tspan><tspan dy="-2" fontSize="1em">O</tspan><tspan dy="2" fontSize="0.75em">2</tspan><tspan dy="-2" fontSize="1em">：阳:阴 = 2:1 (含 1 mol O-O 键)</tspan>
               </text>
             </g>
           )}
@@ -669,10 +669,10 @@ export const AvogadroScene: React.FC<AvogadroSceneProps> = ({
                 </g>
               )}
 
-              {/* 真实值对比条 */}
+              {/* 真实值对比条（isIndicative 的教学示意量以"示意值 + ≈"呈现，不伪装成精确计算结果） */}
               <g transform="translate(0, 20)">
                 <text x="0" y="10" fill="#0369a1" fontSize={canvasSize.font(10)} fontWeight="bold">
-                  真实值:
+                  {stat.isIndicative ? '示意值:' : '真实值:'}
                 </text>
                 <rect x="44" y="1" width={barWidth} height="11" rx="3" fill="#e0f2fe" />
                 <rect
@@ -684,6 +684,7 @@ export const AvogadroScene: React.FC<AvogadroSceneProps> = ({
                   fill="#0284c7"
                 />
                 <text x={50 + Math.max(10, barWidth * actRatio)} y="10" fill="#0369a1" fontSize={canvasSize.font(10)} fontWeight="bold">
+                  {stat.isIndicative ? '≈' : ''}
                   {stat.actualMoles >= 100 ? `${stat.actualMoles.toFixed(0)}+` : stat.actualMoles.toFixed(2)} NA
                 </text>
               </g>

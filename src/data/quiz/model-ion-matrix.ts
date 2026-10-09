@@ -25,7 +25,7 @@ export const modelIonMatrix: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'quiz-1',
-      yearProvince: '高考全国卷',
+      yearProvince: '全国卷 · 情境变式',
       modelId: 'model-ion-matrix',
       title: '真题精选：溶液中离子共存与限制条件突破',
       contextDescription: '25℃ 时，在指定微粒大量存在的特定水溶液体系中。',

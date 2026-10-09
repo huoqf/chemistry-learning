@@ -1,6 +1,6 @@
 /**
  * src/data/quiz/model-industrial-flow.ts
- * 母题七：无机工艺流程与沉淀调 pH 工具 - 踩分卡与真题题库数据
+ * 实验二：无机工艺流程与沉淀调 pH 工具 - 踩分卡与真题题库数据
  */
 
 import type { ModelQuizData } from './types'
@@ -24,7 +24,7 @@ export const modelIndustrialFlow: ModelQuizData = {
       questionText: '在酸浸液中加入 H₂O₂ 溶液的目的是什么？请写出发生反应的离子方程式：',
       formulaLatex: '2Fe^{2+} + H_2O_2 + 2H^+ = 2Fe^{3+} + 2H_2O',
       correctAnswer: '将 Fe²⁺ 氧化为 Fe³⁺；2Fe²⁺ + H₂O₂ + 2H⁺ = 2Fe³⁺ + 2H₂O',
-      explanation: 'Fe³⁺ 的 Ksp (4×10⁻³⁸) 远小于 Fe²⁺ (8×10⁻¹⁶)，转化为 Fe³⁺ 后可在较低 pH (约 3.2) 下完全沉淀，避免与 Mn²⁺ (pH 8.4 开始沉淀) 发生共沉淀。',
+      explanation: 'Fe³⁺ 的 Ksp (4×10⁻³⁸) 远小于 Fe²⁺ (8×10⁻¹⁶)，转化为 Fe³⁺ 后可在较低 pH (约 3.2) 下完全沉淀，避免与 Mn²⁺ (开始沉淀 pH ≈ 8.1，见变式题变式一计算) 发生共沉淀。',
     },
     {
       id: 'step-2',
@@ -41,7 +41,7 @@ export const modelIndustrialFlow: ModelQuizData = {
       questionText: '除去 Fe³⁺ 和 Al³⁺ 后的滤液中仍含有 Ca²⁺、Mg²⁺ 或 Cu²⁺ 杂质，加入 NaF 或 MnS 的目的及反应原理是：____。',
       formulaLatex: 'Cu^{2+} + MnS(s) = CuS(s) + Mn^{2+}',
       correctAnswer: '加入 NaF 形成 MgF₂/CaF₂ 沉淀；加入 MnS 发生沉淀转化将 Cu²⁺ 转化为 Ksp 更小的 CuS 沉淀',
-      explanation: '调 pH 只能除去易水解的高价离子，Ca²⁺/Mg²⁺ 沉淀 pH 极高，须用 F⁻ 形成难溶氟化物；重金属 Cu²⁺/Zn²⁺ 须利用 Ksp(CuS) < Ksp(MnS) 进行沉淀转化。',
+      explanation: '调 pH 只能除去易水解的高价离子，Ca²⁺/Mg²⁺ 沉淀 pH 极高，须用 F⁻ 形成难溶氟化物（注意 F⁻ 需控制用量——过量 F⁻ 会残留于溶液成为新杂质）；重金属 Cu²⁺/Zn²⁺ 须利用 Ksp(CuS) < Ksp(MnS) 进行沉淀转化。',
     },
     {
       id: 'step-4',
@@ -71,7 +71,7 @@ export const modelIndustrialFlow: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'var-industrial-1',
-      yearProvince: '2024 全国高考化学真题卷',
+      yearProvince: '2024 全国卷 · 情境变式',
       modelId: 'model-industrial-flow',
       title: '软锰矿 (主要含 MnO₂，含 Fe₂O₃、Al₂O₃、SiO₂ 杂质) 提纯高纯 MnSO₄ 工艺',
       contextDescription:
@@ -89,13 +89,13 @@ export const modelIndustrialFlow: ModelQuizData = {
         { label: 'D', text: 'pH ≥ 8.1', isCorrect: false },
       ],
       modelAlignmentAnalysis:
-        '【盲盒剖析：沉淀完全 pH 判定】\n1. 计算 Fe³⁺ 完全沉淀 pH: Ksp[Fe(OH)₃]=4.0×10⁻³⁸, c(OH⁻)=∛(Ksp/10⁻⁵)=1.59×10⁻¹¹, pOH=10.8 ⇒ pH=3.2。\n2. 计算 Al³⁺ 完全沉淀 pH: Ksp[Al(OH)₃]=1.0×10⁻³³, c(OH⁻)=∛(Ksp/10⁻⁵)=2.15×10⁻¹⁰, pOH=9.67 ⇒ pH=4.7。\n3. 计算 Mn²⁺ 开始沉淀 pH: Ksp[Mn(OH)₂]=1.9×10⁻¹³, c(OH⁻)=√(Ksp/0.10)=1.38×10⁻⁶, pOH=5.86 ⇒ pH=8.14。\n因此安全沉淀 pH 区间为 4.7 ≤ pH < 8.1。',
+        '【盲盒剖析：沉淀完全 pH 判定】\n1. 计算 Fe³⁺ 完全沉淀 pH: Ksp[Fe(OH)₃]=4.0×10⁻³⁸, c(OH⁻)=∛(Ksp/10⁻⁵)=1.59×10⁻¹¹, pOH=10.8 ⇒ pH=3.2。\n2. 计算 Al³⁺ 完全沉淀 pH: Ksp[Al(OH)₃]=1.0×10⁻³³, c(OH⁻)=∛(Ksp/10⁻⁵)=2.15×10⁻¹⁰, pOH=9.67 ⇒ pH=4.7。\n3. 计算 Mn²⁺ 开始沉淀 pH: Ksp[Mn(OH)₂]=1.9×10⁻¹³, c(OH⁻)=√(Ksp/0.10)=1.38×10⁻⁶, pOH=5.86 ⇒ pH = 8.14 ≈ 8.1。\n因此安全沉淀 pH 区间为 4.7 ≤ pH < 8.1。',
       detailedExplanation:
         '选 C。杂质 Al³⁺ 完全沉淀所需 pH 为 4.7（若 pH<4.7，Al³⁺ 未完全沉淀）；而 Mn²⁺ 开始沉淀的 pH 为 8.1（若 pH≥8.1，主产物 Mn²⁺ 将沉淀损失）。故溶液 pH 须控制在 4.7 至 8.1 之间。',
     },
     {
       id: 'var-industrial-2',
-      yearProvince: '2022 全国甲卷 / 2023 湖北高考真题变式',
+      yearProvince: '2022 全国甲卷 / 2023 湖北卷 · 情境变式',
       modelId: 'model-industrial-flow',
       title: '黄铜废渣 (主要含 ZnO、CuO，含 Fe₂O₃、Al₂O₃ 杂质) 制备高纯 ZnSO₄·7H₂O 工艺',
       contextDescription:
@@ -119,7 +119,7 @@ export const modelIndustrialFlow: ModelQuizData = {
     },
     {
       id: 'var-industrial-3',
-      yearProvince: '2023 全国新课标卷 / 2024 浙江高考真题',
+      yearProvince: '2023 新课标卷 / 2024 浙江卷 · 情境变式',
       modelId: 'model-industrial-flow',
       title: '钛铁矿 (主要成分 FeTiO₃，含 Fe₂O₃、Al₂O₃ 杂质) 制钛白粉 (TiO₂) 并副产绿矾工艺',
       contextDescription:
@@ -133,7 +133,7 @@ export const modelIndustrialFlow: ModelQuizData = {
       options: [
         {
           label: 'A',
-          text: '防止 Fe³⁺ 水解混入 H₂TiO₃ 沉淀；TiOSO₄ + 2H₂O ≜ H₂TiO₃↓ + H₂SO₄',
+          text: '防止 Fe³⁺ 水解混入 H₂TiO₃ 沉淀；TiOSO₄ + 2H₂O =Δ= H₂TiO₃↓ + H₂SO₄',
           isCorrect: true,
         },
         {
@@ -153,13 +153,13 @@ export const modelIndustrialFlow: ModelQuizData = {
         },
       ],
       modelAlignmentAnalysis:
-        '【盲盒剖析：逆向思维还原考点】\n1. Fe³⁺ 的 Ksp 极小 (4×10⁻³⁸)，在 pH<2 时即强烈水解生成 Fe(OH)₃，若不还原为 Fe²⁺，在加热水解制钛酸时 Fe(OH)₃ 会混入沉淀降低钛白粉纯度。\n2. Fe²⁺ 沉淀 pH 较高 (7.7)，在酸性条件下不水解，留在滤液中通过冷却结晶以 FeSO₄·7H₂O (绿矾) 析出。\n3. 加热水解方程式：TiOSO₄ + 2H₂O ≜ H₂TiO₃↓ + H₂SO₄。',
+        '【盲盒剖析：逆向思维还原考点】\n1. Fe³⁺ 的 Ksp 极小 (4×10⁻³⁸)，在 pH<2 时即强烈水解生成 Fe(OH)₃，若不还原为 Fe²⁺，在加热水解制钛酸时 Fe(OH)₃ 会混入沉淀降低钛白粉纯度。\n2. Fe²⁺ 完全沉淀需 pH ≥ 8.95（远高于 Fe³⁺ 的 3.2），在酸性条件下不水解，留在滤液中通过冷却结晶以 FeSO₄·7H₂O (绿矾) 析出。\n3. 加热水解方程式：TiOSO₄ + 2H₂O =Δ= H₂TiO₃↓ + H₂SO₄。',
       detailedExplanation:
         '选 A。加入铁屑将 Fe³⁺ 还原为 Fe²⁺ 属于极具代表性的“逆向思维考点”，能防止 Fe³⁺ 水解产生的 Fe(OH)₃ 污染钛酸沉淀。TiOSO₄ 遇热强烈水解生成 H₂TiO₃ 沉淀。',
     },
     {
       id: 'var-industrial-4',
-      yearProvince: '2024 湖北/山东/广东高考真题热点',
+      yearProvince: '2024 湖北/山东/广东卷热点 · 情境变式',
       modelId: 'model-industrial-flow',
       title: '废旧三元锂电池正极材料 (含 LiNiₓCoᵧMn₁₋ₓ₋ᵧO₂ 及 Al、Fe 杂质) 回收高纯钴/镍盐工艺',
       contextDescription:
@@ -177,13 +177,13 @@ export const modelIndustrialFlow: ModelQuizData = {
         { label: 'D', text: '可以改用过量 NaOH 代替 Na₂CO₃ 调 pH，效果完全一致', isCorrect: false },
       ],
       modelAlignmentAnalysis:
-        '【盲盒剖析：还原酸浸与氟化物深度除杂】\n1. 三元正极中 Co/Ni 为高价态不溶物，H₂O₂ 在此作“还原剂”，将 Co³⁺/Ni³⁺ 还原为可溶的 Co²⁺/Ni²⁺。\n2. 调 pH 至 5.0~5.2 可使 Fe³⁺ (pH 3.2) 和 Al³⁺ (pH 4.7) 完全沉淀，而 Co²⁺/Ni²⁺ 开始沉淀 pH > 7.0，不会沉淀损失。\n3. Ca²⁺/Mg²⁺ 沉淀 pH 极高，调 pH 无法除去，加入 NaF 生成 MgF₂ (Ksp=6.5×10⁻⁹) 沉淀除去。',
+        '【盲盒剖析：还原酸浸与氟化物深度除杂】\n1. 三元正极中 Co/Ni 为高价态不溶物，H₂O₂ 在此作“还原剂”，将 Co³⁺/Ni³⁺ 还原为可溶的 Co²⁺/Ni²⁺。\n2. 调 pH 至 5.0~5.2 可使 Fe³⁺ (pH 3.2) 和 Al³⁺ (pH 4.7) 完全沉淀，而 Co²⁺/Ni²⁺ 开始沉淀 pH > 7.0，不会沉淀损失。\n3. Ca²⁺/Mg²⁺ 沉淀 pH 极高，调 pH 无法除去，加入 NaF 生成 CaF₂/MgF₂ (Ksp[CaF₂]=5.3×10⁻⁹、Ksp[MgF₂]=6.5×10⁻⁹) 沉淀除去；F⁻ 须控制用量，过量残留会引入新杂质。',
       detailedExplanation:
         '选 B。H₂O₂ 作还原剂把高价 Co/Ni 还原为 +2 价；调 pH 至 5.0~5.2 仅沉淀铁铝；加入 NaF 利用难溶氟化物深度除去 Ca²⁺/Mg²⁺ 杂质。不能用过量 NaOH，否则 Al(OH)₃ 会溶解且 Co²⁺/Ni²⁺ 沉淀损失。',
     },
     {
       id: 'var-industrial-5',
-      yearProvince: '2023 全国乙卷 / 浙江高考真题',
+      yearProvince: '2023 全国乙卷 / 浙江卷 · 情境变式',
       modelId: 'model-industrial-flow',
       title: '盐湖卤水 (含 Mg²⁺、Ca²⁺、Fe³⁺、Al³⁺) 制备高纯氧化镁 (MgO) 工艺',
       contextDescription:
@@ -201,13 +201,13 @@ export const modelIndustrialFlow: ModelQuizData = {
         { label: 'D', text: '调 pH 时也可以加入过量 NaOH 试剂，沉淀效果更好', isCorrect: true },
       ],
       modelAlignmentAnalysis:
-        '【盲盒剖析：草酸盐分离与不增杂原则】\n1. MgO 消耗 H⁺ 提高 pH，引入 Mg²⁺ 恰好为主产物离子，不增杂质。\n2. Mg²⁺ 开始沉淀 pH 为 9.4，故 pH 5.0~8.5 下 Mg²⁺ 和 Ca²⁺ 完全保留在滤液中。\n3. CaC₂O₄ 沉淀溶解积极小 (Ksp=2.3×10⁻⁹)，可与 Mg²⁺ 彻底分离。\n4. 若加过量 NaOH，会导致 Mg²⁺ 在 pH>9.4 时提前大量沉淀损失，D 项说法错误。',
+        '【盲盒剖析：草酸盐分离与不增杂原则】\n1. MgO 消耗 H⁺ 提高 pH，引入 Mg²⁺ 恰好为主产物离子，不增杂质。\n2. Mg²⁺ 开始沉淀 pH 为 8.9（Ksp[Mg(OH)₂]=5.6×10⁻¹²，c(Mg²⁺)≈0.1 mol/L），故 pH 5.0~8.5 下 Mg²⁺ 和 Ca²⁺ 完全保留在滤液中。\n3. CaC₂O₄ 沉淀溶解积极小 (Ksp=2.3×10⁻⁹)，可与 Mg²⁺ 彻底分离。\n4. 若加过量 NaOH，会导致 Mg²⁺ 在 pH>8.9 时提前大量沉淀损失，D 项说法错误。',
       detailedExplanation:
         '选 D。题目要求选错误的选项。加入过量 NaOH 会导致主目标离子 Mg²⁺ 生成 Mg(OH)₂ 沉淀析出造成严重损失，违反流程设计原则。故 D 选项说法错误，符合题意。',
     },
     {
       id: 'var-industrial-6',
-      yearProvince: '2024 新课标全国卷 / 山东高考真题',
+      yearProvince: '2024 新课标全国卷 / 山东卷 · 情境变式',
       modelId: 'model-industrial-flow',
       title: '铝土矿 (主要含 Al₂O₃，含 Fe₂O₃、SiO₂ 杂质) 拜耳法制备高纯氧化铝工艺',
       contextDescription:
@@ -231,17 +231,13 @@ export const modelIndustrialFlow: ModelQuizData = {
     },
     {
       id: 'var-industrial-7',
-      yearProvince: '2024 全国甲卷 / 广东高考真题压轴',
+      yearProvince: '2024 全国甲卷 / 广东卷压轴 · 情境变式',
       modelId: 'model-industrial-flow',
       title: '退役磷酸铁锂电池正极材料 (主要含 LiFePO₄，含碳黑杂质) 回收电池级碳酸锂工艺',
       contextDescription:
         '正极黑粉经稀硫酸和 H₂O₂ 氧化酸浸后，过滤除去不溶导电炭黑；滤液调 pH 沉淀回收高纯 FePO₄；随后向富锂母液中加入饱和 Na₂CO₃ 溶液，加热至 90℃ 析出白色 Li₂CO₃ 晶体，并进行“趁热过滤”和“热水洗涤”。已知：Li₂CO₃ 的溶解度随温度升高而显著减小 (0℃: 1.54g; 100℃: 0.72g)，副产物 Na₂SO₄ 溶解度随温度升高而增大。',
       questionText:
         '关于沉淀 Li₂CO₃ 过程中采用“90℃ 加热”、“趁热过滤”和“热水洗涤”的原因，分析最为准确的是：',
-      diagramType: 'precipitation-curve',
-      diagramConfig: {
-        title: 'Li₂CO₃ 与 Na₂SO₄ 溶解度随温度变化对照曲线图',
-      },
       options: [
         { label: 'A', text: '升高温度可以加快结晶速率，防止 Li₂CO₃ 晶型发生剧烈转变', isCorrect: false },
         { label: 'B', text: 'Li₂CO₃ 溶解度随温度升高而降低，90℃ 加热析出率高；趁热过滤和热水洗涤可防止降温溶解损耗，同时洗去易溶的 Na₂SO₄ 杂质', isCorrect: true },

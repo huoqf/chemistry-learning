@@ -1,6 +1,6 @@
 /**
  * src/features/industrial-flow/hooks/industrialFlowData.ts
- * 母题七：无机工艺流程各工业体系静态知识数据 (元素走向与试剂评估)
+ * 实验二：无机工艺流程各工业体系静态知识数据 (元素走向与试剂评估)
  * 遵循《AGENTS.md》铁律 10 领域内聚准则，分离静态知识矩阵与动态化学计算
  */
 

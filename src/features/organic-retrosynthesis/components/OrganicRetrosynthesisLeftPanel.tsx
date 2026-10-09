@@ -11,7 +11,7 @@ import type {
   SyllabusTierLevel,
 } from '../types'
 
-/** 三层判别标签的展示口径（教材主线 / 信息题素材 / 超纲术语） */
+/** 三层判别标签的展示口径（教材主线 / 信息题素材 / 超纲） */
 const SYLLABUS_TIER_META: Record<
   SyllabusTierLevel,
   { label: string; chip: string; text: string }
@@ -27,7 +27,7 @@ const SYLLABUS_TIER_META: Record<
     text: 'text-amber-900',
   },
   beyond: {
-    label: '超纲术语',
+    label: '超纲',
     chip: 'bg-rose-100 text-rose-800 border-rose-300',
     text: 'text-rose-900',
   },
@@ -56,7 +56,7 @@ export function OrganicRetrosynthesisLeftPanel({
   showCrashContrast,
   onToggleCrashContrast,
 }: OrganicRetrosynthesisLeftPanelProps) {
-  // 4 大有机合成探究模型（每个模型横跨教材主线 / 信息题素材 / 超纲术语三层，逐层标注见 syllabusTiers）
+  // 4 大有机合成探究模型（每个模型横跨教材主线 / 信息题素材 / 超纲三层，逐层标注见 syllabusTiers）
   const modelList: Array<{
     id: RetrosynthesisModelId
     name: string

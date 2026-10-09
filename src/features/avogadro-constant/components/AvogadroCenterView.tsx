@@ -307,9 +307,11 @@ export const AvogadroCenterView: React.FC<AvogadroCenterViewProps> = ({
                   y: actualPoints.length > 0
                     ? actualPoints[Math.min(actualPoints.length - 1, Math.round((cursorX / maxRangeX) * (actualPoints.length - 1)))].y
                     : 1,
-                  label: chemistry.particleStats[0]?.actualMoles >= 100
-                    ? `实际: ${chemistry.particleStats[0].actualMoles.toFixed(0)}+ NA`
-                    : `实际: ${(chemistry.particleStats[0]?.actualMoles || 1).toFixed(2)} NA`,
+                  label: `${chemistry.particleStats[0]?.isIndicative ? '示意' : '实际'}: ${
+                    chemistry.particleStats[0]?.actualMoles >= 100
+                      ? `${chemistry.particleStats[0].actualMoles.toFixed(0)}+ NA`
+                      : `${chemistry.particleStats[0]?.isIndicative ? '≈' : ''}${(chemistry.particleStats[0]?.actualMoles || 1).toFixed(2)} NA`
+                  }`,
                   series: 'primary',
                 },
               ]}

@@ -2,10 +2,24 @@ import { useMemo } from 'react'
 import type {
   TitrationErrorParams,
   TitrationChemistryResult,
+  TitrationType,
   ErrorEffectResult,
   PurityResult,
   YieldResult,
 } from '../types'
+
+/**
+ * 按滴定体系下发的指示剂选择 / 终点判定指引（高考高频考点）。
+ * 使左屏「滴定体系」选择器在化学层真正生效。
+ */
+const TITRATION_TYPE_GUIDE: Record<TitrationType, string> = {
+  'acid-base':
+    '【酸碱滴定】强酸强碱互滴选甲基橙或酚酞均可；强碱滴定弱酸（NaOH 滴定 CH₃COOH）终点溶液呈碱性，必须选酚酞（变色范围 8.2~10.0），误选甲基橙会使终点提前、结果偏低。',
+  redox:
+    '【氧化还原滴定】KMnO₄ 法利用自身紫红色作指示剂（终点为最后半滴使溶液呈浅紫红且 30 s 不褪色）；碘量法（I₂ / S₂O₃²⁻）用淀粉指示剂，须待溶液呈浅黄色（近终点）时加入，终点为蓝色恰好褪去且 30 s 不恢复。',
+  precipitation:
+    '【沉淀滴定】莫尔法用 K₂CrO₄ 作指示剂滴定 Cl⁻（终点由白色 AgCl 沉淀转为砖红色 Ag₂CrO₄ 沉淀）；佛尔哈德法用铁铵矾作指示剂，终点溶液显红色。',
+}
 
 export function useTitrationErrorChemistry(
   params: TitrationErrorParams
@@ -30,6 +44,7 @@ export function useTitrationErrorChemistry(
       rawMaterialMolarMass,
       molarMassProduct,
       actualProductMass,
+      rawToProductRatio,
     } = params
 
     // 理论所需标准体积 mL
@@ -145,11 +160,11 @@ export function useTitrationErrorChemistry(
     if (errorOp === 'none' && Math.abs(viewAngle) > 1.0) {
       if (viewAngle > 0) {
         effectDirection = 'high'
-        description = '读数仰视视线向下斜穿刻度，刻度读数偏大。'
+        description = '读数仰视：眼睛低于凹液面，视线向上斜穿刻度线，读取的刻度值偏大。'
         equationExplanation = 'V_{\\text{终}}\\text{ 仰视偏大} \\implies \\Delta V_{\\text{标}}\\uparrow \\implies c_{\\text{待}}\\text{ 偏高}'
       } else {
         effectDirection = 'low'
-        description = '读数俯视视线向上斜穿刻度，刻度读数偏小。'
+        description = '读数俯视：眼睛高于凹液面，视线向下斜穿刻度线，读取的刻度值偏小。'
         equationExplanation = 'V_{\\text{终}}\\text{ 俯视偏小} \\implies \\Delta V_{\\text{标}}\\downarrow \\implies c_{\\text{待}}\\text{ 偏低}'
       }
     }
@@ -163,6 +178,8 @@ export function useTitrationErrorChemistry(
       effectDirection,
       description,
       equationExplanation,
+      // 幅度由简化系数给出，仅示意量级；高考只判方向（详见类型注释）
+      isIndicative: true,
     }
 
     // 2. 纯度与返滴定计算
@@ -180,6 +197,7 @@ export function useTitrationErrorChemistry(
       nTotalSample = nAliquot * (solutionTotalVol / pipetteVol)
       const M = 106.0 // g/mol Na2CO3
       mPureProduct = nTotalSample * M
+      // 不静默截断：越界由 overLimit 标记并在界面显式告警
       purityPct = (mPureProduct / sampleMass) * 100
       stoichiometryRatio = 'n(Na₂CO₃) = 0.5 × n(HCl)'
       calcStepsLatex = `w\\% = \\frac{0.5 \\times ${reagent2Conc.toFixed(2)} \\times ${(vStdL).toFixed(4)} \\times \\frac{${solutionTotalVol}}{${pipetteVol}} \\times 106}{${sampleMass.toFixed(2)}} \\times 100\\% = ${purityPct.toFixed(2)}\\%`
@@ -192,13 +210,15 @@ export function useTitrationErrorChemistry(
       const n1Total = reagent1Conc * (reagent1Vol / 1000)
       const n1Residual = reagent2Conc * (reagent2Vol / 1000)
       const n1Reacted = Math.max(0, n1Total - n1Residual)
+      const aliquotFactor = solutionTotalVol / pipetteVol
       nAliquot = 0.5 * n1Reacted
-      nTotalSample = nAliquot * (solutionTotalVol / pipetteVol)
+      nTotalSample = nAliquot * aliquotFactor
       const M = 100.09 // g/mol CaCO3
       mPureProduct = nTotalSample * M
-      purityPct = Math.min(100, (mPureProduct / sampleMass) * 100)
+      // 不静默截断：越界由 overLimit 标记并在界面显式告警
+      purityPct = (mPureProduct / sampleMass) * 100
       stoichiometryRatio = 'n(样品) = 0.5 × [n(HCl总) - n(NaOH反滴)]'
-      calcStepsLatex = `w\\% = \\frac{[${reagent1Conc.toFixed(2)} \\times ${(reagent1Vol/1000).toFixed(3)} - ${reagent2Conc.toFixed(2)} \\times ${(reagent2Vol/1000).toFixed(3)}] \\times 0.5 \\times 100.09}{${sampleMass.toFixed(2)}} \\times 100\\% = ${purityPct.toFixed(2)}\\%`
+      calcStepsLatex = `w\\% = \\frac{[${reagent1Conc.toFixed(2)} \\times ${(reagent1Vol/1000).toFixed(3)} - ${reagent2Conc.toFixed(2)} \\times ${(reagent2Vol/1000).toFixed(3)}] \\times 0.5 \\times \\frac{${solutionTotalVol}}{${pipetteVol}} \\times 100.09}{${sampleMass.toFixed(2)}} \\times 100\\% = ${purityPct.toFixed(2)}\\%`
     } else {
       // 氧化还原多步关联：如 2Cu²⁺ ~ I₂ ~ 2S₂O₃²⁻ (1:1 关系)
       const vStdL = reagent2Vol / 1000
@@ -208,7 +228,8 @@ export function useTitrationErrorChemistry(
       // 采用高中常用相对原子质量 (Cu = 64)，与 model-titration-error-purity 题库口径一致
       const M = 222 // g/mol 碱式碳酸铜 Cu₂(OH)₂CO₃ 含有2个 Cu²⁺，故 1mol 消耗 2mol S2O32-
       mPureProduct = (nTotalSample / 2) * M
-      purityPct = Math.min(100, (mPureProduct / sampleMass) * 100)
+      // 不静默截断：越界由 overLimit 标记并在界面显式告警
+      purityPct = (mPureProduct / sampleMass) * 100
       stoichiometryRatio = '1 Cu₂(OH)₂CO₃ ～ 2 Cu²⁺ ～ 2 S₂O₃²⁻'
       calcStepsLatex = `w\\% = \\frac{0.5 \\times ${reagent2Conc.toFixed(2)} \\times ${(vStdL).toFixed(4)} \\times \\frac{${solutionTotalVol}}{${pipetteVol}} \\times 222}{${sampleMass.toFixed(2)}} \\times 100\\% = ${purityPct.toFixed(2)}\\%`
     }
@@ -218,22 +239,27 @@ export function useTitrationErrorChemistry(
       nTotalSample: Number(nTotalSample.toFixed(5)),
       mPureProduct: Number(mPureProduct.toFixed(3)),
       purityPct: Number(purityPct.toFixed(2)),
+      overLimit: purityPct > 100 + 1e-9,
       stoichiometryRatio,
       calcStepsLatex,
     }
 
     // 3. 产率计算 Yield
-    // 原料摩尔质量使用参数 rawMaterialMolarMass，支持任意原料（Fe=55.85, Cu=63.5, Al=27...)
-    const nTheoretical = rawMaterialMass / rawMaterialMolarMass
+    // 原料摩尔质量使用参数 rawMaterialMolarMass，支持化学计量系数比 rawToProductRatio (默认 1.0)
+    const ratio = rawToProductRatio ?? 1.0
+    const nTheoretical = (rawMaterialMass / rawMaterialMolarMass) * ratio
     const mTheoretical = nTheoretical * molarMassProduct
-    const yieldPct = Math.min(100, (actualProductMass / mTheoretical) * 100)
-    const calcFormulaLatex = `\\text{Yield}\\% = \\frac{m_{\\text{实际}}}{m_{\\text{理论}}} = \\frac{${actualProductMass.toFixed(2)}}{\\frac{${rawMaterialMass.toFixed(2)}}{${rawMaterialMolarMass}} \\times ${molarMassProduct}} \\times 100\\% = ${yieldPct.toFixed(2)}\\%`
+    // 不静默截断：产率越界同样由 overLimit 标记并在界面显式告警
+    const yieldPct = (actualProductMass / mTheoretical) * 100
+    const ratioStr = ratio !== 1.0 ? ` \\times ${ratio}` : ''
+    const calcFormulaLatex = `\\text{Yield}\\% = \\frac{m_{\\text{实际}}}{m_{\\text{理论}}} = \\frac{${actualProductMass.toFixed(2)}}{\\frac{${rawMaterialMass.toFixed(2)}}{${rawMaterialMolarMass}}${ratioStr} \\times ${molarMassProduct}} \\times 100\\% = ${yieldPct.toFixed(2)}\\%`
 
     const yieldResult: YieldResult = {
       nTheoretical: Number(nTheoretical.toFixed(4)),
       mTheoretical: Number(mTheoretical.toFixed(2)),
       actualMass: Number(actualProductMass.toFixed(2)),
       yieldPct: Number(yieldPct.toFixed(2)),
+      overLimit: yieldPct > 100 + 1e-9,
       calcFormulaLatex,
     }
 
@@ -241,6 +267,7 @@ export function useTitrationErrorChemistry(
       errorResult,
       purityResult,
       yieldResult,
+      indicatorGuide: TITRATION_TYPE_GUIDE[params.titrationType],
     }
   }, [params])
 }

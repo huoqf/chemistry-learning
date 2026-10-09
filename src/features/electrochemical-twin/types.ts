@@ -3,7 +3,6 @@
  * 原电池 vs 电解池双对比解题工具 - 类型定义
  */
 
-export type ElectrochemicalMode = 'classic-twin' | 'flow-battery' | 'membrane-electrolysis' | 'quantitative'
 export type MembraneType = 'none' | 'cation' | 'anion' | 'bpm'
 export type CellType = 'galvanic' | 'electrolytic'
 

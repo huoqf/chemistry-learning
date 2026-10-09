@@ -47,13 +47,22 @@ export interface LonePairNode {
   label: string
 }
 
-/** 化学键参数 */
+/**
+ * σ 骨架键（每个成键原子对一条边，无方向性区分）
+ *
+ * 口径约定（与 `sigmaBonds` / `piBonds` 严格一致）：
+ *   - 一条边 = 中心原子与一个配位原子之间的一个成键原子对；
+ *   - `bondOrder` 为**平均键级** = (σ 键数 + π 键数) / 边数；
+ *     离域 π 键（如 SO₂ 的 Π³₄、SO₃/CO₃²⁻/NO₃⁻ 的 Π⁴₆）按整体计 1 个 π 键，
+ *     因此其平均键级可为非整数（SO₂ 为 1.5，SO₃/CO₃²⁻/NO₃⁻ 为 4/3）。
+ *   - 恒有不变式：Σ bondOrder = sigmaBonds + piBonds，且 bonds.length = sigmaBonds。
+ */
 export interface BondEdge {
   id: string
   fromAtomId: string
   toAtomId: string
-  bondOrder: number // 1: 单键, 2: 双键, 3: 三键
-  bondType: 'sigma' | 'pi'
+  /** 平均键级（σ 键数 + π 键数）/ 边数；非整数表示离域 π 键均摊（如 1.5、4/3） */
+  bondOrder: number
 }
 
 /** 键角标注节点 */
@@ -102,6 +111,17 @@ export interface VseprMoleculeData {
   angles: BondAngleData[]
 
   examNotes: string
+
+  /** σ 键总数 (高考必考) */
+  sigmaBonds?: number
+  /** π 键总数 (高考必考) */
+  piBonds?: number
+  /** 分子极性判断 (极性分子 / 非极性分子) */
+  polarity?: 'polar' | 'nonpolar'
+  /** 分子极性判断理由 */
+  polarityReason?: string
+  /** 键角多值或特殊标注 (如 PCl₅ 为 90° / 120°) */
+  angleDisplay?: string
 }
 
 /** 化学计算 Hook 导出结果 */

@@ -1,6 +1,6 @@
 /**
  * src/features/industrial-flow/hooks/useIndustrialFlowChemistry.ts
- * 母题七：无机工艺流程与沉淀调 pH 工具 - 纯化学计算 Hook (增强动态响应)
+ * 实验二：无机工艺流程与沉淀调 pH 工具 - 纯化学计算 Hook (增强动态响应)
  */
 
 import { useMemo } from 'react'
@@ -404,7 +404,8 @@ export function useIndustrialFlowChemistry(
         cCurrent = Math.min(c0, cMaxSoluble)
       }
 
-      // Al(OH)3 两性溶解修正 (当 pH > 10.5 时，Al(OH)3 + OH- -> [Al(OH)4]-)
+      // Al(OH)₃ 两性溶解修正 (pH > 10.5)。【示意模型】10^((pH-10.5)×1.5) 为经验拟合，
+      // 仅表达高 pH 下 Al(OH)₃ 重新溶解、lg c 回升的趋势，非 Ksp 严格解，不可用于精确读数。
       if (item.symbol === 'Al³⁺' && pH > 10.5) {
         const amphotericFactor = Math.pow(10, (pH - 10.5) * 1.5)
         cCurrent = Math.min(c0, cCurrent + 1e-5 * amphotericFactor)
@@ -515,6 +516,7 @@ export function useIndustrialFlowChemistry(
       ions.forEach((ion) => {
         const cMaxSoluble = kspCalculated(ion.ksp, ion.charge, curCoh, ion.c0)
         let conc = cMaxSoluble
+        // 同第 5 步：Al³⁺ 高 pH 段为【示意】经验拟合（见上方 amphotericFactor 说明）
         if (ion.symbol === 'Al³⁺' && curPh > 10.5) {
           const amphotericFactor = Math.pow(10, (curPh - 10.5) * 1.5)
           conc = Math.min(ion.c0, conc + 1e-5 * amphotericFactor)
@@ -561,7 +563,7 @@ export function useIndustrialFlowChemistry(
     for (let t = 0; t <= 100; t += 10) {
       if (systemId === 'li-fe-p') {
         // Li2CO3 反常溶解度：0℃ 1.54g, 20℃ 1.33g, 60℃ 1.01g, 100℃ 0.72g
-        const mainSol = Math.round((1.54 - 0.0082 * t) * 100) / 10
+        const mainSol = Math.round((1.54 - 0.0082 * t) * 100) / 100
         // Na2SO4 伴生杂质正常溶解度：高温极大
         const impSol = Math.round((4.5 + 0.42 * t) * 10) / 10
         solubilityCurveData.push({ temp: t, main: mainSol, impurity: impSol })
@@ -655,7 +657,7 @@ export function useIndustrialFlowChemistry(
           systemId === 'ti-fe'
             ? '2Fe³⁺ + Fe = 3Fe²⁺'
             : systemId === 'al-fe-si'
-            ? 'SiO₃²⁻ + 2[Al(OH)₄]⁻ = 难溶铝硅酸盐↓ + 2OH⁻'
+            ? 'Na⁺ + [Al(OH)₄]⁻ + SiO₃²⁻ + H₂O = NaAlSiO₄·2H₂O↓ + 2OH⁻'
             : systemId === 'li-fe-p'
             ? 'Fe³⁺ + PO₄³⁻ = FePO₄↓'
             : systemId === 'ni-co-li'

@@ -98,9 +98,9 @@ export function OrganicRetrosynthesisRightPanel({
           },
           {
             name: '金属 Zn 粉还原消去脱溴',
-            latex: '\\begin{aligned} &\\mathrm{邻二溴代烷 + Zn} \\\\[2pt] &\\quad \\xrightarrow{\\mathrm{EtOH, \\Delta}} \\mathrm{烯烃 + ZnBr_2\\downarrow} \\end{aligned}',
+            latex: '\\begin{aligned} &\\mathrm{邻二溴代烷 + Zn} \\\\[2pt] &\\quad \\xrightarrow{\\mathrm{EtOH, \\Delta}} \\mathrm{烯烃 + ZnBr_2} \\end{aligned}',
             condition: 'Zn 粉 / 无水乙醇加热',
-            note: '两电子转移反式 β-消去高效复原碳碳双键。',
+            note: '两电子转移反式 β-消去高效复原碳碳双键；ZnBr₂ 易溶于乙醇，随滤液除去而非沉淀过滤。',
           },
           {
             name: '高考合成路线标准答题范式',
@@ -171,11 +171,11 @@ export function OrganicRetrosynthesisRightPanel({
       case 'double-bond-protection':
         return [
           {
-            text: '【碳碳双键加溴保护】：双键极易被酸性 KMnO₄ 强氧化或与碱性亲电试剂副反应，先加成 Br₂/CCl₄ 生成邻二溴代烷消除不饱和性。',
+            text: '【碳碳双键加溴保护】：双键极易被酸性 KMnO₄ 强氧化，也易与强碱、强亲电试剂发生副反应，故先加成 Br₂/CCl₄ 生成邻二溴代烷消除不饱和性。',
             importance: 'gaokao' as const,
           },
           {
-            text: '【酚羟基安全烷基化】：在双键处于二溴保护状态下，加入强碱与 CH₃I 安全完成酚羟基威廉姆逊成醚反应。',
+            text: '【酚羟基安全烷基化】：在双键处于二溴保护状态下，加入无水 K₂CO₃ 弱碱与 CH₃I 完成酚羟基威廉姆逊成醚反应——此处刻意不用 NaOH 强碱，以免邻二溴代烷发生消去而提前复原双键。',
             importance: 'core' as const,
           },
           {

@@ -25,6 +25,7 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
   const {
     currentElement,
     orbitalBoxes,
+    excitationShell,
     periodIonizationData,
     stepIonizationAnalysis,
     isoParticles,
@@ -93,8 +94,13 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
           </defs>
           <rect x="0" y="0" width="420" height="650" fill="url(#atom-grid)" opacity="0.6" />
 
-          {/* 渲染独立的微观原子结构场景 */}
-          <AtomShellScene element={currentElement} stateType={params.stateType} font={font} />
+          {/* 渲染独立的微观原子结构场景（激发态高亮层与轨道方框图共用 excitationShell） */}
+          <AtomShellScene
+            element={currentElement}
+            stateType={params.stateType}
+            excitationShell={excitationShell}
+            font={font}
+          />
         </AnimationSvgCanvas>
       </div>
 
@@ -117,7 +123,11 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
 
             {/* 轨道方框表示图 (SVG 矢量阵列) */}
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
-              <svg viewBox="0 0 380 200" className="w-full h-auto">
+              {/* viewBox 高度按实际轨道框行数动态计算（每行 4 个框，行距 80），避免 3d/4p 轨道被裁切 */}
+              <svg
+                viewBox={`0 0 380 ${Math.max(200, 80 * Math.ceil(orbitalBoxes.length / 4) + 10)}`}
+                className="w-full h-auto"
+              >
                 {orbitalBoxes.map((box, bIdx) => {
                   const row = Math.floor(bIdx / 4)
                   const col = bIdx % 4

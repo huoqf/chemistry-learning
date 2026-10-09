@@ -33,7 +33,7 @@ const ERROR_OPERATIONS: { id: ErrorOperation; label: string }[] = [
   { id: 'hanging-drop', label: '终点尖嘴悬滴' },
   { id: 'indicator-early', label: '指示剂变色过早' },
   { id: 'indicator-late', label: '指示剂变色过迟' },
-  { id: 'volumetric-flask-down', label: '定容时俯视刻度' },
+  { id: 'volumetric-flask-down', label: '配制标准液定容时俯视' },
 ]
 
 export const TitrationErrorLeftPanel: React.FC<TitrationErrorLeftPanelProps> = ({
@@ -117,19 +117,23 @@ export const TitrationErrorLeftPanel: React.FC<TitrationErrorLeftPanelProps> = (
         key: 'reagent1Conc',
         label: 'c₁',
         value: params.reagent1Conc,
-        min: 0.5,
-        max: 2.0,
-        step: 0.1,
+        // 返滴定用酸标准液的真实量级：0.05 ~ 0.50 mol/L（原 0.5~2.0 相对移取份样品量偏大 1~2 个数量级）
+        min: 0.05,
+        max: 0.5,
+        step: 0.01,
         unit: 'mol/L',
+        description: '过量 HCl 标准液，0.05~0.50 mol/L',
       },
       {
         key: 'reagent1Vol',
         label: 'V₁',
         value: params.reagent1Vol,
-        min: 20,
-        max: 100,
-        step: 5,
+        // 与 25 mL 移取份中的样品量（≈1.5 mmol）相匹配：10 ~ 50 mL
+        min: 10,
+        max: 50,
+        step: 1,
         unit: 'mL',
+        description: '加入的过量 HCl 体积，10~50 mL',
       },
     ],
     [params.reagent1Conc, params.reagent1Vol]
@@ -178,7 +182,8 @@ export const TitrationErrorLeftPanel: React.FC<TitrationErrorLeftPanelProps> = (
         value: params.rawMaterialMolarMass,
         min: 10,
         max: 200,
-        step: 0.5,
+        // step 0.01：使 Fe=55.85 / Cu=63.5 / Al=27 / Zn=65.4 等真实相对原子质量都能被滑块取到
+        step: 0.01,
         unit: 'g/mol',
         description: 'Fe=55.85, Cu=63.5, Al=27, Zn=65.4',
       },
@@ -188,7 +193,8 @@ export const TitrationErrorLeftPanel: React.FC<TitrationErrorLeftPanelProps> = (
         value: params.molarMassProduct,
         min: 100,
         max: 500,
-        step: 10,
+        // step 0.01：使 392.14 这类带小数的真实摩尔质量能被滑块取到
+        step: 0.01,
         unit: 'g/mol',
       },
       {
@@ -197,11 +203,28 @@ export const TitrationErrorLeftPanel: React.FC<TitrationErrorLeftPanelProps> = (
         value: params.actualProductMass,
         min: 1.0,
         max: 30.0,
-        step: 0.5,
+        step: 0.1,
         unit: 'g',
       },
+      {
+        key: 'rawToProductRatio',
+        label: 'k(原料→产物)',
+        value: params.rawToProductRatio ?? 1.0,
+        // 化学计量系数比：1 mol 原料对应的产物 mol 数，由方程式计量数决定（如 2A → B 则为 0.5）
+        min: 0.1,
+        max: 2.0,
+        step: 0.1,
+        unit: 'mol/mol',
+        description: '1 mol 原料对应产物的 mol 数，默认 1.0；2A→B 取 0.5',
+      },
     ],
-    [params.rawMaterialMass, params.rawMaterialMolarMass, params.molarMassProduct, params.actualProductMass]
+    [
+      params.rawMaterialMass,
+      params.rawMaterialMolarMass,
+      params.molarMassProduct,
+      params.actualProductMass,
+      params.rawToProductRatio,
+    ]
   )
 
   const handleParamChange = (key: string, value: number) => {

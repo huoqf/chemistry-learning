@@ -44,7 +44,7 @@ export const vseprHybridQuizData: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'quiz-vsepr-1',
-      yearProvince: '2024 全国新课标卷',
+      yearProvince: '2024 新课标卷 · 情境变式',
       modelId: 'model-vsepr-hybrid-3d',
       title: 'SO₂ 与 SO₃ 分子空间构型与键角差异比较',
       contextDescription: '已知第三周期元素 S 可形成 SO₂ 与 SO₃ 两种常见氧化物。某同学通过 VSEPR 模型分析 SO₂ 与 SO₃ 分子的空间构型与键角差异。',
@@ -60,7 +60,7 @@ export const vseprHybridQuizData: ModelQuizData = {
     },
     {
       id: 'quiz-vsepr-2',
-      yearProvince: '2024 浙江高考真题卷',
+      yearProvince: '2024 浙江卷 · 情境变式',
       modelId: 'model-vsepr-hybrid-3d',
       title: '常见离子 (NH₄⁺、H₃O⁺) VSEPR 模型与杂化判别',
       contextDescription: '在水溶液与晶体结构中，离子如 CO₃²⁻、NH₄⁺、H₃O⁺ 广泛存在。',
@@ -76,7 +76,7 @@ export const vseprHybridQuizData: ModelQuizData = {
     },
     {
       id: 'quiz-vsepr-3',
-      yearProvince: '2024 山东高考真题',
+      yearProvince: '2024 山东卷 · 情境变式',
       modelId: 'model-vsepr-hybrid-3d',
       title: 'CO₃²⁻ 与 NO₃⁻ 中心原子 sp² 杂化与平面三角形构型',
       contextDescription: '碳酸根 CO₃²⁻ 与硝酸根 NO₃⁻ 具有相同的价电子总数，互为等电子体。',
@@ -92,7 +92,7 @@ export const vseprHybridQuizData: ModelQuizData = {
     },
     {
       id: 'quiz-vsepr-4',
-      yearProvince: '2023 全国乙卷',
+      yearProvince: '2023 全国乙卷 · 情境变式',
       modelId: 'model-vsepr-hybrid-3d',
       title: 'CH₄、NH₃、H₂O 中心原子孤电子对数对键角的递减挤压',
       contextDescription: '同周期 CH₄ (109.5°)、NH₃ (107.3°)、H₂O (104.5°) 中心原子均为 sp³ 杂化。',
@@ -108,7 +108,7 @@ export const vseprHybridQuizData: ModelQuizData = {
     },
     {
       id: 'quiz-vsepr-5',
-      yearProvince: '2023 广东高考真题',
+      yearProvince: '2023 广东卷 · 情境变式',
       modelId: 'model-vsepr-hybrid-3d',
       title: 'XeF₂ 与 XeF₄ 稀有气体化合物 VSEPR 电子对数与实际构型',
       contextDescription: '氙 (Xe) 的氟化物 XeF₂ (二氟化氙) 与 XeF₄ (四氟化氙) 在无机化学中应用广泛。',

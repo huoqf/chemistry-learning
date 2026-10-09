@@ -36,3 +36,28 @@ describe('高考母题与记忆矩阵题库数据全景覆盖度测试', () => {
     })
   })
 })
+
+describe('实验二 沉淀 pH 口径一致性守门（P1-I1 / §5.4 NaF）', () => {
+  const industrialText = () => JSON.stringify(getModelQuizData('model-industrial-flow'))
+
+  it('Mn²⁺ / Fe²⁺ / Mg²⁺ 沉淀 pH 必须与 Ksp 计算同源，不得残留 8.4 / 9.4 / 7.7 等孤立旧值', () => {
+    const text = industrialText()
+    expect(text).toBeTruthy()
+
+    // 旧的三口径与孤立值必须彻底清除（8.14 是 Mn²⁺ 开始沉淀的精确计算值，8.1 是其一位小数取值）
+    expect(text).not.toContain('8.4')
+    expect(text).not.toContain('9.4')
+    expect(text).not.toContain('7.7')
+
+    // 统一到与 hook(Ksp) 计算一致的口径
+    expect(text).toContain('8.14 ≈ 8.1')            // Mn²⁺：计算 8.14 → 区间取值 8.1
+    expect(text).toContain('Fe²⁺ 完全沉淀需 pH ≥ 8.95') // Fe²⁺：与右屏同用"完全沉淀"口径
+    expect(text).toContain('Mg²⁺ 开始沉淀 pH 为 8.9')   // Mg²⁺：c≈0.1 mol/L 下的开始沉淀点
+  })
+
+  it('NaF 除 Ca²⁺/Mg²⁺ 必须提示过量 F⁻ 残留会引入新杂质', () => {
+    const text = industrialText()
+    expect(text).toContain('过量 F⁻ 会残留于溶液成为新杂质')
+    expect(text).toContain('F⁻ 须控制用量，过量残留会引入新杂质')
+  })
+})

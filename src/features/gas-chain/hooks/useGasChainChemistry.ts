@@ -242,9 +242,10 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       issues.push({
         id: 'c2h2-naoh-warning',
         level: 'warning',
-        title: '除杂试剂选择不当：NaOH 无法彻底沉淀除尽 H₂S，且微溶损失 C₂H₂',
-        description: '电石法制备乙炔中主要有害恶臭杂质为 H₂S 和 PH₃，高考标准除杂试剂为饱和 CuSO₄ 溶液（生成难溶 CuS 黑色沉淀）。',
-        examPoint: '除去 C₂H₂ 中的 H₂S/PH₃ 必须使用饱和 CuSO₄ 溶液：CuSO₄ + H₂S = CuS↓ + H₂SO₄。',
+        title: '除杂试剂选择不当：NaOH 只能吸收 H₂S，无法除去 PH₃',
+        description:
+          '电石法制乙炔中的有害杂质为 H₂S 与 PH₃。NaOH 溶液只能吸收酸性气体 H₂S，对 PH₃ 无效；而饱和 CuSO₄ 溶液可与二者分别生成难溶 CuS、磷化铜沉淀，一次性除尽，故为标准选择。',
+        examPoint: '除去 C₂H₂ 中的 H₂S/PH₃ 应使用饱和 CuSO₄ 溶液：CuSO₄ + H₂S = CuS↓ + H₂SO₄（PH₃ 亦生成难溶磷化铜沉淀）。',
       })
     }
 
@@ -257,7 +258,7 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
         issues.push({
           id: 'dryer-nh3-acid',
           level: 'danger',
-          title: '高考易错陷阱：严禁使用浓硫酸干燥氨气 ($NH_3$)！',
+          title: '高考易错陷阱：严禁使用浓硫酸干燥氨气 (NH₃)！',
           description: '氨气为碱性气体，与浓硫酸发生剧烈反应 2NH₃ + H₂SO₄ = (NH₄)₂SO₄ 生成固体结晶，封堵导管！',
           examPoint: '酸性干燥剂 (浓H₂SO₄/P₂O₅) 不能干燥碱性气体 (NH₃)；碱性干燥剂 (碱石灰) 不能干燥酸性气体。',
         })
@@ -267,7 +268,7 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
         issues.push({
           id: 'dryer-nh3-cacl2',
           level: 'danger',
-          title: '高考压轴陷阱：无水 $CaCl_2$ 不能干燥氨气 ($NH_3$)！',
+          title: '高考压轴陷阱：无水 CaCl₂ 不能干燥氨气 (NH₃)！',
           description: '无水 CaCl₂ 会与 NH₃ 发生络合反应生成八氨合氯化钙 CaCl₂·8NH₃ 配合物，吸收氨气导致实验完全失败！',
           examPoint: '干燥 NH₃ 必须且只能选用碱石灰 (CaO + NaOH) 干燥管。',
         })
@@ -279,7 +280,7 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
         issues.push({
           id: 'dryer-acid-sodalime',
           level: 'danger',
-          title: '严重错误：碱石灰会完全吸收酸性气体 ($Cl_2 / SO_2 / NO_2$)！',
+          title: '严重错误：碱石灰会完全吸收酸性气体 (Cl₂ / SO₂ / NO₂)！',
           description: '碱石灰 (CaO+NaOH) 为强碱性干燥剂，会与酸性气体发生中和反应全部吸收，导致出口无气体流出！',
           examPoint: '干燥酸性气体 (Cl₂, SO₂, CO₂, NO₂) 应选用浓硫酸或无水 CaCl₂ 干燥管。',
         })
@@ -287,15 +288,18 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
     }
 
     // C₂H₄ 不能用浓H₂SO₄干燥（浓H₂SO₄会与乙烯的碳碳双键加成/氧化，消耗乙烯）
+    // 注意：此处刻意【不】设置 dangerType / dryerClogged。
+    //   dangerType 枚举 (siphon | splashing | clogging | none) 描述的是"气路物理失效模式"，
+    //   而浓硫酸对乙烯是"目标气体被化学破坏"（加成/碳化），机理属化学层面；若误标 clogging
+    //   会连带把 flowRateOut 判成 0（气路其实并未堵塞，仍有气流通过，只是流出物已非乙烯，
+    //   纯度由 gasPurity 单独反映）。该危险由 issue(level:'danger') + hasDangerAlert 承载。
     if ((targetGas === 'C₂H₄' || systemId === 'c2h4-prep') && dryer === 'conc-h2so4') {
-      dryerClogged = true
-      dangerType = 'clogging'
       issues.push({
         id: 'dryer-c2h4-h2so4-wrong',
         level: 'danger',
-        title: '高考经典错误：浓硫酸不能用于干燥乙烯 ($C_2H_4$)！',
-        description: '浓 H₂SO₄ 具有强氧化性，会与乙烯碳碳双键发生加成或氧化反应，将 C₂H₄ 消耗破坏，引入 CO₂、SO₂ 等杂质！乙烯制备体系已使用浓 H₂SO₄ 催化，收集前可直接通过 NaOH 洗气瓶除去酸性杂质，无需再次浓硫酸干燥。',
-        examPoint: '乙烯 (C₂H₄) 含碳碳双键，浓 H₂SO₄ 氧化性强，严禁用于干燥乙烯；可用无水 CaCl₂ 或 P₂O₅ 干燥管。',
+        title: '高考经典错误：浓硫酸不能用于干燥乙烯 (C₂H₄)！',
+        description: '浓 H₂SO₄ 具有强氧化性和吸水性，常温下易与乙烯碳碳双键发生加成生成硫酸氢乙酯，且脱水碳化破坏乙烯，引入 CO₂、SO₂ 杂质！乙烯气体制备纯化必须选用无水 CaCl₂ 或碱石灰干燥管。',
+        examPoint: '乙烯 (C₂H₄) 含碳碳双键，浓 H₂SO₄ 具强氧化性与加成活性，严禁用于干燥乙烯；应选用固态干燥剂 (无水 CaCl₂ 或碱石灰)。',
       })
     }
 
@@ -363,12 +367,11 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
     }
 
     if (targetGas === 'NH₃' && collection === 'upward-air') {
-      dangerType = 'clogging'
       issues.push({
         id: 'collect-nh3-upward-wrong',
         level: 'danger',
         title: '严重收集错误：NH₃ 密度小于空气，严禁用向上排空气法！',
-        description: '氨气 ($NH_3$) 的相对分子质量为 17，密度明显比空气 (29) 小，向上排空气法气体直接上浮逸散，无法集满瓶！',
+        description: '氨气 (NH₃) 的相对分子质量为 17，密度明显比空气 (29) 小，向上排空气法气体直接上浮逸散，无法集满瓶！',
         examPoint: '轻气体 (NH₃) 必须使用向下排空气法 (短进长出)；重气体用向上排空气法。',
       })
     }
@@ -385,13 +388,21 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
     }
 
     if (collection === 'water-displacement') {
-      if (['NH₃', 'SO₂', 'Cl₂'].includes(targetGas) || systemId === 'nh3-prep') {
+      if (targetGas === 'Cl₂' || systemId === 'cl2-prep') {
+        issues.push({
+          id: 'collect-cl2-water-warning',
+          level: 'warning',
+          title: '高考高频考点警示：氯气不能用排纯水法收集，须用排饱和食盐水法！',
+          description: '常温下 1 体积水约溶解 2 体积 Cl₂，且发生 Cl₂ + H₂O ⇌ HCl + HClO 反应。排纯水会造成氯气显著损耗并污染水体；若要使用排液法收集，必须改用【排饱和食盐水法】（同离子效应抑制 Cl₂ 溶解）！',
+          examPoint: 'Cl₂ 可溶于水并与水反应，不能排纯水；实验室常用【向上排空气法】或【排饱和食盐水法】收集。',
+        })
+      } else if (['NH₃', 'SO₂'].includes(targetGas) || systemId === 'nh3-prep') {
         issues.push({
           id: 'collect-water-wrong',
           level: 'warning',
           title: '收集方式错误：易溶于水的气体不能用排水集气法！',
-          description: `${targetGas} 易溶于水，在水槽中大量溶解，排水法无法收集到气体！`,
-          examPoint: '只有难溶/不溶于水且不与水反应的气体 (O₂, H₂, NO, C₂H₄) 才能用排水法收集。',
+          description: `${targetGas} 易溶于水 (NH₃ 达 1:700，SO₂ 达 1:40)，在水槽中极易溶解并引发倒吸，排水法无法收集到气体！`,
+          examPoint: '只有难溶/微溶于水且不与水反应的气体 (O₂, H₂, NO, CO, CH₄, C₂H₄, C₂H₂) 才能用排水法收集。',
         })
       }
     } else if (collection === 'downward-air') {

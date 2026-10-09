@@ -52,16 +52,18 @@ export const IonMatrixScene: React.FC<IonMatrixSceneProps> = ({
     const dropperDropColor = currentReagent?.resultColor || '#0284c7'
 
     // 解析相变卡片的标题与机理正文
+    // 注意：正文/标题本身可能还含「：」，必须用 slice(1).join(...) 取剩余全部内容。
+    // 若写成 parts[1]，第二个「：」之后的内容会被整段丢弃（即"注释被硬截断"）。
     let annotationTitle = '相变原理解析'
     let annotationDetail = state.annotation
     if (state.annotation.includes('】：')) {
       const parts = state.annotation.split('】：')
-      annotationTitle = parts[0].replace('【', '')
-      annotationDetail = parts[1]
+      annotationTitle = parts[0].replace(/^【/, '')
+      annotationDetail = parts.slice(1).join('】：')
     } else if (state.annotation.includes('：')) {
       const parts = state.annotation.split('：')
       annotationTitle = parts[0]
-      annotationDetail = parts[1]
+      annotationDetail = parts.slice(1).join('：')
     }
 
     return (

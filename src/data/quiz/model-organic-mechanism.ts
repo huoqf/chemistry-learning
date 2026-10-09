@@ -76,7 +76,7 @@ export const modelOrganicMechanism: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'var-org-1',
-      yearProvince: '2024 全国甲卷',
+      yearProvince: '2024 全国甲卷 · 情境变式',
       modelId: 'model-organic-mechanism',
       title: '不对称烯烃亲电加成马氏规则与断键取向',
       contextDescription: '丙烯 (CH₃-CH=CH₂) 与 HBr 在常温无过氧化物存在下发生亲电加成反应。',
@@ -97,7 +97,7 @@ export const modelOrganicMechanism: ModelQuizData = {
     },
     {
       id: 'var-org-2',
-      yearProvince: '2025 湖南高考模考',
+      yearProvince: '2025 湖南模考 · 情境变式',
       modelId: 'model-organic-mechanism',
       title: '卤代烃消去与取代条件判定及扎伊采夫规则',
       contextDescription: '将 2-溴丁烷分别与 NaOH 水溶液加热 (反应 I) 和 NaOH 乙醇溶液加热 (反应 II) 处理。',
@@ -118,7 +118,7 @@ export const modelOrganicMechanism: ModelQuizData = {
     },
     {
       id: 'var-org-3',
-      yearProvince: '2024 山东卷',
+      yearProvince: '2024 山东卷 · 情境变式',
       modelId: 'model-organic-mechanism',
       title: '同分异构醇催化氧化断键特征与 α-H 条件',
       contextDescription: '分子式为 C₄H₁₀O 的四种同分异构醇分别在 Cu 催化加热下与 O₂ 反应。',
@@ -139,7 +139,7 @@ export const modelOrganicMechanism: ModelQuizData = {
     },
     {
       id: 'var-org-4',
-      yearProvince: '2024 全国新课标卷',
+      yearProvince: '2024 新课标卷 · 情境变式',
       modelId: 'model-organic-mechanism',
       title: '同位素 18O 标记下有机酯化与水解断键机制',
       contextDescription: '某有机合成实验室利用同位素示踪法研究乙酸乙酯在 H₂¹⁸O 中的酸性水解历程。',
@@ -160,7 +160,7 @@ export const modelOrganicMechanism: ModelQuizData = {
     },
     {
       id: 'var-org-5',
-      yearProvince: '2025 江苏高考模考',
+      yearProvince: '2025 江苏模考 · 情境变式',
       modelId: 'model-organic-mechanism',
       title: '苯酚与甲醛缩聚机制与酚羟基邻对位 C-H 活化',
       contextDescription: '苯酚与甲醛在酸性催化剂 (如盐酸) 作用下，按苯酚过量条件加热反应生成酚醛树脂。',
@@ -181,7 +181,7 @@ export const modelOrganicMechanism: ModelQuizData = {
     },
     {
       id: 'var-org-6',
-      yearProvince: '2024 广东卷',
+      yearProvince: '2024 广东卷 · 情境变式',
       modelId: 'model-organic-mechanism',
       title: '多肽分子酰胺键/肽键水解切断与产物结构分析',
       contextDescription: '某三肽分子由甘氨酸 (Gly)、丙氨酸 (Ala) 和苯丙氨酸 (Phe) 缩合而成，在足量 1 mol/L 稀盐酸中加热完全水解。',
@@ -202,7 +202,7 @@ export const modelOrganicMechanism: ModelQuizData = {
     },
     {
       id: 'var-org-7',
-      yearProvince: '2024 浙江卷 / 新课标卷',
+      yearProvince: '2024 浙江卷 / 新课标卷 · 情境变式',
       modelId: 'model-organic-mechanism',
       title: '过渡金属 Pd 催化循环机理图与决速步辨析',
       contextDescription: '某研究团队利用低价钯配合物 [Pd(PPh₃)₂] 催化芳基卤代烃与苯硼酸发生 Suzuki 偶联反应，反应机理包含氧化加成、金属转移、还原消除三个基元反应，全历程中以氧化加成步骤活化能最高。',
@@ -223,7 +223,7 @@ export const modelOrganicMechanism: ModelQuizData = {
     },
     {
       id: 'var-org-8',
-      yearProvince: '2025 拔尖新高考模考',
+      yearProvince: '2025 新高考模考 · 情境变式',
       modelId: 'model-organic-mechanism',
       title: '信息给予反应逆合成：Diels-Alder 环加成断键与重组成环',
       contextDescription: '已知共轭二烯烃与含吸电子基的不饱和烯烃 (亲双烯体) 在加热条件下发生 [4+2] Diels-Alder 环加成反应生成环己烯衍生物。',

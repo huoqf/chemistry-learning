@@ -17,7 +17,7 @@ export const OrganicSpectroscopyView: React.FC<OrganicSpectroscopyViewProps> = (
           </span>
           <div>
             <h3 className="font-bold text-slate-900 text-sm md:text-base">
-              高中化学 12 大核心官能团现代波谱特征全景大表
+              高中化学 16 大核心官能团现代波谱特征全景大表
             </h3>
             <p className="text-xs text-slate-500">
               红外光谱 (IR) 官能团特征吸收区间 + ¹H-NMR 核磁共振氢谱化学位移与峰型规律
@@ -84,7 +84,7 @@ export const OrganicSpectroscopyView: React.FC<OrganicSpectroscopyViewProps> = (
             <strong>核磁共振氢谱 (¹H-NMR)</strong> 吸收峰的<strong>组数</strong>对应<strong>不同化学环境的氢原子种类</strong>；吸收峰的<strong>面积比</strong>对应<strong>各类氢原子的数目比</strong>；
           </li>
           <li>
-            <strong>质谱 (MS)</strong> 中质荷比 ($m/z$) 最大的数值即为该有机分子的<strong>相对分子质量</strong>。
+            <strong>质谱 (MS)</strong> 中质荷比 (m/z) 最大的数值即为该有机分子的<strong>相对分子质量</strong>。
           </li>
         </ul>
       </div>

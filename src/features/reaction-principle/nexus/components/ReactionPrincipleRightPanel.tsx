@@ -17,8 +17,19 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
   params,
   chemistry,
 }) => {
-  const { system, eaForward, eaReverse, boltzmannData, vantHoffData } = chemistry
+  const {
+    system,
+    eaForward,
+    eaReverse,
+    boltzmannData,
+    vantHoffData,
+    alphaTpData,
+    isMultistep,
+    stepBarriers,
+  } = chemistry
   const { chartTab, inertGasMode } = params
+  // 分步能垒条数：提为局部派生量，使 useMemo 依赖数组可以精确列出（避免 exhaustive-deps 遗漏）
+  const barrierCount: number = stepBarriers?.length ?? 0
 
   // 1. 依当前 chartTab 与体系动态提供专属化学量
   const quantities = useMemo(() => {
@@ -47,17 +58,17 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
           unit: 'kJ/mol',
           color: '#8B5CF6',
         },
-        ...(chemistry.isMultistep && chemistry.stepBarriers?.length > 1
+        ...(isMultistep && barrierCount > 1
           ? [
               {
                 label: '第1步能垒 ΔEa1',
-                value: chemistry.stepBarriers[0].ea,
+                value: stepBarriers[0].ea,
                 unit: 'kJ/mol',
                 color: '#3B82F6',
               },
               {
                 label: '第2步能垒 ΔEa2 (决速步)',
-                value: chemistry.stepBarriers[1].ea,
+                value: stepBarriers[1].ea,
                 unit: 'kJ/mol',
                 color: '#EF4444',
               },
@@ -116,7 +127,7 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
         ...baseQuantities,
         {
           label: '平衡转化率 α',
-          value: `${chemistry.alphaTpData?.currentAlpha ?? 50}%`,
+          value: `${alphaTpData?.currentAlpha ?? 50}%`,
           unit: '',
           color: '#10B981',
         },
@@ -145,8 +156,14 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
         unit: 'K',
         color: system.deltaH < 0 ? '#10B981' : '#EF4444',
       },
+      {
+        label: '图像截距 C (= ΔS°/R)',
+        value: vantHoffData.intercept,
+        unit: '',
+        color: '#8B5CF6',
+      },
     ]
-  }, [chartTab, system.deltaH, eaForward, eaReverse, boltzmannData.activatedFraction, vantHoffData.currentKc, vantHoffData.currentLnK, params.temperature, params.pressure, chemistry.alphaTpData, chemistry.isMultistep, chemistry.stepBarriers])
+  }, [chartTab, system.deltaH, eaForward, eaReverse, boltzmannData.activatedFraction, vantHoffData.currentKc, vantHoffData.currentLnK, vantHoffData.intercept, params.temperature, params.pressure, alphaTpData, isMultistep, stepBarriers, barrierCount])
 
   // 2. 依当前 chartTab 动态提供核心公式
   const formulas = useMemo(() => {
@@ -171,6 +188,18 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
           latex: 'E_a(\\text{决速步}) = \\max(\\Delta E_{a1}, \\Delta E_{a2}, \\dots)',
           note: '各基元反应中相对能垒最大（活化能最高）的一步决定全反应速率。',
           level: 'important' as const,
+        },
+        {
+          name: '能量分布峰值位置（教学示意标定）',
+          latex: 'E_{\\text{peak}} = \\frac{1}{2}kT',
+          note: `玻尔兹曼分布的最大值点严格位于 E = kT/2 处。为便于读图，图中横轴能量尺度采用教学标定 kT ≈ 0.085·T；当前 ${params.temperature} K 下峰值约在 ${boltzmannData.peakEnergy} kJ/mol，而真实 kT(298 K) ≈ 2.48 kJ/mol（若按真实值作图，曲线会全部挤在 5 kJ/mol 以内）。`,
+          level: 'important' as const,
+        },
+        {
+          name: '活化分子占比（示意模型）',
+          latex: 'f_{\\text{活化}} = \\frac{\\int_{E_a}^{+\\infty} f(E)\\,dE}{\\int_{0}^{+\\infty} f(E)\\,dE} \\times 100\\%',
+          note: '占比数值随温度与 Ea 单调变化，方向可靠；绝对数值受上述教学标定尺度影响，属**示意**量，不在高考中作定量计算。',
+          level: 'supplementary' as const,
         },
       ]
     }
@@ -217,7 +246,7 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
       {
         name: '范特霍夫方程 (Van\'t Hoff)',
         latex: '\\ln K = -\\frac{\\Delta H}{R} \\cdot \\frac{1}{T} + C',
-        note: 'ln K 与 1/T 呈线性关系，斜率严格由反应热 -ΔH/R 决定。',
+        note: `ln K 与 1/T 呈线性关系：斜率严格由反应热决定 (k = -ΔH/R)。截距 C 并非自由参数，由热力学恒等式 ΔG° = ΔH° - TΔS° 与 ΔG° = -RT·lnK 联立可得 C = ΔS°/R；本体系 ΔS° ≈ ${system.deltaS} J/(mol·K) ⇒ C ≈ ${(system.deltaS / 8.314).toFixed(2)}。`,
         level: 'core' as const,
       },
       {
@@ -227,7 +256,7 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
         level: 'important' as const,
       },
     ]
-  }, [chartTab, system])
+  }, [chartTab, system, params.temperature, boltzmannData.peakEnergy])
 
   // 3. 依当前 chartTab 动态提供高考要点与答题三段论模板
   const gaokaoPoints = useMemo(() => {

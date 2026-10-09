@@ -6,7 +6,7 @@ import type { ProtectionCheatItem } from '../types'
  * 层级说明（与 `syllabusTiers` 同一口径）：
  * - `textbook`  教材主线：人教版选择性必修3 第三章第五节《有机合成》正文要求
  * - `info-item` 信息题素材：教材未作要求，高考以"给出信息"的方式考查
- * - `beyond`    超纲术语：大学有机合成表述，不作考点
+ * - `beyond`    超纲：大学有机合成表述，不作考点
  */
 export const GAOKAO_PROTECTION_CHEAT_SHEET: ProtectionCheatItem[] = [
   {
@@ -24,7 +24,7 @@ export const GAOKAO_PROTECTION_CHEAT_SHEET: ProtectionCheatItem[] = [
     protectedForm: '苄醚 (-OCH₂Ph)',
     tolerance: '耐强碱、耐还原剂、耐强酸',
     deprotection: 'H₂ + Pd/C 常温常压催化氢解',
-    examTip: '温和脱保护生成 PhCH₃ (甲苯) 和复原酚羟基。苄醚保护与 Pd/C 氢解教材未作要求，属信息题素材。',
+    examTip: '温和脱保护生成 PhCH₃ (甲苯) 和复原酚羟基。苄醚保护与 Pd/C 氢解教材未作要求，属【信息题素材】。',
     syllabusTier: 'info-item',
   },
   {
@@ -33,7 +33,7 @@ export const GAOKAO_PROTECTION_CHEAT_SHEET: ProtectionCheatItem[] = [
     protectedForm: '1,3-二氧五环 (环状缩醛 / 缩酮)',
     tolerance: '耐强碱、耐强还原剂 (LiAlH₄/NaBH₄)、耐格氏试剂',
     deprotection: '稀盐酸 (H₃O⁺) / 加热回流水解',
-    examTip: '【绝不能用碱脱保护】！缩醛在碱中极稳定，只在酸中水解。注意教材常见官能团保护清单不含羰基，LiAlH₄、格氏试剂均属信息题素材。',
+    examTip: '【绝不能用碱脱保护】！缩醛在碱中极稳定，只在酸中水解。注意教材常见官能团保护清单不含羰基，LiAlH₄、格氏试剂均属【信息题素材】。',
     syllabusTier: 'info-item',
   },
   {

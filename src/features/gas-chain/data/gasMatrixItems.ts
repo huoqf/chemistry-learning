@@ -1,6 +1,6 @@
 /**
  * src/features/gas-chain/data/gasMatrixItems.ts
- * 母题六：气体制备/净化/尾气处理装置链 - 13 种核心气体全景数据与物理配置预设
+ * 实验一：气体制备/净化/尾气处理装置链 - 13 种核心气体全景数据与物理配置预设
  */
 
 import type { GasChainParams, GasChainSystemId } from '../types'
@@ -47,11 +47,11 @@ export const GAS_MATRIX_ITEMS: GasMatrixItem[] = [
     reactants: 'MnO₂ 固体 + 浓盐酸 / KMnO₄ + 浓盐酸',
     impurities: ['HCl 挥发酸雾', '水蒸气 (H₂O)'],
     purifyReagent: '饱和食盐水 (洗气瓶，长进短出)',
-    purifyPrinciple: '饱和食盐水利用同离子效应 Cl⁻ 抑制 Cl₂ 与水反应，同时溶解极易溶的 HCl',
+    purifyPrinciple: '饱和食盐水利用同离子效应（大量 Cl⁻ 使 Cl₂ + H₂O ⇌ H⁺ + Cl⁻ + HClO 平衡左移），抑制 Cl₂ 与水反应、降低溶解损耗；同时吸收挥发出的极易溶的 HCl 酸雾',
     dryReagents: ['浓硫酸 (洗气瓶)'],
     incompatibleDrying: ['碱石灰 (反应生成 CaCl₂、NaClO 等)'],
     collectionMethod: '向上排空气法 或 排饱和食盐水法',
-    collectionReason: '密度约为空气的 2.45 倍 (M=71 > 29)；有毒且微溶于水',
+    collectionReason: '密度约为空气的 2.45 倍 (M=71 > 29)；有毒且能溶于水 (1:2)，故不用排水法而用排饱和食盐水法',
     testAndFull: '湿润的淀粉-KI 试纸置于瓶口变蓝；或湿润的蓝色石蕊试纸先变红后褪色',
     tailGasMethod: '浓 NaOH 溶液吸收 (直接或倒置漏斗)',
     tailGasReagent: 'Cl_2 + 2NaOH = NaCl + NaClO + H_2O',
@@ -104,7 +104,7 @@ export const GAS_MATRIX_ITEMS: GasMatrixItem[] = [
     generatorType: '固液常温 (亚硫酸钠+70%硫酸) / 固液加热 (Cu+浓硫酸)',
     reactants: 'Na₂SO₃ 固体 + 70% 硫酸 / 铜片 + 浓硫酸',
     impurities: ['SO₃ 挥发酸雾', '水蒸气 (H₂O)'],
-    purifyReagent: '饱和 NaHSO₃ 溶液 (除去 SO₃/HCl)',
+    purifyReagent: '饱和 NaHSO₃ 溶液 (除去 SO₃ 酸雾)',
     purifyPrinciple: '饱和 NaHSO₃ 抑制 SO₂ 溶解，并与强酸性挥发杂质反应',
     dryReagents: ['浓硫酸 (洗气瓶)', 'P₂O₅ 固态干燥剂'],
     incompatibleDrying: ['碱石灰 (酸碱中和反应生成 Na₂SO₃)'],
@@ -210,9 +210,9 @@ export const GAS_MATRIX_ITEMS: GasMatrixItem[] = [
     reactants: '碳化钙 (电石) + 饱和食盐水',
     impurities: ['H₂S (电石含硫杂质生成，恶臭剧毒)', 'PH₃ (磷化钙杂质生成，剧毒)', '水蒸气'],
     purifyReagent: '饱和 CuSO₄ 溶液 (洗气瓶，长进短出)',
-    purifyPrinciple: 'CuSO₄ 与 H₂S 反应生成 CuS 黑色沉淀除去 H₂S/PH₃：CuSO₄ + H₂S = CuS↓ + H₂SO₄；严禁用 NaOH——NaOH 会与弱酸性的 C₂H₂ 反应导致目标气体损失',
+    purifyPrinciple: 'CuSO₄ 溶液与 H₂S、PH₃ 均反应生成难溶沉淀，可将两种还原性杂质一并除去：CuSO₄ + H₂S = CuS↓ + H₂SO₄；2PH₃ + 3CuSO₄ = Cu₃P₂↓ + 3H₂SO₄（磷化亚铜难溶于水）。NaOH 溶液只能吸收酸性气体 H₂S，无法除去 PH₃，故首选 CuSO₄ 而非 NaOH',
     dryReagents: ['无水 CaCl₂', '碱石灰'],
-    incompatibleDrying: ['浓硫酸 (常温下乙炔可被浓硫酸吸收发生聚合反应，严禁使用)', 'NaOH 溶液 (C₂H₂ 具有弱酸性，NaOH 会将其吸收)'],
+    incompatibleDrying: ['浓硫酸 (常温下乙炔可被浓硫酸催化聚合，严禁使用)'],
     collectionMethod: '排水集气法',
     collectionReason: '微溶于水，适宜排水法收集；密度 (M=26) 与空气 (M=29) 接近，排空气法难以收纯',
     testAndFull: '通入溴水加成褪色，点燃火焰明亮并伴有浓烈的黑烟',
@@ -466,8 +466,8 @@ export const GAS_PRESET_CONFIGS: Record<string, Partial<GasChainParams>> = {
     targetGas: 'C₂H₂',
     generator: 'flask-noheat',
     washingSteps: [
-      // ① 饱和 CuSO₄ 溶液除 H₂S/PH₃：CuSO₄ + H₂S = CuS↓ + H₂SO₄
-      // 严禁用 NaOH：C₂H₂ 具弱酸性，NaOH 会吸收乙炔损失目标气体
+      // ① 饱和 CuSO₄ 溶液除 H₂S/PH₃：CuSO₄ + H₂S = CuS↓ + H₂SO₄（PH₃ 生成难溶磷化铜沉淀）
+      // 选用 CuSO₄ 而非 NaOH：NaOH 只能吸收 H₂S，无法除去 PH₃（乙炔端基氢 pKa≈25，不与 NaOH 反应）
       { id: 's1', device: 'wash-bottle', reagent: 'cuso4', role: 'purify' },
       // ② 无水 CaCl₂ 干燥（乙炔不与 CaCl₂ 络合，可安全使用）
       { id: 's2', device: 'dry-tube', reagent: 'cacl2', role: 'dry' },

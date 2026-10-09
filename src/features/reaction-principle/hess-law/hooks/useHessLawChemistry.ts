@@ -140,14 +140,14 @@ export const BOND_PRESETS: MoleculeBondPreset[] = [
   },
 ]
 
-/** 默认反应高程数据 */
+/** 默认反应高程数据 (严格自洽：决速步为活化能最大步，且为催化路径最高峰) */
 export const DEFAULT_ENERGY_PROFILE: EnergyProfileState = {
   reactantEnergy: 150, // kJ/mol
-  productEnergy: 60, // kJ/mol
-  uncatalyzedEa: 240, // 正反应活化能 = 240 - 150 = 90
-  catalyzedEaStep1: 190, // 第一步能垒 Peak1
-  intermediateEnergy: 120, // 中间体能谷
-  catalyzedEaStep2: 175, // 第二步能垒 Peak2
+  productEnergy: 60, // kJ/mol (放热反应 ΔH = -90 kJ/mol)
+  uncatalyzedEa: 240, // 未加催化剂正反应活化能 = 240 - 150 = 90 kJ/mol
+  catalyzedEaStep1: 190, // 第一步过渡态 TS1 能级 (活化能 Ea1 = 190 - 150 = 40 kJ/mol)
+  intermediateEnergy: 160, // 活性中间体能谷 (吸热活化中间体)
+  catalyzedEaStep2: 215, // 第二步过渡态 TS2 能级 (决速步最高峰，活化能 Ea2 = 215 - 160 = 55 kJ/mol)
 }
 
 export function useHessLawChemistry(params: HessLawParams) {
@@ -218,7 +218,10 @@ export function useHessLawChemistry(params: HessLawParams) {
     // 催化下两步活化能
     const eaForwardCatStep1 = catalyzedEaStep1 - reactantEnergy
     const eaForwardCatStep2 = catalyzedEaStep2 - intermediateEnergy
-    const maxCatEa = Math.max(eaForwardCatStep1, eaForwardCatStep2) // 决速步活化能
+    const maxCatEa = Math.max(eaForwardCatStep1, eaForwardCatStep2) // 决速步活化能（相对该步起始物种）
+    // 表观活化能：催化路径最高峰相对**反应物基准**的能垒（= 215 - 150 = 65 kJ/mol）。
+    // 必须与 maxCatEa（相对中间体 55）区分：二者参照基准不同，混用会造成"文案 55 与图 190/215 打架"的错觉。
+    const apparentCatEa = catalyzedEaStep2 - reactantEnergy
 
     return {
       reactantEnergy,
@@ -233,6 +236,7 @@ export function useHessLawChemistry(params: HessLawParams) {
       eaForwardCatStep1,
       eaForwardCatStep2,
       maxCatEa,
+      apparentCatEa,
     }
   }, [])
 

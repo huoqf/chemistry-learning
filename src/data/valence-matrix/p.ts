@@ -57,7 +57,7 @@ export const P_CONFIG: ElementValenceConfig = {
       rgbColor: colors.success[100],
       testReaction: '【高考极高频陷阱】一元中强酸！分子结构中仅1个-OH，与过量 NaOH 生成正盐 NaH₂PO₂（非酸式盐）',
       equation: 'H₃PO₂ + NaOH = NaH₂PO₂ + H₂O',
-      roleDescription: '一元弱酸，强还原性',
+      roleDescription: '一元中强酸，强还原性',
       isReductant: true,
     },
     {
@@ -81,7 +81,7 @@ export const P_CONFIG: ElementValenceConfig = {
       rgbColor: colors.primary[100],
       testReaction: '【高考陷阱】二元中强酸！分子中含2个-OH和1个P-H键，与过量 NaOH 生成正盐 Na₂HPO₃，无 Na₃PO₃',
       equation: 'H₃PO₃ + 2NaOH = Na₂HPO₃ + 2H₂O',
-      roleDescription: '二元弱酸，还原性',
+      roleDescription: '二元中强酸，还原性',
       isReductant: true,
     },
     {

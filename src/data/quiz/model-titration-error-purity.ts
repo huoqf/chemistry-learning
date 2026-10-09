@@ -11,7 +11,7 @@ export const modelTitrationErrorPurity: ModelQuizData = {
         '滴定管刻度自上而下增大。若滴定前平视，滴定后仰视滴定管刻度读取终点体积，将导致测得的标准溶液消耗体积 V(标) 偏大还是偏小？由此计算的待测液浓度 c(待) 如何变化？写出代数推导过程。',
       correctAnswer: ['偏大', '偏高'],
       explanation:
-        '滴定管刻度自上而下增大（0 刻度在上）。滴定后仰视凹液面最低处，视线向下斜穿刻度线，读取的终点刻度数值 V(终) 偏大。因此算出 V(标) = V(终) - V(始) 偏大。由测定关系式 c(待) = [c(标) × V(标)] / V(待) 可知，c(标) 与 V(待) 为已知常数，V(标) 偏大直接导致算得的 c(待) 偏高。',
+        '滴定管刻度自上而下增大（0 刻度在上）。滴定后仰视凹液面最低处，眼睛低于液面、视线向上斜穿刻度线，读取的终点刻度数值 V(终) 偏大。因此算出 V(标) = V(终) - V(始) 偏大。由测定关系式 c(待) = [c(标) × V(标)] / V(待) 可知，c(标) 与 V(待) 为已知常数，V(标) 偏大直接导致算得的 c(待) 偏高。',
     },
     {
       id: 'step-2',
@@ -28,13 +28,13 @@ export const modelTitrationErrorPurity: ModelQuizData = {
       title: '步骤 3：返滴定法（Back Titration）物质的量代数消去关系',
       type: 'calculation',
       questionText:
-        '称取 1.50 g 粗 CaCO₃ 样品，加入 50.00 mL 1.00 mol/L 过量 HCl 溶液充分反应。反应后残余的过量 HCl 需消耗 20.00 mL 1.00 mol/L NaOH 溶液滴定至终点。计算样品中 CaCO₃ 的质量分数为多少 %？(M = 100 g/mol)',
+        '称取 2.00 g 粗 CaCO₃ 样品，加入 50.00 mL 1.00 mol/L 过量 HCl 溶液充分反应。反应后残余的过量 HCl 需消耗 20.00 mL 1.00 mol/L NaOH 溶液滴定至终点。计算样品中 CaCO₃ 的质量分数为多少 %？(M = 100 g/mol)',
       formulaLatex:
         'w\\% = \\frac{[c_{\\text{HCl}} V_{\\text{HCl}} - c_{\\text{NaOH}} V_{\\text{NaOH}}] \\times 0.5 \\times M_{\\text{CaCO}_3}}{m_{\\text{sample}}} \\times 100\\%',
-      placeholder: '100',
-      correctAnswer: ['100', '100%'],
+      placeholder: '75',
+      correctAnswer: ['75', '75%'],
       explanation:
-        'n(HCl总) = 0.0500 L × 1.00 mol/L = 0.0500 mol。与过量 HCl 反应的 n(NaOH) = 0.0200 L × 1.00 mol/L = 0.0200 mol，故残余 n(HCl) = 0.0200 mol。被 CaCO₃ 消耗的 n(HCl) = 0.0500 - 0.0200 = 0.0300 mol。根据 CaCO₃ + 2HCl → CaCl₂ + CO₂↑ + H₂O，n(CaCO₃) = 0.5 × 0.0300 = 0.0150 mol，m(CaCO₃) = 0.0150 × 100 = 1.50 g。纯度 w% = (1.50 / 1.50) × 100% = 100%。',
+        'n(HCl总) = 0.0500 L × 1.00 mol/L = 0.0500 mol。与过量 HCl 反应的 n(NaOH) = 0.0200 L × 1.00 mol/L = 0.0200 mol，故残余 n(HCl) = 0.0200 mol。被 CaCO₃ 消耗的 n(HCl) = 0.0500 - 0.0200 = 0.0300 mol。根据 CaCO₃ + 2HCl → CaCl₂ + CO₂↑ + H₂O，n(CaCO₃) = 0.5 × 0.0300 = 0.0150 mol，m(CaCO₃) = 0.0150 × 100 = 1.50 g。纯度 w% = (1.50 / 2.00) × 100% = 75.0%（粗样品含杂质，w% < 100% 符合实际）。',
     },
     {
       id: 'step-4',
@@ -53,7 +53,7 @@ export const modelTitrationErrorPurity: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'var-err-1',
-      yearProvince: '2024 全国高考河北卷/湖北卷',
+      yearProvince: '2024 河北/湖北卷 · 情境变式',
       modelId: 'model-titration-error-purity',
       title: '重铬酸钾返滴定法测定水体 COD 与定量误差评估',
       contextDescription:
@@ -93,7 +93,7 @@ export const modelTitrationErrorPurity: ModelQuizData = {
     },
     {
       id: 'var-err-2',
-      yearProvince: '2023 全国高考甲卷',
+      yearProvince: '2023 全国甲卷 · 情境变式',
       modelId: 'model-titration-error-purity',
       title: '草酸钠纯度测定与高锰酸钾滴定视角读数误差分析',
       contextDescription:
@@ -133,7 +133,7 @@ export const modelTitrationErrorPurity: ModelQuizData = {
     },
     {
       id: 'var-err-3',
-      yearProvince: '2024 全国高考山东卷/湖南卷',
+      yearProvince: '2024 山东/湖南卷 · 情境变式',
       modelId: 'model-titration-error-purity',
       title: '工业粗品碱式碳酸铜纯度与间接碘量法滴定计算',
       contextDescription:

@@ -569,9 +569,9 @@ export const MODEL_DOUBLE_BOND_PROTECTION: RetrosynthesisModelData = {
     },
   ],
   description:
-    '目标分子中酚羟基需在强碱性条件下与卤代烃反应转化为甲基醚，但原料中含有活泼碳碳双键，若直接反应或氧化修饰易发生副反应。先加溴保护消除双键不饱和性，成醚后再用 Zn 粉脱溴复原。',
+    '目标分子中酚羟基需在弱碱（无水 K₂CO₃）条件下与卤代烃反应转化为甲基醚，但原料中含有活泼碳碳双键，若直接反应或氧化修饰易发生副反应。先加溴保护消除双键不饱和性，成醚后再用 Zn 粉脱溴复原。',
   coreStrategy:
-    '碳碳双键加成 Br₂ 转化为邻二溴代烷保护；在强碱下进行酚羟基成醚烷基化；最后使用金属 Zn 粉在乙醇中发生 β-消去脱除两个溴原子，复原碳碳双键。',
+    '碳碳双键加成 Br₂ 转化为邻二溴代烷保护；在无水 K₂CO₃ 弱碱下进行酚羟基成醚烷基化（避免强碱使邻二溴代烷提前消去）；最后使用金属 Zn 粉在乙醇中发生 β-消去脱除两个溴原子，复原碳碳双键。',
   protectionKeyPoints: [
     '碳碳双键极易被酸性 KMnO₄ 氧化或与强亲电/强碱试剂副反应',
     '加成 Br₂ / CCl₄ 生成邻二溴代物，消除不饱和性',
@@ -580,12 +580,13 @@ export const MODEL_DOUBLE_BOND_PROTECTION: RetrosynthesisModelData = {
   ],
   unprotectedCrashDemo: {
     warningTitle: '🚨 未保护副反应风险（双键发生异构化或氧化断裂）',
-    consequence: '4-烯丙基酚中的双键与苯环非共轭，在高温强碱（NaOH/CH₃I）下双键易发生热力学异构化迁移至共轭位置；若后续涉及酸性高锰酸钾等强氧化剂，双键会被直接氧化切断生成苯甲酸衍生物。',
-    solution: '先加入 Br₂/CCl₄ 消除不饱和性保护双键，碱性甲基化成醚后加入 Zn/EtOH 回流脱溴复原。',
+    consequence:
+      '若不加保护直接处理：4-烯丙基酚中与苯环非共轭的烯丙基双键，在氢氧化钠等强碱、加热条件下会发生热力学异构化，迁移至与苯环共轭的位置；若后续用到酸性高锰酸钾等强氧化剂，双键还会被直接氧化切断生成苯甲酸衍生物。',
+    solution: '先加入 Br₂/CCl₄ 消除不饱和性保护双键，弱碱（无水 K₂CO₃）甲基化成醚后加入 Zn/EtOH 回流脱溴复原。',
   },
   infoReaction: {
     name: 'Zn 粉脱溴复原双键 (Deprotection)',
-    equation: 'R-CHBr-CH₂Br + Zn ─(EtOH, Δ)→ R-CH=CH₂ + ZnBr₂↓',
+    equation: 'R-CHBr-CH₂Br + Zn ─(EtOH, Δ)→ R-CH=CH₂ + ZnBr₂',
     mechanismDesc: '金属 Zn 作为两电子还原剂，进攻邻二溴代烷发生反式 β-消去，生成烯烃与 ZnBr₂。',
   },
   steps: [
@@ -603,7 +604,7 @@ export const MODEL_DOUBLE_BOND_PROTECTION: RetrosynthesisModelData = {
         isProtected: true,
         protectedGroup: '碳碳双键 (C=C)',
         protectingAgent: '溴单质 (Br₂)',
-        reason: '加成消除双键不饱和性，防止后续强碱性烷基化过程中发生异构化或氧化破坏。',
+        reason: '加成消除双键不饱和性，防止后续碱性烷基化过程中双键发生异构化迁移或被氧化破坏。',
       },
       cutBond: null,
       atomEconomy: 100.0,
@@ -781,18 +782,18 @@ export const MODEL_DOUBLE_BOND_PROTECTION: RetrosynthesisModelData = {
         },
         {
           id: 'salt',
-          label: '副产物 溴化锌 沉淀',
+          label: '副产物 溴化锌 (易溶于水/乙醇)',
           formula: 'ZnBr₂',
           x: 420,
           y: 490,
           role: 'intermediate',
-          badge: '过滤分离',
+          badge: '非沉淀',
         },
       ],
       connections: [
         { from: 'eth', to: 'tm', label: 'Zn 脱溴 β-消去' },
         { from: 'zn', to: 'tm', label: '生成 ZnBr₂' },
-        { from: 'tm', to: 'salt', label: '固液分离' },
+        { from: 'tm', to: 'salt', label: 'ZnBr₂ 溶于乙醇，随滤液除去' },
       ],
     },
   ],

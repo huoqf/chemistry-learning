@@ -7,7 +7,7 @@ import type { IndustrialFlowParams, IndustrialFlowSystemId } from '../types'
 /**
  * industrialChemistryTruthAuditor.test.ts
  *
- * 母题七：无机工艺流程与沉淀调 pH 工具
+ * 实验二：无机工艺流程与沉淀调 pH 工具
  * 高中化学学科真理性与高考命题级合规性自动化守门测试套件
  *
  * 彻底杜绝：
@@ -17,7 +17,7 @@ import type { IndustrialFlowParams, IndustrialFlowSystemId } from '../types'
  * 4. 溶解度特性与结晶分离手段错配；
  * 5. 高考标准答题模板采分点缺漏。
  */
-describe('母题七：无机工艺流程与沉淀调 pH 高考化学学科真理守门审计', () => {
+describe('实验二：无机工艺流程与沉淀调 pH 高考化学学科真理守门审计', () => {
   const ALL_SYSTEM_IDS: IndustrialFlowSystemId[] = [
     'fe-al-mn',
     'fe-cu-zn',
@@ -187,8 +187,10 @@ describe('母题七：无机工艺流程与沉淀调 pH 高考化学学科真理
       )
 
       expect(result.current.hasSafeRange).toBe(true)
-      expect(result.current.safePhRange[0]).toBeLessThanOrEqual(5.0)
-      expect(result.current.safePhRange[1]).toBeGreaterThanOrEqual(8.0)
+      // 安全区间必须与 Ksp 计算严格同源：下限 = Al³⁺ 完全沉淀 4.67，上限 = Mn²⁺ 开始沉淀 8.14 → 取一位小数 4.7 / 8.1。
+      // 此前注释/题库文案曾出现 8.4（三口径打架），此处精确锁死，任何回退到 8.4 的改动都会被拦截。
+      expect(result.current.safePhRange[0]).toBeCloseTo(4.7, 1)
+      expect(result.current.safePhRange[1]).toBeCloseTo(8.1, 1)
       expect(result.current.isPhInSafeRange).toBe(true)
     })
 

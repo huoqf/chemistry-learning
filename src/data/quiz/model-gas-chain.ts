@@ -1,6 +1,6 @@
 /**
  * src/data/quiz/model-gas-chain.ts
- * 母题六：气体制备/净化/尾气处理装置链工具 - 高考规范踩分卡与真题研析题库
+ * 实验一：气体制备/净化/尾气处理装置链工具 - 高考规范踩分卡与真题研析题库
  */
 
 import type { ModelQuizData } from './types'
@@ -63,7 +63,7 @@ export const modelGasChainQuiz: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'gas-quiz-1',
-      yearProvince: '2024 全国高考新课标卷',
+      yearProvince: '2024 新课标卷 · 情境变式',
       modelId: 'model-gas-chain',
       title: '强氧化性气体 Cl₂ 制备及提纯装置链辨析',
       contextDescription: '某化学兴趣小组利用 MnO₂ 和浓盐酸加热制备纯净、干燥的 Cl₂，并探究其与金属铜的反应。实验装置链依次为：发生装置(A) ➔ 洗气瓶(B) ➔ 洗气瓶(C) ➔ 集气瓶(D) ➔ 尾气处理(E)。',
@@ -92,15 +92,10 @@ export const modelGasChainQuiz: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '本题考查气体制备链全流程规范：先除杂 (饱和NaCl) 后干燥 (浓H₂SO₄)；洗气长进短出；Cl₂ 密度比空气大用向上排空气法 (长进短出)；澄清石灰水中 Ca(OH)₂ 溶解度极小吸收不完全，必须用浓 NaOH 溶液吸收。',
       detailedExplanation: '【解析】\n• 选项 A 错误：必须先通过饱和食盐水除 HCl，再通过浓硫酸干燥，顺序不可颠倒；\n• 选项 B 正确：洗气瓶净化气体必须“长进短出”，使气体深入液面下充分洗涤；\n• 选项 C 错误：Cl₂ 相对分子质量为 71，密度大于空气 (29)，必须用向上排空气法 (长进短出)；\n• 选项 D 错误：Ca(OH)₂ 溶解度小，氢氧根浓度低，尾气吸收必须使用强碱浓 NaOH 溶液。',
-      diagramType: 'titration-error-diagram',
-      diagramConfig: {
-        errorDiagramType: 'permanganate-view-angle',
-        title: 'Cl₂ 发生 ➔ 饱和食盐水除杂 ➔ 浓硫酸干燥 ➔ 向上排空气收集 ➔ 浓NaOH尾气吸收装置链图',
-      },
     },
     {
       id: 'gas-quiz-2',
-      yearProvince: '2024 高考浙江卷压轴',
+      yearProvince: '2024 浙江卷压轴 · 情境变式',
       modelId: 'model-gas-chain',
       title: '极易溶气体 NH₃ 制备干燥与防倒吸装置验证',
       contextDescription: '利用固体 NH₄Cl 和 Ca(OH)₂ 加热制取 NH₃，要求收集一瓶干燥的 NH₃ 并进行尾气吸收。',
@@ -129,15 +124,10 @@ export const modelGasChainQuiz: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '考查固体加热发生装置 (试管口微向下倾斜防冷凝水倒流)；NH₃ 干燥剂禁忌 (CaCl₂ 配合物)；向下排空气法试管口棉花的作用辨析（干燥棉花减缓氨气与空气对流，蘸水或稀硫酸的棉花才能吸收多余 NH₃）；防倒吸倒置漏斗刚好下沿接触液面。',
       detailedExplanation: '【解析】\n• 选项 A 错误：固体加热反应有水生成，试管口必须微向下倾斜，防止冷凝水倒流炸裂试管；\n• 选项 B 错误：无水 CaCl₂ 会与 NH₃ 发生络合反应生成 CaCl₂·8NH₃，不能干燥 NH₃；\n• 选项 C 错误：干燥的棉花只能减缓氨气与空气的对流，起不到吸收多余 NH₃ 的作用；要吸收多余 NH₃ 须用蘸有水或稀硫酸的棉花；\n• 选项 D 正确：倒置漏斗刚好下沿接触液面是标准的极易溶气体防倒吸结构。',
-      diagramType: 'titration-error-diagram',
-      diagramConfig: {
-        errorDiagramType: 'cod-back-titration',
-        title: 'NH₃ 固体加热发生 ➔ 碱石灰干燥 ➔ 向下排空气收集 ➔ 倒置漏斗防倒吸装置链图',
-      },
     },
     {
       id: 'gas-quiz-3',
-      yearProvince: '2024 山东高考真题',
+      yearProvince: '2024 山东卷 · 情境变式',
       modelId: 'model-gas-chain',
       title: 'SO₂ 发生与检验装置链顺序辨析',
       contextDescription: '利用 Cu 与浓 H₂SO₄ 加热制备 SO₂，气体依次通过品红溶液（检验漂白性）➔ 酸性 KMnO₄ 溶液（检验还原性）➔ NaOH 尾气吸收瓶。',
@@ -150,15 +140,10 @@ export const modelGasChainQuiz: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '考查 SO₂ 还原性 (使 KMnO₄ 褪色: 5SO₂ + 2MnO₄⁻ + 2H₂O = 5SO₄²⁻ + 2Mn²⁺ + 4H⁺) 与漂白性 (使品红褪色, 加热复原) 的严密区分；以及检验装置链顺序的化学逻辑：品红须在 KMnO₄ 之前，否则 SO₂ 被强氧化剂消耗后无法检验漂白性。',
       detailedExplanation: '【解析】\n• 选项 A 错误：KMnO₄ 与 SO₂ 发生氧化还原反应体现还原性，与漂白性无关；\n• 选项 B 正确：KMnO₄ 褪色体现还原性，品红褪色体现漂白性，完全正确；\n• 选项 C 错误（高考陷阱）：KMnO₄ 氧化性极强，若置于品红之前会将 SO₂ 全部氧化消耗，后方品红无法接触 SO₂ 而不褪色，实验失败！正确顺序：品红 ➔ KMnO₄ ➔ NaOH；\n• 选项 D 错误：无水 CaCl₂ 不与 SO₂ 反应，不能吸收 SO₂ 尾气。',
-      diagramType: 'titration-error-diagram',
-      diagramConfig: {
-        errorDiagramType: 'iodometry-purity',
-        title: 'Cu+浓H₂SO₄ ➔ 品红 (漂白性) ➔ 酸性KMnO₄ (还原性) ➔ NaOH 洗气链图',
-      },
     },
     {
       id: 'gas-quiz-4',
-      yearProvince: '2023 湖北高考真题',
+      yearProvince: '2023 湖北卷 · 情境变式',
       modelId: 'model-gas-chain',
       title: '排水集气法与极易溶气体安全缓冲瓶防倒吸结构',
       contextDescription: '实验室集气时，对于不溶于水的气体 (如 NO、O₂、H₂) 采用排水集气法；对于极易溶于水的气体 (如 HCl) 需接安全瓶防倒吸。',
@@ -171,15 +156,10 @@ export const modelGasChainQuiz: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '考查排水集气法“短进长出”排水原理及 NO 易被 O₂ 氧化 (2NO + O₂ = 2NO₂) 严禁排空气法。',
       detailedExplanation: '排水集气瓶装满水，气体密度小且不溶于水，从短导管进入积聚在顶部，将水从长导管压出，B 项正确。NO 易被 O₂ 氧化，必须用排水法收集。',
-      diagramType: 'titration-error-diagram',
-      diagramConfig: {
-        errorDiagramType: 'permanganate-view-angle',
-        title: '排水集气 (瓶装满水短进长出) 与防倒吸安全缓冲瓶结构图',
-      },
     },
     {
       id: 'gas-quiz-5',
-      yearProvince: '2023 全国甲卷',
+      yearProvince: '2023 全国甲卷 · 情境变式',
       modelId: 'model-gas-chain',
       title: '固液不加热发生装置 (启普发生器原理) 与随开随用',
       contextDescription: '利用块状石灰石 (CaCO₃) 与稀盐酸反应制备 CO₂，采用带孔塑料板和止水夹的简易发生装置。',
@@ -192,11 +172,6 @@ export const modelGasChainQuiz: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '考查“启普发生器”随开随用、随关随停的物理压强原理：关闭止水夹 ➔ 气体积聚压强增大 ➔ 液面下降与固体脱离 ➔ 反应停止。',
       detailedExplanation: '关闭止水夹后，产生的 CO₂ 无法排出，容器内部气压升高，将盐酸压入长颈漏斗中，使得盐酸与 CaCO₃ 固体脱离接触，反应自动停止。B 项正确。',
-      diagramType: 'titration-error-diagram',
-      diagramConfig: {
-        errorDiagramType: 'cod-back-titration',
-        title: '启普发生器原理 (关夹压强增大固液分离) 随开随停简易发生装置图',
-      },
     },
   ],
 }

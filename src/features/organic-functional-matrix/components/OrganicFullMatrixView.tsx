@@ -264,7 +264,8 @@ export const OrganicFullMatrixView: React.FC<OrganicFullMatrixViewProps> = ({
                       <span className="text-rose-700 font-bold">2 mol NaOH</span>！
                     </div>
                     <div>
-                      <strong className="text-amber-800">• 卤代烃/肽键</strong>：脂肪卤代烃水解耗 1 碱；卤代苯水解耗 2 碱；肽键水解耗 1 碱。
+                      <strong className="text-amber-800">• 卤代烃/肽键</strong>：脂肪卤代烃水解耗 1 碱；肽键水解耗 1 碱。（卤代芳烃如氯苯的水解条件苛刻、高中不作要求，属
+                      <span className="font-bold text-amber-700">【超纲】</span>，勿与脂肪卤代烃混用）
                     </div>
                   </div>
                 </div>
@@ -291,6 +292,9 @@ export const OrganicFullMatrixView: React.FC<OrganicFullMatrixViewProps> = ({
                     <div>
                       <strong className="text-indigo-800">• 苯环加氢</strong>：1 mol 苯环催化加氢完全还原消耗{' '}
                       <span className="text-indigo-700 font-bold">3 mol H₂</span>。
+                      <span className="text-slate-600">
+                        （口径提示：矩阵表 H₂ 一栏只计<b>官能团自身的不饱和键</b>，<b>不含苯环加氢</b>；而 Br₂ 一栏按“酚羟基活化苯环”计入邻对位取代。两栏口径不同，跨栏比较数值时务必区分。）
+                      </span>
                     </div>
                     <div>
                       <strong className="text-amber-800">• 醛基氧化</strong>：1 mol -CHO 银镜出{' '}

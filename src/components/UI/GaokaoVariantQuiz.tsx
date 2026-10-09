@@ -73,7 +73,7 @@ export const GaokaoVariantQuiz: React.FC<GaokaoVariantQuizProps> = ({ quizzes = 
               {/* 年份标签与标题 */}
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0 mr-2">
-                  {quiz.yearProvince || '高考真题'}
+                  {quiz.yearProvince || '情境变式题'}
                 </span>
                 <span className="text-xs font-bold text-slate-800 flex-1 text-right leading-snug">
                   <KatexText text={quiz.title || ''} />

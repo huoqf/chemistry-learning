@@ -50,7 +50,7 @@ export function computeReagentDataPoint(
   } else if (sceneId === 'cu-ammonia') {
     // 铜氨络合：
     // 0~3.33 mL (1/3 阶段): Cu²⁺ + 2NH₃·H₂O = Cu(OH)₂↓ + 2NH₄⁺ (浅蓝沉淀 0 -> 100 mmol)
-    // 3.33~10.0 mL (2/3 阶段): Cu(OH)₂ + 4NH₃ = [Cu(NH₃)₄]²⁺ + 2OH⁻ (络合溶解 100 -> 0 mmol)
+    // 3.33~10.0 mL (2/3 阶段): Cu(OH)₂ + 4NH₃·H₂O = [Cu(NH₃)₄]²⁺ + 2OH⁻ + 4H₂O (络合溶解 100 -> 0 mmol)
     pptMass = p <= 0.333 ? (p / 0.333) * 100 : Math.max(0, ((1 - p) / 0.667) * 100)
     if (p <= 0.333) {
       ph = 5.5 + (p / 0.333) * 2.5

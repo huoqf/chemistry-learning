@@ -151,7 +151,7 @@ export const REAGENT_SCENES: Record<ReagentSceneId, ReagentSceneConfig> = {
     title: 'Cu²⁺ 遇氨水先沉淀后络合深蓝变色演练',
     subtitle: '铜氨络离子形成与配合物结构',
     beakerSolution: 'CuSO₄ 溶液 (蓝色)',
-    dropperReagent: '稀氨水 (NH₃·H₂O)',
+    dropperReagent: '浓氨水 (NH₃·H₂O)',
     badgeText: '铜氨络合变色',
     guidance: {
       condition: '0.1 mol/L CuSO₄ 溶液 + 浓氨水逐滴滴加',
@@ -160,7 +160,7 @@ export const REAGENT_SCENES: Record<ReagentSceneId, ReagentSceneConfig> = {
     },
     examPoints: [
       '少量氨水：Cu²⁺ + 2NH₃·H₂O = Cu(OH)₂↓ + 2NH₄⁺ (产生浅蓝色 Cu(OH)₂ 沉淀)',
-      '过量氨水：Cu(OH)₂ + 4NH₃ = [Cu(NH₃)₄]²⁺ + 2OH⁻ (沉淀溶解，生成深蓝色/深蓝紫色透明溶液)',
+      '过量氨水：Cu(OH)₂ + 4NH₃·H₂O = [Cu(NH₃)₄]²⁺ + 2OH⁻ + 4H₂O (沉淀溶解，生成深蓝色/深蓝紫色透明溶液)',
       '配合物结构：[Cu(NH₃)₄]²⁺ 中心原子为 Cu²⁺，配体为 NH₃，配位数为 4，空间构型平面四方形',
     ],
     keyWarning: '注意现象细节区分：浅蓝色沉淀 (Cu(OH)₂) 与 深蓝色/深蓝紫色澄清溶液 ([Cu(NH₃)₄]²⁺)。',
@@ -198,7 +198,7 @@ export const REAGENT_SCENES: Record<ReagentSceneId, ReagentSceneConfig> = {
         precipitateText: '沉淀部分配位溶解',
         precipitateColor: PHENOMENON_COLORS.cuOh2Precipitate,
         precipitateLevel: 0.18,
-        equation: 'Cu(OH)_2 + 4NH_3 = [Cu(NH_3)_4]^{2+} + 2OH^-',
+        equation: 'Cu(OH)_2 + 4NH_3\\cdot H_2O = [Cu(NH_3)_4]^{2+} + 2OH^- + 4H_2O',
         ph: 10.0,
       },
       {
@@ -210,7 +210,7 @@ export const REAGENT_SCENES: Record<ReagentSceneId, ReagentSceneConfig> = {
         precipitateText: '沉淀完全溶解',
         precipitateColor: 'transparent',
         precipitateLevel: 0,
-        equation: 'Cu(OH)_2 + 4NH_3 = [Cu(NH_3)_4]^{2+} + 2OH^- \\text{ (完全溶解, 深蓝色)}',
+        equation: 'Cu(OH)_2 + 4NH_3\\cdot H_2O = [Cu(NH_3)_4]^{2+} + 2OH^- + 4H_2O \\text{ (完全溶解, 深蓝色)}',
         ph: 11.2,
       },
     ],

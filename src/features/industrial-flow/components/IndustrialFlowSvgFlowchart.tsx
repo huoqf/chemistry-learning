@@ -1,6 +1,6 @@
 /**
  * src/features/industrial-flow/components/IndustrialFlowSvgFlowchart.tsx
- * 母题七：无机工艺流程与沉淀调 pH 工具 - 高考标准方框工艺流程图 (SVG 矢量流向图)
+ * 实验二：无机工艺流程与沉淀调 pH 工具 - 高考标准方框工艺流程图 (SVG 矢量流向图)
  */
 
 import React from 'react'

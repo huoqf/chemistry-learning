@@ -37,7 +37,7 @@ export const modelOrganicRetrosynthesis: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'var-retro-1',
-      yearProvince: '2024 全国高考真题卷',
+      yearProvince: '2024 全国卷 · 情境变式',
       modelId: 'model-organic-retrosynthesis',
       title: '抗炎药物中间体的逆合成路线与官能团 Protection 剖析',
       contextDescription:
@@ -69,15 +69,10 @@ export const modelOrganicRetrosynthesis: ModelQuizData = {
         '【母题模型对齐】：考查高考有机大题高频考点「碳碳双键加溴 Protection 与 Zn 粉还原脱溴 Deprotection 策略」。',
       detailedExplanation:
         '4-烯丙基酚中 C=C 双键极为活泼，加 Br₂ 转化为饱和邻二溴化物 (Protection) 后，能在强碱下安全地将酚 -OH 甲基化成醚。随后用 Zn 粉发生 β-消去脱溴 (Deprotection) 重新建立 C=C 双键。',
-      diagramType: 'organic-mechanism-diagram',
-      diagramConfig: {
-        mechanismType: 'haloalkane-elimination',
-        title: '4-烯丙基酚双键加溴 Protection ➔ 碱性甲基化 ➔ Zn粉脱溴 Deprotection 逆合成图',
-      },
     },
     {
       id: 'var-retro-2',
-      yearProvince: '2023 山东高考真题卷',
+      yearProvince: '2023 山东卷 · 情境变式',
       modelId: 'model-organic-retrosynthesis',
       title: 'Diels-Alder 环加成与乙二醇缩醛保护机理推断',
       contextDescription:
@@ -109,15 +104,10 @@ export const modelOrganicRetrosynthesis: ModelQuizData = {
         '【母题模型对齐】：考查高考有机大题「羰基/醛基的缩醛 protection 与酸水解 deprotection 条件」。',
       detailedExplanation:
         '缩醛基团在碱性条件下极其稳定，绝对不能用 NaOH 脱保护！脱去缩醛保护基复原醛基必须使用稀酸 (H₃O⁺) 加水解。故 C 选项错误。',
-      diagramType: 'organic-mechanism-diagram',
-      diagramConfig: {
-        mechanismType: 'ester-cleavage',
-        title: '醛基 + 乙二醇生成五元环状缩醛 Protection 与酸解 Deprotection 机理图',
-      },
     },
     {
       id: 'var-retro-3',
-      yearProvince: '2024 浙江高考真题',
+      yearProvince: '2024 浙江卷 · 情境变式',
       modelId: 'model-organic-retrosynthesis',
       title: '酚羟基苄基 (PhCH₂-) 保护与 H₂/Pd-C 氢解脱保护逆合成',
       contextDescription: '在多酚类天然产物全合成中，常选用苄氯 (PhCH₂Cl) 在 K₂CO₃ 存在下将酚 -OH 转化为苄醚进行保护。',
@@ -130,18 +120,13 @@ export const modelOrganicRetrosynthesis: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：苄基 (PhCH₂-) 为经典的酸碱双稳定保护基，脱除条件为极温和的 H₂/Pd-C 催化氢解生成甲苯 (PhCH₃) 和复原酚 -OH。',
       detailedExplanation: '苄醚结构耐强酸、耐强碱、耐氧化剂，能够保护酚 -OH 不受后续反应干扰。脱保护仅需使用 H₂/Pd-C 条件选择性切断 C-O 键生成甲苯。故 B 项正确。',
-      diagramType: 'organic-mechanism-diagram',
-      diagramConfig: {
-        mechanismType: 'addition-markov',
-        title: '酚羟基 + 苄氯生成苄醚 Protection 与 H₂/Pd-C 氢解 Deprotection 路线图',
-      },
     },
     {
       id: 'var-retro-4',
-      yearProvince: '2024 湖北高考真题',
+      yearProvince: '2024 湖北卷 · 情境变式',
       modelId: 'model-organic-retrosynthesis',
-      title: '羰基与丙二硫醇生成缩硫醛保护及 Hg²⁺ 解保护',
-      contextDescription: '已知在复杂酮类化合物合成中，常用 1,3-丙二硫醇和 BF₃·Et₂O 催化将羰基转化为五元/六元环状缩硫醛。',
+      title: '【信息题素材】羰基与丙二硫醇生成缩硫醛保护及 Hg²⁺ 解保护',
+      contextDescription: '【信息题素材】已知在复杂酮类化合物合成中，常用 1,3-丙二硫醇和 BF₃·Et₂O 催化将羰基转化为五元/六元环状缩硫醛以保护羰基。',
       questionText: '下列关于缩硫醛 Protection 及其逆合成脱保护的说法正确的是：',
       options: [
         { label: 'A', text: '缩硫醛在强酸水溶液中可轻易水解还原为羰基', isCorrect: false },
@@ -151,15 +136,10 @@ export const modelOrganicRetrosynthesis: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：普通缩醛耐碱不耐酸，而缩硫醛既耐碱又耐酸，脱除必须依赖 Hg²⁺ 或 I₂ 与硫原子配位氧化脱保护。',
       detailedExplanation: '缩硫醛对强酸和强碱均具有极高稳定性，常用于强酸环境下的羰基保护。脱除时需加入 HgCl₂/CaCO₃ 或 I₂/H₂O 水解还原生成原羰基。B 项正确。',
-      diagramType: 'organic-mechanism-diagram',
-      diagramConfig: {
-        mechanismType: 'alcohol-oxidation',
-        title: '羰基 + 1,3-丙二硫醇生成缩硫醛 Protection 与 Hg²⁺ 氧化解保护图',
-      },
     },
     {
       id: 'var-retro-5',
-      yearProvince: '2023 全国甲卷',
+      yearProvince: '2023 全国甲卷 · 情境变式',
       modelId: 'model-organic-retrosynthesis',
       title: '目标分子 (Target Molecule) 逆合成切断法 (Disconnection) 与合成树',
       contextDescription: '利用逆合成分析法 (Retrosynthetic Analysis) 拆解药物分子 M，从目标分子反向切断碳碳单键。',
@@ -171,12 +151,7 @@ export const modelOrganicRetrosynthesis: ModelQuizData = {
         { label: 'D', text: '合成路线步数越多，总产率越高', isCorrect: false },
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查逆合成切断策略：寻找策略键 (Strategic Bonds) 切断，优先切断杂原子键 (C-N, C-O) 和碳骨架交叉连接键，逆推至廉价易得的基础原料。',
-      detailedExplanation: '逆合成分析法在目标分子切断时优先寻找容易构建的杂原子键 (如酯键、酰胺键) 或通过羟醛缩合断开 C-C 键；格氏反应亦属常见切断思路，但格氏试剂为信息题素材，教材未作要求，高考若用必给出信息。B 项正确。',
-      diagramType: 'organic-mechanism-diagram',
-      diagramConfig: {
-        mechanismType: 'peptide-hydrolysis',
-        title: '药物分子 M 逆合成切断法 (Disconnection) 关键策略键切断示意图',
-      },
+      detailedExplanation: '逆合成分析法在目标分子切断时优先寻找容易构建的杂原子键 (如酯键、酰胺键) 或通过羟醛缩合断开 C-C 键；格氏反应亦属常见切断思路，但格氏试剂属【信息题素材】，教材未作要求，高考若用必给出信息。B 项正确。',
     },
   ],
 }

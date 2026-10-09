@@ -13,7 +13,7 @@ import {
   AIRTIGHTNESS_TEMPLATES,
 } from '../data/gasChainMatrixData'
 
-describe('gasChainMatrixData — 母题六气体制备全景大表数据完整性测试', () => {
+describe('gasChainMatrixData — 实验一气体制备全景大表数据完整性测试', () => {
   it('应包含完整的新高考 13 种核心气体', () => {
     expect(GAS_MATRIX_ITEMS.length).toBe(13)
     const formulas = GAS_MATRIX_ITEMS.map((g) => g.formula)

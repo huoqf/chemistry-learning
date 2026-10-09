@@ -273,10 +273,10 @@ export function OrganicMechanismCanvas() {
           <div className="flex items-center justify-between border-b pb-2">
             <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2">
               <HelpCircle className="w-4 h-4 text-amber-600" />
-              高考真题变式选择题 & 详细解析 (近几年高考权威试题)
+              高考真题变式选择题 & 详细解析 (近几年高考真题情境变式)
             </h3>
             <span className="text-xs text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md font-medium border border-amber-200">
-              包含 8 大机制对应的近几年高考真题
+              包含 8 大机制对应的近几年高考真题情境变式
             </span>
           </div>
           <GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />

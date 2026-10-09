@@ -1,6 +1,6 @@
 /**
  * src/features/industrial-flow/components/IndustrialFlowLeftPanel.tsx
- * 母题七：无机工艺流程与沉淀调 pH 工具 - 左屏声明式控制面板
+ * 实验二：无机工艺流程与沉淀调 pH 工具 - 左屏声明式控制面板
  * 遵循《AGENTS.md》铁律 3 (声明式体系)、铁律 3C (标题纯粹、无装饰 emoji)
  */
 

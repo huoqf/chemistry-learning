@@ -89,7 +89,7 @@ export const CO_CONFIG: ElementValenceConfig = {
       colorText: '灰黑色锂离子电池正极材料',
       colorStyle: 'bg-zinc-800 text-zinc-100 border-zinc-700',
       rgbColor: colors.neutral[800],
-      testReaction: '【高考工业流程必考】废旧电池正极材料回收：用 H₂SO₄ 和 H₂O₂“酸浸还原”，将不溶的 Co(III) 还原为可溶的 Co²⁺',
+      testReaction: '【信息题素材】废旧电池正极材料回收：用 H₂SO₄ 和 H₂O₂“酸浸还原”，将不溶的 Co(III) 还原为可溶的 Co²⁺',
       equation: '2LiCoO₂ + 3H₂SO₄ + H₂O₂ = 2CoSO₄ + Li₂SO₄ + O₂↑ + 4H₂O',
       roleDescription: '典型三元/钴酸锂电池正极材料',
       isOxidant: true,

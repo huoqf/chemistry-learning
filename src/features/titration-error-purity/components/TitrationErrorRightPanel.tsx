@@ -10,7 +10,7 @@ interface TitrationErrorRightPanelProps {
 export const TitrationErrorRightPanel: React.FC<TitrationErrorRightPanelProps> = ({
   chemistry,
 }) => {
-  const { errorResult, purityResult, yieldResult } = chemistry
+  const { errorResult, purityResult, yieldResult, indicatorGuide } = chemistry
 
   // 1. 动态化学量构建 (满足 ChemistryQuantity 类型)
   const quantities = [
@@ -22,7 +22,7 @@ export const TitrationErrorRightPanel: React.FC<TitrationErrorRightPanelProps> =
     {
       label: '滴定管实际读数 V(读数)',
       value: errorResult.vRead,
-      unit: 'mL',
+      unit: 'mL (示意)',
       highlight: errorResult.effectDirection === 'high' ? ('negative' as const) : errorResult.effectDirection === 'low' ? ('extreme' as const) : undefined,
     },
     {
@@ -33,18 +33,20 @@ export const TitrationErrorRightPanel: React.FC<TitrationErrorRightPanelProps> =
     {
       label: '计算测得浓度 c(计算)',
       value: errorResult.cCalculated,
-      unit: 'mol/L',
+      unit: 'mol/L (示意)',
       highlight: errorResult.effectDirection === 'high' ? ('negative' as const) : errorResult.effectDirection === 'low' ? ('extreme' as const) : undefined,
     },
     {
       label: '样品纯度质量分数 w%',
       value: purityResult.purityPct,
       unit: '%',
+      highlight: purityResult.overLimit ? ('negative' as const) : undefined,
     },
     {
       label: '实验提纯产率 Yield%',
       value: yieldResult.yieldPct,
       unit: '%',
+      highlight: yieldResult.overLimit ? ('negative' as const) : undefined,
     },
   ]
 
@@ -83,6 +85,14 @@ export const TitrationErrorRightPanel: React.FC<TitrationErrorRightPanelProps> =
       importance: 'gaokao' as const,
     },
     {
+      text: '【指示剂与终点判定】' + indicatorGuide,
+      importance: 'core' as const,
+    },
+    {
+      text: '【只判方向、不读数值】误操作造成的误差幅度取决于残留水量、悬滴体积等无法由操作名唯一确定的因素，故本工具给出的 c(计算) 与 Error% 仅示意量级；高考定量分析只在“偏高 / 偏低 / 无影响”这一方向判定上赋分。',
+      importance: 'gaokao' as const,
+    },
+    {
       text: '“始仰终俯，ΔV 严重偏小” → 计算 c(待测) 偏低；“始俯终仰，ΔV 严重偏大” → 计算 c(待测) 偏高。',
       importance: 'hard' as const,
     },
@@ -114,6 +124,22 @@ export const TitrationErrorRightPanel: React.FC<TitrationErrorRightPanelProps> =
       text: '【易错点 3】：返滴定法中，若滴定过量试剂的滴定管未润洗导致 V(返滴) 偏大，算出的剩余量偏大，导致被测物计算纯度反向偏低！',
       level: 'danger' as const,
     },
+    ...(purityResult.overLimit
+      ? [
+          {
+            text: `【数据自洽性检查】当前计算得 w% = ${purityResult.purityPct}%，已超过 100%。粗样品不可能含超过 100% 的有效成分，务必回头核对「移取量/定容总体积」这一换算倍数是否漏乘、返滴定中过量酸的物质的量是否远大于样品可消耗量、以及 m(粗样品) 是否给错。`,
+            level: 'danger' as const,
+          },
+        ]
+      : []),
+    ...(yieldResult.overLimit
+      ? [
+          {
+            text: `【数据自洽性检查】当前计算得 Yield% = ${yieldResult.yieldPct}%，已超过 100%。产率不可能大于 100%，请核对化学方程式的计量系数比（rawToProductRatio）以及投料原料质量与实际产品纯度质量的取值。`,
+            level: 'danger' as const,
+          },
+        ]
+      : []),
   ]
 
   return (

@@ -192,4 +192,83 @@ describe('useAvogadroChemistry — 阿伏加德罗常数全维度陷阱测试', 
       expect(moleculeStat?.isTrap).toBe(true)
     })
   })
+
+  // 4. 胶体/水解类数值必须标注为"教学示意量"，不得伪装成精确计算结果
+  describe('数值可信度标注（isIndicative）', () => {
+    it('FeCl₃ 水解制胶体卡的两项数值均标记为示意量（胶粒聚集度、水解程度本质不可定值）', () => {
+      const params: AvogadroParams = {
+        ...baseParams,
+        trapCategory: 'electrolyte-hydrolysis',
+        electrolyteItem: 'FeCl3',
+        amountValue: 1,
+        amountUnit: 'mol',
+      }
+      const { result } = renderHook(() => useAvogadroChemistry(params))
+
+      const colloid = result.current.particleStats.find((s) => s.label.includes('胶体粒子数'))
+      const ferric = result.current.particleStats.find((s) => s.label.includes('Fe³⁺'))
+      expect(colloid).toBeDefined()
+      expect(ferric).toBeDefined()
+
+      // 两项都必须是示意量（防止再次出现 ×0.001 / ×0.95 被当作精确答案）
+      expect(colloid?.isIndicative).toBe(true)
+      expect(ferric?.isIndicative).toBe(true)
+
+      // 数量级关系仍须成立：胶粒数 ≪ Fe³⁺ 数 ≤ 投料
+      expect(colloid!.actualMoles).toBeLessThan(ferric!.actualMoles)
+      expect(ferric!.actualMoles).toBeLessThanOrEqual(1)
+    })
+  })
+
+  // 5. 口径一致性（L 单位兜底、阴阳离子比方向、配平写法）
+  describe('口径一致性与书写规范', () => {
+    it('Na₂O₂ 阴阳离子比必须写明方向：阳:阴 = 2:1', () => {
+      const params: AvogadroParams = {
+        ...baseParams,
+        trapCategory: 'structure-bonds',
+        structureItem: 'Na2O2',
+        amountValue: 78,
+        amountUnit: 'g',
+      }
+      const { result } = renderHook(() => useAvogadroChemistry(params))
+      expect(result.current.trapBadge).toContain('阳:阴')
+      expect(result.current.trapBadge).toContain('2:1')
+    })
+
+    it('NH₄Cl 的 L 单位兜底与其余体系一致（unit = L 时按 mol 计）', () => {
+      const params: AvogadroParams = {
+        ...baseParams,
+        trapCategory: 'structure-bonds',
+        structureItem: 'NH4Cl',
+        amountValue: 2,
+        amountUnit: 'L',
+      }
+      const { result } = renderHook(() => useAvogadroChemistry(params))
+      const covalent = result.current.particleStats.find((s) => s.label.includes('N-H 共价键总数'))
+      expect(covalent).toBeDefined()
+      // 2 (兜底按 mol) × 4 = 8 N_A
+      expect(covalent?.actualMoles).toBeCloseTo(8)
+      // 结论文案须带上输入量与有效单位口径
+      expect(result.current.correctAnswerSummary).toContain('8.00')
+    })
+
+    it('全部结论文案与要点不得出现自造符号 ≜，且方程配平为最小整数比', () => {
+      const params: AvogadroParams = {
+        ...baseParams,
+        trapCategory: 'redox-electron',
+        redoxItem: 'Cu-S',
+        amountValue: 1,
+        amountUnit: 'mol',
+      }
+      const { result } = renderHook(() => useAvogadroChemistry(params))
+      const text = [
+        ...result.current.keyPointAnalysis,
+        result.current.correctAnswerSummary,
+        result.current.formulaLatex,
+        ...result.current.stepByStepMatrix.map((s) => s.finding),
+      ].join('\n')
+      expect(text).not.toContain('≜')
+      expect(text).not.toMatch(/1\.5\s*Cl/)
+    })
+  })
 })

@@ -6,6 +6,7 @@ import { useTitrationErrorChemistry } from './hooks/useTitrationErrorChemistry'
 import { TitrationErrorLeftPanel } from './components/TitrationErrorLeftPanel'
 import { TitrationErrorCenterView } from './components/TitrationErrorCenterView'
 import { TitrationErrorRightPanel } from './components/TitrationErrorRightPanel'
+import { DEFAULT_TITRATION_ERROR_PARAMS } from './constants'
 import type { ViewMode, TitrationErrorParams } from './types'
 
 export const TitrationErrorPurityCanvas: React.FC = () => {
@@ -15,31 +16,8 @@ export const TitrationErrorPurityCanvas: React.FC = () => {
   // 'explore' | 'scoring' | 'quiz'
   const [viewMode, setViewMode] = useState<ViewMode>('explore')
 
-  // 控制台参数状态
-  const [params, setParams] = useState<TitrationErrorParams>({
-    mode: 'error-analysis',
-    titrationType: 'acid-base',
-    errorOp: 'none',
-    viewAngle: 0,
-    cStandardTrue: 0.1,
-    vSampleTrue: 20.0,
-    cSampleTrue: 0.1,
-
-    purityMethod: 'direct',
-    sampleMass: 2.0,
-    solutionTotalVol: 250,
-    pipetteVol: 25,
-
-    reagent1Conc: 1.0,
-    reagent1Vol: 50.0,
-    reagent2Conc: 0.1,
-    reagent2Vol: 20.0,
-
-    rawMaterialMass: 2.8,
-    rawMaterialMolarMass: 55.85, // Fe 铁粉
-    molarMassProduct: 392.14,
-    actualProductMass: 19.6,
-  })
+  // 控制台参数状态（出厂默认值集中在 ./constants，避免与 handleReset 两处漂移）
+  const [params, setParams] = useState(() => ({ ...DEFAULT_TITRATION_ERROR_PARAMS }))
 
   // 滴定播放与体积状态
   const [isAutoPlaying, setIsAutoPlaying] = useState<boolean>(false)
@@ -80,30 +58,7 @@ export const TitrationErrorPurityCanvas: React.FC = () => {
   const handleReset = () => {
     setIsAutoPlaying(false)
     setCurrentVolume(20.0)
-    setParams({
-      mode: 'error-analysis',
-      titrationType: 'acid-base',
-      errorOp: 'none',
-      viewAngle: 0,
-      cStandardTrue: 0.1,
-      vSampleTrue: 20.0,
-      cSampleTrue: 0.1,
-
-      purityMethod: 'direct',
-      sampleMass: 2.0,
-      solutionTotalVol: 250,
-      pipetteVol: 25,
-
-      reagent1Conc: 1.0,
-      reagent1Vol: 50.0,
-      reagent2Conc: 0.1,
-      reagent2Vol: 20.0,
-
-      rawMaterialMass: 2.8,
-      rawMaterialMolarMass: 55.85, // Fe 铁粉
-      molarMassProduct: 392.14,
-      actualProductMass: 19.6,
-    })
+    setParams({ ...DEFAULT_TITRATION_ERROR_PARAMS })
   }
 
   return (

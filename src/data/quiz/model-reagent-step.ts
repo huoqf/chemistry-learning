@@ -27,7 +27,7 @@ export const modelReagentStep: ModelQuizData = {
       title: '步骤 3：Cu²⁺ 遇氨水浅蓝沉淀至深蓝紫络合溶液转化',
       type: 'fill-in',
       questionText: '向 CuSO₄ 溶液中逐滴滴加氨水至过量，沉淀溶解后生成的深蓝色络离子化学式为：',
-      formulaLatex: 'Cu(OH)_2 + 4NH_3 = [Cu(NH_3)_4]^{2+} + 2OH^-',
+      formulaLatex: 'Cu(OH)_2 + 4NH_3\\cdot H_2O = [Cu(NH_3)_4]^{2+} + 2OH^- + 4H_2O',
       placeholder: '输入络离子化学式',
       correctAnswer: ['[Cu(NH3)4]2+', '[Cu(NH3)4]^2+'],
       explanation: '踩分点：先生成浅蓝色 Cu(OH)₂ 沉淀，继续滴加过量氨水，沉淀溶解得到深蓝色 [Cu(NH₃)₄]²⁺ 络合溶液。',
@@ -54,7 +54,7 @@ export const modelReagentStep: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'var-reagent-1',
-      yearProvince: '2024 全国新课标卷',
+      yearProvince: '2024 新课标卷 · 情境变式',
       modelId: 'model-reagent-step',
       title: '两性金属离子滴定图像与 $n(\\text{沉淀})-V(\\text{滴加})$ 定量分析',
       contextDescription: '向 100 mL 含有 Al³⁺ 与 Mg²⁺ 的混合溶液中逐滴加入 1 mol/L NaOH 溶液，沉淀质量与滴加体积关系如图所示。',
@@ -74,7 +74,7 @@ export const modelReagentStep: ModelQuizData = {
     },
     {
       id: 'var-reagent-2',
-      yearProvince: '2024 广东高考真题',
+      yearProvince: '2024 广东卷 · 情境变式',
       modelId: 'model-reagent-step',
       title: 'Fe(OH)₂ 白色沉淀制备与防氧化隔绝措施分析',
       contextDescription: '某实验小组设计利用新制 FeSO₄ 溶液与 NaOH 溶液制备 Fe(OH)₂ 白色沉淀。',
@@ -87,14 +87,10 @@ export const modelReagentStep: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查 Fe(OH)₂ 极易被 O₂ 氧化的性质（4Fe(OH)₂ + O₂ + 2H₂O = 4Fe(OH)₃）。',
       detailedExplanation: 'Fe(OH)₂ 白色沉淀极易被空气中的 O₂ 氧化为红褐色的 Fe(OH)₃。通入 O₂ 会加速其氧化变色，与保持白色沉淀的目的背道而驰。',
-      diagramType: 'precipitation-curve',
-      diagramConfig: {
-        title: 'Fe(OH)₂ 在空气中暴露氧化颜色变化与防氧化操作图',
-      },
     },
     {
       id: 'var-reagent-3',
-      yearProvince: '2024 浙江高考真题',
+      yearProvince: '2024 浙江卷 · 情境变式',
       modelId: 'model-reagent-step',
       title: 'AlCl₃ 溶液中滴加一水合氨 vs 强碱 NaOH 沉淀图像对比',
       contextDescription: '向 20 mL 0.1 mol/L AlCl₃ 溶液中分别滴加 0.1 mol/L 氨水与 0.1 mol/L NaOH 溶液。',
@@ -107,14 +103,10 @@ export const modelReagentStep: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查 Al³⁺ + 3OH⁻ = Al(OH)₃↓ 及 Al(OH)₃ + OH⁻ = [Al(OH)₄]⁻ 反应消耗 NaOH 的 3:1 体积比及弱碱不溶解沉淀特性。',
       detailedExplanation: 'Al(OH)₃ 为两性氢氧化物，溶于强碱 NaOH 生成 [Al(OH)₄]⁻，消耗 OH⁻ 的体积比为 3:1；一水合氨为弱碱，电离出的 OH⁻ 浓度极低，无法促使 Al(OH)₃ 发生酸式电离溶解，故滴加过量氨水沉淀不溶解。',
-      diagramType: 'precipitation-curve',
-      diagramConfig: {
-        title: 'AlCl₃ 滴加强碱 NaOH (先沉淀后溶解 3:1) 曲线图',
-      },
     },
     {
       id: 'var-reagent-4',
-      yearProvince: '2023 全国甲卷',
+      yearProvince: '2023 全国甲卷 · 情境变式',
       modelId: 'model-reagent-step',
       title: 'CuSO₄ 溶液逐滴加入氨水浅蓝沉淀至深蓝络合溶液转化',
       contextDescription: '向 CuSO₄ 溶液中逐滴加入浓氨水至过量，首先产生浅蓝色沉淀，继续滴加沉淀溶解得到深蓝色透明溶液。',
@@ -127,14 +119,10 @@ export const modelReagentStep: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查 Cu²⁺ 遇少量氨水生成 Cu(OH)₂ 浅蓝沉淀，过量氨水发生配位反应生成四氨合铜络离子 [Cu(NH₃)₄]²⁺。',
       detailedExplanation: '少量氨水提供 OH⁻ 生成 Cu(OH)₂ 浅蓝沉淀；过量 NH₃ 与 Cu²⁺ 配位生成深蓝色 [Cu(NH₃)₄]²⁺ 络离子；加入乙醇降低极性可析出 [Cu(NH₃)₄]SO₄·H₂O 晶体。',
-      diagramType: 'precipitation-curve',
-      diagramConfig: {
-        title: 'Cu²⁺ 遇氨水生成 Cu(OH)₂ 沉淀至 [Cu(NH₃)₄]²⁺ 络合深蓝溶液转化图',
-      },
     },
     {
       id: 'var-reagent-5',
-      yearProvince: '2023 山东高考真题',
+      yearProvince: '2023 山东卷 · 情境变式',
       modelId: 'model-reagent-step',
       title: '分步滴定中 Fe³⁺、Al³⁺、Mg²⁺ 离子沉淀竞争顺序',
       contextDescription: '向含有等物质的量浓度 Fe³⁺、Al³⁺、Mg²⁺ 的酸性混合溶液中逐滴加入 1 mol/L NaOH 溶液。',
@@ -154,7 +142,7 @@ export const modelReagentStep: ModelQuizData = {
     },
     {
       id: 'var-reagent-6',
-      yearProvince: '2024 新课标高考真题',
+      yearProvince: '2024 新课标卷 · 情境变式',
       modelId: 'model-reagent-step',
       title: '沉淀转化实验设计评价与沉淀剂过量陷阱辨析',
       contextDescription: '下列实验操作、现象与所得到的实验结论均正确且相符的是：',
@@ -183,10 +171,6 @@ export const modelReagentStep: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：高频实验评价题眼——沉淀转化实验中必须排除未反应沉淀离子的直接沉淀干扰。',
       detailedExplanation: 'A 项中 AgNO₃ 溶液极大过量，加入 KI 时未反应的 Ag⁺ 直接与 I⁻ 反应生成 AgI 黄色沉淀，不能证明是沉淀转化；B 项保证 NaCl 过量（Ag⁺ 反应完全）或经洗涤去除游离 Ag⁺，滴加 KI 沉淀变黄才能确证 AgCl 转化为 AgI，进而说明 Ksp(AgCl) > Ksp(AgI)；C 项过量氨水不能溶解 Al(OH)₃；D 项 Fe(OH)₂ 还原性强，接触空气迅速被氧化变色。',
-      diagramType: 'precipitation-curve',
-      diagramConfig: {
-        title: 'AgCl → AgI → Ag₂S 溶度积 Ksp 梯度差沉淀转化图',
-      },
     },
   ],
 }

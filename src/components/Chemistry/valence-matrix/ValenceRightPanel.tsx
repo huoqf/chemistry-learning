@@ -355,7 +355,10 @@ export const ValenceRightPanel: React.FC<ValenceRightPanelProps> = ({
       <div className="p-3 bg-white rounded-xl border border-slate-200 flex flex-col gap-2 shadow-2xs min-w-0">
         <h4 className="font-bold text-slate-900 text-xs flex items-center gap-1.5 pb-1 border-b border-slate-100">
           <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-          <span>{currentConfig.name} 高考必考要点提炼</span>
+          <span>
+            {currentConfig.name}
+            {currentConfig.isCoreGaokao ? ' 高考必考要点提炼' : ' 拓展元素信息题要点'}
+          </span>
         </h4>
         <div className="flex flex-col gap-1.5">
           {(currentConfig.examTips || (modelNode ? modelNode.examPointSummary : [])).map((pt, idx) => (

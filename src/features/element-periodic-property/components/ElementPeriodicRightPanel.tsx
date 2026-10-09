@@ -110,7 +110,7 @@ export const ElementPeriodicRightPanel: React.FC<ElementPeriodicRightPanelProps>
       default:
         return [
           {
-            text: '高考压轴点：短周期元素 p 轨电子数等于 s 轨电子数 (O: 4=4; Mg: 6=6; Ar: 12=6 不适用短周期)。',
+            text: '高考压轴点：由电子排布式反推元素，必须回到"核外电子总数 = 原子序数"逐层核对。注意 Ar 为 3s²3p⁶（核外 s 轨共 6 个电子、p 轨共 12 个电子），可见"p 轨电子数 = s 轨电子数"只是个别元素的巧合（O: 4=4、Mg: 6=6），**并非普遍规律**，不可套用。',
             importance: 'gaokao' as const,
           },
         ]
@@ -187,11 +187,15 @@ export const ElementPeriodicRightPanel: React.FC<ElementPeriodicRightPanelProps>
         unit: 'kJ/mol',
       },
       {
-        label: '最高突跃倍率',
-        value: stepIonizationAnalysis.ratios[stepIonizationAnalysis.valanceCountPredicted - 1]
-          ? `×${stepIonizationAnalysis.ratios[stepIonizationAnalysis.valanceCountPredicted - 1]}`
-          : '基态无突跃',
-        unit: `(价电子数: ${stepIonizationAnalysis.valanceCountPredicted})`,
+        label: '最大逐级倍率',
+        value: stepIonizationAnalysis.hasCredibleJump
+          ? `×${stepIonizationAnalysis.maxJumpRatio.toFixed(1)}`
+          : '窗口内无突跃',
+        unit: stepIonizationAnalysis.hasCredibleJump
+          ? `(推断价电子数: ${stepIonizationAnalysis.valanceCountPredicted})`
+          : stepIonizationAnalysis.isTransition
+          ? '(d 区不适用)'
+          : '(数据不足，不可判定)',
       },
     ]
   }, [currentElement, stepIonizationAnalysis])

@@ -34,6 +34,12 @@ export interface ParticleStatItem {
   unit: string
   isTrap: boolean
   trapExplanation?: string
+  /**
+   * actualMoles 是否为**教学示意量**（非可精确计算的化学量）。
+   * 例如"Fe(OH)₃ 胶体粒子数"取决于胶粒聚集度，本质无法定值，
+   * 此时 UI 必须以 "≈" 前缀 + "示意" 标注呈现，不得伪装成精确计算结果。
+   */
+  isIndicative?: boolean
 }
 
 export interface AvogadroResult {

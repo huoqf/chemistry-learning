@@ -324,7 +324,7 @@ export const OrganicLeftPanel: React.FC<OrganicLeftPanelProps> = ({
             <div className="p-2.5 bg-indigo-50/70 rounded-lg border border-indigo-200/80 space-y-1">
               <span className="font-bold text-indigo-950 text-[11.5px]">中屏已展开全景大表</span>
               <p className="text-[10.5px] leading-relaxed text-indigo-900">
-                中屏已全屏呈现 12 大官能团与核心试剂定量反应矩阵及三大秒杀口诀。点击下方任一基团，可在中屏大表与右屏同步高亮锁定。
+                中屏已全屏呈现 16 大官能团与核心试剂定量反应矩阵及三大秒杀口诀。点击下方任一基团，可在中屏大表与右屏同步高亮锁定。
               </p>
             </div>
 

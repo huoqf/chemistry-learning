@@ -1,6 +1,6 @@
 /**
  * src/features/gas-chain/GasChainCanvas.tsx
- * 母题六：气体制备/净化/尾气处理装置链工具 - 核心组装入口
+ * 实验一：气体制备/净化/尾气处理装置链工具 - 核心组装入口
  */
 
 import { useState, useCallback } from 'react'

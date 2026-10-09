@@ -3,7 +3,7 @@ import type { RetrosynthesisModelData } from '../types'
 /**
  * 碳链骨架构建模型四：C-C 键构建 (羟醛缩合与逆合成切断)
  * 层级画像：羟醛缩合与逆合成切断属人教版选必3 §3.5 教材主线；
- * 仅"合成子/FGI"术语属超纲表述（见 syllabusTiers）。
+ * 仅"合成子/FGI"术语属【超纲】表述（见 syllabusTiers）。
  */
 export const MODEL_CARBON_CARBON_BUILDER: RetrosynthesisModelData = {
   id: 'carbon-carbon-builder',

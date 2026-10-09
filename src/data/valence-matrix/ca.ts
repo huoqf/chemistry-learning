@@ -88,7 +88,7 @@ export const CA_CONFIG: ElementValenceConfig = {
       colorStyle: 'bg-stone-800 text-white border-stone-900',
       rgbColor: colors.neutral[800],
       testReaction: '遇水极剧烈水解产生乙炔气体 C₂H₂ 和 Ca(OH)₂（实验常用饱和食盐水减缓反应速率）',
-      equation: 'CaC₂ + 2H₂O → Ca(OH)₂ + CH≡CH↑',
+      equation: 'CaC₂ + 2H₂O = Ca(OH)₂ + C₂H₂↑',
       roleDescription: '实验室制乙炔原料',
     },
   ],

@@ -41,10 +41,10 @@ export const modelElementPeriodicProperty: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'var-elem-1',
-      yearProvince: '2024 山东高考真题卷',
+      yearProvince: '2024 山东卷 · 情境变式',
       modelId: 'model-element-periodic-property',
       title: '短周期元素 X、Y、Z、W 的"位-构-性"逻辑推断',
-      contextDescription: '短周期主族元素 X、Y、Z、W 的原子序数依次增大。X 的基态原子 p 轨道电子数等于 s 轨道电子数，Y 的电负性在同周期中最强，Z 的价层电子 3p 轨道半充满，W 的简单离子在同周期阴阳离子中半径最小。',
+      contextDescription: '短周期主族元素 X、Y、Z、W 的原子序数依次增大。X 的基态原子 p 轨道电子数等于 s 轨道电子数，Y 的电负性在同周期中最强，Z 的简单离子在同周期阴阳离子中半径最小，W 的价层电子 3p 轨道半充满。',
       questionText: '下列关于这些元素及其化合物的说法正确的是？',
       options: [
         { label: 'A', text: '简单离子半径：W > Z > Y > X', isCorrect: false },
@@ -52,17 +52,12 @@ export const modelElementPeriodicProperty: ModelQuizData = {
         { label: 'C', text: '最高价氧化物对应水化物的酸性：X > Z', isCorrect: false },
         { label: 'D', text: '基态 Z 原子的未成对电子数为 0', isCorrect: false },
       ],
-      modelAlignmentAnalysis: '【母题模型对齐】：考查电子排布特征推断、第一电离能 VA>VIA (P>O) 反常与 10/18 电子体半径规律。',
-      detailedExplanation: '推断过程：X (p=s) ➔ O (1s²2s²2p⁴, 4=4)；Y (同周期电负性最强) ➔ F (4.0)；Z (3p³半充满) ➔ P (15号)；W (10电子体半径最小) ➔ Al (13号)。第一电离能：F(1681) > O(1314) > P(1012)，因此 Y(F) > X(O) > Z(P)，B 选项正确。注意：P 的 3p³ 半充满使 I₁(P) 反常高于 S，但仍低于 O。',
-      diagramType: 'titration-error-diagram',
-      diagramConfig: {
-        errorDiagramType: 'permanganate-view-angle',
-        title: '短周期元素 O(8)、F(9)、P(15)、Al(13) 位-构-性周期律推断矩阵图',
-      },
+      modelAlignmentAnalysis: '【母题模型对齐】：考查电子排布特征推断（p 轨道电子数 = s 轨道电子数的 O、3p³ 半充满的 P）、第一电离能 VA>VIA 反常（第二周期 N>O、第三周期 P>S）与等电子体（10 电子体 Al³⁺）离子半径比较规律。',
+      detailedExplanation: '推断过程：X (p=s) ➔ O (1s²2s²2p⁴, 4=4)；Y (第二周期电负性最强) ➔ F (4.0)；Z (简单离子半径最小) ➔ Al (13号，Al³⁺ 为第三周期离子中半径最小者)；W (3p³ 半充满) ➔ P (15号)。原子序数 8 < 9 < 13 < 15，与题设“依次增大”一致。第一电离能：F(1681 kJ/mol) > O(1314 kJ/mol) > Al(578 kJ/mol)，因此 Y(F) > X(O) > Z(Al)，B 选项正确。注意：P 的 3p³ 半充满使 I₁(P) 反常高于 S，但仍低于 O；O 无最高价氧化物对应的水化物，故 C 项的比较前提不成立。',
     },
     {
       id: 'var-elem-2',
-      yearProvince: '2024 全国甲卷',
+      yearProvince: '2024 全国甲卷 · 情境变式',
       modelId: 'model-element-periodic-property',
       title: '第四周期过渡元素 Cr、Mn、Cu 电子排布与电离能',
       contextDescription: '第四周期 d 区与 ds 区过渡元素在工业催化中应用广泛。Cr (24号) 与 Cu (29号) 的基态原子核外电子排布具有特殊性。',
@@ -75,15 +70,10 @@ export const modelElementPeriodicProperty: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查洪特规则特例 (Cr: 3d⁵4s¹, Cu: 3d¹⁰4s¹) 与过渡元素阳离子失电子顺序（先失 4s 再失 3d）。',
       detailedExplanation: 'Cr 形成 Cr³⁺ 阳离子时，先失去 4s 轨道的 1 个电子，再失去 3d 轨道的 2 个电子，故 Cr³⁺ 的价层电子排布式应为 3d³，D 选项错误。',
-      diagramType: 'titration-error-diagram',
-      diagramConfig: {
-        errorDiagramType: 'cod-back-titration',
-        title: 'Cr (3d⁵4s¹)、Mn (3d⁵4s²)、Cu (3d¹⁰4s¹) 特殊电子排布与失电子顺序图',
-      },
     },
     {
       id: 'var-elem-3',
-      yearProvince: '2023 全国新课标卷',
+      yearProvince: '2023 新课标卷 · 情境变式',
       modelId: 'model-element-periodic-property',
       title: '第一电离能 I₁ 同周期全反常特例 (Mg > Al, P > S, N > O)',
       contextDescription: '第三周期主族元素从左到右，其第一电离能 I₁ 的变化呈现整体递增但局部反常锯齿状特征。',
@@ -96,15 +86,10 @@ export const modelElementPeriodicProperty: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：洪特规则全充满/半充满稳定性：IIA (3s²) > IIIA (3s²3p¹)，VA (3p³) > VIA (3p⁴)。故 Mg > Al，P > S。',
       detailedExplanation: '基态 Mg 的价电子排布为 3s²，处于全充满稳定状态；Al 为 3s²3p¹，失 3p¹ 吸收能量比 Mg 失 3s 电子小。故 I₁(Mg) > I₁(Al)，B 项正确。',
-      diagramType: 'titration-error-diagram',
-      diagramConfig: {
-        errorDiagramType: 'iodometry-purity',
-        title: '第三周期第一电离能 (I₁) 全反常 (Mg>Al, P>S) 锯齿折线图',
-      },
     },
     {
       id: 'var-elem-4',
-      yearProvince: '2024 浙江高考真题',
+      yearProvince: '2024 浙江卷 · 情境变式',
       modelId: 'model-element-periodic-property',
       title: '等电子体微粒半径核电荷数反比律 (O²⁻, F⁻, Na⁺, Mg²⁺, Al³⁺)',
       contextDescription: '具有相同电子层结构的 10 电子微粒，其离子半径随核电荷数的改变而呈现规律性变化。',
@@ -117,15 +102,10 @@ export const modelElementPeriodicProperty: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：等电子体微粒“核大半径小”原则：核电荷数 Z(Al)=13 > Z(Mg)=12 > Z(Na)=11 > Z(F)=9 > Z(O)=8，故半径 O²⁻ > F⁻ > Na⁺ > Mg²⁺ > Al³⁺。',
       detailedExplanation: '这五种离子核外均有 10 个电子（2, 8），核电荷数越大，原子核对核外电子的吸引力越强，离子半径越小。故 B 项正确。',
-      diagramType: 'titration-error-diagram',
-      diagramConfig: {
-        errorDiagramType: 'permanganate-view-angle',
-        title: '10电子体 (O²⁻ ➔ Al³⁺) 核电荷数增大导致半径递减曲线图',
-      },
     },
     {
       id: 'var-elem-5',
-      yearProvince: '2023 湖北高考真题',
+      yearProvince: '2023 湖北卷 · 情境变式',
       modelId: 'model-element-periodic-property',
       title: '基态原子核外电子排布式与能量最低原理/泡利原理/洪特规则',
       contextDescription: '基态原子的核外电子排布必须遵循三大基本物理原理：能量最低原理、泡利不相容原理和洪特规则。',
@@ -138,11 +118,6 @@ export const modelElementPeriodicProperty: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：洪特规则：电子分布在同一能级的不同轨道时，优先以自旋平行且单占的方式排布；同一个轨道容纳 2 个自旋相同的电子违反泡利原理。',
       detailedExplanation: '洪特规则要求简并轨道中的电子自旋方向必须相同（自旋平行）。若 2p³ 中的电子出现反向自旋，则违反了洪特规则。故 B 项正确。',
-      diagramType: 'titration-error-diagram',
-      diagramConfig: {
-        errorDiagramType: 'cod-back-titration',
-        title: '基态原子 2p³ 轨道自旋平行 (洪特规则) 电子排布图',
-      },
     },
   ],
 }

@@ -82,7 +82,7 @@ export interface RetrosynthesisStep {
  * 内容归属层级（三层判别，取代原先笼统的"超纲"标签）：
  * - `textbook`  教材主线：人教版选择性必修3 正文要求，必须掌握
  * - `info-item` 信息题素材：教材未作要求，但高考常以"给出信息"的方式考查
- * - `beyond`    超纲术语：大学有机合成学派表述，高考至多作背景名词，不作考点
+ * - `beyond`    超纲：大学有机合成学派表述，高考至多作背景名词，不作考点
  */
 export type SyllabusTierLevel = 'textbook' | 'info-item' | 'beyond'
 
@@ -112,7 +112,7 @@ export interface RetrosynthesisModelData {
   targetMolecule: string
   targetFormula: string
   /**
-   * 整体难度档。注意：本模块的合成策略横跨三个层级（教材主线 / 信息题素材 / 超纲术语），
+   * 整体难度档。注意：本模块的合成策略横跨三个层级（教材主线 / 信息题素材 / 超纲），
    * 该字段只反映整体难度感；"哪一条是必学、哪一条只需读懂信息"必须看 `syllabusTiers`。
    */
   difficulty: '基础' | '中等' | '信息题拓展'

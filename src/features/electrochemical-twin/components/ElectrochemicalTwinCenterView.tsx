@@ -623,7 +623,7 @@ export const ElectrochemicalTwinCenterView: React.FC<Props> = ({
                 <circle cx="-6" cy={-((tick * 70) % 70)} r="3.5" fill="#34D399" opacity={0.8} />
                 <circle cx="6" cy={-(((tick + 0.5) * 70) % 70)} r="4.5" fill="#34D399" opacity={0.9} />
                 <text x="-35" y="-50" fill="#047857" fontSize={f(12)} fontWeight="bold">
-                  V(O₂) = {quantResult.gasVolumeRight} L
+                  V(O₂) = {quantResult.gasVolumeLeft} L
                 </text>
               </g>
 

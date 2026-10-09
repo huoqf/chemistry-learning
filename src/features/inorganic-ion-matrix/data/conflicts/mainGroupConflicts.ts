@@ -451,7 +451,7 @@ export const MAIN_GROUP_CONFLICTS: Record<string, IonPairCell> = {
     category: 'double-hydrolysis',
     badgeLabel: '彻底双水解',
     productSummary: 'Al(OH)₃↓+H₂SiO₃↓',
-    equation: '2Al^{3+} + 3SiO_3^{2-} + 6H_2O = 2Al(OH)_3\\downarrow + 3H_2SiO₃\\downarrow',
+    equation: '2Al^{3+} + 3SiO_3^{2-} + 6H_2O = 2Al(OH)_3\\downarrow + 3H_2SiO_3\\downarrow',
     phenomenon: '生成大量混合白色胶状沉淀。',
     reason: '剧烈彻底双水解生成双沉淀。',
   },

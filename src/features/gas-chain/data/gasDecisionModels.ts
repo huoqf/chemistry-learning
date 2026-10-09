@@ -1,6 +1,6 @@
 /**
  * src/features/gas-chain/data/gasDecisionModels.ts
- * 母题六：气体制备/净化/尾气处理装置链 - 专项实验决策模型体系
+ * 实验一：气体制备/净化/尾气处理装置链 - 专项实验决策模型体系
  *
  * 涵盖：
  * 1. 四大发生装置全景模型与高考操作要点 (GENERATOR_APPARATUS_MODELS)
@@ -505,7 +505,7 @@ export const COLLECTION_DECISION_RULES: CollectionDecisionModel[] = [
   },
   {
     method: '排特定饱和溶液法',
-    applicableCriteria: '气体极易溶于水但在特定饱和溶液中溶解度骤降',
+    applicableCriteria: '气体能溶于水（或与水反应）但在对应饱和溶液中溶解度显著降低',
     typicalGases: ['Cl₂ (排饱和食盐水)', 'CO₂ (排饱和 NaHCO₃ 溶液)', 'SO₂ (排饱和 NaHSO₃ 溶液)'],
     tubeConnection: '同排水法连接',
     fullTestSummary: '集气瓶中饱和溶液全部被排尽',

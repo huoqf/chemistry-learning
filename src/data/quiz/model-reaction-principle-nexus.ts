@@ -71,7 +71,7 @@ export const modelReactionPrincipleNexus: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'nexus-var-1',
-      yearProvince: '2023 全国高考甲卷真题',
+      yearProvince: '2023 全国甲卷 · 情境变式',
       modelId: 'model-reaction-principle-nexus',
       title: 'CO₂ 加氢合成甲醇反应历程与活化能图谱',
       contextDescription:
@@ -103,14 +103,10 @@ export const modelReactionPrincipleNexus: ModelQuizData = {
         '【母题模型对齐】：本题考查活化能量山峰与多步过渡态(TS)。催化剂只改变反应途径、降低正逆反应活化能，但不改变反应始态和终态的能量差 ΔH。活化能 Ea 最高的步骤为决速步。',
       detailedExplanation:
         '解析：A项，催化剂不能改变反应热 ΔH，错误；B项，由历程势能图可知 *HCOO + *H → *H₂CO 对应的势能垒 (Ea) 最高，为决速步，正确；C项，该反应为放热反应，升温平衡逆向移动，错误；D项，加入催化剂同等降低正、逆反应活化能，逆反应活化能变小，错误。',
-      diagramType: 'titration-curve',
-      diagramConfig: {
-        title: 'CO₂ 加氢合成甲醇催化反应历程 (Ea 图谱)',
-      },
     },
     {
       id: 'nexus-var-2',
-      yearProvince: '2024 山东高考化学真题',
+      yearProvince: '2024 山东卷 · 情境变式',
       modelId: 'model-reaction-principle-nexus',
       title: 'ln K - 1/T 范特霍夫图谱与热力学推导',
       contextDescription:
@@ -142,14 +138,10 @@ export const modelReactionPrincipleNexus: ModelQuizData = {
         '【母题模型对齐】：范特霍夫方程为 ln K = -ΔH / (R * T) + C。以 ln K 对 1/T 作图，斜率为 -ΔH / R。若斜率 > 0，则 -ΔH / R > 0 ⇒ ΔH < 0 (放热反应)。',
       detailedExplanation:
         '解析：斜率 -ΔH / R > 0 说明 ΔH < 0，反应放热。放热反应升高温度 T，1/T 减小，ln K 减小，K 减小，平衡逆向移动。平衡常数 K 仅与温度有关，压强改变不改变斜率。因此 C 正确。',
-      diagramType: 'distribution-fraction',
-      diagramConfig: {
-        title: 'ln K - 1/T 范特霍夫线性关系图谱',
-      },
     },
     {
       id: 'nexus-var-3',
-      yearProvince: '2022 全国乙卷高考真题',
+      yearProvince: '2022 全国乙卷 · 情境变式',
       modelId: 'model-reaction-principle-nexus',
       title: '2NO₂(g) ⇌ N₂O₄(g) v-t 速率-时间图与勒夏特列移动',
       contextDescription:
@@ -181,14 +173,10 @@ export const modelReactionPrincipleNexus: ModelQuizData = {
         '【母题模型对齐】：勒夏特列移动 v-t 图像判断核心：① 若某一速率瞬间不变而另一速率瞬间改变，说明改变的是单一产物/反应物的浓度突变；② 若两速率均瞬间跳跃，说明是温度、压强或催化剂。',
       detailedExplanation:
         '解析：t₁ 时刻 v(正) 瞬间不变，说明反应物 NO₂ 浓度未突变；v(逆) 瞬间增大，说明生成物 N₂O₄ 浓度瞬间增大。随后 v(逆) 逐渐减小，v(正) 逐渐增大，平衡逆向移动。因此改变条件为增大 N₂O₄ 浓度，选 C。',
-      diagramType: 'precipitation-curve',
-      diagramConfig: {
-        title: '2NO₂ ⇌ N₂O₄ 反应速率-时间 (v - t) 突变图谱',
-      },
     },
     {
       id: 'nexus-var-4',
-      yearProvince: '2024 浙江高考真题',
+      yearProvince: '2024 浙江卷 · 情境变式',
       modelId: 'model-reaction-principle-nexus',
       title: '压强与温度双因素对平衡转化率 α-T-P 交叉图像解析',
       contextDescription: '对于可逆气体反应 A(g) + 2B(g) ⇌ 2C(g) ΔH < 0，不同压强 P₁ 与 P₂ 下 A 的平衡转化率 α 随温度 T 的变化关系如图所示。',
@@ -201,14 +189,10 @@ export const modelReactionPrincipleNexus: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查“定一议二”读图原则：作垂直于 T 轴的线（同温下），由于正反应气体分子数减小（3➔2），增压平衡右移，α(A) 增大，故 P₁ > P₂。放热反应升温 α(A) 降低。',
       detailedExplanation: '根据正反应气体分子数减少，同温下增大压强平衡正向移动，A 的转化率升高，由图知同温下 P₁ 对应 α 更高，故 P₁ > P₂。放热反应升温平衡逆移，α 减小，B 项正确。',
-      diagramType: 'distribution-fraction',
-      diagramConfig: {
-        title: 'A(g) + 2B(g) ⇌ 2C(g) 温度-压强 α(A) - T - P 双因素图谱',
-      },
     },
     {
       id: 'nexus-var-5',
-      yearProvince: '2023 湖北高考真题',
+      yearProvince: '2023 湖北卷 · 情境变式',
       modelId: 'model-reaction-principle-nexus',
       title: '压强平衡常数 Kp 分压计算公式代数推导',
       contextDescription: '在 T K、总压为 P 情况下，反应 N₂O₄(g) ⇌ 2NO₂(g) 达到平衡，N₂O₄ 的分解率为 α。',
@@ -221,10 +205,6 @@ export const modelReactionPrincipleNexus: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：设初始 n(N₂O₄) = 1，平衡时 n(N₂O₄) = 1-α, n(NO₂) = 2α，总摩尔数 n_tot = 1+α。分压 p(N₂O₄) = [(1-α)/(1+α)]P, p(NO₂) = [(2α)/(1+α)]P。Kp = p(NO²)² / p(N₂O₄) = 4α² P / (1-α²)。',
       detailedExplanation: '代入分压公式：Kp = p(NO₂)² / p(N₂O₄) = [ (2α/1+α)P ]² / [ (1-α/1+α)P ] = (4α² / 1-α²) P。故 A 项完全正确。',
-      diagramType: 'titration-curve',
-      diagramConfig: {
-        title: 'N₂O₄ ⇌ 2NO₂ 分压 Kp = (4α² P)/(1-α²) 代数推导图',
-      },
     },
   ],
 }

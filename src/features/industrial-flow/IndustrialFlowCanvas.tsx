@@ -1,6 +1,6 @@
 /**
  * src/features/industrial-flow/IndustrialFlowCanvas.tsx
- * 母题七：无机工艺流程与沉淀调 pH 工具 - 组装入口
+ * 实验二：无机工艺流程与沉淀调 pH 工具 - 组装入口
  */
 
 import { useState, useCallback } from 'react'
@@ -23,7 +23,7 @@ export function IndustrialFlowCanvas() {
     viewMode: 0,
     systemId: 'fe-al-mn',
     activeStep: 3, // 默认聚焦核心工序 3 (调 pH 沉淀槽)
-    pH: 5.2, // 默认处于安全区间 [4.7, 8.4]
+    pH: 5.2, // 默认处于安全区间 [4.7, 8.1]（上限 = Mn²⁺ 开始沉淀 pH 8.14 取一位小数）
     leachTemp: 60,
     crushSize: 'fine',
     oxidantAmount: 'sufficient',

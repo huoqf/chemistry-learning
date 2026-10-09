@@ -100,10 +100,11 @@ describe('OrganicMechanismCanvas Component', () => {
     fireEvent.click(quizTab)
     expect(screen.getByText(/高考真题变式选择题/i)).toBeDefined()
     expect(screen.getByText(/包含 8 大机制对应的近几年高考真题/i)).toBeDefined()
-    expect(screen.getByText(/2024 全国新课标卷/i)).toBeDefined()
-    expect(screen.getByText(/2024 全国甲卷/i)).toBeDefined()
-    expect(screen.getByText(/2024 山东卷/i)).toBeDefined()
-    expect(screen.getByText(/2024 广东卷/i)).toBeDefined()
+    // P1-X2 署名降级后，变式题标签为「年份/卷别 · 情境变式」
+    expect(screen.getByText(/2024 新课标卷 · 情境变式/)).toBeDefined()
+    expect(screen.getByText(/2024 全国甲卷 · 情境变式/)).toBeDefined()
+    expect(screen.getByText(/2024 山东卷 · 情境变式/)).toBeDefined()
+    expect(screen.getByText(/2024 广东卷 · 情境变式/)).toBeDefined()
   })
 
   it('should synchronize left panel teaching guide and right chemistry panel with stage and solvent controls', () => {

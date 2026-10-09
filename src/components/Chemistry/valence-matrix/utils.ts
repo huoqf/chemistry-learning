@@ -149,11 +149,10 @@ export function getElementKnowledgeNodes(symbol: string): KnowledgeNode[] {
     Sn: ['silicon', 'redox-basic'],
     Sb: ['nitrogen', 'redox-basic'],
     Se: ['sulfur', 'redox-basic'],
-    Te: ['sulfur', 'redox-basic'],
+    Be: ['aluminum', 'redox-basic'],
+    Ge: ['silicon', 'redox-basic'],
     B: ['silicon', 'chemical-bond'],
     Ga: ['aluminum', 'redox-basic'],
-    In: ['aluminum', 'redox-basic'],
-    Tl: ['aluminum', 'redox-basic'],
     H: ['redox-basic', 'chemical-bond'],
     O: ['redox-basic', 'chemical-bond'],
   }

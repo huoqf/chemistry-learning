@@ -6,7 +6,7 @@ import { scanEquations, type EquationEntry } from '@/data/__tests__/helpers/equa
 import { isBalanceWhitelisted } from '@/data/__tests__/helpers/balanceWhitelist'
 
 /**
- * 母题七：无机工艺流程的方程式守恒扫描（审查项 G7）。
+ * 实验二：无机工艺流程的方程式守恒扫描（审查项 G7）。
  *
  * 原 `equationsBalanceScan.test.ts` 只扫描价类二维图，工艺流程全部 8 个体系、
  * 4 个工序的 `coreReaction` 以及调 pH 试剂的 `reaction` 均无守恒校验。
@@ -42,7 +42,7 @@ function buildParams(systemId: IndustrialFlowSystemId, activeStep: number): Indu
   }
 }
 
-describe('母题七：无机工艺流程方程式守恒扫描', () => {
+describe('实验二：无机工艺流程方程式守恒扫描', () => {
   it('全部 8 个体系 × 4 个工序的 coreReaction 必须满足原子与电荷守恒', () => {
     const entries: EquationEntry[] = []
 

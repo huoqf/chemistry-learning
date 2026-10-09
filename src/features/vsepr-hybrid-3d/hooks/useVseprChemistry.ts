@@ -21,6 +21,7 @@ export function useVseprChemistry(molecule: VseprMoleculeData): VseprChemistryRe
       vseprGeometryName,
       molecularGeometryName,
       actualAngle,
+      angleDisplay,
     } = molecule
 
     // 格式化阴阳离子电荷符号：阳离子减去电荷，阴离子加上电荷
@@ -44,7 +45,13 @@ export function useVseprChemistry(molecule: VseprMoleculeData): VseprChemistryRe
     // 3. 孤电子对排斥力与键角变化描述
     let lonePairRepulsionDescription = ''
     if (lonePairs === 0) {
-      lonePairRepulsionDescription = `中心原子无孤电子对，${x} 对成键电子对在空间完全对称排布，实际键角等于理想夹角 (${actualAngle}°)。`
+      // 存在多套键角的构型（如三角双锥 PCl₅ 同时含 90° 与 120°）优先使用 angleDisplay，
+      // 不再笼统写成"完全对称排布 / 键角等于理想夹角"，避免与右屏的双键角标注互相打架。
+      const angleText = angleDisplay ?? `理想夹角 ${actualAngle}°`
+      lonePairRepulsionDescription = `中心原子无孤电子对，${x} 对成键电子对尽可能远离排布，实际键角为 ${angleText}。`
+    } else if (actualAngle === molecule.theoreticalAngle) {
+      // 孤对优先占据斥力较小位置（三角双锥赤道面 / 八面体轴向），只改变分子构型而不压缩成键键角
+      lonePairRepulsionDescription = `中心原子含 ${lonePairs} 对孤电子对。孤对优先占据斥力较小的位置（三角双锥的赤道面、八面体的轴向），使分子空间构型变为 ${molecularGeometryName}；由于成键电子对之间并无直接挤压，实际键角仍保持理想值 ${actualAngle}°。`
     } else if (lonePairs === 1) {
       lonePairRepulsionDescription = `中心原子含 1 对孤电子对。孤电子对对成键电子对的静电排斥力大于成键电子对之间的排斥力，将键角挤压至 ${actualAngle}°。`
     } else {

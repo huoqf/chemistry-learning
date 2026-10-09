@@ -48,7 +48,7 @@ function estimateVisualLength(latex: string): number {
     .replace(/\\(downarrow|uparrow|Delta)/g, '__')
     .replace(/\\text\{([^}]*)\}/g, '$1$1')
     .replace(/\\[a-zA-Z]+/g, '')
-    .replace(/[{}\^_]/g, '')
+    .replace(/[{}^_]/g, '')
     .trim().length
 }
 

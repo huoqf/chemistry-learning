@@ -16,10 +16,11 @@ export interface GaokaoDiagramProps {
 }
 
 /**
- * GaokaoDiagram — 高考化学真题原图高保真复现组件库
+ * GaokaoDiagram — 高考化学图表 / 装置示意图组件库
  *
- * 严格遵循高考真题原图规范：
- * 1. 100% 还原高考官方考场原图的坐标轴、曲线、代表微粒与原题标记。
+ * 说明（诚实标注）：
+ * 1. 本组件绘制的是**原创示意图**，用于还原高考图表的坐标轴、曲线走向与解题标记，
+ *    并非考场原图扫描件，图上角标一律标注为「示意图」，不做"高考真题原图"声称。
  * 2. 默认保持客观看图体验，仅在 isAnalysisMode 为 true 时显示拆解剖析高亮。
  */
 export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
@@ -49,7 +50,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
         <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between">
           <span>{config?.title || '高考有机反应真题情境图'}</span>
           <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">
-            高考真题原图
+            示意图
           </span>
         </div>
         <svg viewBox="0 0 340 120" className="w-full h-auto bg-white rounded border border-slate-200 shadow-2xs">
@@ -148,7 +149,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
         <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between">
           <span>{title || '高考真题：无机元素价态-物质类别二维图像'}</span>
           <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">
-            高考真题原图
+            示意图
           </span>
         </div>
         <svg viewBox="0 0 340 180" className="w-full h-auto bg-white rounded border border-slate-200 shadow-2xs">
@@ -266,7 +267,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
         <div className={`my-2.5 p-3 bg-slate-50 border border-slate-200 rounded-lg ${className}`}>
           <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between">
             <span>{title || '高考真题：m(沉淀) - V(NaOH) 图像'}</span>
-            <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">高考真题原图</span>
+            <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">示意图</span>
           </div>
           <svg viewBox="0 0 340 170" className="w-full h-auto bg-white rounded border border-slate-200 shadow-2xs">
             <line x1="40" y1="140" x2="320" y2="140" stroke="#334155" strokeWidth="1.5" />
@@ -301,7 +302,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
         <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between">
           <span>{title || '高考真题：25℃ 时金属离子 lg c - pH 沉淀分布曲线图'}</span>
           <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">
-            高考真题原图高保真复现
+            示意图（原创复现）
           </span>
         </div>
         <svg viewBox="0 0 350 180" className="w-full h-auto bg-white rounded border border-slate-200 shadow-2xs select-none">
@@ -319,7 +320,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
               <line x1="140" y1="25" x2="140" y2="145" stroke="#059669" strokeDasharray="3 3" strokeWidth="1.5" />
               <line x1="260" y1="25" x2="260" y2="145" stroke="#059669" strokeDasharray="3 3" strokeWidth="1.5" />
               <text x="200" y="35" fontSize="8" fill="#047857" fontWeight="bold" textAnchor="middle">
-                [解题切口] 最佳沉淀 pH 控制区间 [4.7 ~ 8.4)
+                [解题切口] 最佳沉淀 pH 控制区间 [4.7 ~ 8.1)
               </text>
             </g>
           )}
@@ -439,7 +440,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
               <text x="310" y="45" fontSize="8" fill="#D97706" fontWeight="bold">Ca²⁺</text>
             </g>
           ) : (
-            /* 软锰矿通用：Mn²⁺ (pH 8.4 开始沉淀) */
+            /* 软锰矿通用：Mn²⁺ (pH 8.1 开始沉淀) */
             <g>
               <path
                 d="M 195 25 Q 235 35 260 75 Q 280 110 290 145"
@@ -450,7 +451,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
               <text x="240" y="50" fontSize="9" fill="#2563EB" fontWeight="bold">Mn²⁺</text>
               <circle cx="260" cy="75" r="3" fill="#2563EB" />
               <line x1="260" y1="75" x2="260" y2="145" stroke="#2563EB" strokeDasharray="2 2" opacity="0.5" />
-              <text x="260" y="155" fontSize="7.5" fill="#2563EB" textAnchor="middle">8.4</text>
+              <text x="260" y="155" fontSize="7.5" fill="#2563EB" textAnchor="middle">8.1</text>
             </g>
           )}
 
@@ -484,15 +485,85 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
   }
 
   if (diagramType === 'titration-curve') {
-    const phJump = config?.phJumpRange || [7.7, 9.7]
+    // 全部几何均由 config 驱动：滴定方向、突跃区间、半中和点、坐标轴标题
+    const isWeakBase = config?.titrationType === 'weakBase-strongAcid'
+    const pKa1 = config?.pKa1 ?? config?.pKa ?? (isWeakBase ? 9.25 : 4.75)
+    const pKa2 = config?.pKa2
+    const isDiprotic = !isWeakBase && typeof pKa2 === 'number'
     const vEq = config?.vEq || 20
+    const phJump = config?.phJumpRange || (isWeakBase ? [3.3, 7.3] : [7.7, 9.7])
+
+    // pH (0~14) → 画布 y (150~20)；V (0~2·vEq) → 画布 x (40~320)
+    const yOf = (pH: number) => 150 - (Math.max(0, Math.min(14, pH)) / 14) * 130
+    const xOf = (v: number) => 40 + (Math.max(0, Math.min(2 * vEq, v)) / (2 * vEq)) * 280
+
+    // 曲线锚点 [V/vEq, pH]：弱碱滴定 pH 单调下降；弱酸滴定 pH 单调上升；二元酸双突跃
+    let anchors: [number, number][]
+    if (isWeakBase) {
+      anchors = [
+        [0, 11.1],
+        [0.3, 9.7],
+        [0.5, pKa1],
+        [0.7, 8.8],
+        [0.9, 8.3],
+        [0.99, 7.3],
+        [0.999, 6.6],
+        [1.001, 4.0],
+        [1.01, 3.3],
+        [1.1, 2.6],
+        [1.5, 1.9],
+        [2, 1.7],
+      ]
+    } else if (isDiprotic && typeof pKa2 === 'number') {
+      anchors = [
+        [0, Math.max(1.2, pKa1 - 1.0)],
+        [0.25, pKa1],
+        [0.4, (pKa1 + pKa2) / 2],
+        [0.5, (pKa1 + pKa2) / 2],
+        [0.75, pKa2],
+        [0.97, pKa2 + 1.6],
+        [0.999, pKa2 + 2.4],
+        [1.001, pKa2 + 4.4],
+        [1.05, 10.2],
+        [1.25, 11.5],
+        [1.5, 12.2],
+        [2, 12.5],
+      ]
+    } else {
+      anchors = [
+        [0, 2.9],
+        [0.3, 4.3],
+        [0.5, pKa1],
+        [0.7, 5.2],
+        [0.9, 5.7],
+        [0.99, 6.7],
+        [0.999, 7.4],
+        [1.001, 10.0],
+        [1.01, 10.7],
+        [1.1, 11.4],
+        [1.5, 12.3],
+        [2, 12.5],
+      ]
+    }
+
+    const curvePoints = anchors
+      .map(([r, pH]) => `${xOf(r * vEq).toFixed(1)},${yOf(pH).toFixed(1)}`)
+      .join(' ')
+
+    const halfV = isDiprotic ? vEq / 4 : vEq / 2
+    const halfLabel = isWeakBase
+      ? `pH = ${pKa1.toFixed(2)} (= 共轭酸 pKa)`
+      : `pH = ${pKa1.toFixed(2)}${isDiprotic ? ' (= pKa₁)' : ' (= pKa)'}`
+    const titrantLabel = isWeakBase ? 'V(HCl) / mL' : 'V(NaOH) / mL'
+    const jumpTop = Math.max(phJump[0], phJump[1])
+    const jumpBottom = Math.min(phJump[0], phJump[1])
 
     return (
       <div className={`my-2.5 p-3 bg-slate-50 border border-slate-200 rounded-lg ${className}`}>
         <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between">
-          <span>{config?.title || '高考真题：滴定曲线与突跃区间示意图'}</span>
+          <span>{config?.title || '滴定曲线与突跃区间示意图'}</span>
           <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">
-            高考真题原图
+            示意图
           </span>
         </div>
         <svg viewBox="0 0 340 180" className="w-full h-auto bg-white rounded border border-slate-200 shadow-2xs">
@@ -501,30 +572,62 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
           <line x1="40" y1="100" x2="320" y2="100" stroke="#E2E8F0" strokeDasharray="3 3" />
           <line x1="40" y1="140" x2="320" y2="140" stroke="#E2E8F0" strokeDasharray="3 3" />
 
-          <rect x="170" y="53" width="20" height="20" fill="#FEF3C7" opacity="0.85" rx="2" />
-          <line x1="40" y1="53" x2="320" y2="53" stroke="#F59E0B" strokeDasharray="2 2" strokeWidth="1" />
-          <line x1="40" y1="73" x2="320" y2="73" stroke="#F59E0B" strokeDasharray="2 2" strokeWidth="1" />
-          <text x="315" y="50" fontSize="9" fill="#B45309" textAnchor="end" fontWeight="bold">{phJump[1]}</text>
-          <text x="315" y="82" fontSize="9" fill="#B45309" textAnchor="end" fontWeight="bold">{phJump[0]}</text>
-
-          <line x1="180" y1="20" x2="180" y2="150" stroke="#6366F1" strokeDasharray="3 3" strokeWidth="1" />
-          <text x="180" y="162" fontSize="9" fill="#4338CA" textAnchor="middle" fontWeight="bold">Veq({vEq}mL)</text>
-
-          <line x1="110" y1="102" x2="110" y2="150" stroke="#94A3B8" strokeDasharray="2 2" />
-          <circle cx="110" cy="102.5" r="3" fill="#6366F1" />
-          <text x="110" y="96" fontSize="8" fill="#475569" textAnchor="middle">pH=pKa</text>
-          <text x="110" y="162" fontSize="8" fill="#64748B" textAnchor="middle">10mL</text>
-
-          <line x1="40" y1="80" x2="320" y2="80" stroke="#10B981" strokeDasharray="2 2" opacity="0.6" />
-          <text x="44" y="77" fontSize="8" fill="#047857" fontWeight="bold">pH = 7</text>
-
-          <path
-            d="M 40 121 C 70 115, 90 106, 110 102 C 145 96, 168 90, 175 83 C 178 78, 179 66, 180 63 C 181 55, 183 45, 188 40 C 210 30, 260 26, 310 24"
-            fill="none"
-            stroke="#4338CA"
-            strokeWidth="2.5"
-            strokeLinecap="round"
+          {/* 突跃区间阴影带（由 phJumpRange 决定上下边界） */}
+          <rect
+            x="40"
+            y={yOf(jumpTop)}
+            width="280"
+            height={Math.max(4, yOf(jumpBottom) - yOf(jumpTop))}
+            fill="#FEF3C7"
+            opacity="0.85"
+            rx="2"
           />
+          <text x="315" y={yOf(jumpTop) - 3} fontSize="9" fill="#B45309" textAnchor="end" fontWeight="bold">
+            {jumpTop}
+          </text>
+          <text x="315" y={yOf(jumpBottom) + 10} fontSize="9" fill="#B45309" textAnchor="end" fontWeight="bold">
+            {jumpBottom}
+          </text>
+
+          {/* 化学计量点标记 */}
+          <line x1={xOf(vEq)} y1="20" x2={xOf(vEq)} y2="150" stroke="#6366F1" strokeDasharray="3 3" strokeWidth="1" />
+          <text x={xOf(vEq)} y="162" fontSize="9" fill="#4338CA" textAnchor="middle" fontWeight="bold">
+            Veq({vEq}mL)
+          </text>
+          {isDiprotic && (
+            <>
+              <line
+                x1={xOf(vEq / 2)}
+                y1="20"
+                x2={xOf(vEq / 2)}
+                y2="150"
+                stroke="#A5B4FC"
+                strokeDasharray="3 3"
+                strokeWidth="1"
+              />
+              <text x={xOf(vEq / 2)} y="162" fontSize="8" fill="#6366F1" textAnchor="middle">
+                第1计量点({vEq / 2}mL)
+              </text>
+            </>
+          )}
+
+          {/* 半中和点标记（pH = pKa） */}
+          <line x1={xOf(halfV)} y1={yOf(pKa1)} x2={xOf(halfV)} y2="150" stroke="#94A3B8" strokeDasharray="2 2" />
+          <circle cx={xOf(halfV)} cy={yOf(pKa1)} r="3" fill="#6366F1" />
+          <text x={xOf(halfV)} y={yOf(pKa1) - 5} fontSize="8" fill="#475569" textAnchor="middle">
+            {halfLabel}
+          </text>
+          <text x={xOf(halfV)} y="174" fontSize="8" fill="#64748B" textAnchor="middle">
+            {halfV.toFixed(2)} mL
+          </text>
+
+          <line x1="40" y1={yOf(7)} x2="320" y2={yOf(7)} stroke="#10B981" strokeDasharray="2 2" opacity="0.6" />
+          <text x="44" y={yOf(7) - 3} fontSize="8" fill="#047857" fontWeight="bold">
+            pH = 7
+          </text>
+
+          {/* 滴定曲线（多段线锚点由滴定类型生成） */}
+          <polyline points={curvePoints} fill="none" stroke="#4338CA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
 
           <line x1="40" y1="150" x2="320" y2="150" stroke="#334155" strokeWidth="1.5" />
           <line x1="40" y1="20" x2="40" y2="150" stroke="#334155" strokeWidth="1.5" />
@@ -532,7 +635,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
           <text x="35" y="153" fontSize="9" fill="#475569" textAnchor="end">0</text>
           <text x="35" y="24" fontSize="9" fill="#475569" textAnchor="end">14</text>
           <text x="25" y="90" fontSize="9" fill="#1E293B" fontWeight="bold" transform="rotate(-90 25 90)" textAnchor="middle">pH</text>
-          <text x="315" y="165" fontSize="9" fill="#1E293B" fontWeight="bold" textAnchor="end">V(NaOH) / mL</text>
+          <text x="315" y="174" fontSize="9" fill="#1E293B" fontWeight="bold" textAnchor="end">{titrantLabel}</text>
         </svg>
       </div>
     )
@@ -544,7 +647,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
         <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between">
           <span>{config?.title || '高考真题：微粒分布分数 δ - pH 图'}</span>
           <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">
-            高考真题原图
+            示意图
           </span>
         </div>
         <svg viewBox="0 0 340 170" className="w-full h-auto bg-white rounded border border-slate-200 shadow-2xs">
@@ -590,7 +693,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
           <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between">
             <span>{title}</span>
             <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">
-              高考真题原图高保真复现
+              示意图（原创复现）
             </span>
           </div>
           <svg viewBox="0 0 350 180" className="w-full h-auto bg-white rounded border border-slate-200 shadow-2xs select-none">
@@ -669,7 +772,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
           <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between">
             <span>{title}</span>
             <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">
-              高考真题原图高保真复现
+              示意图（原创复现）
             </span>
           </div>
           <svg viewBox="0 0 350 180" className="w-full h-auto bg-white rounded border border-slate-200 shadow-2xs select-none">
@@ -751,7 +854,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
           <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between">
             <span>{title}</span>
             <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">
-              高考真题原图高保真复现
+              示意图（原创复现）
             </span>
           </div>
           <svg viewBox="0 0 350 180" className="w-full h-auto bg-white rounded border border-slate-200 shadow-2xs select-none">

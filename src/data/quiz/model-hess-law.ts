@@ -44,7 +44,7 @@ export const modelHessLaw: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'var-hess-1',
-      yearProvince: '2024 全国甲卷',
+      yearProvince: '2024 全国甲卷 · 情境变式',
       modelId: 'model-hess-law',
       title: 'CO₂ 资源化利用与多步协同盖斯定律',
       contextDescription: '利用 CO₂ 与 CH₄ 重整制备合成气 (CO + H₂)，涉及催化积碳与消碳循环。已知以下热化学方程式：\n① CH₄(g) = C(s) + 2H₂(g) ΔH₁ = +74.8 kJ/mol\n② CO₂(g) + 2H₂(g) = C(s) + 2H₂O(g) ΔH₂ = -90.1 kJ/mol\n③ C(s) + H₂O(g) = CO(g) + H₂(g) ΔH₃ = +131.3 kJ/mol',
@@ -57,14 +57,10 @@ export const modelHessLaw: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：目标反应为 CO₂(g) + C(s) = 2CO(g)。由方程式 2 × ③ + ② 可得目标反应 CO₂(g) + C(s) = 2CO(g)。代数叠加 ΔH = 2 × (+131.3 kJ/mol) + (-90.1 kJ/mol) = +172.5 kJ/mol。',
       detailedExplanation: '根据盖斯定律：反应 2 × ③ + 反应 ② 即可消除中间产物 H₂O(g) 与 H₂(g)，得目标反应 CO₂(g) + C(s) = 2CO(g)，ΔH = 2 × (+131.3 kJ/mol) + (-90.1 kJ/mol) = +172.5 kJ/mol (吸热)。升高温度平衡向吸热的正反应方向移动。',
-      diagramType: 'titration-curve',
-      diagramConfig: {
-        title: 'CO₂ 重整消碳反应热化学能量阶梯叠加示意图',
-      },
     },
     {
       id: 'var-hess-2',
-      yearProvince: '2023 全国高考真题卷',
+      yearProvince: '2023 全国卷 · 情境变式',
       modelId: 'model-hess-law',
       title: '高频微观键能与晶体结构键数陷阱计算',
       contextDescription: '已知几种化学键的键能如下表：\nSi-Si: 222 kJ/mol, Si-O: 460 kJ/mol, O=O: 498 kJ/mol。\n晶体硅与二氧化硅均为立体网状晶体。',
@@ -77,14 +73,10 @@ export const modelHessLaw: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：反应方程式为 Si(s) + O₂(g) = SiO₂(s)。1 mol 晶体硅中含 2 mol Si-Si 键，1 mol O₂ 中含 1 mol O=O 键；生成 1 mol SiO₂ 形成 4 mol Si-O 键。',
       detailedExplanation: '断键吸收能量: 2 mol Si-Si (2 × 222) + 1 mol O=O (498) = 444 + 498 = 942 kJ；\n成键释放能量: 4 mol Si-O (4 × 460) = 1840 kJ；\nΔH = 942 - 1840 = -898 kJ/mol。',
-      diagramType: 'distribution-fraction',
-      diagramConfig: {
-        title: '晶体硅 (Si-Si 2mol) 与 SiO₂ (Si-O 4mol) 断键成键能垒对比图',
-      },
     },
     {
       id: 'var-hess-3',
-      yearProvince: '2024 新课标卷',
+      yearProvince: '2024 新课标卷 · 情境变式',
       modelId: 'model-hess-law',
       title: '反应历程能量高程图与催化机理解析',
       contextDescription: '某催化反应历程的能量高程变化图，包含无催化剂路径和加入催化剂 X 后的两步中间体路径。',
@@ -97,10 +89,6 @@ export const modelHessLaw: ModelQuizData = {
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：催化剂只能改变反应历程和降低活化能，不改变 ΔH；多步反应的总速率由活化能最高的最大能垒步（决速步）决定。',
       detailedExplanation: 'A项催化剂不改变 ΔH；B项活化能最高的步反应最慢，决定整体反应速率；C项 Ea(正) < Ea(逆) 时 ΔH = Ea(正) - Ea(逆) < 0，为放热反应；D项活化能为反应物本身的能量能垒，与温度无关。',
-      diagramType: 'precipitation-curve',
-      diagramConfig: {
-        title: '催化剂降低决速步活化能势能历程图',
-      },
     },
   ],
 }

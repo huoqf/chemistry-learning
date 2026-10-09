@@ -91,6 +91,17 @@ export const HessLawRightPanel: React.FC<HessLawRightPanelProps> = ({
           unit: params.hasCatalyst === 1 ? 'kJ/mol' : '',
           highlight: 'extreme' as const,
         },
+        ...(params.hasCatalyst === 1
+          ? [
+              {
+                label: '催化后表观活化能 (相对反应物)',
+                symbol: 'Ea(表观)',
+                value: energyProfile.apparentCatEa,
+                unit: 'kJ/mol',
+                highlight: 'positive' as const,
+              },
+            ]
+          : []),
       ]
     }
   }, [params.mode, params.hasCatalyst, currentHessGroup, hessCalculated, bondCalculated, energyProfile])
@@ -159,7 +170,7 @@ export const HessLawRightPanel: React.FC<HessLawRightPanelProps> = ({
     <div className="w-full bg-white border-l border-slate-200">
       <ChemistryPanel
         scrollable={false}
-        title="母题九：热化学与盖斯定律理论解析"
+        title="母题七：热化学与盖斯定律理论解析"
         quantities={quantities}
         formulas={formulas}
         gaokaoPoints={gaokaoPoints}

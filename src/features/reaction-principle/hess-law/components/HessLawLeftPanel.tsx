@@ -33,7 +33,7 @@ export const HessLawLeftPanel: React.FC<HessLawLeftPanelProps> = ({
     {
       type: 'segmented',
       key: 'modeVal',
-      label: '母题九核心模块探究',
+      label: '母题七核心模块探究',
       group: '热化学三域',
       options: [
         { label: '盖斯定律叠加', value: 0 },

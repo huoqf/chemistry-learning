@@ -55,7 +55,7 @@ export const O_CONFIG: ElementValenceConfig = {
       colorStyle: 'bg-yellow-100 text-amber-950 border-amber-300',
       rgbColor: PHENOMENON_COLORS.na2o2Solid,
       testReaction: '含有过氧键 [-O-O-]²⁻（1mol Na₂O₂含1mol过氧根，阳离子与阴离子个数比为2:1），与 H₂O/CO₂ 歧化产生 O₂',
-      equation: '2Na₂O₂ + 2CO₂ = 2Na₂CO₃ + O₂',
+      equation: '2Na₂O₂ + 2CO₂ = 2Na₂CO₃ + O₂↑',
       roleDescription: '供氧剂、强氧化剂与漂白剂',
       isOxidant: true,
     },

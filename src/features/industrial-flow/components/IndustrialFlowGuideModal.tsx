@@ -1,6 +1,6 @@
 /**
  * src/features/industrial-flow/components/IndustrialFlowGuideModal.tsx
- * 母题七：无机工艺流程与沉淀调 pH 工具 - 高考题型剖析、解题思路与工具用法导学弹窗
+ * 实验二：无机工艺流程与沉淀调 pH 工具 - 高考题型剖析、解题思路与工具用法导学弹窗
  */
 
 import React, { useState } from 'react'
@@ -279,7 +279,7 @@ export const IndustrialFlowGuideModal: React.FC<IndustrialFlowGuideModalProps> =
                     <p className="text-xs text-slate-600 mt-1 leading-normal">
                       根据题目给出的溶度积常数 Ksp：<br />
                       ① 当杂质 c(Fe³⁺) = 10⁻⁵ mol/L 时，由 c(OH⁻) 算出沉淀完全的 pH 下限；<br />
-                      ② 结合主离子开始沉淀的 c(OH⁻) 算出耐受上限，从而锁定最佳除杂安全 pH 窗口（如 [4.7, 8.4]）。
+                      ② 结合主离子开始沉淀的 c(OH⁻) 算出耐受上限，从而锁定最佳除杂安全 pH 窗口（如 [4.7, 8.1]）。
                     </p>
                   </div>
                 </div>

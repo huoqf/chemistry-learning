@@ -44,7 +44,7 @@ export const modelCrystal3dSplit: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'var-1',
-      yearProvince: '2024 浙江高考真题卷',
+      yearProvince: '2024 浙江卷 · 情境变式',
       modelId: 'model-crystal-3d-split',
       title: '钙钛矿型太阳能电池晶胞结构 (ABX₃) 均摊与密度推导',
       contextDescription: '立方钙钛矿晶胞中，Ca²⁺ 位于体心，Ti⁴⁺ 位于顶点，O²⁻ 位于棱心。晶胞边长为 a pm，阿伏加德罗常数为 N_A。',
@@ -60,7 +60,7 @@ export const modelCrystal3dSplit: ModelQuizData = {
     },
     {
       id: 'var-2',
-      yearProvince: '2024 山东高考真题卷',
+      yearProvince: '2024 山东卷 · 情境变式',
       modelId: 'model-crystal-3d-split',
       title: '金刚石晶胞 (C) 空间利用率与键长计算',
       contextDescription: '金刚石晶胞为面心立方 + 4 个内部四面体空隙，晶胞边长为 a pm。',
@@ -76,7 +76,7 @@ export const modelCrystal3dSplit: ModelQuizData = {
     },
     {
       id: 'var-3',
-      yearProvince: '2024 全国新课标卷',
+      yearProvince: '2024 新课标卷 · 情境变式',
       modelId: 'model-crystal-3d-split',
       title: '体心立方 (BCC) 与面心立方 (FCC) 金属晶胞密堆积对比',
       contextDescription: '金属 Na 结晶为体心立方 (BCC) 晶胞，金属 Cu 结晶为面心立方 (FCC) 晶胞。',
@@ -92,7 +92,7 @@ export const modelCrystal3dSplit: ModelQuizData = {
     },
     {
       id: 'var-4',
-      yearProvince: '2023 全国甲卷',
+      yearProvince: '2023 全国甲卷 · 情境变式',
       modelId: 'model-crystal-3d-split',
       title: '闪锌矿 (ZnS) 晶胞中 S²⁻ 面心堆积与 Zn²⁺ 四面体空隙填充',
       contextDescription: '闪锌矿晶胞中，S²⁻ 离子呈面心立方紧密堆积，Zn²⁺ 离子填入内部的四面体空隙中。',
@@ -108,7 +108,7 @@ export const modelCrystal3dSplit: ModelQuizData = {
     },
     {
       id: 'var-5',
-      yearProvince: '2024 广东高考真题',
+      yearProvince: '2024 广东卷 · 情境变式',
       modelId: 'model-crystal-3d-split',
       title: '石墨烯二维正六边形平面网状晶体 C-C 键均摊法',
       contextDescription: '石墨烯是单层 C 原子形成的二维正六边形网状结构，每个 C 原子与相邻 3 个 C 原子形成 C-C 单键。',
