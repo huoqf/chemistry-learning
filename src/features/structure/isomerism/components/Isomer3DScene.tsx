@@ -1,7 +1,13 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
-import { AtomMesh, BondMesh, WebGLFallback, isWebGLAvailable } from '@/components/Chemistry3D'
+import {
+  AtomMesh,
+  BondMesh,
+  WebGLFallback,
+  WEBGL_FALLBACK_FRAME_CLASS,
+  isWebGLAvailable,
+} from '@/components/Chemistry3D'
 import { SCENE_COLORS, CANVAS_COLORS, colors } from '@/theme'
 import type { IsomerNode } from '@/components/Chemistry'
 import { get3DModelForIsomer } from '../utils/isomer3dTransform'
@@ -63,6 +69,7 @@ export function Isomer3DScene({ isomer, className = '' }: Isomer3DSceneProps) {
   if (!isWebGLAvailable()) {
     return (
       <WebGLFallback
+        className={WEBGL_FALLBACK_FRAME_CLASS}
         size="sm"
         description="当前环境未开启 WebGL 硬件加速，左侧 2D 碳骨架图仍可正常用于探究与学习。"
       />

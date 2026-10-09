@@ -24,9 +24,18 @@ export interface WebGLFallbackProps {
    * - `sm` 嵌在弹窗 / 分屏半区内的局部降级
    */
   size?: 'lg' | 'sm'
-  /** 外部扩展类名（默认无边框无背景，各场景可按需透传边框或间距） */
+  /** 附加类名。需要边框等视觉边界时透传 WEBGL_FALLBACK_FRAME_CLASS */
   className?: string
 }
+
+/**
+ * 需要视觉边界时透传的边框规格 —— 唯一来源。
+ *
+ * 为什么默认不带边框：整屏中屏降级时背景已由 Light Theme 提供，边框画在面板边缘没有意义；
+ * 但弹窗内 / 分屏半区（size="sm"）等场景需要与宿主划清界限，此时透传本常量，
+ * 避免「边框类在各调用点各写一份」重新退化成 8 处手写的老问题。
+ */
+export const WEBGL_FALLBACK_FRAME_CLASS = 'border border-slate-200 rounded-xl'
 
 /** 统一标题：4/8 处原本就用它，且点明原因便于用户自行排查 */
 const DEFAULT_TITLE = 'WebGL 3D 环境不可用'

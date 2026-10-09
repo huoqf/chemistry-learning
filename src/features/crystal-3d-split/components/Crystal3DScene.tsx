@@ -6,6 +6,7 @@ import {
   AtomMesh,
   BondMesh,
   WebGLFallback,
+  WEBGL_FALLBACK_FRAME_CLASS,
   fracToWorld,
   isWebGLAvailable,
 } from '@/components/Chemistry3D'
@@ -62,7 +63,12 @@ export function Crystal3DScene({
   }
 
   if (!isWebGLAvailable()) {
-    return <WebGLFallback description="当前环境未开启 WebGL 硬件加速，无法渲染 3D 晶胞场景。请检查浏览器设置。" />
+    return (
+      <WebGLFallback
+        className={WEBGL_FALLBACK_FRAME_CLASS}
+        description="当前环境未开启 WebGL 硬件加速，无法渲染 3D 晶胞场景。请检查浏览器设置。"
+      />
+    )
   }
 
   return (

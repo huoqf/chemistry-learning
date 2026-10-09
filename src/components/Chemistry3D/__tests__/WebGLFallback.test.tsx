@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
-import { WebGLFallback } from '../index'
+import { WebGLFallback, WEBGL_FALLBACK_FRAME_CLASS } from '../index'
 
 /** 收集容器内所有元素上的全部 class token */
 function collectClassTokens(container: HTMLElement): string[] {
@@ -37,11 +37,14 @@ describe('WebGLFallback 共享降级组件守门测试', () => {
     expect(container.firstElementChild?.classList.contains('custom-fallback-class')).toBe(true)
   })
 
-  it('铁律 1：lg / sm 两档容器均不得出现任何手写背景类', () => {
+  it('铁律 1：容器与公共边框常量均不得出现任何手写背景类', () => {
     for (const size of ['lg', 'sm'] as const) {
-      const { container, unmount } = render(<WebGLFallback size={size} />)
+      const { container, unmount } = render(
+        <WebGLFallback size={size} className={WEBGL_FALLBACK_FRAME_CLASS} />,
+      )
       expect(collectClassTokens(container).filter((c) => c.startsWith('bg-'))).toEqual([])
       unmount()
     }
+    expect(WEBGL_FALLBACK_FRAME_CLASS.split(/\s+/).filter((c) => c.startsWith('bg-'))).toEqual([])
   })
 })
