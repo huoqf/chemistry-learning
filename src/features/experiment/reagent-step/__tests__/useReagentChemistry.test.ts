@@ -58,11 +58,13 @@ describe('useReagentChemistry 高考试剂滴加演练逻辑测试', () => {
     })
     expect(result.current.currentStep.precipitateText).toContain('沉淀完全溶解')
 
-    // 开启弱碱模式：过量氨水沉淀绝不溶解
+    // 切换为弱碱模式：过量氨水沉淀绝不溶解（通过模式联动接口保持 alMode 与 isWeakBase 同步）
     act(() => {
-      result.current.setIsWeakBase(true)
+      result.current.handleAlModeChange('forward-weak')
       result.current.setProgress(1.0)
     })
+    expect(result.current.alMode).toBe('forward-weak')
+    expect(result.current.isWeakBase).toBe(true)
     expect(result.current.currentStep.precipitateText).toContain('白色沉淀 Al(OH)₃')
   })
 
@@ -117,9 +119,13 @@ describe('useReagentChemistry 高考试剂滴加演练逻辑测试', () => {
     expect(result.current.progress).toBe(0)
     expect(result.current.isReverseTitration).toBe(true)
 
-    // 切换防氧化模式，进度也必须重置为 0
+    // 切入铁盐氧化场景后切换防氧化隔绝空气开关，进度必须重置为 0
     act(() => {
+      result.current.handleSceneChange('fe-air-ox')
       result.current.setProgress(0.6)
+    })
+    expect(result.current.progress).toBe(0.6)
+    act(() => {
       result.current.handleToggleAirIsolated()
     })
     expect(result.current.progress).toBe(0)

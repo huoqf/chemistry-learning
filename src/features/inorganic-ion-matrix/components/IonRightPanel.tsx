@@ -267,7 +267,7 @@ export const IonRightPanel: React.FC<IonRightPanelProps> = ({
               <div className="p-1.5 bg-white rounded border border-indigo-100">
                 <span className="font-bold text-indigo-900">④ 看剧烈双水解：</span>
                 <span className="text-slate-600">
-                  Al³⁺/Fe³⁺ 遇 CO₃²⁻/HCO₃⁻/S²⁻/AlO₂⁻ 水解彻底生成沉淀与气体。
+                  Al³⁺/Fe³⁺ 遇 CO₃²⁻/HCO₃⁻/S²⁻/[Al(OH)₄]⁻ 水解彻底生成沉淀与气体。
                 </span>
               </div>
             </div>
@@ -494,15 +494,32 @@ export const IonRightPanel: React.FC<IonRightPanelProps> = ({
                         )}
                       </div>
                     ) : (
-                      <div className="p-2 rounded bg-emerald-50/70 border border-emerald-200 text-xs text-emerald-900 space-y-1">
-                        <span className="font-bold flex items-center gap-1">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                          共存机理说明
-                        </span>
-                        <p className="text-slate-700 leading-relaxed font-medium">
-                          {activeCell.reason ||
-                            `${activeCell.cationId} 与 ${activeCell.anionId} 不发生复分解、氧化还原或剧烈双水解，可在同一溶液中稳定大量共存。`}
-                        </p>
+                      <div className="space-y-1.5">
+                        <div className="p-2 rounded bg-emerald-50/70 border border-emerald-200 text-xs text-emerald-900 space-y-1">
+                          <span className="font-bold flex items-center gap-1">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                            共存机理说明
+                          </span>
+                          <p className="text-slate-700 leading-relaxed font-medium">
+                            {activeCell.reason ||
+                              `${activeCell.cationId} 与 ${activeCell.anionId} 不发生复分解、氧化还原或剧烈双水解，可在同一溶液中稳定大量共存。`}
+                          </p>
+                          {activeCell.examTrap && (
+                            <p className="text-amber-800 font-medium pt-1 border-t border-emerald-200/80">
+                              <strong>特例提示：</strong>
+                              {activeCell.examTrap}
+                            </p>
+                          )}
+                        </div>
+                        {activeCell.equation && (
+                          <div className="space-y-1">
+                            <span className="text-xs font-bold text-sky-900 flex items-center gap-1">
+                              <Sparkles className="w-3.5 h-3.5 text-sky-600" />
+                              配位/转化方程式（{activeCell.productSummary || '共存体系'}）
+                            </span>
+                            <IonChemEquation equation={activeCell.equation} highlight />
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

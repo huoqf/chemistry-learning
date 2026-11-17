@@ -114,7 +114,7 @@ export function TitrationLeftPanel({
             size="sm"
             onClick={() => updateParam('vRatio', 1.5)}
           >
-            碱过量点 (1.5Veq)
+            {params.systemType === 'strongAcidWeakBase' ? '酸过量点 (1.5Veq)' : '碱过量点 (1.5Veq)'}
           </Button>
         </div>
       </LeftPanelSection>

@@ -127,13 +127,15 @@ export function Isomer2DScene({
 
       {/* 3. 绘制 2D 碳原子与基团节点 */}
       {isomer.nodes.map((node) => {
-        const eqGroup = node.equivalentHydrogenGroup || 1
+        const hasEqGroup = typeof node.equivalentHydrogenGroup === 'number'
+        const eqGroup = node.equivalentHydrogenGroup ?? 1
         const groupColor = EQUIVALENT_H_COLORS[(eqGroup - 1) % EQUIVALENT_H_COLORS.length]
+        const highlightGroup = showEquivalentH && hasEqGroup
 
         return (
           <g key={`node-${node.id}`} transform={`translate(${node.x}, ${node.y})`}>
-            {/* 等效氢染色背景圈 */}
-            {showEquivalentH && (
+            {/* 等效氢染色背景圈（仅含氢节点展示） */}
+            {highlightGroup && (
               <circle
                 r={20}
                 fill={groupColor}
@@ -145,8 +147,8 @@ export function Isomer2DScene({
             <circle
               r={15}
               fill={colors.neutral.white}
-              stroke={showEquivalentH ? groupColor : colors.neutral[400]}
-              strokeWidth={showEquivalentH ? 2.5 : 1.5}
+              stroke={highlightGroup ? groupColor : colors.neutral[400]}
+              strokeWidth={highlightGroup ? 2.5 : 1.5}
             />
 
             {/* 基团化学式文字 (如 CH₃) */}
@@ -155,13 +157,13 @@ export function Isomer2DScene({
               dy="4"
               fontSize={font(FONT.label)}
               fontWeight="bold"
-              fill={showEquivalentH ? groupColor : colors.neutral[800]}
+              fill={highlightGroup ? groupColor : colors.neutral[800]}
             >
               {node.label}
             </text>
 
-            {/* 等效氢编号 Badge 标注 */}
-            {showEquivalentH && (
+            {/* 等效氢编号 Badge 标注（仅含氢节点展示） */}
+            {highlightGroup && (
               <g transform="translate(12, -12)">
                 <circle r={7} fill={groupColor} />
                 <text

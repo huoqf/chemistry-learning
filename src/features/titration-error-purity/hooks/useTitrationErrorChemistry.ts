@@ -157,14 +157,15 @@ export function useTitrationErrorChemistry(
     const cCalculated = (cStandardTrue * vRead) / vSampleTrue
     const relativeErrorPct = ((cCalculated - cSampleTrue) / cSampleTrue) * 100
 
-    if (errorOp === 'none' && Math.abs(viewAngle) > 1.0) {
+    if ((errorOp === 'none' || errorOp === 'wet-flask') && Math.abs(viewAngle) > 1.0) {
+      const wetNote = errorOp === 'wet-flask' ? '锥形瓶有水本身无误差，当前结果偏差由' : ''
       if (viewAngle > 0) {
         effectDirection = 'high'
-        description = '读数仰视：眼睛低于凹液面，视线向上斜穿刻度线，读取的刻度值偏大。'
+        description = `${wetNote}读数仰视：眼睛低于凹液面，视线向上斜穿刻度线，读取的刻度值偏大。`
         equationExplanation = 'V_{\\text{终}}\\text{ 仰视偏大} \\implies \\Delta V_{\\text{标}}\\uparrow \\implies c_{\\text{待}}\\text{ 偏高}'
       } else {
         effectDirection = 'low'
-        description = '读数俯视：眼睛高于凹液面，视线向下斜穿刻度线，读取的刻度值偏小。'
+        description = `${wetNote}读数俯视：眼睛高于凹液面，视线向下斜穿刻度线，读取的刻度值偏小。`
         equationExplanation = 'V_{\\text{终}}\\text{ 俯视偏小} \\implies \\Delta V_{\\text{标}}\\downarrow \\implies c_{\\text{待}}\\text{ 偏低}'
       }
     }

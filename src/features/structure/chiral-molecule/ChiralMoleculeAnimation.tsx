@@ -27,14 +27,16 @@ export default function ChiralMoleculeAnimation() {
     return <WebGLFallback />
   }
 
+  const isCisTransActive = showCisTransCompare && molecule.type === 'cis-trans'
+
   return (
     <div className="w-full h-full relative">
       <ChiralMoleculeScene
         molecule={molecule}
         mirroredMolecule={mirroredMolecule}
-        showMirror={showMirror && !showCisTransCompare}
+        showMirror={showMirror && !isCisTransActive}
         showChiralLabels={showChiralLabels}
-        showCisTransCompare={showCisTransCompare && molecule.type === 'cis-trans'}
+        showCisTransCompare={isCisTransActive}
         mirrorOverlapRatio={mirrorOverlapRatio}
         onRatioChange={(r) => setParams({ mirrorOverlapRatio: Math.round(r * 100) })}
       />

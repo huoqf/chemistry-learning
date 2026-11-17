@@ -27,7 +27,7 @@ describe('coexistenceMatrixData 离子共存互斥数据矩阵测试', () => {
     expect(cellCount).toBe(266)
   })
 
-  it('应精确识别高考经典彻底双水解组合 (Al3+ + HCO3-, Fe3+ + CO32-, NH4+ + AlO2- 等)', () => {
+  it('应精确识别高考经典彻底双水解组合 (Al3+ + HCO3-, Fe3+ + CO32-, NH4+ + [Al(OH)4]- 等)', () => {
     const alHco3 = getIonPairCell('Al3+', 'HCO3-')
     expect(alHco3.status).toBe('conflict')
     expect(alHco3.category).toBe('double-hydrolysis')
@@ -37,14 +37,14 @@ describe('coexistenceMatrixData 离子共存互斥数据矩阵测试', () => {
     expect(fe3Co3.status).toBe('conflict')
     expect(fe3Co3.category).toBe('double-hydrolysis')
 
-    const nh4Alo2 = getIonPairCell('NH4+', 'AlO2-')
+    const nh4Alo2 = getIonPairCell('NH4+', '[Al(OH)4]-')
     expect(nh4Alo2.status).toBe('conflict')
     expect(nh4Alo2.category).toBe('double-hydrolysis')
   })
 
-  it('应精确识别隐蔽氧化还原与酸性介质陷阱 (Fe2+ + NO3-, Fe3+ + I-, MnO4- + Fe2+, H+ + S2O32- 等)', () => {
+  it('应精确识别隐蔽氧化还原与条件型酸性介质陷阱 (Fe2+ + NO3- 中性共存·加酸互斥, Fe3+ + I-, MnO4- + Fe2+, H+ + S2O32-)', () => {
     const fe2No3 = getIonPairCell('Fe2+', 'NO3-')
-    expect(fe2No3.status).toBe('conflict')
+    expect(fe2No3.status).toBe('coexist')
     expect(fe2No3.category).toBe('acid-medium-trap')
 
     const fe3I = getIonPairCell('Fe3+', 'I-')

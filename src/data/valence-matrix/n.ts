@@ -131,7 +131,7 @@ export const N_CONFIG: ElementValenceConfig = {
       colorStyle: 'bg-rose-100 text-rose-950 border-rose-300',
       rgbColor: CHEMISTRY_COLORS.acid,
       testReaction: '向浓硝酸中投入铜片，铜片剧烈溶解，剧烈放出红棕色刺激性气体 (NO₂↑)，溶液变为蓝绿色',
-      equation: 'Cu + 4H⁺ + 2NO₃⁻ = Cu²⁺ + 2NO₂↑ + 2H₂O',
+      equation: 'Cu + 4HNO₃(浓) = Cu(NO₃)₂ + 2NO₂↑ + 2H₂O',
       roleDescription: '强一元酸，强氧化剂',
       isOxidant: true,
       physicalState: 'solution',

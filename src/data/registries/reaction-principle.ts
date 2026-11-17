@@ -204,7 +204,7 @@ export const reactionPrincipleAnimations = defineAnimations({
         showIfValue: 1,
         options: [
           { label: '阳离子膜 (Na⁺/H⁺)', value: 0 },
-          { label: '阴离子膜 (Cl⁻)', value: 1 },
+          { label: '阴离子膜 (SO₄²⁻)', value: 1 },
           { label: '质子交换膜 (H⁺)', value: 2 },
         ],
       },

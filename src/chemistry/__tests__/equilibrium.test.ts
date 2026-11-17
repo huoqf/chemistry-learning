@@ -94,13 +94,19 @@ describe('no2N2o4State', () => {
     expect(s.vForward).toBeCloseTo(s.vReverse, 6)
   })
 
-  it('物料守恒：c(NO₂) + 2c(N₂O₄) = (2 + 外加NO₂)·pressure 始终成立', () => {
+  it('非钳制常规压力区间下物料守恒：c(NO₂) + 2c(N₂O₄) = (2 + 外加NO₂)·pressure', () => {
     for (const pressure of [0.5, 1.0, 2.0, 3.0]) {
       for (const addedNO2 of [0, 0.5, 1.0]) {
         const s = no2N2o4State(298, pressure, addedNO2, 7.3)
         expect(s.cNO2 + 2 * s.cN2O4).toBeCloseTo((2.0 + addedNO2) * pressure, 6)
       }
     }
+  })
+
+  it('升温瞬间 Qc > K，v(逆) > v(正)（放热反应向吸热逆方向移动）', () => {
+    const s = no2N2o4State(350, 1.0, 0, 0.1)
+    expect(s.Qc).toBeGreaterThan(s.K)
+    expect(s.vReverse).toBeGreaterThan(s.vForward)
   })
 
   it('加压扰动瞬间 Qc < K，故 v(正) > v(逆)（向气体分子数减小方向移动）', () => {

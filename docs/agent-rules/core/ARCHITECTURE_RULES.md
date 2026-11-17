@@ -265,11 +265,9 @@ export const storage = {
 
 ### 11.1 已批准依赖
 
-**生产**：react、react-dom、react-router-dom、zustand、lucide-react
+**生产**：react、react-dom、react-router-dom、zustand、lucide-react、katex、idb、three、@react-three/fiber、@react-three/drei、zod
 
-**开发**：vite、@vitejs/plugin-react、tailwindcss、postcss、autoprefixer、typescript、vitest、@testing-library/react
-
-**候选**：katex、idb、pixijs
+**开发**：vite、@vitejs/plugin-react、tailwindcss、postcss、autoprefixer、typescript、vitest、@testing-library/react、@playwright/test、oxlint
 
 ### 11.2 新增流程
 
@@ -281,7 +279,7 @@ export const storage = {
 
 - 纯组件使用 React.memo()，计算密集逻辑使用 useMemo()
 - 所有纯函数必须有测试
-- 测试文件放 tests/，结构与 src/ 对齐
+- 测试文件就近放置于 `src/**/__tests__/*.test.{ts,tsx}`（E2E 放置于 `e2e/`）
 
 ---
 

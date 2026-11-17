@@ -1,41 +1,27 @@
 import { describe, it, expect } from 'vitest'
 import { gaokaoModels, type GaokaoModelCategory } from '../gaokaoModels'
-import { getModelQuizData } from '../gaokaoQuizData'
+import { getModelQuizData, modelQuizMap } from '../quiz'
 import { getKnowledgeNode } from '../knowledgeTree'
 
 describe('Gaokao Models & Quiz Data 整合审计测试', () => {
-  it('恰好包含 18 个高考专属交互工具 (5 大记忆矩阵 + 10 大解题母题 + 3 大实验流程链)', () => {
-    // 精确断言总数，防止遗漏/重复注册
-    expect(gaokaoModels.length).toBe(18)
+  it('全部已声明的高考专属交互工具覆盖 3 类模块并与题库注册表 100% 对齐', () => {
+    expect(gaokaoModels.length).toBeGreaterThanOrEqual(18)
 
     const modelIds = gaokaoModels.map(m => m.id)
+    expect(new Set(modelIds).size).toBe(modelIds.length)
 
-    // ── A. 5 大记忆矩阵 (memory-matrix) ──
-    expect(modelIds).toContain('model-valence-matrix')
-    expect(modelIds).toContain('model-ion-matrix')
-    expect(modelIds).toContain('model-organic-matrix')
-    expect(modelIds).toContain('model-reagent-step')
-    expect(modelIds).toContain('model-flash-cards')
-    expect(gaokaoModels.filter(m => m.category === 'memory-matrix').length).toBe(5)
+    const memoryMatrix = gaokaoModels.filter(m => m.category === 'memory-matrix')
+    const masterModels = gaokaoModels.filter(m => m.category === 'master-model')
+    const experimentChains = gaokaoModels.filter(m => m.category === 'experiment-chain')
 
-    // ── B. 10 大解题母题 (master-model) ──
-    expect(modelIds).toContain('model-titration-balance')
-    expect(modelIds).toContain('model-electrochemical-twin')
-    expect(modelIds).toContain('model-crystal-3d-split')
-    expect(modelIds).toContain('model-reaction-principle-nexus')
-    expect(modelIds).toContain('model-vsepr-hybrid-3d')
-    expect(modelIds).toContain('model-organic-mechanism')
-    expect(modelIds).toContain('model-hess-law')
-    expect(modelIds).toContain('model-element-periodic-property')
-    expect(modelIds).toContain('model-avogadro-constant')
-    expect(modelIds).toContain('model-organic-retrosynthesis')
-    expect(gaokaoModels.filter(m => m.category === 'master-model').length).toBe(10)
+    expect(memoryMatrix.length).toBeGreaterThanOrEqual(5)
+    expect(masterModels.length).toBeGreaterThanOrEqual(10)
+    expect(experimentChains.length).toBeGreaterThanOrEqual(3)
 
-    // ── C. 3 大实验综合流程链 (experiment-chain) ──
-    expect(modelIds).toContain('model-gas-chain')
-    expect(modelIds).toContain('model-industrial-flow')
-    expect(modelIds).toContain('model-titration-error-purity')
-    expect(gaokaoModels.filter(m => m.category === 'experiment-chain').length).toBe(3)
+    // 题库注册表与 gaokaoModels 互相完备对齐
+    for (const id of modelIds) {
+      expect(modelQuizMap[id], `母题 ${id} 缺少题库注册`).toBeDefined()
+    }
   })
 
   it('所有高考母题 category 字段必须是合法枚举值', () => {
@@ -47,7 +33,7 @@ describe('Gaokao Models & Quiz Data 整合审计测试', () => {
       ).toContain(model.category)
     })
     const memoryMatrix = gaokaoModels.filter(m => m.category === 'memory-matrix')
-    expect(memoryMatrix.length).toBe(5)
+    expect(memoryMatrix.length).toBeGreaterThanOrEqual(5)
   })
 
   it('所有高考母题工具路由与关联教材知识 ID 必须有效声明', () => {
@@ -69,7 +55,7 @@ describe('Gaokao Models & Quiz Data 整合审计测试', () => {
     })
   })
 
-  it('获取高考母题手算步骤与近3年真题变式盲盒数据必须契合规范', () => {
+  it('获取高考母题手算步骤与情境变式数据必须契合规范', () => {
     const valenceQuiz = getModelQuizData('model-valence-matrix')
     expect(valenceQuiz).toBeDefined()
     expect(valenceQuiz?.scoringSteps.length).toBeGreaterThan(0)

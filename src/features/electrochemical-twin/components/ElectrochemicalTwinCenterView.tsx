@@ -325,8 +325,9 @@ export const ElectrochemicalTwinCenterView: React.FC<Props> = ({
                 <text x="253" y="-66" textAnchor="middle" fill="#1E293B" fontSize={f(13)} fontWeight="bold">
                   正极 (+)
                 </text>
-                <text x="253" y="100" textAnchor="middle" fill="#FFFFFF" fontSize={f(11)}>
-                  VO₂⁺ + e⁻ → VO²⁺
+                <text x="253" y="94" textAnchor="middle" fill="#FFFFFF" fontSize={f(9.5)}>
+                  VO₂⁺+2H⁺+e⁻
+                  <tspan x="253" dy={f(13)}>→ VO²⁺+H₂O</tspan>
                 </text>
 
                 {/* 质子交换膜 (PEM) */}
@@ -400,8 +401,9 @@ export const ElectrochemicalTwinCenterView: React.FC<Props> = ({
                 <text x="253" y="-66" textAnchor="middle" fill="#1E293B" fontSize={f(13)} fontWeight="bold">
                   阳极 (接正极)
                 </text>
-                <text x="253" y="100" textAnchor="middle" fill="#FFFFFF" fontSize={f(11)}>
-                  VO²⁺ - e⁻ → VO₂⁺
+                <text x="253" y="94" textAnchor="middle" fill="#FFFFFF" fontSize={f(9.5)}>
+                  VO²⁺+H₂O-e⁻
+                  <tspan x="253" dy={f(13)}>→ VO₂⁺+2H⁺</tspan>
                 </text>
 
                 {/* 质子交换膜 */}
@@ -502,7 +504,7 @@ export const ElectrochemicalTwinCenterView: React.FC<Props> = ({
                   : params.membraneType === 1
                   ? '阳离子交换膜 (只透Na⁺)'
                   : params.membraneType === 2
-                  ? '阴离子交换膜 (只透Cl⁻)'
+                  ? '阴离子交换膜 (反例: OH⁻/Cl⁻ 串流)'
                   : '双极膜 (BPM 水解离)'}
               </text>
 
@@ -550,20 +552,20 @@ export const ElectrochemicalTwinCenterView: React.FC<Props> = ({
               {params.membraneType === 2 && (
                 <g>
                   <circle cx={295 - tick * 90} cy={180} r="5" fill="#EF4444" />
-                  <text x={295 - tick * 90} y={170} textAnchor="middle" fill="#DC2626" fontSize={f(11)} fontWeight="bold">
-                    ←Cl⁻
+                  <text x={295 - tick * 90} y={170} textAnchor="middle" fill="#DC2626" fontSize={f(10)} fontWeight="bold">
+                    ←OH⁻/Cl⁻ (副反应)
                   </text>
                 </g>
               )}
               {params.membraneType === 3 && (
                 <g>
-                  <circle cx={250 - tick * 60} cy={170} r="5" fill="#2563EB" />
-                  <text x={250 - tick * 60} y={158} textAnchor="middle" fill="#2563EB" fontSize={f(10)} fontWeight="bold">
-                    ←H⁺
+                  <circle cx={250 + tick * 60} cy={170} r="5" fill="#2563EB" />
+                  <text x={250 + tick * 60} y={158} textAnchor="middle" fill="#2563EB" fontSize={f(10)} fontWeight="bold">
+                    H⁺→ (往阴极)
                   </text>
-                  <circle cx={250 + tick * 60} cy={215} r="5" fill="#EF4444" />
-                  <text x={250 + tick * 60} y={203} textAnchor="middle" fill="#DC2626" fontSize={f(10)} fontWeight="bold">
-                    OH⁻→
+                  <circle cx={250 - tick * 60} cy={215} r="5" fill="#EF4444" />
+                  <text x={250 - tick * 60} y={203} textAnchor="middle" fill="#DC2626" fontSize={f(10)} fontWeight="bold">
+                    ←OH⁻ (往阳极)
                   </text>
                 </g>
               )}
@@ -598,8 +600,9 @@ export const ElectrochemicalTwinCenterView: React.FC<Props> = ({
               <text x="80" y="-66" textAnchor="middle" fill="#1E293B" fontSize={f(13)} fontWeight="bold">
                 阳极 (Pt)
               </text>
-              <text x="80" y="100" textAnchor="middle" fill="#FFFFFF" fontSize={f(11)}>
-                4OH⁻ - 4e⁻ → O₂↑
+              <text x="80" y="94" textAnchor="middle" fill="#FFFFFF" fontSize={f(9.5)}>
+                2H₂O - 4e⁻
+                <tspan x="80" dy={f(13)}>→ O₂↑ + 4H⁺</tspan>
               </text>
 
               {/* 阴极 (Cu 极板，析出增重) */}

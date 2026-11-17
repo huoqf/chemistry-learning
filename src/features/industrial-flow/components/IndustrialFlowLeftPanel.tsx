@@ -176,12 +176,12 @@ export const IndustrialFlowLeftPanel: React.FC<IndustrialFlowLeftPanelProps> = (
               updateParam('crystallizeMethod', 'cooling')
               updateParam('washSolvent', 'water')
             } else if (val === 'ti-fe') {
-              updateParam('reagent', 'NaOH')
+              updateParam('reagent', 'NH3·H2O')
               updateParam('pH', 1.5)
               updateParam('oxidantAmount', 'sufficient')
               updateParam('crystallizeMethod', 'cooling')
             } else if (val === 'ni-co-li') {
-              updateParam('reagent', 'NaOH')
+              updateParam('reagent', 'Na2CO3')
               updateParam('pH', 4.8)
               updateParam('oxidantAmount', 'sufficient')
             } else if (val === 'al-fe-si') {

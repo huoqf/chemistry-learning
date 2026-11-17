@@ -34,7 +34,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
       <div className={`my-2 p-1 bg-slate-50 border border-slate-200 rounded-lg text-center ${className}`}>
         <img
           src={config.imageUrl}
-          alt={config.title || '高考真题插图'}
+          alt={config.title || '化学试题情境示意图'}
           className="max-h-48 mx-auto object-contain rounded"
         />
         {config.title && <p className="text-[10px] text-slate-500 mt-1">{config.title}</p>}
@@ -48,7 +48,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
     return (
       <div className={`my-2.5 p-3 bg-slate-50 border border-slate-200 rounded-lg ${className}`}>
         <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between">
-          <span>{config?.title || '高考有机反应真题情境图'}</span>
+          <span>{config?.title || '有机反应机理情境示意图'}</span>
           <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">
             示意图
           </span>
@@ -147,7 +147,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
     return (
       <div className={`my-2.5 p-3 bg-slate-50 border border-slate-200 rounded-lg ${className}`}>
         <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between">
-          <span>{title || '高考真题：无机元素价态-物质类别二维图像'}</span>
+          <span>{title || '示意图：无机元素价态-物质类别二维图像'}</span>
           <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">
             示意图
           </span>
@@ -266,7 +266,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
       return (
         <div className={`my-2.5 p-3 bg-slate-50 border border-slate-200 rounded-lg ${className}`}>
           <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between">
-            <span>{title || '高考真题：m(沉淀) - V(NaOH) 图像'}</span>
+            <span>{title || '示意图：m(沉淀) - V(NaOH) 图像'}</span>
             <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">示意图</span>
           </div>
           <svg viewBox="0 0 340 170" className="w-full h-auto bg-white rounded border border-slate-200 shadow-2xs">
@@ -300,7 +300,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
     return (
       <div className={`my-2.5 p-3 bg-slate-50 border border-slate-200 rounded-lg ${className}`}>
         <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between">
-          <span>{title || '高考真题：25℃ 时金属离子 lg c - pH 沉淀分布曲线图'}</span>
+          <span>{title || '示意图：25℃ 时金属离子 lg c - pH 沉淀分布曲线图'}</span>
           <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">
             示意图（原创复现）
           </span>
@@ -376,7 +376,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
               <text x="215" y="155" fontSize="7.5" fill="#2563EB" textAnchor="middle">6.2</text>
             </g>
           ) : isTi ? (
-            /* 钛铁矿：TiO²⁺ (极高极强水解) & Fe²⁺ (pH 7.7~9.7) */
+            /* 钛铁矿：TiO²⁺ (极高极强水解) & Fe²⁺ (完全沉淀 pH ≈ 8.95) */
             <g>
               <path
                 d="M 45 25 L 65 75 L 75 145"
@@ -387,15 +387,15 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
               <text x="55" y="45" fontSize="8.5" fill="#0284C7" fontWeight="bold">TiO²⁺</text>
 
               <path
-                d="M 180 25 Q 220 35 245 75 Q 265 110 275 145"
+                d="M 190 25 Q 235 35 264 75 Q 282 110 292 145"
                 fill="none"
                 stroke="#D97706"
                 strokeWidth="2"
               />
-              <text x="230" y="50" fontSize="8.5" fill="#D97706" fontWeight="bold">Fe²⁺</text>
-              <circle cx="245" cy="75" r="2.5" fill="#D97706" />
-              <line x1="245" y1="75" x2="245" y2="145" stroke="#D97706" strokeDasharray="2 2" opacity="0.5" />
-              <text x="245" y="155" fontSize="7.5" fill="#D97706" textAnchor="middle">7.7</text>
+              <text x="242" y="50" fontSize="8.5" fill="#D97706" fontWeight="bold">Fe²⁺</text>
+              <circle cx="264" cy="75" r="2.5" fill="#D97706" />
+              <line x1="264" y1="75" x2="264" y2="145" stroke="#D97706" strokeDasharray="2 2" opacity="0.5" />
+              <text x="264" y="155" fontSize="7.5" fill="#D97706" textAnchor="middle">8.95</text>
             </g>
           ) : isBattery ? (
             /* 三元锂电池：Co²⁺ (pH 7.2) & Ni²⁺ (pH 7.7) */
@@ -417,18 +417,18 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
               <text x="245" y="55" fontSize="8.5" fill="#059669" fontWeight="bold">Ni²⁺</text>
             </g>
           ) : isMgCa ? (
-            /* 盐湖卤水：Mg²⁺ (pH 9.4) & Ca²⁺ (pH 12.0) */
+            /* 盐湖卤水：Mg²⁺ (0.1 mol/L 开始沉淀 pH ≈ 8.9) & Ca²⁺ (pH ≈ 12.0) */
             <g>
               <path
-                d="M 215 25 Q 255 35 280 75 Q 295 110 305 145"
+                d="M 210 25 Q 248 35 270 75 Q 288 110 298 145"
                 fill="none"
                 stroke="#2563EB"
                 strokeWidth="2.5"
               />
-              <text x="260" y="50" fontSize="9" fill="#2563EB" fontWeight="bold">Mg²⁺</text>
-              <circle cx="280" cy="75" r="3" fill="#2563EB" />
-              <line x1="280" y1="75" x2="280" y2="145" stroke="#2563EB" strokeDasharray="2 2" opacity="0.5" />
-              <text x="280" y="155" fontSize="7.5" fill="#2563EB" textAnchor="middle">9.4</text>
+              <text x="252" y="50" fontSize="9" fill="#2563EB" fontWeight="bold">Mg²⁺</text>
+              <circle cx="270" cy="75" r="3" fill="#2563EB" />
+              <line x1="270" y1="75" x2="270" y2="145" stroke="#2563EB" strokeDasharray="2 2" opacity="0.5" />
+              <text x="270" y="155" fontSize="7.5" fill="#2563EB" textAnchor="middle">8.9</text>
 
               <path
                 d="M 270 25 Q 305 35 320 75 L 325 145"
@@ -645,7 +645,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
     return (
       <div className={`my-2.5 p-3 bg-slate-50 border border-slate-200 rounded-lg ${className}`}>
         <div className="text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between">
-          <span>{config?.title || '高考真题：微粒分布分数 δ - pH 图'}</span>
+          <span>{config?.title || '示意图：微粒分布分数 δ - pH 图'}</span>
           <span className="text-[10px] text-slate-600 bg-slate-200/80 px-1.5 py-0.5 rounded font-mono">
             示意图
           </span>
@@ -685,7 +685,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
 
   if (diagramType === 'titration-error-diagram') {
     const errorType = config?.errorDiagramType || 'cod-back-titration'
-    const title = config?.title || '高考真题：定量滴定与计算原图解析'
+    const title = config?.title || '示意图：定量滴定与计算分析'
 
     if (errorType === 'cod-back-titration') {
       return (
@@ -832,7 +832,7 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
                 <polygon points="40,84 34,77 46,77" fill="#DC2626" />
 
                 <text x="40" y="100" fontSize="7" fill="#7F1D1D" textAnchor="middle">代入公式:</text>
-                <text x="40" y="112" fontSize="6.5" fill="#B91C1C" textAnchor="middle">w% = c·ΔV·M / 5m</text>
+                <text x="40" y="112" fontSize="6.5" fill="#B91C1C" textAnchor="middle">w% = 5c·ΔV·M / 2m</text>
                 <text x="40" y="130" fontSize="8" fill="#DC2626" fontWeight="bold" textAnchor="middle">纯度 w% 偏低！</text>
               </g>
             ) : (

@@ -135,8 +135,9 @@ export function calculateStateVolumeTrap(
     }
 
     case 'HF': {
-      // 氟化氢沸点 19.5℃，在 0℃ 标况下为液体，且分子间存在强氢键形成 (HF)n 缔合分子
+      // 氟化氢沸点 19.5℃，在 0℃ 标况下为液体（密度约 1.00 g/cm³ = 1000 g/L），且分子间形成 (HF)n 缔合分子
       const molesGiven = unit === 'L' ? val / 22.4 : unit === 'mol' ? val : val / 20
+      const actualMoles = unit === 'L' ? (val * 1000) / 20 : molesGiven
       return {
         title: 'HF (氟化氢) 标况状态与分子缔合陷阱',
         subtitle: 'HF 在标况下为液体 (沸点 19.5℃)，且分子间形成 (HF)n 氢键缔合',
@@ -145,23 +146,27 @@ export function calculateStateVolumeTrap(
         vmValue: vm,
         particleStats: [
           {
-            label: 'HF 分子数',
+            label: 'HF 化学式单元数 (未计缔合)',
             theoreticalMoles: unit === 'L' ? val / 22.4 : molesGiven,
-            actualMoles: molesGiven,
+            actualMoles,
             unit: '$N_{\\text{A}}$',
             isTrap: unit === 'L',
-            trapExplanation: 'HF 沸点 19.5℃，标况 (0℃) 下为液体，且分子间缔合使独立分子数变少！',
+            trapExplanation: unit === 'L'
+              ? `HF 沸点 19.5℃，标况 (0℃) 下为无色发烟液体（ρ≈1.0 g/cm³，${val} L 约含 ${actualMoles.toFixed(0)} mol HF，远大于 ${(val / 22.4).toFixed(2)} mol）；且因 F-H…F 强氢键，独立缔合分子数少于化学式单元数！`
+              : 'HF 分子间存在 F-H…F 强氢键形成 (HF)ₙ 缔合分子，实际独立分子数少于 HF 化学式单元数！',
           },
         ],
         trapType: '标况液体与氢键缔合陷阱',
         trapBadge: 'HF 标况液态',
         trapLevel: 'high',
         keyPointAnalysis: [
-          'HF 沸点 19.5℃，标况下 (0℃) 呈无色发烟液体。',
+          'HF 沸点 19.5℃，标况下 (0℃) 呈无色发烟液体，不可用 Vm = 22.4 L/mol 计算。',
           'HF 分子间存在强 F-H...F 氢键，常形成 (HF)₂、(HF)₄ 等缔合分子。',
         ],
         formulaLatex: '\\text{HF (沸点 19.5}^\\circ\\text{C)} \\implies \\text{标况下为液体及 (HF)}_n \\text{ 缔合分子}',
-        correctAnswerSummary: 'HF 在标况下为液体，不可套用 22.4 L/mol 计算',
+        correctAnswerSummary: unit === 'L'
+          ? `标况下 ${val} L HF 为液体（约含 ${actualMoles.toFixed(0)} mol HF 单元），远大于按气体算出的 ${(val / 22.4).toFixed(2)} N_A，不可套用 22.4 L/mol`
+          : 'HF 分子间存在强氢键缔合为 (HF)n，不可套用标况气体摩尔体积计算',
         stepByStepMatrix: [
           { stepName: '一审环境', checkTarget: '标况 0℃', pass: true, finding: '0℃, 101 kPa' },
           { stepName: '二审状态', checkTarget: 'HF 状态判定', pass: false, finding: '沸点 19.5℃ ➔ 标况下为液体！' },

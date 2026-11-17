@@ -392,7 +392,7 @@ export function computeCationStepChemistry(
         precipitateColor: '#ffffff',
         hasGas: true,
         litmusChange: true,
-        annotation: '【微热促逸出】：NH₄⁺ + OH⁻ ⇌ NH₃↑ + H₂O，管口湿润红色石蕊试纸遇氨气迅速变蓝',
+        annotation: '【微热促逸出】：NH₄⁺ + OH⁻ =△= NH₃↑ + H₂O，管口湿润红色石蕊试纸遇氨气迅速变蓝',
         stepTitle: dropCount === 1 ? '滴加浓 NaOH 溶液' : '微热促使刺激性 NH₃ 逸出 (试纸变蓝)',
       }
     }

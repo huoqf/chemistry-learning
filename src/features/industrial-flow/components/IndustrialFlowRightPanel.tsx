@@ -203,7 +203,7 @@ export const IndustrialFlowRightPanel: React.FC<IndustrialFlowRightPanelProps> =
             note: '标准采分规范：必须先写 c(OH⁻) 开方表达式，再求负对数 pOH，最后由 14 - pOH 得出 pH=3.20。',
           },
           {
-            name: `调 pH 试剂反应 (${reagent} 消耗 H⁺ 不增杂)`,
+            name: reagent === 'CO2' ? 'CO₂ 通入酸化沉淀反应' : `调 pH 试剂反应 (${reagent} 消耗 H⁺)`,
             latex:
               reagent === 'MnO'
                 ? 'MnO + 2H^+ = Mn^{2+} + H_2O'
@@ -213,8 +213,27 @@ export const IndustrialFlowRightPanel: React.FC<IndustrialFlowRightPanelProps> =
                 ? 'CuO + 2H^+ = Cu^{2+} + H_2O'
                 : reagent === 'MgO'
                 ? 'MgO + 2H^+ = Mg^{2+} + H_2O'
+                : reagent === 'CaCO3'
+                ? 'CaCO_3 + 2H^+ = Ca^{2+} + CO_2\\uparrow + H_2O'
+                : reagent === 'MnCO3'
+                ? 'MnCO_3 + 2H^+ = Mn^{2+} + CO_2\\uparrow + H_2O'
+                : reagent === 'ZnCO3'
+                ? 'ZnCO_3 + 2H^+ = Zn^{2+} + CO_2\\uparrow + H_2O'
+                : reagent === 'MgCO3'
+                ? 'MgCO_3 + 2H^+ = Mg^{2+} + CO_2\\uparrow + H_2O'
+                : reagent === 'Cu2(OH)2CO3'
+                ? 'Cu_2(OH)_2CO_3 + 4H^+ = 2Cu^{2+} + CO_2\\uparrow + 3H_2O'
+                : reagent === 'Na2CO3'
+                ? 'CO_3^{2-} + 2H^+ = CO_2\\uparrow + H_2O'
+                : reagent === 'NaOH'
+                ? 'OH^- + H^+ = H_2O'
+                : reagent === 'CO2'
+                ? '[Al(OH)_4]^- + CO_2 = Al(OH)_3\\downarrow + HCO_3^-'
                 : `${reagent} + 2H^+ = \\text{阳离子} + H_2O`,
-            note: `选用含主产品的试剂消耗 H⁺ 促使水解沉淀，引入阳离子即为主产物阳离子，不增新杂质。`,
+            note:
+              reagent === 'CO2'
+                ? '拜耳法碱液通入过量 CO₂ 酸化，生成高纯 Al(OH)₃ 沉淀而不会回溶。'
+                : '选用与主产品匹配的试剂消耗 H⁺ 促使杂质离子水解沉淀，严控不引入难除新杂质。',
           },
         ]
       : [

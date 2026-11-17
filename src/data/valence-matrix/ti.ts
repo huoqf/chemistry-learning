@@ -103,8 +103,8 @@ export const TI_CONFIG: ElementValenceConfig = {
       toSubstance: 'TiCl₄ (四氯化钛)',
       reagent: '焦炭 + Cl₂ 高温氯化',
       equation: 'TiO₂ + 2C + 2Cl₂ =高温= TiCl₄ + 2CO',
-      electronTransfer: 'C 还原剂升至 +2，Cl₂ 氧化剂降至 -1',
-      type: 'oxidation',
+      electronTransfer: 'C 还原剂由 0 升至 +2 失电子，Cl₂ 氧化剂由 0 降至 -1 得电子（Ti +4 价态保持不变）',
+      type: 'reduction',
     },
   ],
   examTips: [

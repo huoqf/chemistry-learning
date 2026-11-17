@@ -26,7 +26,7 @@ export const GaokaoToolPlaceholderCanvas: React.FC<GaokaoToolPlaceholderCanvasPr
   const model = getGaokaoModel(modelId)
   const quizData = getModelQuizData(modelId)
 
-  // 0: 图谱探究 | 1: 规范踩分 | 2: 真题研析
+  // 0: 图谱探究 | 1: 规范踩分 | 2: 变式演练
   const [viewMode, setViewMode] = useState<number>(0)
 
   if (!model) {
@@ -97,7 +97,7 @@ export const GaokaoToolPlaceholderCanvas: React.FC<GaokaoToolPlaceholderCanvasPr
                 高级 3D / 交互动画解题引擎升级中
               </div>
               <p className="text-[11px] text-slate-500 leading-normal">
-                你可以通过顶栏导航切换至「规范踩分」与「真题研析」查看该母题的高考标准答题模板与压轴真题演练。
+                你可以通过顶栏导航切换至「规范踩分」与「变式演练」查看该母题的高考标准答题模板与情境变式演练。
               </p>
             </div>
           </div>
@@ -122,7 +122,7 @@ export const GaokaoToolPlaceholderCanvas: React.FC<GaokaoToolPlaceholderCanvasPr
             <GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />
           ) : (
             <div className="p-8 text-center bg-white rounded-xl border border-slate-200 text-xs text-slate-500">
-              暂无真题研析试题
+              暂无变式演练试题
             </div>
           )}
         </div>

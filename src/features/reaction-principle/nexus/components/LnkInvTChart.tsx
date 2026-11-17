@@ -5,7 +5,7 @@ interface LnkInvTChartProps {
   vantHoffData: {
     points: { invT: number; lnK: number; temp: number }[]
     currentLnK: number
-    currentKc: number
+    currentK: number
   }
   temperature: number
   deltaH: number
@@ -158,7 +158,7 @@ export const LnkInvTChart: React.FC<LnkInvTChartProps> = ({
         stroke="#fff"
         strokeWidth={3}
       >
-        T = {temperature} K (ln K = {vantHoffData.currentLnK}, Kc ≈ {vantHoffData.currentKc})
+        T = {temperature} K (ln K^\ominus = {vantHoffData.currentLnK}, K^\ominus(Kp) ≈ {vantHoffData.currentK})
       </text>
 
       {/* 斜率与吸放热直观判定 */}

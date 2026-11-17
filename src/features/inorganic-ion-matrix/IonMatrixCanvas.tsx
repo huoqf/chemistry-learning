@@ -90,11 +90,25 @@ export const IonMatrixCanvas: React.FC = () => {
     setSelectedMatrixPair({ cationId, anionId })
   }, [])
 
-  const handleNavigateToBeaker = useCallback((cationId: string, anionId: string) => {
-    // 映射到离子清单
-    setCoexistenceSelectedIons([cationId, anionId])
-    setInquiryMode('coexistence-check')
-  }, [])
+  const handleNavigateToBeaker = useCallback(
+    (cationId: string, anionId: string) => {
+      if (inquiryMode === 'mechanism-grid') {
+        if (cationId === 'H+' && anionId === 'I-') {
+          setCoexistenceSelectedIons(['H+', 'NO3-', 'I-'])
+          setInquiryMode('coexistence-check')
+          return
+        }
+        if (cationId === 'Fe2+' && anionId === 'NO3-') {
+          setCoexistenceSelectedIons(['Fe2+', 'NO3-', 'H+'])
+          setInquiryMode('coexistence-check')
+          return
+        }
+      }
+      setCoexistenceSelectedIons([cationId, anionId])
+      setInquiryMode('coexistence-check')
+    },
+    [inquiryMode]
+  )
 
   const handleLoadPresetPair = useCallback((cationId: string, anionId: string) => {
     setSelectedMatrixPair({ cationId, anionId })

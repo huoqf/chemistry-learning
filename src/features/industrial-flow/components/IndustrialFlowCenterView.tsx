@@ -61,19 +61,19 @@ export const IndustrialFlowCenterView: React.FC<IndustrialFlowCenterViewProps> =
     )
   }
 
-  // 2. 视角 2: 高考真题变式
+  // 2. 视角 2: 变式演练
   if (viewMode === 2) {
     return (
       <div className="w-full h-full flex flex-col p-4 bg-slate-50 overflow-y-auto">
         <h3 className="font-bold text-slate-800 text-sm mb-3 flex items-center gap-2">
           <Activity className="w-4 h-4 text-indigo-600" />
-          无机工艺流程与沉淀调 pH · 高考官方真题拆解
+          无机工艺流程与沉淀调 pH · 考点变式拆解
         </h3>
         {quizData?.variantQuizzes && quizData.variantQuizzes.length > 0 ? (
           <GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />
         ) : (
           <div className="p-4 bg-white rounded-lg border text-xs text-slate-500">
-            暂无真题数据
+            暂无变式演练数据
           </div>
         )}
       </div>
@@ -229,7 +229,11 @@ export const IndustrialFlowCenterView: React.FC<IndustrialFlowCenterViewProps> =
           {activeStep === 4 && (
             <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold bg-amber-50 text-amber-800 px-2 py-0.5 rounded border border-amber-200">
               <Filter className="w-3 h-3 text-amber-600" />
-              推荐操作：趁热过滤除去不溶杂质 ➔ 冷却结晶析出主产品
+              {systemId === 'li-fe-p'
+                ? '推荐操作：90℃ 高温沉淀 Li₂CO₃ ➔ 趁热过滤收集晶体并用热水洗涤'
+                : systemId === 'al-fe-si'
+                ? '推荐操作：过滤洗涤 Al(OH)₃ ➔ 高温煅烧脱除结晶水制 Al₂O₃'
+                : '推荐操作：趁热过滤除去高溶解度/不溶杂质 ➔ 冷却结晶析出主产品'}
             </div>
           )}
         </div>
@@ -591,6 +595,32 @@ function OxidationWindowRenderer({
 }) {
   const isTiFe = systemId === 'ti-fe'
   const isNiCoLi = systemId === 'ni-co-li'
+  const isAlFeSi = systemId === 'al-fe-si'
+  const isLiFeP = systemId === 'li-fe-p'
+
+  if (isAlFeSi || isLiFeP) {
+    return (
+      <div className="w-full h-full flex flex-col justify-center items-center p-4 bg-slate-50/70 rounded-lg">
+        <div className="w-full max-w-xl bg-white border border-slate-200 rounded-xl p-4 shadow-xs space-y-2.5 text-xs">
+          <div className="font-bold text-slate-800 flex items-center justify-between">
+            <span>
+              {isAlFeSi
+                ? '工序二核心机理：拜耳法赤泥分离与水合铝硅酸钠粗脱硅'
+                : '工序二核心机理：pH 2.0~2.5 下磷酸铁 (FePO₄) 沉淀分离'}
+            </span>
+            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
+              {isAlFeSi ? '硅渣协同去除' : '铁磷沉淀回收'}
+            </span>
+          </div>
+          <div className="p-2.5 rounded-lg border border-blue-200 bg-blue-50/60 text-slate-700 leading-relaxed">
+            {isAlFeSi
+              ? 'Na⁺ + [Al(OH)₄]⁻ + SiO₃²⁻ + H₂O = NaAlSiO₄·2H₂O↓ + 2OH⁻。溶出的硅酸根与部分偏铝酸钠反应生成难溶水合铝硅酸钠随赤泥过滤除去。'
+              : 'Fe³⁺ + PO₄³⁻ = FePO₄↓。在 pH 2.0~2.5 的微酸性区间，Fe³⁺ 与 PO₄³⁻ 生成溶度积极小 (Ksp=1.3×10⁻²²) 的 FePO₄ 沉淀，实现铁磷与 Li⁺ 彻底分离。'}
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center p-4 bg-slate-50/70 rounded-lg">

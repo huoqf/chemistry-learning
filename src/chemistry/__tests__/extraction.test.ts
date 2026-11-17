@@ -9,10 +9,12 @@
 
 import { describe, it, expect } from 'vitest'
 import {
+  CCL4_BOILING_POINT_C,
   IODINE_PARTITION_BENZENE,
   IODINE_PARTITION_CCL4,
   IODINE_WATER_INITIAL_CONC,
   IODINE_WATER_VOLUME_ML,
+  computeDistillationState,
   extractionEquilibrium,
   extractionMixProgress,
   miscibleUniformConcentration,
@@ -102,5 +104,30 @@ describe('miscibleUniformConcentration — 互溶体系（乙醇反例）', () =
   it('均一相浓度低于初始碘水浓度（只被稀释，不发生富集）', () => {
     expect(miscibleUniformConcentration(C0, VAQ, 20)).toBeLessThan(C0)
     expect(miscibleUniformConcentration(C0, VAQ, 20)).toBeGreaterThan(0)
+  })
+})
+
+describe('computeDistillationState — 蒸馏分馏状态', () => {
+  it('正常操作下温度在 CCl₄ 沸点处进入平台并持续馏出', () => {
+    const heating = computeDistillationState(500, 1.0, 0)
+    expect(heating.currentTemp).toBeLessThan(CCL4_BOILING_POINT_C)
+    expect(heating.distilledVolumeMl).toBe(0)
+
+    const boiling = computeDistillationState(500, 10.0, 0)
+    expect(boiling.targetBoilTemp).toBe(CCL4_BOILING_POINT_C)
+    expect(boiling.currentTemp).toBe(CCL4_BOILING_POINT_C)
+    expect(boiling.distilledVolumeMl).toBeGreaterThan(0)
+    expect(boiling.distilledVolumeMl).toBeLessThanOrEqual(40)
+  })
+
+  it('误操作 1（温度计插液面）显示偏高沸点 86.5°C；误操作 2（冷凝水反向）显著降低冷凝速率', () => {
+    const normal = computeDistillationState(500, 10.0, 0)
+    const misTherm = computeDistillationState(500, 10.0, 1)
+    const misCondenser = computeDistillationState(500, 10.0, 2)
+
+    expect(misTherm.targetBoilTemp).toBeGreaterThan(normal.targetBoilTemp)
+    expect(misTherm.targetBoilTemp).toBe(86.5)
+    expect(misCondenser.flowMultiplier).toBe(0.35)
+    expect(misCondenser.distRate).toBeCloseTo(normal.distRate * 0.35, 10)
   })
 })

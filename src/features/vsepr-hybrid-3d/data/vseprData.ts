@@ -79,8 +79,8 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     actualAngle: 119.5,
     atoms: [
       { id: 's', symbol: 'S', elementName: '硫原子', role: 'center', position: [0, -0.2, 0], color: ATOM_COLORS.S, radius: 0.5 },
-      { id: 'o1', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [-1.3, -0.9, 0], color: ATOM_COLORS.O, radius: 0.38 },
-      { id: 'o2', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [1.3, -0.9, 0], color: ATOM_COLORS.O, radius: 0.38 },
+      { id: 'o1', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [-1.25, -0.93, 0], color: ATOM_COLORS.O, radius: 0.38 },
+      { id: 'o2', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [1.25, -0.93, 0], color: ATOM_COLORS.O, radius: 0.38 },
     ],
     bonds: [
       { id: 'b1', fromAtomId: 's', toAtomId: 'o1', bondOrder: 1.5 },
@@ -255,9 +255,9 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     actualAngle: 107.3,
     atoms: [
       { id: 'n', symbol: 'N', elementName: '氮原子', role: 'center', position: [0, 0.2, 0], color: ATOM_COLORS.N, radius: 0.45 },
-      { id: 'h1', symbol: 'H', elementName: '氢原子', role: 'terminal', position: [1.05, -0.3, 0], color: ATOM_COLORS.H, radius: 0.3 },
-      { id: 'h2', symbol: 'H', elementName: '氢原子', role: 'terminal', position: [-0.52, -0.3, 0.91], color: ATOM_COLORS.H, radius: 0.3 },
-      { id: 'h3', symbol: 'H', elementName: '氢原子', role: 'terminal', position: [-0.52, -0.3, -0.91], color: ATOM_COLORS.H, radius: 0.3 },
+      { id: 'h1', symbol: 'H', elementName: '氢原子', role: 'terminal', position: [1.07, -0.22, 0], color: ATOM_COLORS.H, radius: 0.3 },
+      { id: 'h2', symbol: 'H', elementName: '氢原子', role: 'terminal', position: [-0.535, -0.22, 0.927], color: ATOM_COLORS.H, radius: 0.3 },
+      { id: 'h3', symbol: 'H', elementName: '氢原子', role: 'terminal', position: [-0.535, -0.22, -0.927], color: ATOM_COLORS.H, radius: 0.3 },
     ],
     bonds: [
       { id: 'b1', fromAtomId: 'n', toAtomId: 'h1', bondOrder: 1 },
@@ -300,8 +300,8 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     actualAngle: 104.5,
     atoms: [
       { id: 'o', symbol: 'O', elementName: '氧原子', role: 'center', position: [0, 0, 0], color: ATOM_COLORS.O, radius: 0.45 },
-      { id: 'h1', symbol: 'H', elementName: '氢原子', role: 'terminal', position: [-0.92, -0.65, 0], color: ATOM_COLORS.H, radius: 0.3 },
-      { id: 'h2', symbol: 'H', elementName: '氢原子', role: 'terminal', position: [0.92, -0.65, 0], color: ATOM_COLORS.H, radius: 0.3 },
+      { id: 'h1', symbol: 'H', elementName: '氢原子', role: 'terminal', position: [-0.89, -0.69, 0], color: ATOM_COLORS.H, radius: 0.3 },
+      { id: 'h2', symbol: 'H', elementName: '氢原子', role: 'terminal', position: [0.89, -0.69, 0], color: ATOM_COLORS.H, radius: 0.3 },
     ],
     bonds: [
       { id: 'b1', fromAtomId: 'o', toAtomId: 'h1', bondOrder: 1 },
@@ -475,9 +475,9 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     actualAngle: 107.0,
     atoms: [
       { id: 'o', symbol: 'O', elementName: '氧原子', role: 'center', position: [0, 0.2, 0], color: ATOM_COLORS.O, radius: 0.45 },
-      { id: 'h1', symbol: 'H', elementName: '氢原子', role: 'terminal', position: [1.05, -0.3, 0], color: ATOM_COLORS.H, radius: 0.3 },
-      { id: 'h2', symbol: 'H', elementName: '氢原子', role: 'terminal', position: [-0.52, -0.3, 0.91], color: ATOM_COLORS.H, radius: 0.3 },
-      { id: 'h3', symbol: 'H', elementName: '氢原子', role: 'terminal', position: [-0.52, -0.3, -0.91], color: ATOM_COLORS.H, radius: 0.3 },
+      { id: 'h1', symbol: 'H', elementName: '氢原子', role: 'terminal', position: [1.07, -0.23, 0], color: ATOM_COLORS.H, radius: 0.3 },
+      { id: 'h2', symbol: 'H', elementName: '氢原子', role: 'terminal', position: [-0.535, -0.23, 0.927], color: ATOM_COLORS.H, radius: 0.3 },
+      { id: 'h3', symbol: 'H', elementName: '氢原子', role: 'terminal', position: [-0.535, -0.23, -0.927], color: ATOM_COLORS.H, radius: 0.3 },
     ],
     bonds: [
       { id: 'b1', fromAtomId: 'o', toAtomId: 'h1', bondOrder: 1 },
@@ -565,9 +565,9 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     actualAngle: 106.0,
     atoms: [
       { id: 's', symbol: 'S', elementName: '硫原子', role: 'center', position: [0, 0.2, 0], color: ATOM_COLORS.S, radius: 0.5 },
-      { id: 'o1', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [1.15, -0.35, 0], color: ATOM_COLORS.O, radius: 0.38 },
-      { id: 'o2', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [-0.57, -0.35, 0.99], color: ATOM_COLORS.O, radius: 0.38 },
-      { id: 'o3', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [-0.57, -0.35, -0.99], color: ATOM_COLORS.O, radius: 0.38 },
+      { id: 'o1', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [1.2, -0.3, 0], color: ATOM_COLORS.O, radius: 0.38 },
+      { id: 'o2', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [-0.6, -0.3, 1.04], color: ATOM_COLORS.O, radius: 0.38 },
+      { id: 'o3', symbol: 'O', elementName: '氧原子', role: 'terminal', position: [-0.6, -0.3, -1.04], color: ATOM_COLORS.O, radius: 0.38 },
     ],
     bonds: [
       { id: 'b1', fromAtomId: 's', toAtomId: 'o1', bondOrder: 1 },
@@ -686,7 +686,7 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     angleDisplay: '90° (相邻) / 180° (对位)',
   },
 
-  // 16. XeF2 (超价分子拓展, sp3d, 直线形 - 高考真题变式5对齐)
+  // 16. XeF2 (【信息题素材】, 电子域数 5, 直线形)
   {
     id: 'xef2',
     formula: 'XeF₂',
@@ -724,14 +724,14 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     angles: [
       { id: 'a1', atom1Id: 'f1', centerAtomId: 'xe', atom2Id: 'f2', angleDegree: 180, displayLabel: '180°' },
     ],
-    examNotes: '高考真题热点：中心 Xe 价电子数 8，价层电子对数 = 2 + (8 - 2×1)/2 = 5。根据互斥理论，3 对孤电子对排布于排斥力最小的赤道平面，两个 F 位于两极轴向，分子实际空间构型为直线形 (键角 180°)。【口径说明】人教版选择性必修2 正文以 VSEPR 电子域数 5 为主线，sp³d 属传统/拓展标注；主流一轮资料常列其为选必2 拓展，信息题语境下可直接使用。',
+    examNotes: '【信息题素材】核心考点解析：中心 Xe 价电子数 8，价层电子对数 = 2 + (8 - 2×1)/2 = 5。根据互斥理论，3 对孤电子对排布于排斥力最小的赤道平面，两个 F 位于两极轴向，分子实际空间构型为直线形 (键角 180°)。人教版选择性必修2 正文以 VSEPR 电子域数 5 为主线，sp³d 属传统标注，信息题语境下可直接使用。',
     sigmaBonds: 2,
     piBonds: 0,
     polarity: 'nonpolar',
     polarityReason: '直线形对称构型，2 个轴向 Xe-F 键反向抵消，3 对赤道孤对平面内完全抵消。',
   },
 
-  // 17. XeF4 (超价分子拓展, sp3d2, 平面正方形 - 高考真题变式5对齐)
+  // 17. XeF4 (【信息题素材】, 电子域数 6, 平面正方形)
   {
     id: 'xef4',
     formula: 'XeF₄',
@@ -772,7 +772,7 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
     angles: [
       { id: 'a1', atom1Id: 'f1', centerAtomId: 'xe', atom2Id: 'f3', angleDegree: 90, displayLabel: '90°' },
     ],
-    examNotes: '高考真题热点：中心 Xe 价电子数 8，价层电子对数 = 4 + (8 - 4×1)/2 = 6。2 对孤电子对相互排斥处于八面体对位 (上下两极)，4 个 F 原子位于赤道平面，分子实际空间构型为平面正方形 (键角 90°)。【口径说明】人教版选择性必修2 正文以 VSEPR 电子域数 6 为主线，sp³d² 属传统/拓展标注；主流一轮资料常列其为选必2 拓展，信息题语境下可直接使用。',
+    examNotes: '【信息题素材】核心考点解析：中心 Xe 价电子数 8，价层电子对数 = 4 + (8 - 4×1)/2 = 6。2 对孤电子对相互排斥处于八面体对位 (上下两极)，4 个 F 原子位于赤道平面，分子实际空间构型为平面正方形 (键角 90°)。人教版选择性必修2 正文以 VSEPR 电子域数 6 为主线，sp³d² 属传统标注，信息题语境下可直接使用。',
     sigmaBonds: 4,
     piBonds: 0,
     polarity: 'nonpolar',

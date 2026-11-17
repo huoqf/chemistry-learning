@@ -28,9 +28,39 @@ const SOURCES: Array<[string, unknown]> = [
 ]
 
 describe('现象/术语错误表述守卫（全数据源）', () => {
+  /** 仅采集肯定性/陈述性知识字段，防止后续若引入含错误诱饵选项的字段时被误判 */
+  const FACTUAL_FIELDS = new Set([
+    'substance',
+    'colorText',
+    'testReaction',
+    'equation',
+    'roleDescription',
+    'phenomenon',
+    'conflictReason',
+    'trapNote',
+    'description',
+    'conclusion',
+    'keyPoint',
+    'examTip',
+    'notes',
+    'purifyReagent',
+    'purifyPrinciple',
+    'dryingReagent',
+    'tailGasReagent',
+    'collectMethod',
+    'title',
+    'explanation',
+    'frontTip',
+    'backPrinciple',
+    'trapExplanation',
+    'correctRule',
+  ])
+
   for (const [name, data] of SOURCES) {
     it(`${name} 的文本不得出现已登记的错误表述`, () => {
-      const strings = collectStrings(data, name)
+      const allStrings = collectStrings(data, name)
+      const factualStrings = collectStrings(data, name, FACTUAL_FIELDS)
+      const strings = factualStrings.length > 0 ? factualStrings : allStrings
 
       // 反向保护：确保确实扫到了内容，避免字段改名后“空扫描假绿”
       expect(strings.length, `${name} 未采集到任何字符串`).toBeGreaterThan(5)

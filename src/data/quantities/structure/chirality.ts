@@ -33,9 +33,9 @@ export function buildChiralityQuantities(params: Record<string, number>): Chemis
     },
     {
       key: 'substituentCount',
-      label: '手性碳取代基种类',
-      value: mol.isChiral ? 4 : 3,
-      unit: '种',
+      label: mol.type === 'cis-trans' ? '双键端基异构类型' : '手性碳取代基种类',
+      value: mol.type === 'cis-trans' ? 2 : mol.isChiral ? 4 : 3,
+      unit: mol.type === 'cis-trans' ? '种 (顺式/反式)' : '种',
       colorKey: 'equilibriumConstant',
       precision: 0,
     },

@@ -44,7 +44,7 @@ describe('无机离子特征检验与共存排斥矩阵数据审计', () => {
         'NO3-',
         'OH-',
         'HCO3-',
-        'AlO2-',
+        '[Al(OH)4]-',
         'ClO-',
         'MnO4-',
         'SiO32-',
@@ -155,10 +155,10 @@ describe('无机离子特征检验与共存排斥矩阵数据审计', () => {
     expect(iStep.hasPrecipitate).toBe(false)
     expect(iStep.fillColor).toContain('30, 58, 138')
 
-    // 3. AlO2- 偏铝酸根加强酸：少量析出白沉淀 -> 过量沉淀完全溶解生成澄清 Al3+
-    const alo2Step1 = computeStepChemistry('AlO2-', 'alo2-hcl-drop', 1, 'rgba(241, 245, 249, 0.6)')
+    // 3. [Al(OH)4]- 四羟基合铝酸根加强酸：少量析出白沉淀 -> 过量沉淀完全溶解生成澄清 Al3+
+    const alo2Step1 = computeStepChemistry('[Al(OH)4]-', 'alo2-hcl-drop', 1, 'rgba(241, 245, 249, 0.6)')
     expect(alo2Step1.hasPrecipitate).toBe(true)
-    const alo2Step2 = computeStepChemistry('AlO2-', 'alo2-hcl-drop', 2, 'rgba(241, 245, 249, 0.6)')
+    const alo2Step2 = computeStepChemistry('[Al(OH)4]-', 'alo2-hcl-drop', 2, 'rgba(241, 245, 249, 0.6)')
     expect(alo2Step2.hasPrecipitate).toBe(false) // 过量酸沉淀溶解
 
     // 4. CO32- vs HCO3- 区分：

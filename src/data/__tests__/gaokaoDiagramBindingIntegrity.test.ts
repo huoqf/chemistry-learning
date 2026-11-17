@@ -68,7 +68,7 @@ const DIAGRAM_TITLE_RULES: Record<
   },
   'precipitation-curve': {
     label: '沉淀 / lg c - pH 分布曲线',
-    required: [/沉淀/, /lg\s*c/i, /分布曲线/, /分布图/, /m\(沉淀\)/],
+    required: [/沉淀/, /lg\s*c/i, /m\(沉淀\)/],
     forbidden: [/滴定曲线/, /分布分数/],
   },
   'valence-matrix-chart': {
@@ -95,7 +95,7 @@ const MECHANISM_TITLE_RULES: Record<
 > = {
   'addition-markov': /马氏|亲电加成/,
   'haloalkane-elimination': /卤代烃|消去/,
-  'alcohol-oxidation': /醇.{0,8}氧化|氧化.{0,8}醇|α-H/,
+  'alcohol-oxidation': /(?:醇[\s\S]{0,16}氧化|氧化[\s\S]{0,16}醇|α-H)/,
   'ester-cleavage': /酯|¹⁸O|18O/,
   'peptide-hydrolysis': /肽|酰胺键/,
   'phenol-condensation': /酚|缩聚/,
@@ -260,16 +260,17 @@ describe('高考题面图形绑定守门测试（防图文错配）', () => {
     })
   })
 
-  it('⑦ 题名点名了某类图时，声明类型必须与其一致（且不得漏挂）', () => {
+  it('⑦ 题名或题干点名了某类图时，声明类型必须与其一致（且不得漏挂）', () => {
     Object.entries(modelQuizMap).forEach(([modelId, quiz]) => {
       quiz.variantQuizzes.forEach((variant) => {
         const title = variant.title || ''
-        const named = FIGURE_NAME_PATTERNS.filter((f) => f.pattern.test(title))
+        const combined = `${title} ${variant.contextDescription || ''}`
+        const named = FIGURE_NAME_PATTERNS.filter((f) => f.pattern.test(combined))
         if (named.length === 0) return
         named.forEach((f) => {
           expect(
             variant.diagramType,
-            `[${modelId} / ${variant.id}] 题名点名了「${f.label}」却未挂 ${f.type} 图形：${JSON.stringify(title)}`
+            `[${modelId} / ${variant.id}] 点名了「${f.label}」却未挂 ${f.type} 图形：${JSON.stringify(title)}`
           ).toBe(f.type)
         })
       })

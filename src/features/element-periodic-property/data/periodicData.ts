@@ -581,12 +581,12 @@ export const ISO_ELECTRON_SERIES: Record<'10e' | '18e', IsoElectronParticle[]> =
   ],
 }
 
-// 高考经典位-构-性压轴推断题案例库
+// 高考经典位-构-性压轴推断模型案例库
 export const GAOKAO_INFERENCE_CASES: GaokaoInferenceCase[] = [
   {
-    id: 'case-2024-shandong',
-    title: '2024 山东高考真题：短周期 X/Y/Z/W 结构推断',
-    source: '2024 全国高考山东卷',
+    id: 'case-short-period',
+    title: '短周期 X/Y/Z/W 位-构-性逻辑推断模型',
+    source: '高频考点推断模型',
     coreQuestion: '推断短周期元素 X, Y, Z, W 身份，并比较简单离子半径与第一电离能大小。',
     analysis: 'X 的基态 p 轨道电子数等于 s 轨道电子数 ➔ X=O (1s²2s²2p⁴, s=4, p=4)；Y 的电负性在同周期中最强 ➔ Y=F；Z 的最外层 p 轨道 3p³ 半充满 ➔ Z=P；W 的简单离子在同周期阴阳离子中半径最小 ➔ W=Al (Al³⁺ 核电荷数最大，10电子体半径最小)。',
     elements: [
@@ -621,11 +621,11 @@ export const GAOKAO_INFERENCE_CASES: GaokaoInferenceCase[] = [
     ],
   },
   {
-    id: 'case-2024-quanguo',
-    title: '2024 全国甲卷：第四周期 d 区 Transition 元素推演',
-    source: '2024 全国甲卷',
-    coreQuestion: '探究 ₂₄Cr 与 ₂₉Cu 洪特规则特例价电子排布与电离能。',
-    analysis: 'Cr (24号): 3d⁵ 4s¹ 半充满极稳；Cu (29号): 3d¹⁰ 4s¹ 全充满极稳。能量最低原理受洪特规则稳定位相修饰。',
+    id: 'case-transition-3d',
+    title: '第四周期 d/ds 区过渡元素洪特特例推演',
+    source: '高频考点推断模型',
+    coreQuestion: '探究 ₂₄Cr (d 区) 与 ₂₉Cu (ds 区) 洪特规则特例价电子排布与电离能。',
+    analysis: 'Cr (24号，d 区): 3d⁵ 4s¹ 半充满极稳；Cu (29号，ds 区): 3d¹⁰ 4s¹ 全充满极稳。能量最低原理受洪特规则稳定状态影响。',
     elements: [
       {
         elementCode: 'M',

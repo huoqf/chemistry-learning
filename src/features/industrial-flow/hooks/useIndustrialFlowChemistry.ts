@@ -379,30 +379,41 @@ export function useIndustrialFlowChemistry(
     }
 
     // 4. 计算各离子在当前 pH 下的余量浓度与沉淀百分比 (c0 受浸出率联动)
+    const calcSolubleAtPh = (item: typeof rawIons[number], targetPh: number, curC0: number) => {
+      if (item.precipitateFormula === 'FePO₄') {
+        // FePO₄ 非氢氧化物，受磷酸分步电离影响，pH≈1.0 起沉、pH≈2.2 完全沉淀 (c≤1e-5)
+        if (targetPh <= 1.0) return curC0
+        const expDrop = curC0 * Math.pow(10, -(targetPh - 1.0) * 3.5)
+        return Math.max(1e-12, Math.min(curC0, expDrop))
+      }
+      if (systemId === 'li-fe-p' && item.symbol === 'Li⁺') {
+        // Li⁺ 在调 pH 除铁阶段不沉淀（于工序四高温加碳酸钠沉锂）
+        return curC0
+      }
+      const cOHVal = Math.pow(10, -(14 - targetPh))
+      return cOHVal > 0 ? Math.min(curC0, item.ksp / Math.pow(cOHVal, item.charge)) : curC0
+    }
+
     const ions: IonConcentrationPoint[] = rawIons.map((item) => {
       const { charge, ksp, baseC0 } = item
       const c0 = Math.round(baseC0 * leachFactor * 1000) / 1000
 
-      // pOH 与 [OH-]
-      const pOH = 14 - pH
-      const cOH = Math.pow(10, -pOH)
-
-      // 开始沉淀 pH (c = c0)
-      const cOH_start = Math.pow(ksp / c0, 1 / charge)
-      const pOH_start = -Math.log10(cOH_start)
-      const pHStart = Math.round((14 - pOH_start) * 100) / 100
-
-      // 沉淀完全 pH (c = 1e-5)
-      const cOH_end = Math.pow(ksp / 1e-5, 1 / charge)
-      const pOH_end = -Math.log10(cOH_end)
-      const pHEnd = Math.round((14 - pOH_end) * 100) / 100
-
-      // 当前 pH 下理论余量浓度
-      let cCurrent = c0
-      if (cOH > 0) {
-        const cMaxSoluble = ksp / Math.pow(cOH, charge)
-        cCurrent = Math.min(c0, cMaxSoluble)
+      let pHStart: number
+      let pHEnd: number
+      if (item.precipitateFormula === 'FePO₄') {
+        pHStart = 1.0
+        pHEnd = 2.2
+      } else if (systemId === 'li-fe-p' && item.symbol === 'Li⁺') {
+        pHStart = 14.0
+        pHEnd = 14.0
+      } else {
+        const cOH_start = Math.pow(ksp / c0, 1 / charge)
+        pHStart = Math.round((14 + Math.log10(cOH_start)) * 100) / 100
+        const cOH_end = Math.pow(ksp / 1e-5, 1 / charge)
+        pHEnd = Math.round((14 + Math.log10(cOH_end)) * 100) / 100
       }
+
+      let cCurrent = calcSolubleAtPh(item, pH, c0)
 
       // Al(OH)₃ 两性溶解修正 (pH > 10.5)。【示意模型】10^((pH-10.5)×1.5) 为经验拟合，
       // 仅表达高 pH 下 Al(OH)₃ 重新溶解、lg c 回升的趋势，非 Ksp 严格解，不可用于精确读数。
@@ -459,7 +470,7 @@ export function useIndustrialFlowChemistry(
       } else if (pH > 11.0) {
         safeRangeDescription = `当前 pH=${pH.toFixed(1)} 碱度偏高：尚未充分通入 CO₂，强碱环境下 Al(OH)₃ 继续以 [Al(OH)₄]⁻ 溶解损失。`
       } else {
-        safeRangeDescription = `当前 pH=${pH.toFixed(1)} 偏酸：CO₂ 通入过量导致沉淀物重新溶解，或造成酸性杂质共析出。`
+        safeRangeDescription = `当前 pH=${pH.toFixed(1)} 偏低：若误用强酸替代 CO₂ 才会引起两性 Al(OH)₃ 反溶；单纯通入过量 CO₂ 只会生成 Al(OH)₃↓ 与 HCO₃⁻，沉淀不会溶解。`
       }
     } else if (systemId === 'li-fe-p') {
       // 磷酸铁锂回收：第一步调 pH 2.0~2.5 析出 FePO4 沉淀，Li+ 留在溶液中
@@ -514,8 +525,8 @@ export function useIndustrialFlowChemistry(
       const point: { pH: number; [key: string]: number } = { pH: curPh }
 
       ions.forEach((ion) => {
-        const cMaxSoluble = kspCalculated(ion.ksp, ion.charge, curCoh, ion.c0)
-        let conc = cMaxSoluble
+        const rawMatch = rawIons.find((r) => r.symbol === ion.symbol)
+        let conc = rawMatch ? calcSolubleAtPh(rawMatch, curPh, ion.c0) : kspCalculated(ion.ksp, ion.charge, curCoh, ion.c0)
         // 同第 5 步：Al³⁺ 高 pH 段为【示意】经验拟合（见上方 amphotericFactor 说明）
         if (ion.symbol === 'Al³⁺' && curPh > 10.5) {
           const amphotericFactor = Math.pow(10, (curPh - 10.5) * 1.5)

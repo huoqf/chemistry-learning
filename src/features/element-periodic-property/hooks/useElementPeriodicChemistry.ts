@@ -73,27 +73,40 @@ export function useElementPeriodicChemistry(params: ElementPeriodicParams) {
     // 不会再出现"壳层图高亮一层、方框图从另一层移除"的模型打架。
     let excitationShell: number | null = null
     if (isExcited) {
-      // ① 激发源 = n 最大的已占据 s 轨道（即最外层 ns），确保是"最外层价电子跃迁"
-      let src = -1
+      // ① 确定价电子激发源：
+      //    - 若最外层存在已满占的 np⁶（稀有气体 Ne / Ar），最高占据轨道为 np（能量高于 ns），应从 np 激发；
+      //    - 其余元素从最外层已占据 ns 取 1 个电子跃迁（如 C 2s→2p、Na 3s→3p）。
       let bestN = -1
       orbitals.forEach((o, i) => {
         if (o.l === 's' && counts[i] > 0 && o.n > bestN) {
           bestN = o.n
-          src = i
         }
       })
-      // ② 目标轨道 = 同层 np 中电子数最少者（保持洪特规则排布）；同层 np 已充满或不存在时取 (n+1)s
+
+      let src = -1
       let tgt = -1
-      if (src >= 0) {
-        const openSameShellP = orbitals
+      if (bestN > 0) {
+        const sameShellP = orbitals
           .map((o, i) => ({ o, i }))
-          .filter(({ o, i }) => o.n === bestN && o.l === 'p' && counts[i] < o.maxCap)
-        if (openSameShellP.length > 0) {
-          tgt = openSameShellP.reduce((best, cur) => (counts[cur.i] < counts[best.i] ? cur : best)).i
-        } else {
+          .filter(({ o }) => o.n === bestN && o.l === 'p')
+        const openSameShellP = sameShellP.filter(({ o, i }) => counts[i] < o.maxCap)
+
+        if (sameShellP.length > 0 && openSameShellP.length === 0) {
+          // 同层 np 已满（稀有气体如 Ne / Ar）：取最高占据 np 电子跃迁至 (n+1)s
+          const occupiedP = sameShellP.filter(({ i }) => counts[i] > 0)
+          src = occupiedP[occupiedP.length - 1]?.i ?? -1
           tgt = orbitals.findIndex((o) => o.l === 's' && o.n === bestN + 1)
+        } else {
+          // 常规主/副族元素：从最外层 ns 激发至同层空位（无同层 p 如 H/He/4s 过渡元素则升至 (n+1)s 或 np）
+          src = orbitals.findIndex((o) => o.n === bestN && o.l === 's' && counts[orbitals.indexOf(o)] > 0)
+          if (openSameShellP.length > 0) {
+            tgt = openSameShellP.reduce((best, cur) => (counts[cur.i] < counts[best.i] ? cur : best)).i
+          } else {
+            tgt = orbitals.findIndex((o) => o.l === 's' && o.n === bestN + 1)
+          }
         }
       }
+
       if (src >= 0 && tgt >= 0 && src !== tgt) {
         counts[src] -= 1
         counts[tgt] += 1
@@ -189,7 +202,7 @@ export function useElementPeriodicChemistry(params: ElementPeriodicParams) {
     let jumpDescription: string
 
     if (isTransition) {
-      jumpDescription = `${currentElement.symbol} 属于 ${currentElement.block.toUpperCase()} 区过渡元素，价电子涉及 (n−1)d 与 ns 两个能级，逐级电离能的简单"突跃"规律不适用，不能据此直接判定最外层价电子数。`
+      jumpDescription = `${currentElement.symbol} 属于 ${currentElement.block} 区过渡元素，价电子涉及 (n−1)d 与 ns 两个能级，逐级电离能的简单"突跃"规律不适用，不能据此直接判定最外层价电子数。`
     } else if (hasCredibleJump) {
       valanceCountPredicted = maxJumpIndex
       jumpDescription = `从 I${maxJumpIndex} (${steps[maxJumpIndex - 1]} kJ/mol) 到 I${

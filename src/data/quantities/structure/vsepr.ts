@@ -93,7 +93,10 @@ export function getVseprExamPoints(params: Record<string, number>) {
       importance: 'gaokao' as const,
     },
     {
-      text: `【电子对与分子构型对比】${mol.formula} 的价电子对构型为【${mol.electronGeometry}】，由于包含 ${mol.lonePairCount} 对孤电子对，实际分子构型为【${mol.molecularGeometry}】。注意高考辨析两者区别！`,
+      text:
+        mol.lonePairCount > 0
+          ? `【电子对与分子构型对比】${mol.formula} 的价电子对构型为【${mol.electronGeometry}】，由于包含 ${mol.lonePairCount} 对孤电子对，实际分子构型为【${mol.molecularGeometry}】。注意高考辨析两者区别！`
+          : `【电子对与分子构型一致】${mol.formula} 中心原子不含孤电子对，因此价电子对构型与实际分子构型均为【${mol.molecularGeometry}】。`,
       importance: 'gaokao' as const,
     },
     {

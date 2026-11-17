@@ -7,6 +7,7 @@ import {
   extractionEquilibrium,
   extractionMixProgress,
   miscibleUniformConcentration,
+  computeDistillationState,
 } from '@/chemistry'
 
 /**
@@ -57,30 +58,22 @@ export function buildExtractionDistillationQuantities(
       { key: 'vOrg', label: '萃取剂体积', value: vSolvent, unit: 'mL', colorKey: 'molarMass' },
     ]
   } else {
-    // ─── 蒸馏分馏模式 ───
+    // ─── 蒸馏分馏模式（与 hook 共用 computeDistillationState 同源计算） ───
     const power = params.power ?? 500 // W 加热功率
-    const tBoil = 76.8 // °C (CCl4 沸点)
-    const tEnv = 20.0 // °C 初始室温
-
-    // 加热温度上升曲线 (升温至沸点并在沸点保持平台)
-    const heatingRate = (power / 500) * 8.0 // 升温速率 °C/s
-    const rawTemp = tEnv + heatingRate * time
-    const currentTemp = Math.min(tBoil, rawTemp)
-
-    // 达到沸点后的馏出量 (mL)
-    const distTime = Math.max(0, time - (tBoil - tEnv) / heatingRate)
-    const distRate = (power / 500) * 0.8 // mL/s
-    const vDist = Math.min(40.0, distTime * distRate)
-    const vVapor = distTime > 0 ? parseFloat((distRate * 22.4 * 0.1).toFixed(2)) : 0.0
+    const { tBoil, currentTemp, distilledVolumeMl, vaporRate } = computeDistillationState(
+      power,
+      time,
+      misoperation
+    )
 
     // 错操作危害指数
     const eHarm = misoperation === 3 ? 95 : misoperation === 1 ? 45 : misoperation === 2 ? 60 : 0
 
     return [
-      { key: 'T', label: '烧瓶/蒸气温度', value: parseFloat(currentTemp.toFixed(1)), unit: '°C', colorKey: 'temperature' },
-      { key: 'Tb', label: '馏出物沸点', value: tBoil, unit: '°C', colorKey: 'temperature' },
-      { key: 'VDist', label: '累计馏出体积', value: parseFloat(vDist.toFixed(1)), unit: 'mL', colorKey: 'molarMass' },
-      { key: 'vVapor', label: '蒸气凝结速率', value: vVapor, unit: 'mL/s', colorKey: 'reactionRate' },
+      { key: 'T', label: '温度计测得温度', value: parseFloat(currentTemp.toFixed(1)), unit: '°C', colorKey: 'temperature' },
+      { key: 'Tb', label: '馏出物理论沸点', value: tBoil, unit: '°C', colorKey: 'temperature' },
+      { key: 'VDist', label: '累计馏出体积', value: parseFloat(distilledVolumeMl.toFixed(1)), unit: 'mL', colorKey: 'molarMass' },
+      { key: 'vVapor', label: '蒸气凝结速率', value: vaporRate, unit: 'mL/s', colorKey: 'reactionRate' },
       { key: 'eHarm', label: '暴沸/偏误风险', value: eHarm, unit: '%', colorKey: 'energy' },
     ]
   }

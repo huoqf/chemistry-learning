@@ -134,7 +134,11 @@ export function Crystal3DScene({
         </div>
         {crystalData.id === 'hcp-mg' && (
           <div>
-            <span style={{ color: CHEMISTRY_COLORS.temperature }}>c</span> = {Math.round(Math.sqrt(8 / 3) * edgeLengthPm)} pm
+            <span style={{ color: CHEMISTRY_COLORS.temperature }}>c</span> ={' '}
+            {crystalData.defaultHeightPm
+              ? Math.round((edgeLengthPm / crystalData.defaultEdgeLengthPm) * crystalData.defaultHeightPm)
+              : Math.round(Math.sqrt(8 / 3) * edgeLengthPm)}{' '}
+            pm
           </div>
         )}
       </div>

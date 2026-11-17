@@ -36,11 +36,14 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       heating,
     } = params
 
-    // 从 washingSteps 提取向后兼容变量（供下方诊断逻辑使用）
-    const washReagent = washingSteps[0]?.reagent ?? 'none'
-    const washReverse = washingSteps[0]?.reversed ?? false
-    const dryer = washingSteps.find(s => s.device === 'dry-tube')?.reagent
-      ?? (washingSteps.find(s => s.device === 'acid-bottle') ? 'conc-h2so4' : 'none')
+    // 按 role/device 精确提取净化与干燥步骤，避免仅凭索引 0 造成两者相互覆盖
+    const purifyStep = washingSteps.find(
+      (s) => s.role === 'purify' || s.role === 'detect' || s.device === 'wash-bottle'
+    )
+    const washReagent = purifyStep?.reagent ?? 'none'
+    const washReverse = purifyStep?.reversed ?? false
+    const dryer = washingSteps.find((s) => s.device === 'dry-tube')?.reagent
+      ?? (washingSteps.find((s) => s.device === 'acid-bottle') ? 'conc-h2so4' : 'none')
 
     const issues: DiagnosticIssue[] = []
     let dangerType: 'siphon' | 'splashing' | 'clogging' | 'none' = 'none'
@@ -118,9 +121,18 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
           examPoint: '乙烯制备三大要素：①蒸馏烧瓶；②浓硫酸与乙醇 3:1 混合；③水银球浸没液面下控温 170°C。',
         })
       }
+    } else if (targetGas === 'C₂H₂' && generator === 'kipp') {
+      dangerType = 'clogging'
+      issues.push({
+        id: 'generator-c2h2-kipp-wrong',
+        level: 'danger',
+        title: '高考经典陷阱：实验室制乙炔 (C₂H₂) 严禁使用启普发生器！',
+        description: '电石 (CaC₂) 与水反应剧烈放热，生成的糊状 Ca(OH)₂ 会堵塞启普发生器球形漏斗下端并使反应无法随时停止，易引起炸裂。',
+        examPoint: '实验室制乙炔必须选用分液漏斗 + 烧瓶/锥形瓶，且用饱和食盐水代替纯水以减缓反应速率。',
+      })
     }
 
-    // 发生方程式计算
+    // 发生方程式计算（覆盖全部 13 种气体）
     let reactionEquation = ''
     if (systemId === 'cl2-prep' || targetGas === 'Cl₂') {
       reactionEquation = '\\text{MnO}_2 + 4\\text{HCl(浓)} \\xrightarrow{\\Delta} \\text{MnCl}_2 + \\text{Cl}_2\\uparrow + 2\\text{H}_2\\text{O}'
@@ -134,6 +146,20 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       } else {
         reactionEquation = '\\text{Cu} + 4\\text{HNO}_3(\\text{浓}) \\rightarrow \\mathrm{Cu(NO_3)_2} + 2\\text{NO}_2\\uparrow + 2\\text{H}_2\\text{O}'
       }
+    } else if (targetGas === 'C₂H₂') {
+      reactionEquation = '\\text{CaC}_2 + 2\\text{H}_2\\text{O} \\rightarrow \\text{Ca(OH)}_2 + \\text{C}_2\\text{H}_2\\uparrow'
+    } else if (targetGas === 'CO₂') {
+      reactionEquation = '\\text{CaCO}_3 + 2\\text{HCl} = \\text{CaCl}_2 + \\text{CO}_2\\uparrow + \\text{H}_2\\text{O}'
+    } else if (targetGas === 'CO') {
+      reactionEquation = '\\text{HCOOH} \\xrightarrow[\\Delta]{\\text{浓 H}_2\\text{SO}_4} \\text{CO}\\uparrow + \\text{H}_2\\text{O}'
+    } else if (targetGas === 'O₂') {
+      reactionEquation = '2\\text{H}_2\\text{O}_2 \\xrightarrow{\\text{MnO}_2} 2\\text{H}_2\\text{O} + \\text{O}_2\\uparrow'
+    } else if (targetGas === 'H₂') {
+      reactionEquation = '\\text{Zn} + \\text{H}_2\\text{SO}_4(\\text{稀}) = \\text{ZnSO}_4 + \\text{H}_2\\uparrow'
+    } else if (targetGas === 'HCl') {
+      reactionEquation = '\\text{NaCl(固)} + \\text{H}_2\\text{SO}_4(\\text{浓}) \\xrightarrow{\\text{微热}} \\text{NaHSO}_4 + \\text{HCl}\\uparrow'
+    } else if (targetGas === 'H₂S') {
+      reactionEquation = '\\text{FeS} + 2\\text{HCl} = \\text{FeCl}_2 + \\text{H}_2\\text{S}\\uparrow'
     } else {
       reactionEquation = `\\text{CH}_3\\text{CH}_2\\text{OH} \\xrightarrow[${temp}^\\circ\\text{C}]{\\text{浓 H}_2\\text{SO}_4} \\text{CH}_2=\\text{CH}_2\\uparrow + \\text{H}_2\\text{O}`
     }
@@ -160,10 +186,20 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       purificationEquation = '\\text{洗气瓶除杂中}'
     }
 
-    // 尾气吸收方程式计算
+    // 尾气吸收方程式计算（严格按目标气体分支）
     let tailGasEquation = ''
     if (tailGas === 'combustion') {
-      tailGasEquation = '\\text{CH}_2=\\text{CH}_2 + 3\\text{O}_2 \\xrightarrow{\\text{点燃}} 2\\text{CO}_2 + 2\\text{H}_2\\text{O}'
+      if (targetGas === 'C₂H₂') {
+        tailGasEquation = '2\\text{C}_2\\text{H}_2 + 5\\text{O}_2 \\xrightarrow{\\text{点燃}} 4\\text{CO}_2 + 2\\text{H}_2\\text{O}'
+      } else if (targetGas === 'CO') {
+        tailGasEquation = '2\\text{CO} + \\text{O}_2 \\xrightarrow{\\text{点燃}} 2\\text{CO}_2'
+      } else if (targetGas === 'H₂') {
+        tailGasEquation = '2\\text{H}_2 + \\text{O}_2 \\xrightarrow{\\text{点燃}} 2\\text{H}_2\\text{O}'
+      } else if (targetGas === 'H₂S') {
+        tailGasEquation = '2\\text{H}_2\\text{S} + 3\\text{O}_2 \\xrightarrow{\\text{点燃}} 2\\text{SO}_2 + 2\\text{H}_2\\text{O}'
+      } else {
+        tailGasEquation = '\\text{CH}_2=\\text{CH}_2 + 3\\text{O}_2 \\xrightarrow{\\text{点燃}} 2\\text{CO}_2 + 2\\text{H}_2\\text{O}'
+      }
     } else if (tailGas === 'balloon') {
       tailGasEquation = '\\text{气球物理收集 (防尾气逸散污染)}'
     } else if (targetGas === 'NO₂') {
@@ -179,8 +215,14 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       tailGasEquation = '\\text{NH}_3 + \\text{H}^+ = \\text{NH}_4^+'
     } else if (targetGas === 'SO₂') {
       tailGasEquation = '\\text{SO}_2 + 2\\text{OH}^- = \\text{SO}_3^{2-} + \\text{H}_2\\text{O}'
+    } else if (targetGas === 'HCl') {
+      tailGasEquation = '\\text{HCl} + \\text{OH}^- = \\text{Cl}^- + \\text{H}_2\\text{O}'
+    } else if (targetGas === 'H₂S') {
+      tailGasEquation = '\\text{H}_2\\text{S} + 2\\text{OH}^- = \\text{S}^{2-} + 2\\text{H}_2\\text{O}'
+    } else if (targetGas === 'CO₂') {
+      tailGasEquation = '\\text{CO}_2 + 2\\text{OH}^- = \\text{CO}_3^{2-} + \\text{H}_2\\text{O}'
     } else {
-      tailGasEquation = '\\text{尾气吸收处理}'
+      tailGasEquation = '\\text{无毒/惰性或已充分收集气体，无需化学中和尾气}'
     }
 
     // 2. 洗气瓶管道与除杂试剂诊断
@@ -273,18 +315,29 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
           examPoint: '干燥 NH₃ 必须且只能选用碱石灰 (CaO + NaOH) 干燥管。',
         })
       }
-    } else if (['Cl₂', 'SO₂', 'NO₂'].includes(targetGas) || systemId === 'cl2-prep' || systemId === 'so2-chain') {
+    } else if (['Cl₂', 'SO₂', 'NO₂', 'CO₂', 'HCl', 'H₂S'].includes(targetGas) || systemId === 'cl2-prep' || systemId === 'so2-chain') {
       if (dryer === 'soda-lime') {
         dryerClogged = true
         dangerType = 'clogging'
         issues.push({
           id: 'dryer-acid-sodalime',
           level: 'danger',
-          title: '严重错误：碱石灰会完全吸收酸性气体 (Cl₂ / SO₂ / NO₂)！',
+          title: '严重错误：碱石灰会完全吸收酸性气体 (Cl₂ / SO₂ / NO₂ / CO₂ / HCl / H₂S)！',
           description: '碱石灰 (CaO+NaOH) 为强碱性干燥剂，会与酸性气体发生中和反应全部吸收，导致出口无气体流出！',
-          examPoint: '干燥酸性气体 (Cl₂, SO₂, CO₂, NO₂) 应选用浓硫酸或无水 CaCl₂ 干燥管。',
+          examPoint: '干燥酸性气体 (Cl₂, SO₂, CO₂, NO₂, HCl) 应选用浓硫酸或无水 CaCl₂（H₂S 只能用无水 CaCl₂ / P₂O₅）。',
         })
       }
+    }
+    if (targetGas === 'H₂S' && dryer === 'conc-h2so4') {
+      dryerClogged = true
+      dangerType = 'clogging'
+      issues.push({
+        id: 'dryer-h2s-h2so4-wrong',
+        level: 'danger',
+        title: '高考高频雷区：严禁使用浓硫酸干燥强还原性气体 H₂S！',
+        description: '浓 H₂SO₄ 具有强氧化性，会与 H₂S 发生氧化还原反应 H₂S + H₂SO₄(浓) = S↓ + SO₂↑ + 2H₂O，产生硫沉淀并消耗 H₂S！',
+        examPoint: '强还原性气体 (H₂S、HI、HBr) 严禁使用强氧化性浓硫酸干燥，H₂S 应选用无水 CaCl₂ 或 P₂O₅ 干燥。',
+      })
     }
 
     // C₂H₄ 不能用浓H₂SO₄干燥（浓H₂SO₄会与乙烯的碳碳双键加成/氧化，消耗乙烯）
@@ -364,13 +417,23 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       }
     }
 
-    if (targetGas === 'NH₃' && collection === 'upward-air') {
+    if ((targetGas === 'NH₃' || targetGas === 'H₂') && collection === 'upward-air') {
       issues.push({
         id: 'collect-nh3-upward-wrong',
         level: 'danger',
-        title: '严重收集错误：NH₃ 密度小于空气，严禁用向上排空气法！',
-        description: '氨气 (NH₃) 的相对分子质量为 17，密度明显比空气 (29) 小，向上排空气法气体直接上浮逸散，无法集满瓶！',
-        examPoint: '轻气体 (NH₃) 必须使用向下排空气法 (短进长出)；重气体用向上排空气法。',
+        title: `严重收集错误：${targetGas} 密度小于空气，严禁用向上排空气法！`,
+        description: `${targetGas} 密度明显小于空气 (平均 M=29)，向上排空气法气体会迅速上浮逸散，无法集满瓶！`,
+        examPoint: '轻气体 (NH₃, H₂) 必须使用向下排空气法 (短进长出)，或根据溶解度选用排水法 (H₂)。',
+      })
+    }
+
+    if (['CO', 'C₂H₄'].includes(targetGas) && (collection === 'upward-air' || collection === 'downward-air')) {
+      issues.push({
+        id: 'collect-air-density-close-wrong',
+        level: 'warning',
+        title: `收集方式不当：${targetGas} 摩尔质量 (28) 与空气 (29) 接近，不能用排空气法！`,
+        description: `${targetGas} 密度与空气过于接近（且混合易引发爆炸），无法通过空气排代有效收集纯净气体，必须使用排水集气法！`,
+        examPoint: 'NO(30)、CO(28)、C₂H₄(28)、N₂(28) 密度均与空气相近，一律采用排水集气法收集。',
       })
     }
 
@@ -394,17 +457,17 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
           description: '常温下 1 体积水约溶解 2 体积 Cl₂，且发生 Cl₂ + H₂O ⇌ HCl + HClO 反应。排纯水会造成氯气显著损耗并污染水体；若要使用排液法收集，必须改用【排饱和食盐水法】（同离子效应抑制 Cl₂ 溶解）！',
           examPoint: 'Cl₂ 可溶于水并与水反应，不能排纯水；实验室常用【向上排空气法】或【排饱和食盐水法】收集。',
         })
-      } else if (['NH₃', 'SO₂'].includes(targetGas) || systemId === 'nh3-prep') {
+      } else if (['NH₃', 'SO₂', 'HCl'].includes(targetGas) || systemId === 'nh3-prep') {
         issues.push({
           id: 'collect-water-wrong',
           level: 'warning',
           title: '收集方式错误：易溶于水的气体不能用排水集气法！',
-          description: `${targetGas} 易溶于水 (NH₃ 达 1:700，SO₂ 达 1:40)，在水槽中极易溶解并引发倒吸，排水法无法收集到气体！`,
+          description: `${targetGas} 极易/易溶于水 (NH₃ 1:700，HCl 1:500，SO₂ 1:40)，在水槽中迅速溶解并引发倒吸，排水法无法收集到气体！`,
           examPoint: '只有难溶/微溶于水且不与水反应的气体 (O₂, H₂, NO, CO, CH₄, C₂H₄, C₂H₂) 才能用排水法收集。',
         })
       }
     } else if (collection === 'downward-air') {
-      if (['Cl₂', 'SO₂', 'NO₂'].includes(targetGas) || systemId === 'cl2-prep' || systemId === 'so2-chain') {
+      if (['Cl₂', 'SO₂', 'NO₂', 'CO₂', 'HCl', 'H₂S'].includes(targetGas) || systemId === 'cl2-prep' || systemId === 'so2-chain') {
         issues.push({
           id: 'collect-air-density-wrong',
           level: 'warning',

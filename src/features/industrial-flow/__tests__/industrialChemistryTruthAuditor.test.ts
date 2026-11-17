@@ -315,9 +315,9 @@ describe('实验二：无机工艺流程与沉淀调 pH 高考化学学科真理
         const recommended = evals.filter((e) => e.isRecommended)
         expect(recommended.length, `体系 [${sys}] 必须有推荐的不增杂试剂`).toBeGreaterThan(0)
 
-        // 强碱 NaOH 必须被标记为不推荐或警告其易导致两性反溶/沉淀损失
+        // 强碱 NaOH 必须被标记为不推荐，防止两性反溶与主金属局部过碱共沉淀损失
         const naoh = evals.find((e) => e.reagent === 'NaOH')
-        if (naoh && sys !== 'ti-fe' && sys !== 'ni-co-li') {
+        if (naoh) {
           expect(naoh.isRecommended, `体系 [${sys}] 中强碱 NaOH 严禁作为首选不增杂试剂`).toBe(false)
         }
       }

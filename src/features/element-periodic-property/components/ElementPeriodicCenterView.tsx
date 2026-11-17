@@ -63,7 +63,7 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
     )
   }
 
-  // 视角 2: 高考真题变式研析
+  // 视角 2: 变式演练
   if (viewMode === 2) {
     return (
       <div className="w-full h-full flex flex-col overflow-y-auto p-4 select-none">
@@ -71,7 +71,7 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
           <GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />
         ) : (
           <div className="text-center text-slate-500 py-12 text-sm bg-white rounded-xl border border-slate-200">
-            暂无高考真题数据
+            暂无考点变式数据
           </div>
         )}
       </div>
@@ -197,7 +197,7 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
             {/* 规范表达矩阵 */}
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 flex flex-col gap-2 text-xs">
               <div className="font-bold text-slate-800 border-b pb-1">
-                规范表达矩阵 (Standard Expressions)
+                规范表达矩阵{params.stateType === 'excited' ? ' (基态对照 · 激发态见上方方框图)' : ' (Standard Expressions)'}
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-slate-500">完整电子排布式：</span>
@@ -253,14 +253,24 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
                   series="primary"
                   color={CHART_COLORS.primary}
                 />
-                <ChartCursor
-                  x={1}
-                  dataPoints={chartPoints.map((p) => ({
-                    y: p.y,
-                    label: p.label,
-                    series: p.isAnomaly ? 'warm' : 'primary',
-                  }))}
-                />
+                {(() => {
+                  const selectedIdx = periodIonizationData.findIndex((d) => d.z === currentElement.z)
+                  const activeIdx = selectedIdx >= 0 ? selectedIdx : 0
+                  const activePt = chartPoints[activeIdx]
+                  if (!activePt) return null
+                  return (
+                    <ChartCursor
+                      x={activePt.x}
+                      dataPoints={[
+                        {
+                          y: activePt.y,
+                          label: activePt.label,
+                          series: activePt.isAnomaly ? 'warm' : 'primary',
+                        },
+                      ]}
+                    />
+                  )
+                })()}
               </BaseChart>
             </div>
 

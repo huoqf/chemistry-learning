@@ -9,6 +9,19 @@ export function buildRedoxElectronTransferQuantities(params: Record<string, numb
   const eTransferred = model.transferredElectrons * n
   const oxidantMoles = model.stoichiometry.oxidant * n
   const reductantMoles = model.stoichiometry.reductant * n
+  const effectiveReductantItem =
+    reactionIdx === 2
+      ? [
+          {
+            key: 'effectiveReductantMoles',
+            label: '其中：作还原剂的 HCl (仅半数被氧化)',
+            value: model.elements.oxidized.count * n,
+            unit: 'mol',
+            colorKey: 'reactionRate' as const,
+            precision: 1,
+          },
+        ]
+      : []
 
   return [
     {
@@ -43,6 +56,7 @@ export function buildRedoxElectronTransferQuantities(params: Record<string, numb
       colorKey: 'temperature',
       precision: 1,
     },
+    ...effectiveReductantItem,
     {
       key: 'electronCount',
       label: '转移电子微粒数',

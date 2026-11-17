@@ -577,9 +577,40 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                         </g>
                       )}
                     </>
+                  ) : tailGas === 'direct-pipe' ? (
+                    // 直导管直接插入吸收液烧杯（高危反例：易引发倒吸液面爬升）
+                    <g>
+                      <rect
+                        x={tailLayout.x + 10}
+                        y={tailLayout.y + 35}
+                        width={tailLayout.width - 20}
+                        height={tailLayout.height - 38}
+                        rx={6}
+                        fill="none"
+                        stroke={SCENE_COLORS.container.beakerBorder}
+                        strokeWidth={2}
+                      />
+                      <rect
+                        x={tailLayout.x + 12}
+                        y={tailLayout.y + 70}
+                        width={tailLayout.width - 24}
+                        height={tailLayout.height - 75}
+                        rx={4}
+                        fill={withAlpha(SCENE_COLORS.reagent.base, 0.35)}
+                      />
+                      <line
+                        x1={tailLayout.x + tailLayout.width / 2}
+                        y1={tailLayout.y + 8}
+                        x2={tailLayout.x + tailLayout.width / 2}
+                        y2={tailLayout.y + tailLayout.height - 20}
+                        stroke={SCENE_COLORS.container.testTubeBorder}
+                        strokeWidth={4}
+                        strokeLinecap="round"
+                      />
+                    </g>
                   ) : (
-                    // naoh-absorber / 其他吸收剖氧化物：使用洗气瓶形式（高考规范 NaOH 溶液吸收尾气标准图示）
-                    // 严禁使用直导管插入吸收液——极易倒吸圆裂，必须用洗气瓶或倒置漏斗
+                    // naoh-absorber / 其他吸收尾气装置：使用洗气瓶形式（高考规范 NaOH 溶液吸收尾气标准图示）
+                    // 严禁使用直导管插入吸收液——极易倒吸炸裂，必须用洗气瓶或倒置漏斗
                     <>
                       <GasWashingBottleApparatus
                         x={tailLayout.x}

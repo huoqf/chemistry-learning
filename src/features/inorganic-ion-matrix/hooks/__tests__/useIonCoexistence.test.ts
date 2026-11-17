@@ -50,9 +50,20 @@ describe('useIonCoexistence', () => {
     expect(result.current.selectedIonObjects.length).toBe(4)
   })
 
-  it('should correctly allow Ba2+ and AlO2- to coexist without false double-hydrolysis', () => {
-    // Ba(OH)2 是强碱可溶强电解质，Ba2+ 与 AlO2- 完全能大量共存
-    const { result } = renderHook(() => useIonCoexistence(['Ba2+', 'AlO2-']))
+  it('中性环境下 Fe2+ 与 NO3- 可大量共存；引入 H+ 酸化后立刻触发三元氧化还原冲突', () => {
+    const { result: neutralRes } = renderHook(() => useIonCoexistence(['Fe2+', 'NO3-']))
+    expect(neutralRes.current.canCoexist).toBe(true)
+    expect(neutralRes.current.conflicts.length).toBe(0)
+
+    const { result: acidRes } = renderHook(() => useIonCoexistence(['Fe2+', 'NO3-', 'H+']))
+    expect(acidRes.current.canCoexist).toBe(false)
+    expect(acidRes.current.conflicts.some((c) => c.type === 'redox')).toBe(true)
+    expect(acidRes.current.conflicts.some((c) => c.equation.includes('3Fe^{2+} + NO_3^- + 4H^+'))).toBe(true)
+  })
+
+  it('should correctly allow Ba2+ and [Al(OH)4]- to coexist without false double-hydrolysis', () => {
+    // Ba(OH)2 是强碱强电解质，Ba2+ 与 [Al(OH)4]- 可共存
+    const { result } = renderHook(() => useIonCoexistence(['Ba2+', '[Al(OH)4]-']))
     expect(result.current.canCoexist).toBe(true)
     expect(result.current.conflicts.length).toBe(0)
   })
@@ -69,14 +80,14 @@ describe('useIonCoexistence', () => {
     expect(r2.current.conflicts.some((c) => c.type === 'redox')).toBe(true)
   })
 
-  it('Al3+ 与 F- 形成可溶性氟配离子、Ca2+ 与 AlO2- 特例均不应误判为硬互斥冲突', () => {
+  it('Al3+ 与 F- 形成可溶性氟配离子、Ca2+ 与 [Al(OH)4]- 特例均不误判为硬互斥冲突', () => {
     // Al3+ + F- 属于络合共存，不沉淀互斥
     const { result: rAlF } = renderHook(() => useIonCoexistence(['Al3+', 'F-']))
     expect(rAlF.current.canCoexist).toBe(true)
     expect(rAlF.current.conflicts.length).toBe(0)
 
-    // Ca2+ + AlO2- 高考回避特例，不作为一票否决冲突
-    const { result: rCaAlO2 } = renderHook(() => useIonCoexistence(['Ca2+', 'AlO2-']))
+    // Ca2+ + [Al(OH)4]- 高考回避特例，不作为一票否决冲突
+    const { result: rCaAlO2 } = renderHook(() => useIonCoexistence(['Ca2+', '[Al(OH)4]-']))
     expect(rCaAlO2.current.canCoexist).toBe(true)
     expect(rCaAlO2.current.conflicts.length).toBe(0)
   })

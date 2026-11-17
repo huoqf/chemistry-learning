@@ -12,7 +12,7 @@ export const ElementPeriodicPropertyCanvas: React.FC = () => {
   const modelId = 'model-element-periodic-property'
   const quizData = getModelQuizData(modelId) || null
 
-  // 平级三视角 (0: 交互图谱 | 1: 规范踩分 | 2: 真题研析)
+  // 平级三视角 (0: 交互图谱 | 1: 规范踩分 | 2: 变式演练)
   const [viewMode, setViewMode] = useState<number>(0)
 
   // 控制台参数
@@ -22,7 +22,7 @@ export const ElementPeriodicPropertyCanvas: React.FC = () => {
     stateType: 'ground',
     periodFilter: 2,
     isoGroupFilter: '10e',
-    inferenceId: 'case-2024-shandong',
+    inferenceId: 'case-short-period',
   })
 
   // 纯化学计算 Hook
@@ -39,7 +39,7 @@ export const ElementPeriodicPropertyCanvas: React.FC = () => {
       stateType: 'ground',
       periodFilter: 2,
       isoGroupFilter: '10e',
-      inferenceId: 'case-2024-shandong',
+      inferenceId: 'case-short-period',
     })
   }
 

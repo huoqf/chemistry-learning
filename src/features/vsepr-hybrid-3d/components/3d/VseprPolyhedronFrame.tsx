@@ -38,14 +38,20 @@ export const VseprPolyhedronFrame: React.FC<VseprPolyhedronFrameProps> = ({ atom
     return points
   }, [atoms, lonePairs, centerPos])
 
-  // 生成两两连线的虚线段对
+  // 生成多面体真实外表面棱线（对三角双锥 n=5 / 正八面体 n=6 剔除对跖穿心对角线）
   const frameLinePairs = useMemo(() => {
     const pairs: [number, number, number][][] = []
     const n = vertexPositions.length
     if (n < 2) return pairs
 
+    const dirs = vertexPositions.map((pt) => pt.clone().sub(centerPos).normalize())
+
     for (let i = 0; i < n; i++) {
       for (let j = i + 1; j < n; j++) {
+        // n >= 5 时，反向共线顶点（如三角双锥双轴向顶点、正八面体三组对顶点）连线属于体对角线，非表面棱
+        if (n >= 5 && dirs[i].dot(dirs[j]) < -0.85) {
+          continue
+        }
         const p1 = vertexPositions[i]
         const p2 = vertexPositions[j]
         pairs.push([
@@ -55,7 +61,7 @@ export const VseprPolyhedronFrame: React.FC<VseprPolyhedronFrameProps> = ({ atom
       }
     }
     return pairs
-  }, [vertexPositions])
+  }, [vertexPositions, centerPos])
 
   return (
     <group>

@@ -54,7 +54,7 @@ export const CO_CONFIG: ElementValenceConfig = {
       colorText: '粉红色溶液（无水 CoCl₂ 为深蓝色）',
       colorStyle: 'bg-rose-50 text-rose-900 border-rose-300',
       rgbColor: PHENOMENON_COLORS.co2Plus,
-      testReaction: '【变色硅胶湿度指示剂】[Co(H₂O)₆]²⁺(粉红) ⇌ [CoCl₄]²⁻(蓝) + 6H₂O（吸水变粉红，脱水干燥变蓝）',
+      testReaction: '【变色硅胶湿度指示剂】[Co(H₂O)₆]²⁺(粉红) + 4Cl⁻ ⇌ [CoCl₄]²⁻(蓝) + 6H₂O（吸水变粉红，脱水干燥变蓝）',
       equation: 'CoCl₂·6H₂O(粉红) =△= CoCl₂(蓝) + 6H₂O',
       roleDescription: '湿度指示剂，三元电池原料',
     },

@@ -63,6 +63,14 @@ export default function PrimaryCellAnimation() {
     y: p.ne,
   }))
 
+  // 根据当前曲线极值自适应 Y 轴量程，避免在 [-20, 20] 大量程下折线近乎水平
+  const maxAbsDelta = Math.max(
+    1.0,
+    ...anodeLineData.map((p) => Math.abs(p.y)),
+    ...cathodeLineData.map((p) => Math.abs(p.y))
+  )
+  const yBound = Math.ceil(maxAbsDelta * 1.25 * 10) / 10
+
   return (
     <div className="w-full h-full flex flex-row overflow-hidden">
       {/* 左屏 280px 装置动画区 */}
@@ -86,7 +94,7 @@ export default function PrimaryCellAnimation() {
           <BaseChart
             title="两极电极质量变化 Δm - 时间"
             xDomain={[0, 10]}
-            yDomain={[-20, 20]}
+            yDomain={[-yBound, yBound]}
             xLabel="时间 t (s)"
             yLabel="质量变化 Δm (g)"
           >

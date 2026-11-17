@@ -60,17 +60,24 @@ describe('母题八：元素位-构-性 电子排布化学正确性守门', () =
     }
   })
 
-  it('3. 激发态跃迁层 excitationShell 恒等于最外层（壳层图与方框图共用同一层）', () => {
+  it('3. 激发态跃迁层 excitationShell 恒等于最外层，且最外层实际迁出 1 个电子', () => {
     for (const z of ALL_Z) {
+      const ground = hookAt(z, 'ground')
       const { currentElement, excitationShell, orbitalBoxes } = hookAt(z, 'excited')
       expect(excitationShell).not.toBeNull()
-      // 主量子数 n 与"电子层数"一致（K=1, L=2, M=3, N=4），
-      // 故壳层图索引 excitationShell-1 必落在最后一层，B 图不会各高亮一层
       expect(excitationShell).toBe(currentElement.electronLayers.length)
-      // 跃迁发生的层必须确实少了 1 个电子（该层 ns 轨道被取走 1 个）
-      const srcBox = orbitalBoxes.find((b) => b.n === excitationShell && b.l === 's')
-      expect(srcBox).toBeDefined()
-      expect(srcBox!.electrons.length).toBeLessThan(2)
+
+      // 激发态应将 1 个最外层电子跃迁至更高能级：主层 n 总电子数减 1，且更高层或同层高能亚层多出 1 个电子
+      const groundOuterSum = ground.orbitalBoxes
+        .filter((b) => b.n === excitationShell)
+        .reduce((acc, b) => acc + b.electrons.length, 0)
+      const excitedOuterSum = orbitalBoxes
+        .filter((b) => b.n === excitationShell)
+        .reduce((acc, b) => acc + b.electrons.length, 0)
+      const excitedHigherCount = orbitalBoxes
+        .filter((b) => b.n > excitationShell!)
+        .reduce((acc, b) => acc + b.electrons.length, 0)
+      expect(excitedOuterSum + excitedHigherCount).toBe(groundOuterSum)
     }
   })
 
@@ -93,14 +100,15 @@ describe('母题八：元素位-构-性 电子排布化学正确性守门', () =
     expect(excited.excitationShell).toBe(3)
   })
 
-  it('6. Ar (Z=18) 激发态：3s 已满的同层 np 无空位，跃迁落到 4s', () => {
+  it('6. Ar (Z=18) 激发态：3p⁶ 已满且能量高于 3s，最低激发态由最高占据轨道 3p 跃迁到 4s (3s² 3p⁵ 4s¹)', () => {
     const ground = hookAt(18, 'ground')
     // 反例核验：Ar 的 s 轨共 6 个电子、p 轨共 12 个电子 ⇒ "p 轨电子数 = s 轨电子数"并非普遍规律
     expect(shellSum(ground.orbitalBoxes, 's')).toBe(6)
     expect(shellSum(ground.orbitalBoxes, 'p')).toBe(12)
 
     const excited = hookAt(18, 'excited')
-    expect(countOf(excited.orbitalBoxes, '3s')).toBe(1)
+    expect(countOf(excited.orbitalBoxes, '3s')).toBe(2)
+    expect(shellSum(excited.orbitalBoxes, 'p')).toBe(11) // 2p⁶ + 3p⁵
     expect(countOf(excited.orbitalBoxes, '4s')).toBe(1)
     expect(excited.excitationShell).toBe(3)
     expect(electronSum(excited.orbitalBoxes)).toBe(18)

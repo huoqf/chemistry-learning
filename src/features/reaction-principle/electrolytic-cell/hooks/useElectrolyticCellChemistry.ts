@@ -159,11 +159,11 @@ export function useElectrolyticCellChemistry({
       }
     } else {
       return {
-        anodeProduct: 'O₂ (无色气体, C电极消耗)',
+        anodeProduct: 'CO₂ / CO (O₂氧化石墨阳极)',
         cathodeProduct: 'Al (液态金属铝)',
-        anodeEquation: '2O²⁻ - 4e⁻ = O₂↑',
+        anodeEquation: '2O²⁻ - 4e⁻ = O₂↑（O₂与C生成CO₂/CO）',
         cathodeEquation: 'Al³⁺ + 3e⁻ = Al',
-        overallEquation: '2Al₂O₃(熔融) ═(电解)═ 4Al + 3O₂↑',
+        overallEquation: '2Al₂O₃(熔融) ═(冰晶石,电解)═ 4Al + 3O₂↑',
       }
     }
   }

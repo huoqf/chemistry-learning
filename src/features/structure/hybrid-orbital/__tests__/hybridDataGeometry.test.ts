@@ -327,9 +327,10 @@ describe('SO₂ 的 sp² 取向（V 形）', () => {
     expect(lpBond[0] + lpBond[1] + bondBond).toBeCloseTo(360, 4)
   })
 
-  it('两个 S=O 均为双键：必须各有 1 条 π 键，且 π 云都垂直于分子平面', () => {
-    // 原数据只写了 1 条 π，等于把右侧画成 S=O、左侧画成 S–O —— 两个 S=O 都应为双键
+  it('三中心四电子离域大 π 键 (Π³₄)：沿两根等长 S–O 轴线对称展开两翼 π 云且均垂直于分子平面', () => {
+    // 化学本质为 1 个离域 Π³₄ 大 π 键，3D 视觉需沿两侧 S—O 各铺设一翼以体现离域对称性
     expect(so2.piBonds).toHaveLength(2)
+    expect(so2.description).toContain('Π³₄')
 
     so2.piBonds!.forEach((pi, i) => {
       expect(len(sub(pi.endPos, so2.ligands[i].pos))).toBeLessThan(1e-6)

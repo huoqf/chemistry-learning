@@ -139,7 +139,7 @@ export const AtomShellScene: React.FC<AtomShellSceneProps> = ({
             fontSize={font(10)}
             fontWeight="bold"
           >
-            ⚡ 激发态：最外层价电子吸收能量跃迁到同层空轨道（详见右侧轨道方框图）
+            ⚡ 激发态：最外层价电子吸收能量跃迁至更高能级空轨道（详见右侧轨道方框图）
           </text>
         </g>
       )}
@@ -156,7 +156,7 @@ export const AtomShellScene: React.FC<AtomShellSceneProps> = ({
           fontSize={font(11)}
           fontWeight="bold"
         >
-          【第 {element.period} 周期 · {element.group} 族 · {element.block.toUpperCase()} 区】
+          【第 {element.period} 周期 · {element.group} 族 · {element.block} 区】
         </text>
       </g>
     </g>

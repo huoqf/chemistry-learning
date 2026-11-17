@@ -1,6 +1,19 @@
+// @vitest-environment jsdom
+import React from 'react'
 import { describe, it, expect } from 'vitest'
+import { render } from '@testing-library/react'
 import { solvePhysicalChainLayout } from '../physics/layoutEngine'
 import { GAS_PRESET_CONFIGS } from '../data/gasChainMatrixData'
+import { GasWashingBottleApparatus } from '@/components/Chemistry/GasWashingBottleApparatus'
+import { KippApparatus } from '@/components/Chemistry/KippApparatus'
+import { LiquidHeatingGeneratorApparatus } from '@/components/Chemistry/LiquidHeatingGeneratorApparatus'
+import { SolidHeatingGeneratorApparatus } from '@/components/Chemistry/SolidHeatingGeneratorApparatus'
+import {
+  getGasWashingBottlePorts,
+  getKippApparatusPorts,
+  getLiquidHeatingGeneratorPorts,
+  getSolidHeatingGeneratorPorts,
+} from '@/components/Chemistry/apparatusPorts'
 
 describe('高中化学装置链几何与物理装配自动化守则 (GasChainGeometry)', () => {
   describe('铁律一：全链导管水平主梁唯一性与平直共线', () => {
@@ -39,61 +52,104 @@ describe('高中化学装置链几何与物理装配自动化守则 (GasChainGeo
     })
   })
 
-  describe('铁律二：发生装置物理装配与无穿模守则', () => {
-    it('蒸馏烧瓶加热体系：铁架台立柱必须在烧瓶球体左外侧，绝不刺穿玻璃', () => {
-      const FLASK_CENTER_X = 125
-      const FLASK_W = 90
-      const FLASK_BULB_R = FLASK_W * 0.42 // = 37.8
-      const FLASK_LEFT_EDGE = FLASK_CENTER_X - FLASK_BULB_R // 87.2
+  describe('铁律二：发生装置真实组件渲染与物理装配无穿模守则', () => {
+    it('蒸馏烧瓶加热体系：铁架台立柱位于烧瓶左外侧，且支管口端口朝向右方供导管对接', () => {
+      const { container } = render(
+        React.createElement(
+          'svg',
+          null,
+          React.createElement(LiquidHeatingGeneratorApparatus, { x: 125, y: 480 })
+        )
+      )
+      const group = container.querySelector('#liquid-heating-generator-group')
+      expect(group).toBeTruthy()
+      const ports = getLiquidHeatingGeneratorPorts(125, 480)
+      // 蒸馏烧瓶中心 x = 125，支管口向右伸出必大于烧瓶右外缘 (> 125 + 45)
+      expect(ports.sideArmPort.x).toBeGreaterThan(165)
+      expect(ports.topNeckPort.y).toBeLessThan(ports.sideArmPort.y)
 
-      // 立柱绝对位置设计在 x - 50 = 75
-      const POLE_CENTER_X = FLASK_CENTER_X - 50 // 75
-
-      // 断言：立柱最右边缘 (POLE_CENTER_X + 3) 必须在烧瓶球体左外侧，并留有安全间距
-      expect(POLE_CENTER_X + 3).toBeLessThan(FLASK_LEFT_EDGE - 5)
+      // 检查实际渲染出的铁架台底座左侧位于烧瓶中心左侧 75px，立柱 x 应落在烧瓶左侧外部
+      const rects = Array.from(group!.querySelectorAll('rect'))
+      const baseRect = rects[0]
+      expect(Number(baseRect.getAttribute('x'))).toBe(50)
+      // 存在竖直立柱 rect（高度 > 200 且宽度 <= 8）位于烧瓶左外侧 (< 125 - 38)
+      const pole = rects.find(
+        (r) => Number(r.getAttribute('height')) > 200 && Number(r.getAttribute('width')) <= 8
+      )
+      expect(pole).toBeDefined()
+      expect(Number(pole!.getAttribute('x')) + Number(pole!.getAttribute('width'))).toBeLessThan(87)
     })
 
-    it('蒸馏烧瓶加热体系：铁夹夹持位置必须高于支管口，严禁夹在支管分叉点', () => {
-      const FLASK_H = 140
-      const NECK_H = FLASK_H * 0.4 // 56
-      const SIDE_TUBE_TOP_Y = NECK_H * 0.35 // 19.6
-      const CLAMP_REL_Y = 11 // 设计夹持在瓶颈相对顶部 11px 处
-
-      // 断言：铁夹高度必须在支管口上方至少 5px
-      expect(CLAMP_REL_Y).toBeLessThan(SIDE_TUBE_TOP_Y - 5)
-    })
-
-    it('分液漏斗装配：活塞必须高出橡皮塞，细长下管必须穿透塞子深入瓶颈', () => {
-      const FUNNEL_H = 150
-      const insertDepth = 28
-      const stopperTopRelY = FUNNEL_H - insertDepth // 122
-      const valveRelY = 97 // 活塞相对漏斗顶部位置
-
-      // 断言 1：活塞必须高出橡皮塞顶面至少 20px (便于手拧操作)
-      expect(stopperTopRelY - valveRelY).toBeGreaterThanOrEqual(20)
-
-      // 断言 2：细长下导管必须深入塞孔至少 25px
-      expect(insertDepth).toBeGreaterThanOrEqual(25)
+    it('固液加热与导管连线体系：支管口导出水平导管且高于基座', () => {
+      const preset = GAS_PRESET_CONFIGS['Cl₂']
+      const solved = solvePhysicalChainLayout({
+        generator: preset.generator!,
+        washingSteps: preset.washingSteps!,
+        collection: preset.collection!,
+        tailGas: preset.tailGas!,
+        baseY: 480,
+      })
+      const genLayout = solved.apparatusLayouts.find((a) => a.id === 'generator')
+      expect(genLayout).toBeDefined()
+      expect(genLayout!.outletPort).toBeTruthy()
+      expect(genLayout!.outletPort!.y).toBeLessThan(480)
+      expect(solved.routes[0].pathD).toContain('M ')
     })
   })
 
-  describe('铁律三：气流进出方向与化学事实一致性断言', () => {
-    it('洗气瓶必须“长进短出”：进气管深入液面，出气管微露塞体', () => {
-      const WASH_H = 140
-      const longTubeDepth = WASH_H - 15 // 深入距底 15px
-      const shortTubeDepth = 35 // 仅微穿塞子
+  describe('铁律三：真实组件渲染下的气流方向与化学事实一致性断言', () => {
+    it('洗气瓶实测 DOM 必须“长进短出”：进气长管显著深于出气短管，reversed 时自动对调', () => {
+      const ports = getGasWashingBottlePorts(0, 0, 90, 140)
+      expect(ports.inletPort.x).toBeLessThan(ports.outletPort.x)
 
-      // 断言：进气管深度至少是出气管的 3 倍以上，严禁短进长出冲料
-      expect(longTubeDepth).toBeGreaterThan(shortTubeDepth * 3)
+      const { container: normalDom } = render(
+        React.createElement(
+          'svg',
+          null,
+          React.createElement(GasWashingBottleApparatus, { x: 0, y: 0, width: 90, height: 140 })
+        )
+      )
+      const normalLines = Array.from(normalDom.querySelectorAll('#wash-tubes line'))
+      // 长管底端 y2 应深入液面近瓶底 (> 120)，短管底端仅停在瓶肩上方 (< 65)
+      const normalY2s = normalLines.map((l) => Number(l.getAttribute('y2')))
+      expect(Math.max(...normalY2s)).toBeGreaterThan(120)
+      expect(Math.min(...normalY2s)).toBeLessThan(65)
+
+      const { container: revDom } = render(
+        React.createElement(
+          'svg',
+          null,
+          React.createElement(GasWashingBottleApparatus, {
+            x: 0,
+            y: 0,
+            width: 90,
+            height: 140,
+            reversed: true,
+          })
+        )
+      )
+      const leftTubeY2Normal = Math.max(
+        ...normalLines
+          .filter((l) => Number(l.getAttribute('x1')) < 45)
+          .map((l) => Number(l.getAttribute('y2')))
+      )
+      const leftTubeY2Rev = Math.max(
+        ...Array.from(revDom.querySelectorAll('#wash-tubes line'))
+          .filter((l) => Number(l.getAttribute('x1')) < 45)
+          .map((l) => Number(l.getAttribute('y2')))
+      )
+      expect(leftTubeY2Normal).toBeGreaterThan(120)
+      expect(leftTubeY2Rev).toBeLessThan(65)
     })
 
-    it('极易溶气体体系（NH3 / HCl）必须配置防倒吸装置', () => {
+    it('极易溶气体体系（NH₃ / HCl）必须配置防倒吸装置', () => {
       const nh3Preset = GAS_PRESET_CONFIGS['NH₃']
-      // 氨气极易溶于水 (1:700)，必须配防倒吸
       expect(['inverted-funnel', 'safety-bottle', 'water-displacement']).toContain(nh3Preset.tailGas)
+      const hclPreset = GAS_PRESET_CONFIGS['HCl']
+      expect(['inverted-funnel', 'safety-bottle']).toContain(hclPreset.tailGas)
     })
 
-    it('密度比空气小的气体（NH3 / H2）必须使用向下排空气或排水法', () => {
+    it('密度比空气小的气体（NH₃ / H₂）必须使用向下排空气或排水法', () => {
       const nh3Preset = GAS_PRESET_CONFIGS['NH₃']
       expect(['downward-air', 'water-displacement']).toContain(nh3Preset.collection)
 
@@ -101,20 +157,38 @@ describe('高中化学装置链几何与物理装配自动化守则 (GasChainGeo
       expect(['downward-air', 'water-displacement']).toContain(h2Preset.collection)
     })
 
-    it('固体加热体系 (NH3 / O2)：试管口必须向下微倾斜 5°~10° 防冷凝水倒流炸裂', () => {
-      // 固体加热试管经典倾角标定在 6°
-      const TUBE_TILT_ANGLE = 6
-      expect(TUBE_TILT_ANGLE).toBeGreaterThanOrEqual(5)
-      expect(TUBE_TILT_ANGLE).toBeLessThanOrEqual(10)
+    it('固体加热组件 (NH₃ / O₂)：真实渲染后出气管端口向右导出且与铁夹旋转锚点协同', () => {
+      const ports = getSolidHeatingGeneratorPorts(50, 480)
+      expect(ports.outletPort.x).toBeGreaterThan(ports.clampPort.x)
+      expect(ports.outletPort.direction).toBe('right')
+
+      const { container } = render(
+        React.createElement(
+          'svg',
+          null,
+          React.createElement(SolidHeatingGeneratorApparatus, { x: 50, y: 480, targetGas: 'NH₃' })
+        )
+      )
+      expect(container.querySelector('#solid-heating-generator')).toBeTruthy()
     })
 
-    it('启普发生器结构断言：上漏斗长颈管必须贯穿中球直达底球 (深度 > 多孔隔板)', () => {
-      const BASE_H = 220
-      const WAIST_PERFORATED_PLATE_Y = 154 // 多孔隔板 Y 坐标
-      const STEM_BOTTOM_Y = BASE_H - 12     // 长管底端 Y 坐标 (深入底球近底)
+    it('启普发生器真实 DOM：长颈管深入下球底面以上方，开关切换时酸液层随之退回或漫过隔板', () => {
+      const ports = getKippApparatusPorts(0, 0, 90)
+      expect(ports.outletPort.direction).toBe('up')
 
-      // 断言：长管底端必须深入多孔隔板下方至少 40px，确保酸液液封并实现连通器压差
-      expect(STEM_BOTTOM_Y - WAIST_PERFORATED_PLATE_Y).toBeGreaterThan(40)
+      const { container: openDom } = render(
+        React.createElement('svg', null, React.createElement(KippApparatus, { x: 0, y: 0, isOpen: true }))
+      )
+      const stem = openDom.querySelector('#internal-stem-tube rect')
+      expect(stem).toBeTruthy()
+      const stemBottom = Number(stem!.getAttribute('y')) + Number(stem!.getAttribute('height'))
+      expect(stemBottom).toBeGreaterThan(200)
+      expect(openDom.querySelector('#acid-liquid-open')).toBeTruthy()
+
+      const { container: closedDom } = render(
+        React.createElement('svg', null, React.createElement(KippApparatus, { x: 0, y: 0, isOpen: false }))
+      )
+      expect(closedDom.querySelector('#acid-liquid-closed')).toBeTruthy()
     })
   })
 

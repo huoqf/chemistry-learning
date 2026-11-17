@@ -283,9 +283,8 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
       },
     ],
     piBonds: [
-      // SO₂ 的两个 S=O 都是双键（O=S=O），故必须各画一条 π 键。
-      // 两条 π 都来自 S 的同一个未杂化 p（垂直于分子平面），因此方向一致；
-      // 原数据只写了 1 条，等价于把右侧画成 S=O、左侧画成 S–O。
+      // SO₂ 中 S 为 sp² 杂化，剩余 1 个未杂化 p 轨道与两个 O 形成 1 个三中心四电子离域大 π 键 (Π³₄)。
+      // 3D 视图沿两根等长 S—O 键各渲染一翼 π 云用于展示该离域 Π³₄ 覆盖两键的对称性，方向垂直分子平面。
       {
         startPos: SO2_CENTER,
         endPos: addVec(SO2_CENTER, scaleDir(SO2_UNIT_DIRS[0], SO2_BOND_LEN)),
@@ -297,7 +296,7 @@ export const HYBRID_MODELS: Record<string, HybridModelData> = {
         dir: [0, 0, 0.9],
       },
     ],
-    description: 'S 原子采取 sp² 杂化，1 对孤电子对占据 1 个 sp² 轨道，使分子呈现 V 形 (键角约 119.5°)。',
+    description: 'S 原子采取 sp² 杂化（V 形，键角约 119.5°），1 个未杂化 p 轨道与两个 O 形成 1 个三中心四电子离域大 π 键 (Π³₄)。',
   },
 
   c2h4: {

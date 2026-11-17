@@ -117,7 +117,9 @@ describe('高中化学真理性与高考命题合规性自动化守门审计', (
       expect(formicPhenyl?.examAnalysis).toContain('【酯基】')
       expect(formicPhenyl?.examTraps).toContain('酯基')
 
-      const { result } = renderHook(() => useOrganicQuantitative(formicPhenyl!.counts))
+      const { result } = renderHook(() =>
+        useOrganicQuantitative(formicPhenyl!.counts, 'formic-phenyl-ester')
+      )
       expect(result.current.NaOH).toBe(2)
       expect(result.current.precipitateAg).toBe(2)
     })

@@ -124,6 +124,7 @@ function MoleBarChartContent({ chemistry }: { chemistry: RedoxChemistryResult })
   const { toSvgX, toSvgY, font } = ctx
 
   const {
+    model,
     actualTransferredElectrons,
     actualOxidantMoles,
     actualReductantMoles,
@@ -133,10 +134,13 @@ function MoleBarChartContent({ chemistry }: { chemistry: RedoxChemistryResult })
   const oxColor = CHEMISTRY_COLORS.reactionRate
   const redColor = CHEMISTRY_COLORS.concentration
 
-  // 注意：「还原剂」柱必须取 actualReductantMoles，与「氧化剂」柱是两个不同的量
-  // （如 2Na + Cl₂ 中还原剂 Na 为 2 mol、氧化剂 Cl₂ 为 1 mol；MnO₂ + 4HCl 中为 4 : 1）
+  // 对于 MnO₂ + 4HCl(浓) 部分氧化还原，仅展示实际作还原剂被氧化的 HCl 物质的量 (2n)，避免误导为 4n
+  const effectiveReductantMoles =
+    model.id === 2
+      ? model.elements.oxidized.count * (actualTransferredElectrons / model.transferredElectrons)
+      : actualReductantMoles
   const moleData = [
-    { label: '还原剂', value: actualReductantMoles, color: oxColor },
+    { label: model.id === 2 ? '作还原剂HCl' : '还原剂', value: effectiveReductantMoles, color: oxColor },
     { label: '氧化剂', value: actualOxidantMoles, color: redColor },
     { label: '氧化产物', value: actualOxProductMoles, color: oxColor },
     { label: '转移电子', value: actualTransferredElectrons, color: CHART_COLORS.primary },

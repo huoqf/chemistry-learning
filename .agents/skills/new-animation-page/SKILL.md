@@ -19,7 +19,7 @@ description: 新建动画页面 / 创建新的化学动画组件 / 新增动画�
 > - 水平变化+图表在上 → **splitV**（低频）
 > - 无图表 → **full**；圆形对称 → **square**
 
-⚠️ **worldWidth 账本**：`useSceneScale` 的 `worldWidth` 等于 **SVG 画布实际宽度**（splitH 左区=**420**，splitHw 装置区=**280**，full=**840**），写错导致场景双倍/半倍缩放。
+⚠️ **worldWidth 账本**：`useSceneScale` 的 `worldWidth` 是**化学/物理逻辑坐标系的场景域宽度**（`scaleX = visibleDesign.width / worldWidth`，如反应容器跨度 `10` 个逻辑单位）；不要把设计画布宽度 `420/280/840` 当作 `worldWidth`（那会导致 `scaleX ≈ 1` 而丧失世界坐标映射）。
 
 ⚠️ **高度账本**：多图表时用 `flex-1 min-h-0` 弹性平分，严禁手写 `h-[280px]` 固定高度与 `overflow-y-auto` 滚动。
 
@@ -29,18 +29,17 @@ description: 新建动画页面 / 创建新的化学动画组件 / 新增动画�
 
 | 模式 | 典型场景 |
 |------|---------|
-| `'timed'`（默认，可省略） | 化学反应/滴定/浓度变化——**绝大多数** |
+| `'timed'`（默认，可省略） | 化学反应/滴定/浓度变化/化学平衡（配 `stopCondition`）——**绝大多数** |
 | `'param'` | 静态结构、参数分析，无时间轴 |
-| `'loop'` | 分子振动、布朗运动，永续循环 |
-| `'loop'` + stopCondition | 化学平衡（正逆速率相等自动暂停） |
+| `'loop'` | 分子热运动、布朗运动等永续循环演示 |
 
 ### 0C：其余参数
 
 | 项 | 说明 |
 |----|------|
-| anchor | `'center'`（圆周对称）/ `'viewport'`（充满型）/ `'design'`（固定原点） |
-| worldWidth/Height | 化学场景真实尺寸（anchor='viewport' 时必填） |
-| CenterExtra | 需要实时图表时才加 |
+| anchor | `'center'`（圆周对称，配 `scaleDesign`）/ `'viewport'`（充满型，配 `worldWidth`/`worldHeight`）/ `'design'`（固定原点） |
+| worldWidth/Height | 化学场景逻辑坐标系宽高（`anchor='viewport'` 时必填） |
+| 右屏与附属展示 | 通过 `chemistryQuantities.ts` + registry `formulas`/`gaokaoPoints` 驱动（`AnimationPage` 自身不消费 `CenterExtra`） |
 
 ---
 
@@ -95,8 +94,7 @@ export default function <Topic>Animation() {
     vp,
     preset: CANVAS_PRESETS.full,
     anchor: 'center',
-    physicsWidth: 10,
-    physicsHeight: 8,
+    scaleDesign: 40, // 1 逻辑单位 = 40 设计像素
   })
 
   return (
@@ -141,13 +139,13 @@ export default function <Topic>Animation() {
 >     {/* 右侧：图表区，DOM 层与 SVG 平级，无 foreignObject */}
 >     <div className="flex-1 h-full min-w-0 flex flex-col overflow-hidden border-l border-slate-200/60">
 >       <div className="flex-1 min-h-0 w-full p-2">
->         <BaseChart title="图表 1" xDomain={[0, 2]} yDomain={[-2, 8]} ... />
+>         <BaseChart title="图表 1" xDomain={[0, MAX_TIME]} yDomain={[0, 2]} xLabel="t / s" yLabel="c / (mol·L⁻¹)" ... />
 >       </div>
 >     </div>
 >   </div>
 > )
-> // splitH sceneScale: worldWidth = 左区宽度 420
-> // useSceneScale({ vp, preset: CANVAS_PRESETS.splitH, anchor: 'viewport', worldWidth: 420, worldHeight: 650 })
+> // splitH sceneScale: worldWidth 为化学逻辑域宽度（例如反应区 10 个逻辑单位）
+> // useSceneScale({ vp, preset: CANVAS_PRESETS.splitH, anchor: 'viewport', worldWidth: 10, worldHeight: 15 })
 > ```
 >
 > **splitV 布局**（上图表+下动画）：
@@ -190,10 +188,8 @@ export interface <Topic>ChemistryResult {
  */
 export function use<Topic>Chemistry({ c0, k, time }: Use<Topic>ChemistryParams): <Topic>ChemistryResult {
   return useMemo(() => {
-    // 纯化学计算，无副作用，无 DOM/React/window/store 依赖
-    const c = c0 * Math.exp(-k * time)
-    const v = k * c
-    return { c, v }
+    // 委托 src/chemistry/<domain>.ts 纯函数计算（与右屏 Quantities 共享同一公式源）
+    return compute<Topic>State(c0, k, time)
   }, [c0, k, time])
 }
 ```
@@ -222,7 +218,7 @@ export function <Topic>Scene({ chemistry, canvasSize, sceneScale }: <Topic>Scene
   return (
     <g>
       {/* 器材：用现有组件，禁止手写等效 SVG */}
-      {/* 坐标：worldToDesign({ x, y }, sceneScale)，禁止手写 x * scale + offset */}
+      {/* 坐标：const { px, py } = worldToDesign(x, y, sceneScale)，禁止手写 x * scale + offset */}
       {/* 字号：font(N)，禁止裸 fontSize={14}（见 AGENTS.md 铁律 7） */}
     </g>
   )
@@ -292,8 +288,8 @@ export function build<Topic>Quantities(
   time: number,
 ): ChemistryQuantity[] {
   const { c0 = 1.0, k = 0.5 } = params
-  const c = c0 * Math.exp(-k * time)
-  const v = k * c
+  // 与 Hook 共同调用 src/chemistry/<domain>.ts 纯函数
+  const { c, v } = compute<Topic>State(c0, k, time)
   return [
     { key: 'c', label: '浓度', value: parseFloat(c.toFixed(4)), unit: 'mol/L',     colorKey: 'concentration' },
     { key: 'v', label: '速率', value: parseFloat(v.toFixed(4)), unit: 'mol/(L·s)', colorKey: 'reactionRate'  },
@@ -309,16 +305,16 @@ registerQuantityBuilder('anim-<topic>', build<Topic>Quantities)
 
 ### 3C：知识树（`src/data/knowledgeTree.ts`）
 
-`resolveAnimationIds()` 自动关联，无需手动操作。只需确认：
-1. `knowledgeId` 与 `knowledge/<domain>.ts` 中节点 `id` 一致（静默失败，必须手动核对）
-2. 全新领域需在 `knowledge/<domain>.ts` 添加节点，并在 `knowledge/index.ts` 导出
+需核对以下两处：
+1. `knowledgeId` 与 `knowledge/<domain>.ts` 中节点 `id` 一致（静默失败，必须手动核对）；
+2. 若需让新动画在首页**首屏同步渲染阶段**立即可见，需确认 `knowledgeTree.ts` 中 `loadExtendedRegistry()` 与初始 `animIds` 注入关联（全新领域还需在 `knowledge/<domain>.ts` 添加节点，并在 `knowledge/index.ts` 导出）。
 
 ---
 
 ## 执行前 Checklist
 
 - [ ] **三屏**：主屏无教学文字；左屏走 paramMeta/controlMeta；右屏由框架渲染（见 AGENTS.md 三屏铁律）
-- [ ] **布局**：preset 正确；worldWidth 对应 SVG 实际宽度；多图表用 `flex-1 min-h-0`；无手写固定高度；无 `foreignObject`
+- [ ] **布局**：preset 正确；worldWidth 对应逻辑坐标系宽度；多图表用 `flex-1 min-h-0`；无手写固定高度；无 `foreignObject`
 - [ ] **背景色**：画布区及图表区任何包裹 div 绝不手写背景色（包括 bg-white、bg-slate-50 等，由 Light Theme 统一提供）
 - [ ] **纯计算层**：复杂反应/平衡/动力学公式在 `src/chemistry/` 权威收敛，Hook 与右屏 Quantities 100% 同源引用
 - [ ] **时序图**：history 全量预计算 + `.filter(p => p.time <= time)`；图表显式传 `xDomain={[0, MAX_TIME]}`；stopCondition 用化学条件（非时间截断）；reset 路径同步清空衍生状态

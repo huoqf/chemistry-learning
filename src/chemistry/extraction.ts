@@ -88,3 +88,64 @@ export function miscibleUniformConcentration(
 ): number {
   return (c0 * vAqueous) / (vAqueous + vAdded);
 }
+
+/** CCl₄ 常压沸点 (°C) */
+export const CCL4_BOILING_POINT_C = 76.8;
+
+/** 室温环境温度 (°C) */
+export const ROOM_TEMP_C = 20.0;
+
+export interface DistillationComputation {
+  /** 沸点参考值 (°C) */
+  tBoil: number;
+  /** 温度计当前示数目标平台 (°C)：温度计插液面时偏高至 86.5°C */
+  targetBoilTemp: number;
+  /** 升温速率 (°C/s) */
+  heatSpeed: number;
+  /** 当前温度计读数 (°C) */
+  currentTemp: number;
+  /** 达沸点后的持续沸腾时长 (s) */
+  boilTime: number;
+  /** 冷凝水正常/反向效率因子 */
+  flowMultiplier: number;
+  /** 馏出速率 (mL/s) */
+  distRate: number;
+  /** 累计馏出体积 (mL，最大 40 mL) */
+  distilledVolumeMl: number;
+  /** 蒸气凝结速率表观值 (mL/s) */
+  vaporRate: number;
+}
+
+/**
+ * 蒸馏分馏状态纯计算（量面板、图表与 SVG 场景共用唯一来源）。
+ * @param power 加热功率 (W)
+ * @param time 当前时间 (s)
+ * @param misoperation 误操作编号 (0: 规范, 1: 温度计深入液面, 2: 冷凝水反向, 3: 未加沸石)
+ */
+export function computeDistillationState(
+  power: number,
+  time: number,
+  misoperation: number
+): DistillationComputation {
+  const tBoil = CCL4_BOILING_POINT_C;
+  const targetBoilTemp = misoperation === 1 ? 86.5 : tBoil;
+  const heatSpeed = (power / 500) * 14.0;
+  const currentTemp = Math.min(targetBoilTemp, ROOM_TEMP_C + heatSpeed * time);
+  const boilTime = Math.max(0, time - (targetBoilTemp - ROOM_TEMP_C) / heatSpeed);
+  const flowMultiplier = misoperation === 2 ? 0.35 : 1.0;
+  const distRate = (power / 500) * 5.2 * flowMultiplier;
+  const distilledVolumeMl = Math.min(40, boilTime * distRate);
+  const vaporRate = boilTime > 0 ? parseFloat((distRate * 0.4).toFixed(2)) : 0.0;
+
+  return {
+    tBoil,
+    targetBoilTemp,
+    heatSpeed,
+    currentTemp,
+    boilTime,
+    flowMultiplier,
+    distRate,
+    distilledVolumeMl,
+    vaporRate,
+  };
+}

@@ -41,7 +41,7 @@ export const modelElementPeriodicProperty: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'var-elem-1',
-      yearProvince: '2024 山东卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-element-periodic-property',
       title: '短周期元素 X、Y、Z、W 的"位-构-性"逻辑推断',
       contextDescription: '短周期主族元素 X、Y、Z、W 的原子序数依次增大。X 的基态原子 p 轨道电子数等于 s 轨道电子数，Y 的电负性在同周期中最强，Z 的简单离子在同周期阴阳离子中半径最小，W 的价层电子 3p 轨道半充满。',
@@ -57,7 +57,7 @@ export const modelElementPeriodicProperty: ModelQuizData = {
     },
     {
       id: 'var-elem-2',
-      yearProvince: '2024 全国甲卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-element-periodic-property',
       title: '第四周期过渡元素 Cr、Mn、Cu 电子排布与电离能',
       contextDescription: '第四周期 d 区与 ds 区过渡元素在工业催化中应用广泛。Cr (24号) 与 Cu (29号) 的基态原子核外电子排布具有特殊性。',
@@ -73,7 +73,7 @@ export const modelElementPeriodicProperty: ModelQuizData = {
     },
     {
       id: 'var-elem-3',
-      yearProvince: '2023 新课标卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-element-periodic-property',
       title: '第一电离能 I₁ 同周期全反常特例 (Mg > Al, P > S, N > O)',
       contextDescription: '第三周期主族元素从左到右，其第一电离能 I₁ 的变化呈现整体递增但局部反常锯齿状特征。',
@@ -89,7 +89,7 @@ export const modelElementPeriodicProperty: ModelQuizData = {
     },
     {
       id: 'var-elem-4',
-      yearProvince: '2024 浙江卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-element-periodic-property',
       title: '等电子体微粒半径核电荷数反比律 (O²⁻, F⁻, Na⁺, Mg²⁺, Al³⁺)',
       contextDescription: '具有相同电子层结构的 10 电子微粒，其离子半径随核电荷数的改变而呈现规律性变化。',
@@ -105,7 +105,7 @@ export const modelElementPeriodicProperty: ModelQuizData = {
     },
     {
       id: 'var-elem-5',
-      yearProvince: '2023 湖北卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-element-periodic-property',
       title: '基态原子核外电子排布式与能量最低原理/泡利原理/洪特规则',
       contextDescription: '基态原子的核外电子排布必须遵循三大基本物理原理：能量最低原理、泡利不相容原理和洪特规则。',

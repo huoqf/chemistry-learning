@@ -309,8 +309,8 @@ export function computeAnionStepChemistry(
     }
   }
 
-  // ── 23. AlO2- (两性偏铝酸根：先析出 Al(OH)3，酸过量完全溶解澄清！) ──
-  if (ionId === 'AlO2-') {
+  // ── 23. [Al(OH)4]- (两性四羟基合铝酸根：先析出 Al(OH)3，酸过量完全溶解澄清！) ──
+  if (ionId === '[Al(OH)4]-' || ionId === 'AlO2-') {
     if (reagentId.includes('alo2-hcl')) {
       if (dropCount === 1) {
         return {
@@ -321,7 +321,7 @@ export function computeAnionStepChemistry(
           precipitateColor: '#ffffff',
           hasGas: false,
           litmusChange: false,
-          annotation: '【逐滴滴加少量强酸】：AlO₂⁻ + H⁺ + H₂O = Al(OH)₃↓ 析出白色胶状沉淀',
+          annotation: '【逐滴滴加少量强酸】：[Al(OH)₄]⁻ + H⁺ = Al(OH)₃↓ + H₂O 析出白色胶状沉淀',
           stepTitle: '阶段 1/2：滴加少量强酸 (析出白色沉淀)',
         }
       }
@@ -346,7 +346,7 @@ export function computeAnionStepChemistry(
         precipitateColor: '#ffffff',
         hasGas: false,
         litmusChange: false,
-        annotation: '【通入弱酸 CO₂】：AlO₂⁻ + CO₂ + 2H₂O = Al(OH)₃↓ + HCO₃⁻ 沉淀在过量弱酸中绝对不溶解',
+        annotation: '【通入弱酸 CO₂】：[Al(OH)₄]⁻ + CO₂ = Al(OH)₃↓ + HCO₃⁻ 沉淀在过量弱酸中绝对不溶解',
         stepTitle: '通入过量 CO₂ (析出白色沉淀且不溶解)',
       }
     }
@@ -489,7 +489,7 @@ export function computeAnionStepChemistry(
         hasGas: true,
         litmusChange: false,
         annotation: '【酸性强氧化】：3Cu + 8H⁺ + 2NO₃⁻ = 3Cu²⁺ + 2NO↑ + 4H₂O，管口呈红棕色 NO₂，溶液变天蓝',
-        stepTitle: dropCount === 1 ? '加入浓硫酸' : '微热生成红棕色气体与天蓝色溶液',
+        stepTitle: dropCount === 1 ? '加入稀硫酸与铜片' : '微热生成红棕色气体与天蓝色溶液',
       }
     }
     return {
@@ -543,7 +543,7 @@ export function computeAnionStepChemistry(
       precipitateColor: '#ffffff',
       hasGas: true,
       litmusChange: false,
-      annotation: '【挥发性弱酸】：CH₃COO⁻ + H⁺ ⇌ CH₃COOH↑ 微热产生特有强烈刺激性酸醋香味',
+      annotation: '【挥发性弱酸】：CH₃COO⁻ + H⁺ ⇌ CH₃COOH（微热逸出醋酸蒸气），产生特有刺激性醋酸气味',
       stepTitle: '浓硫酸微热 (挥发刺激性醋酸香味)',
     }
   }

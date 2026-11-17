@@ -149,7 +149,7 @@ export const MECHANISM_TEACHING_GUIDES: Record<
     observationGuide: '观察断键必须同时断裂 O-H 键和 α-C 上的 C-H 键；切换至【叔丁醇反例】可观察到 α-C 无氢脱出导致反应终止。',
   },
   3: {
-    condition: '浓硫酸催化、加热沸水浴 (回流防挥发，饱和碳酸钠洗涤除酸除醇降溶度)',
+    condition: '浓硫酸催化并吸水、酒精灯加热（饱和 Na₂CO₃ 溶液吸收除酸除醇并降低酯溶解度）',
     coreQuestion: '水分子中的氧原子到底来自乙酸还是来自乙醇？',
     observationGuide: '点击【断键过渡】观察乙酸羧基脱去 -OH、乙醇脱去 -H，粉色 ¹⁸O 氧原子完整保留进入乙酸乙酯。',
   },
@@ -369,7 +369,7 @@ export function getMechanismFormulas(
           {
             name: '酯化平衡总反应方程式',
             latex: '\\begin{aligned} &\\mathrm{CH_3COOH + CH_3CH_2^{18}OH} \\\\[2pt] &\\quad \\xrightleftharpoons[\\Delta]{\\text{浓}H_2SO_4} \\mathrm{CH_3CO^{18}OCH_2CH_3 + H_2O} \\end{aligned}',
-            condition: '浓 H₂SO₄ 吸水并催化, 沸水浴加热',
+            condition: '浓 H₂SO₄ 催化并吸水, 酒精灯直接加热',
             note: '18O 全部进入乙酸乙酯，生成的水分子完全不含 18O。水解时断裂 C-O 键恢复。',
           },
         ]

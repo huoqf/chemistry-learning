@@ -25,9 +25,9 @@ export const modelIonMatrix: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'quiz-1',
-      yearProvince: '全国卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-ion-matrix',
-      title: '真题精选：溶液中离子共存与限制条件突破',
+      title: '考点变式：溶液中离子共存与限制条件突破',
       contextDescription: '25℃ 时，在指定微粒大量存在的特定水溶液体系中。',
       questionText: '下列各组离子在指定溶液中一定能够大量共存的是？',
       options: [

@@ -64,7 +64,7 @@ export const ZN_CONFIG: ElementValenceConfig = {
       colorText: '无色透明溶液配盐',
       colorStyle: 'bg-indigo-50 text-indigo-900 border-indigo-200',
       rgbColor: colors.primary[100],
-      testReaction: '四羟基合锌酸钠，通入过量 CO₂ 产生白色 Zn(OH)₂ 沉淀（弱酸制强碱弱酸盐）',
+      testReaction: '四羟基合锌酸钠，通入过量 CO₂ 产生白色 Zn(OH)₂ 沉淀（较强酸制较弱酸）',
       equation: '[Zn(OH)₄]²⁻ + 2CO₂ = Zn(OH)₂↓ + 2HCO₃⁻',
       roleDescription: '两性强碱溶解配合物',
     },

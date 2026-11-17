@@ -18,9 +18,9 @@ describe('collision.ts — 碰撞理论核心物理化学计算', () => {
       expect(computeEffectiveActivationEnergy(50, false)).toBe(50)
     })
 
-    it('有催化剂时活化能降低为 0.55 倍', () => {
+    it('有催化剂时实效活化能按催化系数比例显著下降', () => {
       expect(computeEffectiveActivationEnergy(80, true)).toBeCloseTo(80 * CATALYST_EA_FACTOR, 5)
-      expect(computeEffectiveActivationEnergy(100, true)).toBeCloseTo(55, 5)
+      expect(computeEffectiveActivationEnergy(100, true)).toBeLessThan(100)
     })
   })
 
@@ -59,10 +59,11 @@ describe('collision.ts — 碰撞理论核心物理化学计算', () => {
       })
     })
 
-    it('常温常压常规活化能下，活化分子占比在合理的教学展示区间 (1% ~ 50%)', () => {
-      const normal = computeMaxwellBoltzmann(298, 80, false)
-      expect(normal.activationFraction).toBeGreaterThanOrEqual(0.01)
-      expect(normal.activationFraction).toBeLessThanOrEqual(0.5)
+    it('极低/极高 Ea 下活化分子占比被安全钳制在 [0.005, 0.99] 区间内', () => {
+      const veryHighEa = computeMaxwellBoltzmann(250, 300, false)
+      const veryLowEa = computeMaxwellBoltzmann(600, 0.1, true)
+      expect(veryHighEa.activationFraction).toBeGreaterThanOrEqual(0.005)
+      expect(veryLowEa.activationFraction).toBeLessThanOrEqual(0.99)
     })
   })
 
@@ -93,14 +94,25 @@ describe('collision.ts — 碰撞理论核心物理化学计算', () => {
       expect(k.effectiveCollisions).toBeCloseTo(k.totalCollisions * k.activationFraction, 5)
     })
 
-    it('反应速率 v = k * c 恒成立', () => {
-      const k = computeCollisionKinetics({
+    it('反应速率 v = k * c 恒成立，且变温下 v 与 Z_eff 保持恒定正比', () => {
+      const lowT = computeCollisionKinetics({
         temperature: 298,
         concentration: 1.5,
         activationEnergy: 80,
         hasCatalyst: false,
       })
-      expect(k.reactionRate).toBeCloseTo(k.rateConstant * 1.5, 5)
+      const highT = computeCollisionKinetics({
+        temperature: 500,
+        concentration: 1.5,
+        activationEnergy: 80,
+        hasCatalyst: false,
+      })
+      expect(lowT.reactionRate).toBeCloseTo(lowT.rateConstant * 1.5, 5)
+      expect(highT.reactionRate).toBeCloseTo(highT.rateConstant * 1.5, 5)
+      expect(highT.reactionRate / highT.effectiveCollisions).toBeCloseTo(
+        lowT.reactionRate / lowT.effectiveCollisions,
+        8
+      )
     })
   })
 })

@@ -37,12 +37,12 @@
 | 类别 | 选型 |
 |------|------|
 | 前端框架 | React 19 |
-| 构建工具 | Vite 6，base: './' |
-| 语言 | TypeScript 5.5+（strict mode） |
+| 构建工具 | Vite 8，base: './' |
+| 语言 | TypeScript 6（strict mode） |
 | CSS 框架 | TailwindCSS 4 |
 | 状态管理 | Zustand |
 | 路由 | react-router-dom（HashRouter only） |
-| 动画渲染 | SVG（教学图解优先）/ Canvas（高频动画）/ PixiJS（后期复杂场景） |
+| 动画渲染 | SVG（教学图解优先）/ Canvas（高频动画）/ Three.js + React Three Fiber（3D 晶胞与分子构型） |
 | 数学公式 | KaTeX（完全离线） |
 | 图标 | lucide-react |
 | 数据验证 | Zod |
@@ -64,24 +64,24 @@
 
 | 序号 | 铁律 | 禁止 |
 |------|------|------|
-| 1 | 统一来源，禁止绕过（十条子约束见下方展开） | 硬编码颜色/魔法数字/裸值 fontSize={N}/自造 marker/直接 requestAnimationFrame/写死 scale = N |
+| 1 | 统一来源，禁止绕过（十一条子约束见下方展开） | 硬编码颜色/魔法数字/裸值 fontSize={N}/自造 marker/直接 requestAnimationFrame/写死 scale = N |
 | 2 | 化学计算层纯函数可序列化：src/chemistry/ 无副作用、无 DOM/React/window 依赖、有 JSDoc + 单位注释；所有数据结构可序列化 | 在 chemistry/ 中访问 DOM/Store；不可序列化的数据结构（Set/Map/Function） |
-| 3 | 组件职责边界：页面组件薄壳（路由+布局+数据注入）；三屏不交叉；动画状态统一 useAnimationStore | 页面塞业务逻辑；右侧屏放参数控件；左侧屏放公式推导；另建 useChemistryState |
+| 3 | 组件职责边界：页面组件薄壳（路由+布局+数据注入）；三屏不交叉；动画状态统一 useAnimationStore | 页面塞业务逻辑；右侧屏放参数控件；左侧屏放公式推导；另建孤立状态池 |
 | 4 | HashRouter only：禁止 BrowserRouter（Electron file:// 下路由 404） | BrowserRouter |
 | 5 | 组件复用优先：场景中存在可复用组件时必须直接使用，禁止在 features/ 中重复手写等效实现 | 手写已有组件实现（烧杯/试管/分子模型/矢量箭头/图表轴等） |
 | 6 | 左屏控制台声明式优先：左屏必须使用 LeftPanel 体系；数值参数优先 paramMeta -> ParamControl，模式/开关/预设/提示优先 controlMeta -> ControlPanel | 新页面手写散乱左屏容器、简单模式切换/开关仍写 SidebarExtra、直接手写 input[type=range] |
 
-### 铁律 1 展开：统一来源十条子约束
+### 铁律 1 展开：统一来源十一条子约束
 
-1. 颜色/间距/圆角/阴影/动效 -> 必须从 src/theme/ 引用
+1. 颜色/间距/圆角/阴影/动效 -> 必须从 `@/theme` 引用
 2. 坐标转换 -> 新页面必须走 worldToDesign()（src/scene，通过 useSceneScale 构造 SceneScale）
 3. 场景缩放 -> 新页面统一使用 useSceneScale（src/hooks/useSceneScale.ts）构造 SceneScale，通过 anchor 模式选择缩放策略；化学坐标->设计坐标统一使用 worldToDesign（src/scene）
 4. 动画调度 -> 必须通过 src/utils/animation.ts 的 Hook（禁止直接调用 requestAnimationFrame）
 5. 矢量箭头 -> 必须使用 VectorArrow 或 ChemistryVectorArrow 组件；化学矢量（浓度/速率/能量变化等）优先使用 ChemistryVectorArrow（禁止 pixelLength，长度通过 sceneScale.refMagnitudes 归一化）；视觉标注/几何图形/等长示意使用 VectorArrow
 6. 画布尺寸 -> 新页面通过 useAnimationViewport({ preset }) 统一获取（见约束 8）
-7. 字体缩放 -> 必须走 font() 函数（内置 clamp 7-16，来自 useCanvasSize 返回值）
+7. 字体缩放 -> 必须走 font() 函数（来自 useAnimationViewport / useCanvasSize 返回值）
 8. 布局缩放策略：新页面唯一标准路径为 useAnimationViewport({ preset }) + AnimationSvgCanvas，无 viewBox，SVG 以 CSS 尺寸为视口
-9. Canvas+SVG 混合渲染坐标对齐：SVG 使用 useSceneScale + worldToDesign；Canvas 使用 useCanvasViewport({ mode: 'raw' }) + designToPixel
+9. Canvas+SVG 混合渲染坐标对齐：SVG 使用 useSceneScale + worldToDesign；Canvas（2D pixel）需配合 useCanvasViewport({ mode: 'raw' }) 与 designToPixel，SVG 场景设计坐标层使用 `'transform'` 模式
 10. 渲染缩放策略互斥：同一组件只能选一条核心渲染策略。严禁在 SVG 内用 foreignObject 嵌入响应式 React 图表组件
 11. viewModel 纯净性：model/viewModel.ts 只返回化学坐标系数据，禁止引入 viewport 相关坐标
 

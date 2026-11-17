@@ -108,10 +108,10 @@ export function TitrationCenterView({
         <div className="flex items-center justify-between border-b pb-2 mb-3">
           <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2">
             <HelpCircle className="w-4 h-4 text-amber-600" />
-            高考真题变式选择题 & 详细解析
+            考点变式选择题 & 详细解析
           </h3>
           <span className="text-xs text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md font-medium border border-amber-200">
-            包含近年滴定突跃与粒子排序真题
+            滴定突跃与粒子排序考点变式
           </span>
         </div>
         <GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />
@@ -187,7 +187,11 @@ export function TitrationCenterView({
           <div className="absolute top-2 left-2 right-2 bg-white/90 border border-slate-200 px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs font-mono backdrop-blur shadow-xs">
             <span className="font-bold text-slate-800 flex items-center gap-1">
               <Eye className="w-3.5 h-3.5 text-amber-500" />
-              {isAcidTitrant ? 'HCl 滴定 NH₃·H₂O' : 'NaOH 滴定 CH₃COOH'}
+              {params.systemType === 'strongAcidWeakBase'
+                ? 'HCl 滴定 NH₃·H₂O'
+                : params.systemType === 'strongBaseStrongAcid'
+                ? 'NaOH 滴定 HCl'
+                : 'NaOH 滴定 CH₃COOH'}
             </span>
             <span className="text-indigo-700 font-bold">
               pH {chemistry.pH.toFixed(2)}

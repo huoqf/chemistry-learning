@@ -36,4 +36,18 @@ describe('buildRedoxElectronTransferQuantities', () => {
     expect(redQ?.value).toBe(2.0)
     expect(oxQ?.value).toBe(1.0)
   })
+
+  it('MnO₂ + 4HCl 反应正确输出 effectiveReductantMoles（作还原剂的 HCl 仅占半数）及转移电子微粒数', () => {
+    const q = buildRedoxElectronTransferQuantities({ moleAmount: 1.0, reaction: 2 })
+    const oxQ = q.find((item) => item.key === 'oxidantMoles')
+    const redQ = q.find((item) => item.key === 'reductantMoles')
+    const effRedQ = q.find((item) => item.key === 'effectiveReductantMoles')
+    const eCountQ = q.find((item) => item.key === 'electronCount')
+
+    expect(oxQ?.value).toBe(1.0)
+    expect(redQ?.value).toBe(4.0)
+    expect(effRedQ).toBeDefined()
+    expect(effRedQ?.value).toBe(2.0)
+    expect(eCountQ?.value).toBeCloseTo(2 * 6.02, 2)
+  })
 })

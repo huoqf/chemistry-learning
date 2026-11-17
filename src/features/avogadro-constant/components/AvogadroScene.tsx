@@ -12,6 +12,7 @@ import {
   VectorArrow,
 } from '@/components/Chemistry'
 import type { AvogadroParams, AvogadroResult } from '../types'
+import { AvogadroStructureScene } from './AvogadroStructureScene'
 
 interface AvogadroSceneProps {
   params: AvogadroParams
@@ -228,164 +229,11 @@ export const AvogadroScene: React.FC<AvogadroSceneProps> = ({
 
       {/* 2. 结构化学微观几何与成键拓扑 */}
       {params.trapCategory === 'structure-bonds' && (
-        <g transform="translate(210, 215)">
-          {params.structureItem === 'P4' ? (
-            /* P4 白磷正四面体立体旋转微动画 */
-            <g>
-              {(() => {
-                const rotTheta = Math.sin(animTime * 1.2) * 16
-                const rad = (rotTheta * Math.PI) / 180
-                const p1x = 0
-                const p1y = -105
-                const p2x = -95 * Math.cos(rad) - 20 * Math.sin(rad)
-                const p2y = 55
-                const p3x = 95 * Math.cos(rad) - 20 * Math.sin(rad)
-                const p3y = 55
-                const p4x = 25 * Math.sin(rad)
-                const p4y = 0
-                const glowAlpha = 0.75 + 0.25 * Math.sin(animTime * 3)
-
-                return (
-                  <g>
-                    <polygon
-                      points={`${p1x},${p1y} ${p2x},${p2y} ${p3x},${p3y}`}
-                      fill={withAlpha('#a855f7', 0.12)}
-                      stroke="#7e22ce"
-                      strokeWidth={3}
-                      strokeOpacity={glowAlpha}
-                    />
-                    <line x1={p1x} y1={p1y} x2={p4x} y2={p4y} stroke="#7e22ce" strokeWidth={2.8} strokeOpacity={glowAlpha} />
-                    <line x1={p2x} y1={p2y} x2={p4x} y2={p4y} stroke="#a855f7" strokeWidth={2.2} strokeDasharray="4 3" />
-                    <line x1={p3x} y1={p3y} x2={p4x} y2={p4y} stroke="#a855f7" strokeWidth={2.2} strokeDasharray="4 3" />
-
-                    {[
-                      [p1x, p1y], [p2x, p2y], [p3x, p3y], [p4x, p4y]
-                    ].map(([px, py], idx) => (
-                      <g key={idx}>
-                        <circle cx={px} cy={py} r="18" fill="#f3e8ff" stroke="#7e22ce" strokeWidth={2.5} />
-                        <text x={px} y={py + 5} fill="#6b21a8" fontSize={canvasSize.font(13)} textAnchor="middle" fontWeight="bold">
-                          P
-                        </text>
-                      </g>
-                    ))}
-                  </g>
-                )
-              })()}
-
-              <text x="0" y="96" fill="#6b21a8" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">
-                正四面体：4 个 P 顶点 · 6 条 P-P 棱键
-              </text>
-              <text x="0" y="118" fill="#7e22ce" fontSize={canvasSize.font(11)} textAnchor="middle">
-                1 mol P<tspan dy="2" fontSize="0.75em">4</tspan><tspan dy="-2" fontSize="1em"> = 6 mol 共价键 (键角 60°)</tspan>
-              </text>
-            </g>
-          ) : params.structureItem === 'SiO2' ? (
-            /* SiO2 二氧化硅硅氧网状单元 */
-            <g>
-              {(() => {
-                const wave = Math.sin(animTime * 2) * 2
-                return (
-                  <g>
-                    <line x1="0" y1="0" x2="0" y2={-70 - wave} stroke="#0284c7" strokeWidth={3.5} />
-                    <line x1="0" y1="0" x2={-65 - wave} y2={45 + wave} stroke="#0284c7" strokeWidth={3.5} />
-                    <line x1="0" y1="0" x2={65 + wave} y2={45 + wave} stroke="#0284c7" strokeWidth={3.5} />
-                    <line x1="0" y1="0" x2="0" y2={65 + wave} stroke="#0284c7" strokeWidth={3.5} strokeDasharray="4 3" />
-
-                    <line x1="0" y1={-70 - wave} x2="45" y2="-105" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
-                    <line x1={-65 - wave} y1={45 + wave} x2="-105" y2="65" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
-                    <line x1={65 + wave} y1={45 + wave} x2="105" y2="65" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
-
-                    <circle cx="0" cy="0" r="22" fill="#0284c7" stroke="#0369a1" strokeWidth="2" />
-                    <text x="0" y="5" fill="#ffffff" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">Si</text>
-
-                    <circle cx="0" cy={-70 - wave} r="14" fill="#f87171" stroke="#dc2626" strokeWidth="2" />
-                    <text x="0" y={-65 - wave} fill="#ffffff" fontSize={canvasSize.font(10)} textAnchor="middle" fontWeight="bold">O</text>
-                    <circle cx={-65 - wave} cy={45 + wave} r="14" fill="#f87171" stroke="#dc2626" strokeWidth="2" />
-                    <text x={-65 - wave} y={50 + wave} fill="#ffffff" fontSize={canvasSize.font(10)} textAnchor="middle" fontWeight="bold">O</text>
-                    <circle cx={65 + wave} cy={45 + wave} r="14" fill="#f87171" stroke="#dc2626" strokeWidth="2" />
-                    <text x={65 + wave} y={50 + wave} fill="#ffffff" fontSize={canvasSize.font(10)} textAnchor="middle" fontWeight="bold">O</text>
-                    <circle cx="0" cy={65 + wave} r="14" fill="#f87171" stroke="#dc2626" strokeWidth="2" />
-                    <text x="0" y={70 + wave} fill="#ffffff" fontSize={canvasSize.font(10)} textAnchor="middle" fontWeight="bold">O</text>
-                  </g>
-                )
-              })()}
-              <text x="0" y="105" fill="#0369a1" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">
-                共价晶体：1 mol Si 对应 4 mol Si-O 键
-              </text>
-            </g>
-          ) : params.structureItem === 'ice' ? (
-            /* 冰晶体水分子四面体定向氢键流动 */
-            <g>
-              <circle cx="0" cy="0" r="28" fill="#0284c7" />
-              <text x="0" y="5" fill="#ffffff" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">
-                H<tspan dy="2" fontSize="0.75em">2</tspan><tspan dy="-2" fontSize="1em">O</tspan>
-              </text>
-              {[
-                [-60, -60], [60, -60], [-60, 60], [60, 60]
-              ].map(([hx, hy], idx) => (
-                <g key={idx}>
-                  <line
-                    x1="0"
-                    y1="0"
-                    x2={hx}
-                    y2={hy}
-                    stroke="#0284c7"
-                    strokeWidth={3}
-                    strokeDasharray="4 3"
-                    strokeDashoffset={-animTime * 18}
-                  />
-                  <circle cx={hx} cy={hy} r="16" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1.5" />
-                  <text x={hx} y={hy + 4} fill="#0369a1" fontSize={canvasSize.font(9)} textAnchor="middle" fontWeight="bold">
-                    H<tspan dy="1.5" fontSize="0.75em">2</tspan><tspan dy="-1.5" fontSize="1em">O</tspan>
-                  </text>
-                </g>
-              ))}
-              <text x="0" y="100" fill="#0369a1" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">
-                冰氢键均摊：1 mol 冰 (18 g) = 2 mol 氢键
-              </text>
-              <text x="0" y="118" fill="#64748b" fontSize={canvasSize.font(10)} textAnchor="middle">
-                (4 个氢键方向 × 1/2 共享 = 2)
-              </text>
-            </g>
-          ) : params.structureItem === 'graphite' ? (
-            /* 石墨平面六元环网状均摊拓扑 */
-            <g>
-              <polygon points="0,-60 52,-30 52,30 0,60 -52,30 -52,-30" fill={withAlpha('#475569', 0.1)} stroke="#334155" strokeWidth={3} />
-              <line x1="52" y1="-30" x2="88" y2="-50" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
-              <line x1="52" y1="30" x2="88" y2="50" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
-              <line x1="-52" y1="-30" x2="-88" y2="-50" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
-              <line x1="-52" y1="30" x2="-88" y2="50" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 3" />
-              {[[0, -60], [52, -30], [52, 30], [0, 60], [-52, 30], [-52, -30]].map(([x, y], idx) => (
-                <g key={idx}>
-                  <circle cx={x} cy={y} r="13" fill="#1e293b" stroke="#0f172a" strokeWidth="1.5" />
-                  <text x={x} y={y + 4} fill="#ffffff" fontSize={canvasSize.font(9)} textAnchor="middle" fontWeight="bold">C</text>
-                </g>
-              ))}
-              <text x="0" y="95" fill="#1e293b" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">
-                石墨均摊：1 mol C 形成 1.5 mol C-C 键
-              </text>
-              <text x="0" y="115" fill="#64748b" fontSize={canvasSize.font(10)} textAnchor="middle">
-                (每个 C 连 3 键，3 × 1/2 = 1.5)
-              </text>
-            </g>
-          ) : (
-            /* Na2O2 过氧化物晶体单元 */
-            <g>
-              <circle cx="-55" cy="0" r="30" fill="#0284c7" />
-              <circle cx="55" cy="0" r="30" fill="#dc2626" />
-              <line x1="-25" y1="0" x2="25" y2="0" stroke="#334155" strokeWidth={3.5} />
-              <text x="-55" y="5" fill="#ffffff" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">
-                Na<tspan dy="-3" fontSize="0.75em">+</tspan><tspan dy="3" fontSize="1em"></tspan>
-              </text>
-              <text x="55" y="5" fill="#ffffff" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">
-                O<tspan dy="2" fontSize="0.75em">2</tspan><tspan dy="-5" fontSize="0.75em">2−</tspan><tspan dy="3" fontSize="1em"></tspan>
-              </text>
-              <text x="0" y="70" fill="#1e293b" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">
-                Na<tspan dy="2" fontSize="0.75em">2</tspan><tspan dy="-2" fontSize="1em">O</tspan><tspan dy="2" fontSize="0.75em">2</tspan><tspan dy="-2" fontSize="1em">：阳:阴 = 2:1 (含 1 mol O-O 键)</tspan>
-              </text>
-            </g>
-          )}
-        </g>
+        <AvogadroStructureScene
+          structureItem={params.structureItem}
+          animTime={animTime}
+          font={canvasSize.font}
+        />
       )}
 
       {/* 3. 弱电解质、胶体与熔融态 */}
@@ -454,6 +302,65 @@ export const AvogadroScene: React.FC<AvogadroSceneProps> = ({
                 仅拆出 2 mol 离子 (不拆 H<tspan dy="-3" fontSize="0.75em">+</tspan><tspan dy="3" fontSize="1em">)</tspan>
               </text>
             </g>
+          ) : params.electrolyteItem === 'pureH2O' ? (
+            /* 纯水极微弱电离 */
+            <g>
+              <BeakerApparatus
+                x={0}
+                y={0}
+                width={180}
+                height={205}
+                fillLevel={0.7}
+                fillColor={withAlpha('#bae6fd', 0.55)}
+                label="25℃ 纯水体系"
+                font={canvasSize.font}
+              />
+              <circle cx="65" cy="95" r="18" fill="#0284c7" />
+              <text x="65" y="99" fill="#ffffff" fontSize={canvasSize.font(10)} textAnchor="middle" fontWeight="bold">
+                H₂O
+              </text>
+              <text x="98" y="99" fill="#0369a1" fontSize={canvasSize.font(13)} textAnchor="middle" fontWeight="bold">
+                ⇌
+              </text>
+              <text x="135" y="98" fill="#dc2626" fontSize={canvasSize.font(10)} textAnchor="middle" fontWeight="bold">
+                H⁺+OH⁻
+              </text>
+              <text x="90" y="235" fill="#0369a1" fontSize={canvasSize.font(11.5)} textAnchor="middle" fontWeight="bold">
+                c(H⁺) = 10⁻⁷ mol/L (极微弱)
+              </text>
+            </g>
+          ) : params.electrolyteItem === 'Na2CO3' ? (
+            /* Na2CO3 水解使阴离子总数增加 */
+            <g>
+              <BeakerApparatus
+                x={0}
+                y={0}
+                width={180}
+                height={205}
+                fillLevel={0.7}
+                fillColor={SCENE_COLORS.reagent.solution}
+                label="Na₂CO₃ 水解体系"
+                font={canvasSize.font}
+              />
+              <circle cx="48" cy="92" r="18" fill="#0369a1" />
+              <text x="48" y="96" fill="#ffffff" fontSize={canvasSize.font(8.5)} textAnchor="middle" fontWeight="bold">
+                CO₃²⁻
+              </text>
+              <text x="82" y="96" fill="#0284c7" fontSize={canvasSize.font(13)} textAnchor="middle" fontWeight="bold">
+                ⇌
+              </text>
+              <circle cx="122" cy="84" r="16" fill="#2563eb" />
+              <text x="122" y="88" fill="#ffffff" fontSize={canvasSize.font(8)} textAnchor="middle" fontWeight="bold">
+                HCO₃⁻
+              </text>
+              <circle cx="122" cy="122" r="14" fill="#dc2626" />
+              <text x="122" y="126" fill="#ffffff" fontSize={canvasSize.font(8)} textAnchor="middle" fontWeight="bold">
+                OH⁻
+              </text>
+              <text x="90" y="235" fill="#0369a1" fontSize={canvasSize.font(11)} textAnchor="middle" fontWeight="bold">
+                1 个阴离子水解得 2 个阴离子
+              </text>
+            </g>
           ) : (
             /* CH3COOH 弱酸微弱电离 */
             <g>
@@ -519,39 +426,54 @@ export const AvogadroScene: React.FC<AvogadroSceneProps> = ({
               </text>
             </g>
           ) : (
-            /* Cl2 / Na2O2 歧化反应：飞行动画电子转移 */
-            <g>
-              <OxidationBridgeArrow
-                startPos={[-80, 0]}
-                endPos={[80, 0]}
-                label={params.redoxItem === 'Cu-S' ? '失 1e- (生成 Cu2S)' : '歧化转移 1e-'}
-                arcHeight={35}
-                font={canvasSize.font}
-              />
-              {(() => {
-                const p = (animTime * 0.75) % 1
-                const ex = -80 + p * 160
-                const ey = -4 * 35 * p * (1 - p)
-                return (
-                  <g transform={`translate(${ex}, ${ey})`}>
-                    <circle cx="0" cy="0" r="7" fill="url(#electron-glow)" />
-                    <circle cx="0" cy="0" r="3.5" fill="#facc15" />
-                    <text x="0" y="2.5" fill="#713f12" fontSize={canvasSize.font(6)} textAnchor="middle" fontWeight="bold">
-                      e<tspan dy="-1" fontSize="0.75em">−</tspan><tspan dy="1" fontSize="1em"></tspan>
-                    </text>
-                  </g>
-                )
-              })()}
-              <circle cx="-80" cy="0" r="22" fill="#fef3c7" stroke="#d97706" strokeWidth="2" />
-              <text x="-80" y="5" fill="#b45309" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">0</text>
-              <circle cx="80" cy="0" r="22" fill="#dcfce7" stroke="#16a34a" strokeWidth="2" />
-              <text x="80" y="5" fill="#15803d" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">+1</text>
-              <text x="0" y="65" fill="#334155" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">
-                {params.redoxItem === 'Cu-S'
-                  ? 'S 为弱氧化剂，1 mol Cu 转移 1 NA 电子'
-                  : '1 mol Cl2 歧化反应转移 1 NA 电子'}
-              </text>
-            </g>
+            /* 电子转移定量动画（依据当前 redoxItem 动态标注反应物、价态跃迁与电子转移数） */
+            (() => {
+              const redoxMeta = {
+                'Cu-S': { fromVal: '0', toVal: '+1', bridge: '失 1e⁻ (Cu→Cu₂S)', caption: 'S 为弱氧化剂，1 mol Cu 转移 1 NA 电子' },
+                'Na2O2-H2O': { fromVal: '-1', toVal: '0 / -2', bridge: '歧化转移 1e⁻', caption: '1 mol Na₂O₂ 歧化反应转移 1 NA 电子' },
+                'NO2-H2O': { fromVal: '+4', toVal: '+5 / +2', bridge: '3 NO₂ 转移 2e⁻', caption: '1 mol NO₂ 歧化反应转移 2/3 NA 电子' },
+                'SO2-O2-reversible': { fromVal: '+4', toVal: '+6', bridge: '可逆反应 < 2e⁻', caption: '可逆反应有限度，转移电子数 < 2·n(SO₂)' },
+                'Fe-HNO3': { fromVal: '0', toVal: '+3', bridge: '失 3e⁻ (生成 Fe³⁺)', caption: '足量稀硝酸将 Fe 氧化为 +3 价，转移 3 NA' },
+                'Cl2-NaOH': { fromVal: '0', toVal: '+1 / -1', bridge: '歧化转移 1e⁻', caption: '1 mol Cl₂ 歧化反应转移 1 NA 电子' },
+              }[params.redoxItem] ?? {
+                fromVal: '0',
+                toVal: '+1 / -1',
+                bridge: '歧化转移 1e⁻',
+                caption: '1 mol Cl₂ 歧化反应转移 1 NA 电子',
+              }
+              return (
+                <g>
+                  <OxidationBridgeArrow
+                    startPos={[-80, 0]}
+                    endPos={[80, 0]}
+                    label={redoxMeta.bridge}
+                    arcHeight={35}
+                    font={canvasSize.font}
+                  />
+                  {(() => {
+                    const p = (animTime * 0.75) % 1
+                    const ex = -80 + p * 160
+                    const ey = -4 * 35 * p * (1 - p)
+                    return (
+                      <g transform={`translate(${ex}, ${ey})`}>
+                        <circle cx="0" cy="0" r="7" fill="url(#electron-glow)" />
+                        <circle cx="0" cy="0" r="3.5" fill="#facc15" />
+                        <text x="0" y="2.5" fill="#713f12" fontSize={canvasSize.font(6)} textAnchor="middle" fontWeight="bold">
+                          e<tspan dy="-1" fontSize="0.75em">−</tspan><tspan dy="1" fontSize="1em"></tspan>
+                        </text>
+                      </g>
+                    )
+                  })()}
+                  <circle cx="-80" cy="0" r="22" fill="#fef3c7" stroke="#d97706" strokeWidth="2" />
+                  <text x="-80" y="5" fill="#b45309" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">{redoxMeta.fromVal}</text>
+                  <circle cx="80" cy="0" r="22" fill="#dcfce7" stroke="#16a34a" strokeWidth="2" />
+                  <text x="80" y="5" fill="#15803d" fontSize={canvasSize.font(11)} textAnchor="middle" fontWeight="bold">{redoxMeta.toVal}</text>
+                  <text x="0" y="65" fill="#334155" fontSize={canvasSize.font(12)} textAnchor="middle" fontWeight="bold">
+                    {redoxMeta.caption}
+                  </text>
+                </g>
+              )
+            })()
           )}
         </g>
       )}

@@ -140,9 +140,9 @@ describe('mode=1 阴离子膜 (membraneType=1)', () => {
     expect(res.anodeGasName).toContain('O₂')
   })
 
-  it('穿膜离子为 Cl⁻（阴离子交换膜只允许阴离子通过）', () => {
+  it('电解 Na₂SO₄ 阴离子膜下，体系内迁移阴离子以 SO₄²⁻ 为主，阳极水放电析氧', () => {
     const res = calc(base)
-    expect(res.membraneIonSymbol).toContain('Cl⁻')
+    expect(res.membraneIonSymbol).toContain('SO₄²⁻')
   })
 
   it('阴极产生 H₂↑', () => {
@@ -194,9 +194,12 @@ describe('mode=2 串联电化学池（Zn-Cu 原电池 驱动 镀铜电解池）'
     expect(znMoles).toBeCloseTo(cuMoles, 3)
   })
 
-  it('膜迁移标识为导线电子传递标识', () => {
+  it('膜迁移标识为导线电子传递标识，且活性镀铜池不产生气体', () => {
     const res = calc(base)
     expect(res.membraneIonSymbol).toContain('e⁻')
+    expect(res.anodeGasBubbleRate).toBe(0)
+    expect(res.anodeGasName).toBe('')
+    expect(res.cathodeGasName).toBe('')
   })
 })
 
@@ -246,10 +249,9 @@ describe('pH 量纲正确性（P0-2 回归锁）', () => {
     expect(res.pH).toBeCloseTo(14 + Math.log10(res.ne / V + WATER), 2)
   })
 
-  it('阴离子膜：pH 严格等于 −lg(n(e⁻)/V + 1e-7)，不再是「生成酸而 pH 几乎不动」', () => {
+  it('阴离子膜（半室教学近似，未计 OH⁻ 迁移中和）：阳极区 pH 等于 −lg(n(e⁻)/V + 1e-7)', () => {
     const res = calc({ current: 1.5, mode: 1, membraneType: 1, time: 8 })
     expect(res.pH).toBeCloseTo(-Math.log10(res.ne / V + WATER), 2)
-    // 修复前该工况 pH ≈ 6.93（肉眼不可见），修复后应显著低于 7
     expect(res.pH).toBeLessThan(6.5)
   })
 

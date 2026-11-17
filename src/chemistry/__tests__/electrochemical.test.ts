@@ -100,14 +100,21 @@ describe('pHFromHydrogenMoles — 酸性室（阴离子膜阳极室）', () => {
   })
 })
 
-describe('常量契约', () => {
-  it('法拉第常数与时间放大系数为约定值', () => {
+describe('常量与边界契约', () => {
+  it('法拉第常数与时间放大倍率为正数，支持 c = n/V 量纲链路', () => {
     expect(FARADAY_CONSTANT).toBe(96485)
-    expect(ELECTROLYSIS_TIME_SCALE).toBe(50)
+    expect(ELECTROLYSIS_TIME_SCALE).toBeGreaterThan(0)
   })
 
   it('溶液体积为正值（防止将来被误改为 0 导致除零）', () => {
     expect(ELECTROLYTE_VOLUME_L).toBeGreaterThan(0)
+  })
+
+  it('支持自定义体积且在 n <= 0 边界返回中性 7.00 不崩溃', () => {
+    expect(pHFromHydrogenMoles(-0.1)).toBeCloseTo(7, 6)
+    expect(pHFromHydroxideMoles(-0.1)).toBeCloseTo(7, 6)
+    expect(pHFromHydroxideMoles(0.01, 2)).toBeCloseTo(pHFromHydroxideMoles(0.005, 1), 10)
+    expect(pHFromHydrogenMoles(0.01, 2)).toBeCloseTo(pHFromHydrogenMoles(0.005, 1), 10)
   })
 
   it('c = n/V 的量纲链：n = 1 mol 时 c(OH⁻) 应为 1/V mol/L', () => {

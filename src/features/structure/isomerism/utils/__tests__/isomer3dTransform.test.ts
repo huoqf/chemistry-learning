@@ -124,6 +124,63 @@ describe('isomer3dTransform', () => {
     expect(model.atoms.filter((a) => a.element === 'H')).toHaveLength(6)
   })
 
+  it('应完整生成乙酸甲酯、甲酸乙酯与羟基丙酮的 2 个氧原子 (C₃H₆O₂)', () => {
+    const methylAcetate: IsomerNode = {
+      id: 'methyl-acetate',
+      name: '乙酸甲酯',
+      formula: 'C₃H₆O₂',
+      equivalentHCount: 2,
+      nodes: [
+        { id: 'c1', label: 'CH₃', x: 100, y: 240, equivalentHydrogenGroup: 1 },
+        { id: 'c2', label: 'COO', x: 210, y: 240 },
+        { id: 'c3', label: 'CH₃', x: 320, y: 240, equivalentHydrogenGroup: 2 },
+      ],
+      bonds: [
+        { fromId: 'c1', toId: 'c2' },
+        { fromId: 'c2', toId: 'c3' },
+      ],
+    }
+    const ethylFormate: IsomerNode = {
+      id: 'ethyl-formate',
+      name: '甲酸乙酯',
+      formula: 'C₃H₆O₂',
+      equivalentHCount: 3,
+      nodes: [
+        { id: 'c1', label: 'HCOO', x: 90, y: 240, equivalentHydrogenGroup: 1 },
+        { id: 'c2', label: 'CH₂', x: 210, y: 240, equivalentHydrogenGroup: 2 },
+        { id: 'c3', label: 'CH₃', x: 310, y: 240, equivalentHydrogenGroup: 3 },
+      ],
+      bonds: [
+        { fromId: 'c1', toId: 'c2' },
+        { fromId: 'c2', toId: 'c3' },
+      ],
+    }
+    const hydroxyAcetone: IsomerNode = {
+      id: 'hydroxy-acetone',
+      name: '羟基丙酮',
+      formula: 'C₃H₆O₂',
+      equivalentHCount: 3,
+      nodes: [
+        { id: 'c1', label: 'CH₃', x: 70, y: 240, equivalentHydrogenGroup: 1 },
+        { id: 'c2', label: 'CO', x: 170, y: 240 },
+        { id: 'c3', label: 'CH₂', x: 270, y: 240, equivalentHydrogenGroup: 2 },
+        { id: 'o1', label: 'OH', x: 360, y: 240, equivalentHydrogenGroup: 3 },
+      ],
+      bonds: [
+        { fromId: 'c1', toId: 'c2' },
+        { fromId: 'c2', toId: 'c3' },
+        { fromId: 'c3', toId: 'o1' },
+      ],
+    }
+
+    for (const node of [methylAcetate, ethylFormate, hydroxyAcetone]) {
+      const m = get3DModelForIsomer(node)
+      expect(m.atoms.filter((a) => a.element === 'C')).toHaveLength(3)
+      expect(m.atoms.filter((a) => a.element === 'O')).toHaveLength(2)
+      expect(m.atoms.filter((a) => a.element === 'H')).toHaveLength(6)
+    }
+  })
+
   it('应能够处理闭环结构 (环丁烷 cyclobutane)', () => {
     const cyclobutane: IsomerNode = {
       id: 'cyclobutane',

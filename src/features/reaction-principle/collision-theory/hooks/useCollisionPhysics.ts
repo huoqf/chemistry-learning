@@ -155,7 +155,7 @@ export function stepCollisionWorld(
 
       if (dist < minDist) {
         total++
-        // 能量条件：两者均需为活化分子
+        // 能量条件：碰撞微粒中至少一方（或相对动能之和）达到活化能门槛
         const hasEnergy = a.isActivated || b.isActivated
 
         // 取向条件：如果开启取向检查，不同类型粒子（A2 与 B2 碰撞）且碰撞矢量接近对心才算取向正确

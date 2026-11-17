@@ -73,7 +73,7 @@ export const TitrationErrorCenterView: React.FC<TitrationErrorCenterViewProps> =
 
     for (const v of vList) {
       let ph = 7.0
-      const totalV = vEq + v
+      const totalV = (params.vSampleTrue || 20) + v
       if (v < vEq) {
         // 酸过量：c_excess = (vEq - v) * c0 / totalV
         const cAcid = ((vEq - v) * c0) / totalV
@@ -92,7 +92,7 @@ export const TitrationErrorCenterView: React.FC<TitrationErrorCenterViewProps> =
       points.push({ x: v, y: Number(ph.toFixed(2)) })
     }
     return points
-  }, [vEq, vMax, params.cStandardTrue])
+  }, [vEq, vMax, params.cStandardTrue, params.vSampleTrue])
 
   // 动态视线偏角计算 (如始仰终俯 view-start-up-end-down 或始俯终仰 view-start-down-end-up 随滴定进度平滑过渡)
   const effectiveViewAngle = useMemo(() => {
@@ -200,13 +200,13 @@ export const TitrationErrorCenterView: React.FC<TitrationErrorCenterViewProps> =
               clampPos={0.35}
             />
 
-            {/* 2. 复用 BuretteApparatus 滴定管组件 */}
+            {/* 2. 复用 BuretteApparatus 滴定管组件（NaOH 碱液用碱式滴定管 'base'，KMnO₄ / AgNO₃ 用酸式滴定管 'acid'） */}
             <BuretteApparatus
               x={70}
               y={30}
               width={30}
               height={300}
-              variant={params.titrationType === 'acid-base' ? 'acid' : 'base'}
+              variant={params.titrationType === 'acid-base' ? 'base' : 'acid'}
               fillLevel={Math.max(0, 1 - currentVolume / vMax)}
               fillColor={params.titrationType === 'redox' ? SCENE_COLORS.reagent.indicator : SCENE_COLORS.reagent.acid}
               isOpen={isAutoPlaying}
@@ -231,7 +231,13 @@ export const TitrationErrorCenterView: React.FC<TitrationErrorCenterViewProps> =
               fillLevel={Math.min(0.65, 0.2 + (currentVolume / vMax) * 0.45)}
               fillColor={flaskColor}
               font={canvasSize.font}
-              label={params.titrationType === 'redox' ? 'Fe²⁺' : 'HCl'}
+              label={
+                params.titrationType === 'redox'
+                  ? 'Fe²⁺'
+                  : params.titrationType === 'precipitation'
+                  ? 'Cl⁻'
+                  : 'HCl'
+              }
             />
 
             {/* 4. 右侧 Viewfinder 凹液面光学视线放大镜 (x: 135~270, y: 40~300) */}
@@ -439,7 +445,13 @@ export const TitrationErrorCenterView: React.FC<TitrationErrorCenterViewProps> =
         <TitrationControls
           volume={currentVolume}
           maxVolume={vMax}
-          reagentName={params.titrationType === 'redox' ? '0.02 mol/L KMnO₄ 滴定试剂' : '0.1000 mol/L NaOH 滴加试剂'}
+          reagentName={
+            params.titrationType === 'redox'
+              ? `${(params.cStandardTrue || 0.02).toFixed(4)} mol/L KMnO₄ 滴定试剂`
+              : params.titrationType === 'precipitation'
+              ? `${(params.cStandardTrue || 0.1).toFixed(4)} mol/L AgNO₃ 滴定试剂`
+              : `${(params.cStandardTrue || 0.1).toFixed(4)} mol/L NaOH 滴加试剂`
+          }
           isPlaying={isAutoPlaying}
           onPlayPause={onPlayPause}
           onSingleDrop={onSingleDrop}

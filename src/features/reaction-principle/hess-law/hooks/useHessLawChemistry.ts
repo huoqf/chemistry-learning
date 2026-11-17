@@ -164,10 +164,20 @@ export function useHessLawChemistry(params: HessLawParams) {
       const k = coeffs[idx] ?? eq.defaultK
       const stepH = k * eq.deltaH
       totalDeltaH += stepH
+      const absK = Math.abs(k)
+      const factorPrefix = absK !== 1 ? `${absK}×(` : ''
+      const factorSuffix = absK !== 1 ? ')' : ''
+      const transformedText =
+        k === 0
+          ? '已剔除（未参与叠加）'
+          : k < 0
+          ? `反向 ${factorPrefix}${eq.productsText} = ${eq.reactantsText}${factorSuffix}`
+          : `${factorPrefix}${eq.reactantsText} = ${eq.productsText}${factorSuffix}`
       return {
         equation: eq,
         k,
         stepH,
+        transformedText,
       }
     })
 

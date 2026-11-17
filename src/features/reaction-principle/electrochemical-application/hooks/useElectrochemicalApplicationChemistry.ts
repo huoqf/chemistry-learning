@@ -111,11 +111,12 @@ export function useElectrochemicalApplicationChemistry({
         // pH 由 c = n/V 严格导出（电解质初始浓度不参与）
         pH = pHFromHydroxideMoles(ne)
       } else if (membraneType === 1) {
-        // 阴离子膜 (Cl- / SO42-): 阴离子穿膜至阳极区制酸
+        // 阴离子膜（电解 Na₂SO₄ 溶液）：允许 SO₄²⁻、OH⁻ 等阴离子通过；阳极水氧化析 O₂ 并产酸，阴极析 H₂
+        // 注：此教学半室模型跟踪阳极生成 H⁺（n(H⁺)=n(e⁻)），未计入阴极室 OH⁻ 迁入中和效应
         // 阳极 2H2O - 4e- = O2 + 4H+
         // 阴极 2H2O + 2e- = H2 + 2OH-
         anodeGasName = 'O₂ 气体↑'
-        membraneIonSymbol = 'Cl⁻'
+        membraneIonSymbol = 'SO₄²⁻'
         cathodeMassDelta = ne * 0.5 * 2.016
         // 阳极室 H⁺ 积累：n(H⁺) = n(e⁻)（2H₂O − 4e⁻ = O₂↑ + 4H⁺）
         // pH 由 c = n/V 严格导出（电解质初始浓度不参与）
@@ -136,8 +137,9 @@ export function useElectrochemicalApplicationChemistry({
       // 电解池阴极 Cu 析出
       cathodeMassDelta = ne * 0.5 * 63.55
       cathodeGasBubbleRate = 0
-      anodeGasBubbleRate = current * 0.3
-      anodeGasName = 'O₂ (微量)'
+      // 池2 阳极为活性 Cu 电极，优先溶解 (Cu - 2e⁻ = Cu²⁺)，水不放电析氧；阴极 Cu²⁺ + 2e⁻ = Cu，无气体生成
+      anodeGasBubbleRate = 0
+      anodeGasName = ''
       cathodeGasName = ''
       membraneIonSymbol = 'e⁻ 导线传递'
     }

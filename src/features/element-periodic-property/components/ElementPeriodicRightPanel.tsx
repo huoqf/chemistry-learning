@@ -174,7 +174,7 @@ export const ElementPeriodicRightPanel: React.FC<ElementPeriodicRightPanelProps>
       {
         label: '价电子排布式',
         value: currentElement.outerConfig,
-        unit: `${currentElement.block.toUpperCase()} 区`,
+        unit: `${currentElement.block} 区`,
       },
       {
         label: '基态未成对电子数',
@@ -194,7 +194,7 @@ export const ElementPeriodicRightPanel: React.FC<ElementPeriodicRightPanelProps>
         unit: stepIonizationAnalysis.hasCredibleJump
           ? `(推断价电子数: ${stepIonizationAnalysis.valanceCountPredicted})`
           : stepIonizationAnalysis.isTransition
-          ? '(d 区不适用)'
+          ? `(${currentElement.block} 区不适用)`
           : '(数据不足，不可判定)',
       },
     ]

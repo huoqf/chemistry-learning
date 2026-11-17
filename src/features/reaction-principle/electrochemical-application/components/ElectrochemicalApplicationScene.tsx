@@ -274,10 +274,6 @@ export function ElectrochemicalApplicationScene({
             <text x={80} y={150} fontSize={font(10)} fill={SCENE_COLORS.labels.chemicalFormula} textAnchor="middle" fontWeight="bold">
               池2：电解池 (精炼/镀铜)
             </text>
-
-            <g transform="translate(110, 80)">
-              <BubbleEmitter x={0} y={0} width={20} height={50} count={3} />
-            </g>
           </g>
 
           {/* 闭合外回路导线：原电池负极(68) ➔ 顶部 ➔ 电解池阴极(348) 流入电子 */}

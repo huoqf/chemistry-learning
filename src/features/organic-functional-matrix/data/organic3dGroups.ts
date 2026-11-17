@@ -199,45 +199,6 @@ export const FUNCTIONAL_GROUP_3D_MOLECULES: Record<string, Organic3DMolecule> = 
     ],
   },
 
-  // 4-B. 苯甲醇 (对比项：芳香醇)
-  'benzyl-alcohol': {
-    id: 'benzyl-alcohol',
-    name: '苯甲醇 (C₆H₅-CH₂OH)',
-    formula: 'C_6H_5-CH_2-OH',
-    categoryName: '芳香醇 / 易混对比模型',
-    relatedGroupId: 'alcohol-oh',
-    description: '虽然分子中同时含有苯环与 -OH，但 -OH 并没有直接连在苯环上，而是连在侧链的 -CH₂- 饱和碳上。由于 sp³ 碳的四面体构型，-OH 翘出苯环平面，因此完全具备醇的性质，呈中性，绝不消耗 NaOH！',
-    spatialContrastNote:
-      '【空间实质】：-CH₂- 作为 sp³ 四面体支架将 -OH 顶出苯环平面，阻断了 p-π 共轭，导致它完全没有弱酸性！',
-    variants: [
-      { id: 'phenol-oh', label: '真·酚类：苯酚', formula: 'C₆H₅-OH', differenceHint: '-OH 直连苯环，显弱酸性，耗 1 NaOH', targetMoleculeId: 'phenol-oh' },
-      { id: 'benzyl-alcohol', label: '芳香醇：苯甲醇', formula: 'C₆H₅-CH₂OH', differenceHint: '-OH 连饱和碳，中性醇，不耗 NaOH', targetMoleculeId: 'benzyl-alcohol' },
-    ],
-    geometryFeatures: {
-      hybridization: '苯环碳为 sp²，侧链碳为 sp³ 四面体',
-      coplanarInfo: '苯环共面，-OH 翘出平面',
-      reactionSite: '仅与 Na 反应放 H₂；催化氧化生成苯甲醛',
-    },
-    keyPoints: [
-      '芳香醇 ≠ 酚：不与 NaOH 反应，不与 FeCl₃ 显紫色',
-      '催化氧化生成苯甲醛 (C₆H₅-CHO)',
-    ],
-    atoms: [
-      ...createBenzeneRing([0, 0, 0], 1.35, 'ba-ring', [0]).atoms,
-      { id: 'ch2-c', symbol: 'C', elementName: '侧链亚甲基碳 (sp³)', position: [2.3, 0.2, 0.4], color: ATOM_COLORS.C, radius: 0.35, hybridization: 'sp³' },
-      { id: 'oh-o', symbol: 'O', elementName: '醇羟基氧 (翘出平面)', position: [3.3, 0.7, -0.3], color: ATOM_COLORS.O, radius: 0.32, isFunctionalGroup: true },
-      { id: 'oh-h', symbol: 'H', elementName: '醇羟基氢', position: [3.9, 0.1, -0.5], color: ATOM_COLORS.H, radius: 0.22, isFunctionalGroup: true },
-      ...createMethyleneGroup([2.3, 0.2, 0.4], [1.35, 0, 0], [3.3, 0.7, -0.3], 'ba-ch2').atoms,
-    ],
-    bonds: [
-      ...createBenzeneRing([0, 0, 0], 1.35, 'ba-ring', [0]).bonds,
-      { id: 'ring-ch2', start: [1.35, 0, 0], end: [2.3, 0.2, 0.4], order: 1 },
-      { id: 'ch2-oh', start: [2.3, 0.2, 0.4], end: [3.3, 0.7, -0.3], order: 1 },
-      { id: 'o-h', start: [3.3, 0.7, -0.3], end: [3.9, 0.1, -0.5], order: 1 },
-      ...createMethyleneGroup([2.3, 0.2, 0.4], [1.35, 0, 0], [3.3, 0.7, -0.3], 'ba-ch2').bonds,
-    ],
-  },
-
   // 5. 乙醛 (醛基)
   'aldehyde-cho': {
     id: 'aldehyde-cho',
@@ -247,7 +208,7 @@ export const FUNCTIONAL_GROUP_3D_MOLECULES: Record<string, Organic3DMolecule> = 
     relatedGroupId: 'aldehyde-cho',
     description: '醛基碳为 sp² 杂化，具有强极性的 C=O 双键，羰基氢具强还原性，极易被弱氧化剂氧化。',
     spatialContrastNote:
-      '【易混题眼】：甲酸酯类（如甲酸苯酯 HCOOCH₃）分子式虽是酯，但在 3D 球棍空间中，左端保留了完整的甲酰基醛基氢 (H-C=O)，因此同样具备醛基的所有定性特征（银镜反应出 2 Ag）！',
+      '【易混题眼】：甲酸酯类（如甲酸苯酯 HCOOC₆H₅）分子式虽是酯，但在 3D 球棍空间中，左端保留了完整的甲酰基醛基氢 (H-C=O)，因此同样具备醛基的还原性特征（银镜反应出 2 Ag）！',
     variants: [
       { id: 'aldehyde-cho', label: '基准：乙醛', formula: 'CH₃CHO', differenceHint: '经典醛基 (出 2 Ag)', targetMoleculeId: 'aldehyde-cho' },
       { id: 'formic-phenyl-ester', label: '甲酸苯酯', formula: 'HCOO-C₆H₅', differenceHint: '甲酸酯基保留醛基氢 (出 2 Ag)', targetMoleculeId: 'formic-phenyl-ester' },

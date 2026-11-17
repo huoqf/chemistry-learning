@@ -63,8 +63,15 @@ export function normalizeLatexEquation(text: string): string {
     .replace(/\^\{([^{}]*)\}/g, (_: string, g: string) => toSuperscript(g))
     .replace(/\^([0-9+-])/g, (_: string, c: string) => toSuperscript(c))
 
-  // 括号内的补充方程式（如 "(SiO₂ + 4HF = SiF₄↑ + 2H₂O)"）另行单独处理，先整体剥离
-  s = s.replace(/\([^()]*[=⇌→][^()]*\)/g, ' ')
+  // 收集括号（中英文）内的补充方程式（如 "(SiO₂ + 4HF = SiF₄↑ + 2H₂O)" 或 "（Zn + 2H⁺ = Zn²⁺ + H₂↑）"）
+  const parentheticalEquations: string[] = []
+  s = s.replace(/[（(]([^()（）]*[=⇌→][^()（）]*)[）)]/g, (_: string, inner: string) => {
+    const trimmed = inner.trim()
+    if (trimmed && !/^Δ\s*H/i.test(trimmed)) {
+      parentheticalEquations.push(trimmed)
+    }
+    return ' '
+  })
   // 尾部的 ΔH 方向标注（如 "  Δ H < 0 (加压平衡右移)"）不属于方程式本体
   s = s.replace(/Δ\s*H\s*[<>][\s\S]*$/, '')
   // 未闭合的括号（叙述被切分时常见，如 "O₂↑ (增重 Δm 等同于 CO"）：连同其后内容整体剥离，
@@ -73,7 +80,7 @@ export function normalizeLatexEquation(text: string): string {
   // 起始处游离的右括号（上一条的对偶情形）
   s = s.replace(/^[^（）()]*[）)]/, ' ')
 
-  return s
+  return parentheticalEquations.length > 0 ? `${s} ; ${parentheticalEquations.join(' ; ')}` : s
 }
 
 /**
@@ -262,12 +269,12 @@ export function parseSide(sideStr: string): ParsedSide {
         continue
       }
 
-      // 匹配前导化学计量数
+      // 匹配前导化学计量数（支持整数与小数，防止 0.5O₂ 被整数正则截成 0 导致原子清零）
       let coeff = 1
       let formula = sub
-      const coeffMatch = sub.match(/^([0-9]+)\s*(.*)$/)
+      const coeffMatch = sub.match(/^([0-9]+(?:\.[0-9]+)?)\s*(.*)$/)
       if (coeffMatch && coeffMatch[2]) {
-        coeff = parseInt(coeffMatch[1], 10)
+        coeff = parseFloat(coeffMatch[1])
         formula = coeffMatch[2]
       }
 

@@ -357,7 +357,7 @@ export const ValenceRightPanel: React.FC<ValenceRightPanelProps> = ({
           <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
           <span>
             {currentConfig.name}
-            {currentConfig.isCoreGaokao ? ' 高考必考要点提炼' : ' 拓展元素信息题要点'}
+            {currentConfig.isCoreGaokao ? ' 高考必考要点提炼' : ' 【信息题素材】要点提炼'}
           </span>
         </h4>
         <div className="flex flex-col gap-1.5">

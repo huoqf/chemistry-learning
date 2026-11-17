@@ -120,7 +120,7 @@ describe('useReactionPrincipleChemistry 化学逻辑核查与测试', () => {
     }
   })
 
-  it('9. 范特霍夫截距由 ΔS° 严格决定 (C = ΔS°/R)，Kc 落在真实量级', () => {
+  it('9. 范特霍夫截距由 ΔS° 严格决定 (C = ΔS°/R)，标准热力学平衡常数 K⊖ (Kp) 落在真实量级', () => {
     const { result } = renderHook(() => useReactionPrincipleChemistry(defaultParams))
     const { vantHoffData, system } = result.current
 
@@ -131,10 +131,10 @@ describe('useReactionPrincipleChemistry 化学逻辑核查与测试', () => {
     const expectedLnK = (-system.deltaH * 1000) / (8.314 * 298) + system.deltaS / 8.314
     expect(vantHoffData.currentLnK).toBeCloseTo(expectedLnK, 1)
 
-    // 298 K 下 2NO₂ ⇌ N₂O₄ 的 Kc 应为个位数~十位数量级；
-    // 若截距被硬编码为 -12，则得 Kc ≈ 6.5×10⁴（量级严重失真）
-    expect(vantHoffData.currentKc).toBeGreaterThan(0.5)
-    expect(vantHoffData.currentKc).toBeLessThan(100)
+    // 298 K 下 2NO₂ ⇌ N₂O₄ 的标准平衡常数 K⊖ (Kp) ≈ 6.8（个位~十位数量级）；
+    // 注：因为 Δν_g = -1 ≠ 0，浓度平衡常数 Kc = Kp·(RT/p°) ≈ 168 L/mol，不可混同为同一个值
+    expect(vantHoffData.currentK).toBeGreaterThan(0.5)
+    expect(vantHoffData.currentK).toBeLessThan(100)
 
     // 三点共线：斜率必须等于 -ΔH/R（栅格取整带来 ~1% 误差，阈值放宽至 5%）
     const pts = vantHoffData.points

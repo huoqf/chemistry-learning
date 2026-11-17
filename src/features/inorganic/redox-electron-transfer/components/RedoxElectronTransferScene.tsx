@@ -210,7 +210,7 @@ export function RedoxElectronTransferScene({
               );
             })}
             <text x={0} y={90} fontSize={font(11)} fill={CANVAS_COLORS.labelText} textAnchor="middle">
-              {`电子排布: ${model.microShells.reductant.shells.join('-')}`}
+              {`电子排布: ${(electronFlowProgress >= 1 ? model.microShells.reductant.finalShells : model.microShells.reductant.shells).join('-')}`}
             </text>
           </g>
 
@@ -240,7 +240,7 @@ export function RedoxElectronTransferScene({
               );
             })}
             <text x={0} y={90} fontSize={font(11)} fill={CANVAS_COLORS.labelText} textAnchor="middle">
-              {`电子排布: ${model.microShells.oxidant.shells.join('-')}`}
+              {`电子排布: ${(electronFlowProgress >= 1 ? model.microShells.oxidant.finalShells : model.microShells.oxidant.shells).join('-')}`}
             </text>
           </g>
 
@@ -262,6 +262,63 @@ export function RedoxElectronTransferScene({
                 {`Cl${model.microShells.oxidant.charge}`}
               </text>
             </g>
+          )}
+        </g>
+      )}
+
+      {/* 模式 2 兜底：无壳层模型的反应 (1/2/3) 展示微观电子转移拓扑卡片，防止画布空白 */}
+      {bridgeStyle === 2 && !model.microShells && (
+        <g transform={`translate(${cx}, ${cy})`}>
+          <rect
+            x={-165}
+            y={-110}
+            width={130}
+            height={110}
+            rx={10}
+            fill={withAlpha(oxidizedColor, 0.08)}
+            stroke={oxidizedColor}
+            strokeWidth={1.5}
+          />
+          <text x={-100} y={-82} fontSize={font(12)} fontWeight="bold" fill={oxidizedColor} textAnchor="middle">
+            {`还原剂：${model.reductant}`}
+          </text>
+          <text x={-100} y={-55} fontSize={font(11)} fill={CANVAS_COLORS.labelText} textAnchor="middle">
+            {`${model.elements.oxidized.symbol}: ${model.elements.oxidized.fromValence} → +${model.elements.oxidized.toValence}`}
+          </text>
+          <text x={-100} y={-30} fontSize={font(10)} fill={oxidizedColor} textAnchor="middle">
+            {`失 ${actualTransferredElectrons.toFixed(1)} mol e⁻`}
+          </text>
+
+          <rect
+            x={35}
+            y={-110}
+            width={130}
+            height={110}
+            rx={10}
+            fill={withAlpha(reducedColor, 0.08)}
+            stroke={reducedColor}
+            strokeWidth={1.5}
+          />
+          <text x={100} y={-82} fontSize={font(12)} fontWeight="bold" fill={reducedColor} textAnchor="middle">
+            {`氧化剂：${model.oxidant}`}
+          </text>
+          <text x={100} y={-55} fontSize={font(11)} fill={CANVAS_COLORS.labelText} textAnchor="middle">
+            {`${model.elements.reduced.symbol}: +${model.elements.reduced.fromValence} → ${model.elements.reduced.toValence}`}
+          </text>
+          <text x={100} y={-30} fontSize={font(10)} fill={reducedColor} textAnchor="middle">
+            {`得 ${actualTransferredElectrons.toFixed(1)} mol e⁻`}
+          </text>
+
+          <path d="M -32 -55 L 32 -55" stroke={CHART_COLORS.primary} strokeWidth={2.5} />
+          <polygon points="32,-55 24,-60 24,-50" fill={CHART_COLORS.primary} />
+          <text x={0} y={-66} fontSize={font(10)} fontWeight="bold" fill={CHART_COLORS.primary} textAnchor="middle">
+            {`${actualTransferredElectrons.toFixed(1)} mol e⁻`}
+          </text>
+
+          {model.elements.spectator && (
+            <text x={0} y={35} fontSize={font(11)} fill={CANVAS_COLORS.axis} textAnchor="middle">
+              {`旁观/酸性组分: ${model.elements.spectator.symbol} (${model.elements.spectator.role})`}
+            </text>
           )}
         </g>
       )}

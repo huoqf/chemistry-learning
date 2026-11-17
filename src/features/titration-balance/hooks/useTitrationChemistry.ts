@@ -180,7 +180,7 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
     const Ka = systemType === 'strongAcidWeakBase' ? KW / Math.pow(10, -pKa) : Math.pow(10, -pKa)
     const vEq = V0 // 假定滴定剂与被滴定剂浓度相等 c_titrant = c0
     const cTitrant = c0
-    const vAdd = Math.max(0.01, vRatio * vEq)
+    const vAdd = Math.max(0, vRatio * vEq)
 
     const build = (v: number) => solveAt(systemType, v, c0, cTitrant, vEq, Ka)
 
@@ -207,10 +207,10 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
     // 3. 离子浓度大小排序（由同源解动态生成，杜绝「文案与数值互斥」）
     const concOrderingLatex = buildOrdering(current.values, orderingKeys)
 
-    // 4. 区域判定（决定解题推导文案与题干守恒卡片形态）
-    const inHalf = vRatio >= 0.45 && vRatio <= 0.55
-    const atEquiv = vRatio >= 0.95 && vRatio <= 1.05
-    const over = vRatio > 1.05
+    // 4. 区域判定（收窄特例窗口至 ±0.01，避免缓冲过渡区误判为严格半中和/计量点）
+    const inHalf = Math.abs(vRatio - 0.5) <= 0.015
+    const atEquiv = Math.abs(vRatio - 1.0) <= 0.015
+    const over = vRatio > 1.015
     const k = vRatio
 
     let orderingExplanation = ''
@@ -291,7 +291,15 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
         explanation: 'Cl 元素全部来源于滴加的 HCl；B 元素全部来源于初始弱碱。',
       }
 
-      if (inHalf) {
+      if (vRatio < 0.005) {
+        orderingExplanation =
+          '滴定起点：溶液中只有弱碱 B，仅少量电离出 BH⁺ 与 OH⁻，故分子浓度远大于离子浓度。'
+        protonEq = {
+          title: '质子守恒 (纯 B 弱碱溶液)',
+          equationLatex: 'c(\\text{OH}^-) = c(\\text{BH}^+) + c(\\text{H}^+)',
+          explanation: '以 B 与 H₂O 为零水准：H₂O 失去的质子数（留下的 OH⁻）等于结合到 B 上的质子与游离 H⁺ 之和。',
+        }
+      } else if (inHalf) {
         orderingExplanation =
           '半中和点：B 与 BHCl 按 1:1 混合成缓冲溶液。弱碱 B 的电离程度大于 BH⁺ 的水解程度，故 c(BH⁺) 略大于 c(Cl⁻)，且溶液显弱碱性（pH ≈ 14 − pKb）。'
         protonEq = {
@@ -339,21 +347,35 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
         equationLatex: `c(\\text{Na}^+) : c(\\text{Cl}^-) = ${vAdd.toFixed(1)} : ${V0.toFixed(1)}`,
         explanation: 'Na⁺ 全部来自滴加的 NaOH，Cl⁻ 全部来自初始 HCl。',
       }
-      protonEq = {
-        title: '质子守恒 (水的电离平衡)',
-        equationLatex: 'c(\\text{H}^+) = c(\\text{OH}^-)',
-        explanation:
-          '强酸强碱体系中只有水发生质子转移，恒有 c(H⁺) = c(OH⁻)，故 25 ℃ 下恰好中和点必为中性 (pH = 7)。',
-      }
 
-      if (vRatio < 0.95) {
-        orderingExplanation =
-          '未达中和点：HCl 过量，H⁺ 显著高于 OH⁻；Cl⁻ 全部来自初始溶液，故 c(Cl⁻) 大于 c(Na⁺)。'
-      } else if (vRatio <= 1.05) {
+      if (atEquiv) {
+        protonEq = {
+          title: '质子守恒 (恰好中和纯 NaCl 溶液)',
+          equationLatex: 'c(\\text{H}^+) = c(\\text{OH}^-)',
+          explanation:
+            '恰好完全中和为 NaCl 中性溶液，只有水发生电离质子转移，25 ℃ 下必有 c(H⁺) = c(OH⁻) (pH = 7)。',
+        }
         orderingExplanation =
           '恰好完全中和生成 NaCl 中性溶液：c(Na⁺) = c(Cl⁻)，且 c(H⁺) = c(OH⁻)。'
+      } else if (vRatio < 0.985) {
+        protonEq = {
+          title: '质子分布与余酸关系 (HCl 过量区)',
+          equationLatex: 'c(\\text{H}^+) = [c(\\text{Cl}^-) - c(\\text{Na}^+)] + c(\\text{OH}^-)',
+          explanation:
+            '由电荷守恒整理：HCl 过量阶段，溶液中 c(H⁺) 主要由未中和的过量盐酸贡献，c(H⁺) ≫ c(OH⁻)，切勿在未中和时误用 c(H⁺)=c(OH⁻)。',
+        }
+        orderingExplanation =
+          vRatio < 0.005
+            ? '滴定起点：纯 HCl 强酸溶液完全电离，c(H⁺) ≈ c(Cl⁻) ≫ c(OH⁻)。'
+            : '未达中和点：HCl 过量，c(H⁺) 显著高于 c(OH⁻)；Cl⁻ 全部来自初始溶液，故 c(Cl⁻) 大于 c(Na⁺)。'
       } else {
-        orderingExplanation = 'NaOH 过量：c(OH⁻) 显著升高，但生成的 Cl⁻ 浓度仍大于 c(H⁺)。'
+        protonEq = {
+          title: '质子分布与余碱关系 (NaOH 过量区)',
+          equationLatex: 'c(\\text{OH}^-) = [c(\\text{Na}^+) - c(\\text{Cl}^-)] + c(\\text{H}^+)',
+          explanation:
+            '由电荷守恒整理：NaOH 过量阶段，溶液中 c(OH⁻) 主要由过量强碱贡献，c(OH⁻) ≫ c(H⁺)。',
+        }
+        orderingExplanation = 'NaOH 过量：c(OH⁻) 显著升高，且 c(Na⁺) > c(Cl⁻)。'
       }
     }
 
@@ -429,7 +451,7 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
     const samples: PointSolution[] = []
     for (let i = 0; i <= SAMPLE_COUNT; i++) {
       const r = (i / SAMPLE_COUNT) * 2.0
-      samples.push(build(Math.max(0.01, r * vEq)))
+      samples.push(build(r * vEq))
     }
 
     const curvePoints: TitrationCurvePoint[] = samples.map((s) => ({

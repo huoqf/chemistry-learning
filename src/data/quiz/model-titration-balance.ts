@@ -43,7 +43,7 @@ export const modelTitrationBalance: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'var-1',
-      yearProvince: '2024 全国卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-titration-balance',
       title: '一元弱酸 HA 滴定过程离子浓度关系与 pH 突跃',
       contextDescription: '常温下，用 0.1000 mol/L NaOH 溶液滴定 20.00 mL 0.1000 mol/L 弱酸 HA 溶液，滴定曲线与突跃区间如图所示。',
@@ -67,7 +67,7 @@ export const modelTitrationBalance: ModelQuizData = {
     },
     {
       id: 'var-2',
-      yearProvince: '2024 湖北卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-titration-balance',
       title: '二元弱酸 H₂A 滴定分布分数与 lg(c) 图像',
       contextDescription: '室温下向 0.1 mol/L H₂A 溶液中滴加 NaOH，微粒分布分数 δ 随 pH 的变化如图所示。',
@@ -89,7 +89,7 @@ export const modelTitrationBalance: ModelQuizData = {
     },
     {
       id: 'var-3',
-      yearProvince: '2024 浙江卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-titration-balance',
       title: '盐酸滴定氨水过程中的质子守恒与导电性变化',
       contextDescription: '25℃ 时，用 0.1 mol/L 盐酸滴定 20 mL 0.1 mol/L 氨水。',
@@ -113,7 +113,7 @@ export const modelTitrationBalance: ModelQuizData = {
     },
     {
       id: 'var-4',
-      yearProvince: '2023 新课标卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-titration-balance',
       title: '常温下 NaHA 溶液水解与电离竞争平衡解析',
       contextDescription: '25℃ 时，0.1 mol/L NaHA 溶液 pH = 4.5，溶液中 HA⁻ 既发生电离又发生水解。',
@@ -135,7 +135,7 @@ export const modelTitrationBalance: ModelQuizData = {
     },
     {
       id: 'var-5',
-      yearProvince: '2024 广东卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-titration-balance',
       title: '邻苯二甲酸 (H₂A) 滴定突跃中三大守恒推导',
       contextDescription: '用 0.1000 mol/L NaOH 溶液滴定 20.00 mL 0.1000 mol/L 二元弱酸 H₂A 溶液，滴定曲线出现两个突跃。',

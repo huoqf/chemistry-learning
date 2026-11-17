@@ -16,8 +16,8 @@ export const REAGENT_SCENES: Record<ReagentSceneId, ReagentSceneConfig> = {
       observation: '切换“开启/关闭隔绝空气”，观察白色沉淀是否转化为灰绿色和红褐色。',
     },
     examPoints: [
-      'Fe(OH)₂ 白色沉淀在空气中被迅速氧化为灰绿色，最终变为红褐色 Fe(OH)₃',
-      '氧化总化学方程式：4Fe(OH)₂ + O₂ + 2H₂O = 4Fe(OH)₃',
+      'Fe(OH)₂ 白色沉淀在空气中被迅速氧化为灰绿色，最终变为红褐色 Fe(OH)₃↓',
+      '氧化总化学方程式：4Fe(OH)₂ + O₂ + 2H₂O = 4Fe(OH)₃↓',
       '实验室防氧化关键：试剂煮沸去氧、胶头滴管伸入液面下滴加、加植物油/苯封顶隔绝空气',
     ],
     keyWarning: '注意高考标准现象描述：“产生白色絮状沉淀，在空气中迅速变为灰绿色，最终变为红褐色”。',
@@ -108,7 +108,7 @@ export const REAGENT_SCENES: Record<ReagentSceneId, ReagentSceneConfig> = {
         ph: 4.5,
       },
       {
-        progress: 0.4,
+        progress: 0.75,
         title: '沉淀最大值：生成白色胶状 Al(OH)₃ 沉淀',
         description: '滴入 NaOH 达到 n(OH⁻):n(Al³⁺)=3，沉淀量达到最大值。',
         solutionColor: 'rgba(248, 250, 252, 0.15)',
@@ -120,7 +120,7 @@ export const REAGENT_SCENES: Record<ReagentSceneId, ReagentSceneConfig> = {
         ph: 7.5,
       },
       {
-        progress: 0.7,
+        progress: 0.88,
         title: '过量溶解中：沉淀两性溶解',
         description: '继续滴加 NaOH，Al(OH)₃ 展现两性与 OH⁻ 反应转化为偏铝酸根 [Al(OH)₄]⁻，沉淀减少。',
         solutionColor: 'rgba(248, 250, 252, 0.1)',
@@ -178,7 +178,7 @@ export const REAGENT_SCENES: Record<ReagentSceneId, ReagentSceneConfig> = {
         ph: 5.5,
       },
       {
-        progress: 0.4,
+        progress: 0.333,
         title: '少量氨水：生成浅蓝色 Cu(OH)₂ 沉淀',
         description: '滴入少量氨水，电离出的 OH⁻ 与 Cu²⁺ 结合生成浅蓝色沉淀。',
         solutionColor: 'rgba(56, 189, 248, 0.25)',
@@ -190,7 +190,7 @@ export const REAGENT_SCENES: Record<ReagentSceneId, ReagentSceneConfig> = {
         ph: 8.0,
       },
       {
-        progress: 0.75,
+        progress: 0.67,
         title: '继续滴加：沉淀配位络合溶解',
         description: '过量的 NH₃ 分子提供孤电子对，与 Cu²⁺ 形成配位键，沉淀开始溶解并显深蓝色。',
         solutionColor: 'rgba(30, 64, 175, 0.65)',
@@ -289,7 +289,7 @@ export const REAGENT_SCENES: Record<ReagentSceneId, ReagentSceneConfig> = {
     examPoints: [
       '沉淀转化规律：一般由 Ksp 较大的沉淀转化为 Ksp 更小的沉淀 (如 AgCl > AgI > Ag₂S)',
       '颜色渐变演练：白色沉淀 (AgCl) → 黄色沉淀 (AgI) → 黑色沉淀 (Ag₂S)',
-      '离子方程式：AgCl(s) + I⁻ = AgI(s) + Cl⁻ ； 2AgI(s) + S²⁻ = Ag₂S(s) + 2I⁻',
+      '离子方程式：AgCl(s) + I⁻ ⇌ AgI(s) + Cl⁻ ； 2AgI(s) + S²⁻ ⇌ Ag₂S(s) + 2I⁻',
       '转化平衡常数计算：K = Ksp(AgCl) / Ksp(AgI) ≈ (1.8×10⁻¹⁰) / (8.5×10⁻¹⁷) ≈ 2.1×10⁶ ≫ 1，反应极彻底',
     ],
     keyWarning: '【高考最高频命题陷阱】：向 AgNO₃ 中加 NaCl 产生白色沉淀，再加 KI 产生黄色沉淀，若 AgNO₃ 过量，则剩余 Ag⁺ 直接与 I⁻ 反应生成沉淀，不能证明发生沉淀转化！证明沉淀转化必须保证沉淀剂足量或无游离 Ag⁺。',

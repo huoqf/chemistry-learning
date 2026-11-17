@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react'
 import { VSEPR_MOLECULE_LIST, VSEPR_MOLECULE_MAP } from '../data/vseprData'
 import { useVseprChemistry } from '../hooks/useVseprChemistry'
 
-describe('母题五 VSEPR 与杂化轨道化学正确性与新高考真题对齐测试', () => {
+describe('母题五 VSEPR 与杂化轨道化学正确性测试', () => {
   it('应当包含完整 17 种高考必考分子与离子', () => {
     expect(VSEPR_MOLECULE_LIST.length).toBe(17)
     expect(VSEPR_MOLECULE_MAP.so3).toBeDefined()
@@ -52,7 +52,7 @@ describe('母题五 VSEPR 与杂化轨道化学正确性与新高考真题对齐
     expect(so4_2minus.molecularGeometryName).toBe('正四面体形')
   })
 
-  it('真题变式 5 稀有气体化合物 (XeF2 / XeF4) 构型与孤对推导严谨', () => {
+  it('考点变式 5 稀有气体化合物 (XeF2 / XeF4) 构型与孤对推导严谨', () => {
     const xef2 = VSEPR_MOLECULE_MAP.xef2
     const xef4 = VSEPR_MOLECULE_MAP.xef4
 

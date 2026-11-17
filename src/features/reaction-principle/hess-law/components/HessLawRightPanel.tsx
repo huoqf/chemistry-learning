@@ -45,14 +45,14 @@ export const HessLawRightPanel: React.FC<HessLawRightPanelProps> = ({
           label: '反应物断键吸收总能',
           symbol: 'Q_吸',
           value: bondCalculated.reactantEnergySum,
-          unit: 'kJ',
+          unit: 'kJ/mol',
           highlight: 'positive' as const,
         },
         {
           label: '生成物成键释放总能',
           symbol: 'Q_放',
           value: bondCalculated.productEnergySum,
-          unit: 'kJ',
+          unit: 'kJ/mol',
           highlight: 'negative' as const,
         },
         {

@@ -26,8 +26,10 @@ const SKIP_SEGMENTS = ['__tests__']
 /** 自造符号：任一出现即违规 */
 const FORBIDDEN_LITERALS = ['≜']
 
+/** 匹配含真实化学反应连接符的行（排除 JSX/TS 赋值 `className=` 与 `===`） */
+const EQUATION_CONNECTOR = /(?:\s[=⇌→]\s|=[Δ高点催电热]|\\rightarrow|\\rightleftharpoons|\\xlongequal|[⇌→])/
 /** 非整数系数配平：数字 + 元素/化学式（要求数字与符号之间无 "mol" 等单位，避免误伤"1.5 mol O₂"） */
-const NON_INTEGER_COEFF = /(?<![\d.])1\.5\s*(Cl₂|Cl2|O₂|O2|H₂|H2|N₂|N2|Fe|Cu|NaOH|HCl|KOH)/
+const NON_INTEGER_COEFF = /(?<![\d.])(?:\d+\.5|[1-9]?\d*\.\d+)\s*(Cl₂|Cl2|O₂|O2|H₂|H2|N₂|N2|Fe|Cu|NaOH|HCl|KOH|H₂O|H2O|CO₂|CO2|SO₂|SO2|NH₃|NH3)(?![\d])/
 
 function walk(dir) {
   const files = []
@@ -55,7 +57,7 @@ for (const dir of TARGET_DIRS) {
           violations.push({ file: relPath, line: i + 1, reason: `自造符号 "${literal}"（应为 =Δ=）`, text: lines[i].trim() })
         }
       }
-      if (NON_INTEGER_COEFF.test(lines[i])) {
+      if (EQUATION_CONNECTOR.test(lines[i]) && NON_INTEGER_COEFF.test(lines[i])) {
         violations.push({ file: relPath, line: i + 1, reason: '非整数系数配平（应整体配平为最小整数比）', text: lines[i].trim() })
       }
     }

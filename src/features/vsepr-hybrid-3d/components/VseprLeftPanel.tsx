@@ -125,8 +125,8 @@ export const VseprLeftPanel: React.FC<VseprLeftPanelProps> = ({
         </div>
       </LeftPanelSection>
 
-      {/* 4. 高考高频母题对比组 */}
-      <LeftPanelSection title="高考真题核心对比">
+      {/* 4. 核心构型对比组 */}
+      <LeftPanelSection title="核心构型对比">
         <div className="text-[11px] text-slate-600 space-y-2.5">
           <div>
             <p className="font-semibold text-slate-700 mb-1">孤电子对增多 ➔ 键角递减：</p>
@@ -183,7 +183,7 @@ export const VseprLeftPanel: React.FC<VseprLeftPanelProps> = ({
           </div>
 
           <div>
-            <p className="font-semibold text-slate-700 mb-1">稀有气体超价化合物 (真题5)：</p>
+            <p className="font-semibold text-slate-700 mb-1">稀有气体超价化合物 (【信息题素材】)：</p>
             <div className="grid grid-cols-2 gap-1">
               <OptionButton
                 label="XeF₂"

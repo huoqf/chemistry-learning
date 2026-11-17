@@ -59,7 +59,7 @@ export const experimentAnimations = defineAnimations({
         showIfValue: 0,
         options: [
           { label: 'CCl₄ (下层紫红)', value: 0 },
-          { label: '苯 (上层橙红)', value: 1 },
+          { label: '苯 (上层紫红)', value: 1 },
           { label: '乙醇 (互溶不分层 ❌)', value: 2 },
         ],
       },

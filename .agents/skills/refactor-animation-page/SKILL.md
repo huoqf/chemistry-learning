@@ -32,9 +32,9 @@ description: 重构动画页面 / 重构已有组件 / 迁移旧动画 / 修复�
 
 | 位置 | 违规内容 | 正确位置 |
 |------|-----------|-----------|
-| 主屏 SVG | 大段教学文字（超过一句话的解释性 text） | 右屏 FormulaSection / 左屏 controlMeta tip |
-| 主屏 SVG | 完整公式推导（多行 KaTeX 块） | 右屏 FormulaSection |
-| 主屏 SVG | 高考考点总结列表 | 右屏 ExamPointSection |
+| 主屏 SVG | 大段教学文字（超过一句话的解释性 text） | 右屏 ChemistryPanel / 左屏 controlMeta tip |
+| 主屏 SVG | 完整公式推导（多行 KaTeX 块） | 右屏 ChemistryPanel (`formulas`) |
+| 主屏 SVG | 高考考点总结列表 | 右屏 ChemistryPanel (`gaokaoPoints` / `GaokaoSection`) |
 | 左屏 | 手写 input type="range" | 迁移到 paramMeta |
 | 左屏 | 手写 button 模式切换 / toggle 开关 | 迁移到 controlMeta.segmented / .toggle |
 | 左屏 | 手写预设按钮 | 迁移到 controlMeta.preset |
@@ -51,7 +51,7 @@ description: 重构动画页面 / 重构已有组件 / 迁移旧动画 / 修复�
 | CANVAS_PRESETS.wide / CANVAS_PRESETS.tall | 迁移至 full/splitV/splitH/splitHw/square（见 Step 1） |
 | requestAnimationFrame(...) 裸调用 | 改用 useAnimationLifecycle / useAnimationFrame |
 | originPixel prop（已废弃） | 改为 originDesign |
-| x * (canvasWidth / physicsWidth) 手写坐标 | 改为 worldToDesign({ x, y }, sceneScale) |
+| x * (canvasWidth / physicsWidth) 手写坐标 | 改为 worldToDesign(x, y, sceneScale) |
 | 硬编码 width={900} height={520} | 改为 CANVAS_PRESETS.<preset>.width/height |
 | useViewport / computeScale 在新功能中 | 新功能必须用 useAnimationViewport + useSceneScale |
 
@@ -73,8 +73,8 @@ stroke="red"               -> stroke={CHEMISTRY_COLORS.reactionRate}
 fill="#22C55E"             -> fill={CHEMISTRY_COLORS.energy}
 fill="rgba(0,0,0,0.3)"    -> fill={withAlpha(CHEMISTRY_COLORS.xxx, 0.3)}
 stroke={colors.neutral[200]}  // Canvas 基础设施 -> stroke={CANVAS_COLORS.grid}
-fill="#8B4513"             -> fill={SCENE_COLORS.wood}
-fill="#C0C0C0"             -> fill={SCENE_COLORS.metal}
+fill="#8B4513"             -> fill={SCENE_COLORS.materials.wood}
+fill="#C0C0C0"             -> fill={SCENE_COLORS.materials.metal}
 // 禁止 UI 色用于化学量（colors.primary/danger 用于 Canvas 化学量）
 fill={colors.primary[500]} -> fill={CHEMISTRY_COLORS.concentration}  // 这是化学量，不是 UI 元素
 
@@ -83,10 +83,9 @@ fontSize={14}              -> fontSize={font(14)}
 fontSize={11}              -> fontSize={font(11)}
 ```
 
-### 0E：信息密度违规
+### 0E：信息密度评估（教学简洁，不机械切分）
 
-- SVG 可见元素 > 7 个：应分层（showVectors toggle 控制辅助层）
-- SVG 文字标注 > 5 个：合并或默认隐藏次要标注
+- 主屏只保留核心反应/装置图与关键化学量标注；次要辅助矢量可通过 `showVectors` 开关收放，不强制一刀切上限。
 
 ### 0F：动态行为违规识别
 
@@ -130,9 +129,9 @@ const { containerRef, canvasSize, vp } = useAnimationViewport({
 ### 分区布局迁移（图表+动画）
 
 ```tsx
-// splitV：上图表 + 下动画，flex-col，各独立 div，禁止嵌套
+// splitV：上图表 + 下动画，flex-col，各独立 div，弹性分配高度（禁止硬编码 px 高度）
 <div className="w-full h-full flex flex-col">
-  <div className="h-[310px] shrink-0">
+  <div className="flex-1 min-h-0">
     <BaseChart ... />
   </div>
   <div className="flex-1 min-h-0">
@@ -149,8 +148,8 @@ const { containerRef, canvasSize, vp } = useAnimationViewport({
 
 | 旧写法 | 新写法 |
 |-------|-------|
-| chemistryToCanvas(x, y, w, h) | worldToDesign({ x, y }, sceneScale) |
-| x * (canvasWidth / physicsWidth) | worldToDesign({ x, y }, sceneScale).x |
+| chemistryToCanvas(x, y, w, h) | worldToDesign(x, y, sceneScale) |
+| x * (canvasWidth / physicsWidth) | worldToDesign(x, y, sceneScale).px |
 | createSceneScaleFromViewport({ mode: 'visibleArea' }) | useSceneScale({ vp, preset, anchor }) |
 | createSceneScaleFromViewport({ mode: 'transform' }) | 保留可用（输出设计坐标） |
 | 拖拽：(clientX - rect.left - vp.tx) / vp.scale | useViewportPointer(svgRef) |
@@ -172,13 +171,20 @@ import { BaseChart, ChartCursor, ChartLine } from '@/components/Chart'
   <ChartCursor x={time} dataPoints={[{ y: currentC, label: 'c', series: 'primary' }]} />
 </BaseChart>
 
-// 正确：MiniChart（轻量实时时序图，CenterExtra 常用）
+// 正确：MiniChart（轻量实时时序图）
 import { MiniChart } from '@/components/UI'
 <MiniChart
-  series={[{ data: ctData, color: CHEMISTRY_COLORS.concentration, label: 'c' }]}
+  title="浓度随时间变化"
+  xMin={0}
+  xMax={MAX_TIME}
+  yMin={0}
+  yMax={2}
+  points={ctData}
+  lines={[{ key: 'c', color: CHEMISTRY_COLORS.concentration, name: 'c' }]}
   xLabel="t / s"
   yLabel="c / mol·L⁻¹"
-  currentTime={time}
+  currentVals={{ c: currentC }}
+  currentXVal={time}
 />
 ```
 
@@ -200,7 +206,7 @@ import { MiniChart } from '@/components/UI'
     </LeftPanel>
   }
   center={<TopicAnimation />}  {/* 中屏：useAnimationViewport + AnimationSvgCanvas */}
-  right={<RightPanel quantities={...} formulas={...} examPoints={...} />}
+  right={<ChemistryPanel quantities={...} formulas={...} gaokaoPoints={...} />}
 />
 // 播放控制（AnimationControls）由框架自动渲染在中屏底部
 ```
@@ -209,7 +215,7 @@ import { MiniChart } from '@/components/UI'
 - [ ] 主屏无大段教学文字（只有数值标注 + 坐标轴标签）
 - [ ] 知识讲解/公式推导已移至右屏或删除
 - [ ] 左屏控件走声明式体系（paramMeta/controlMeta）
-- [ ] SVG 可见元素 <= 7，文字标注 <= 5
+- [ ] 主屏保持视觉焦点清晰（不堆砌冗余辅助图层）
 
 ### 布局与 Viewport
 - [ ] 双重缩放已消除（viewBox + vp.transform 不共存）

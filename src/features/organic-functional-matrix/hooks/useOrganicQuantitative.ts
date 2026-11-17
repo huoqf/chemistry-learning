@@ -32,10 +32,14 @@ export function useOrganicQuantitative(
       H2: [],
     }
 
-    // 检查是否为水杨醛母题（醛基占据酚羟基邻位，苯环仅剩 2 处取代）
+    // 检查是否为水杨醛/水杨酸甲酯（邻位被取代占据，酚环浓溴水仅发生 2 处取代）
     const isSalicylaldehyde =
       presetId === 'salicylaldehyde' ||
       (groupCounts['aldehyde-cho'] === 1 && groupCounts['phenol-oh'] === 1 && Object.keys(groupCounts).length === 2 && presetId !== undefined)
+    const isMethylSalicylate = presetId === 'methyl-salicylate'
+    const isOrthoSubstitutedPhenol = isSalicylaldehyde || isMethylSalicylate
+    // 检查是否为甲酸苯酯母题（只有 1 个酚酯基，无独立醛基官能团，但结构含甲酰基能发生银镜/斐林反应）
+    const isFormicPhenylEster = presetId === 'formic-phenyl-ester'
 
     Object.entries(groupCounts).forEach(([groupId, count]) => {
       if (count <= 0) return
@@ -118,15 +122,19 @@ export function useOrganicQuantitative(
 
       // Br2
       if (group.consumptions.Br2 > 0) {
-        // 水杨醛母题特异性校正：酚羟基邻位被醛基占据，苯环仅剩 2 处取代
-        const molPerGroup = isSalicylaldehyde && groupId === 'phenol-oh' ? 2 : group.consumptions.Br2
+        // 邻位被取代的酚类母题校正：苯环仅剩 2 处邻对位空位可发生溴代取代
+        const molPerGroup = isOrthoSubstitutedPhenol && groupId === 'phenol-oh' ? 2 : group.consumptions.Br2
         const mol = molPerGroup * count
         totalBr2 += mol
         let brReason = '碳碳不饱和键加成反应'
         if (groupId === 'phenol-oh') {
-          brReason = isSalicylaldehyde
-            ? '水杨醛中醛基占据1个邻位，苯环仅在4,6位发生2处溴代取代'
-            : '苯酚邻对位 3 处取代反应'
+          if (isSalicylaldehyde) {
+            brReason = '水杨醛中醛基占据1个邻位，苯环仅在4,6位发生2处溴代取代'
+          } else if (isMethylSalicylate) {
+            brReason = '水杨酸甲酯中酯基占据1个邻位，苯环仅剩1邻1对共2处溴代取代'
+          } else {
+            brReason = '苯酚邻对位 3 处取代反应'
+          }
         } else if (groupId === 'aldehyde-cho') {
           brReason = '醛基被溴水氧化为羧基'
         }
@@ -176,6 +184,10 @@ export function useOrganicQuantitative(
 
       // 沉淀与特殊反应产物
       if (groupId === 'aldehyde-cho') {
+        precipitateAg += 2.0 * count
+        precipitateCu2O += 1.0 * count
+      }
+      if (isFormicPhenylEster && groupId === 'phenol-ester') {
         precipitateAg += 2.0 * count
         precipitateCu2O += 1.0 * count
       }

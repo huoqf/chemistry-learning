@@ -18,7 +18,7 @@ description: 新建化学器材组件 / 新建实验装置SVG组件 / 实现化�
 
 ### 0A：先查现有组件，禁止重复手写
 
-现有组件（`@/components/Chemistry` barrel 导出，完整列表见 AGENTS.md 铁律 4）：
+现有组件（`@/components/Chemistry` barrel 导出，完整清单见 `docs/agent-rules/ui/COMPONENT_REGISTRY.md`）：
 
 | 分类 | 已有组件（节选） |
 |------|---------|
@@ -70,7 +70,7 @@ src/components/Chemistry/
 ```tsx
 // src/components/Chemistry/XxxApparatus.tsx
 // 颜色 Token 见 AGENTS.md 铁律 4B（器材用 SCENE_COLORS，禁用 CHEMISTRY_COLORS/CHART_COLORS）
-import { SCENE_COLORS, withAlpha, STROKE, FONT } from '@/theme'
+import { SCENE_COLORS, withAlpha, STROKE, FONT, identityFontScaler } from '@/theme'
 import type { FontScaler } from '@/theme'
 
 export interface XxxApparatusProps {
@@ -110,7 +110,7 @@ export function XxxApparatus({
   height = 120,
   fillLevel = 0,
   fillColor = SCENE_COLORS.reagent.solution,
-  font = (n) => n,
+  font = identityFontScaler,
 }: XxxApparatusProps) {
   const w = width
   const h = height
@@ -151,7 +151,7 @@ export function XxxApparatus({
 
 ```tsx
 // src/components/Chemistry/XxxEquipment.tsx
-import { SCENE_COLORS, STROKE, FONT } from '@/theme'
+import { SCENE_COLORS, STROKE, FONT, identityFontScaler } from '@/theme'
 import type { FontScaler } from '@/theme'
 
 export interface XxxEquipmentProps {
@@ -161,12 +161,8 @@ export interface XxxEquipmentProps {
   height?: number
   /** 运行状态 'idle' | 'running' | 'heating' */
   status?: 'idle' | 'running' | 'heating'
-  /** 进料量比例 0~1 */
-  inputLevel?: number
   /** 字体缩放函数 */
   font?: FontScaler
-  /** 是否显示流向箭头 */
-  showFlow?: boolean
 }
 
 /**
@@ -181,7 +177,7 @@ export interface XxxEquipmentProps {
 export function XxxEquipment({
   x, y, width = 100, height = 80,
   status = 'idle',
-  font = (n) => n,
+  font = identityFontScaler,
 }: XxxEquipmentProps) {
   const isRunning = status === 'running' || status === 'heating'
   const bodyColor = isRunning
@@ -195,17 +191,19 @@ export function XxxEquipment({
         fill={bodyColor}
         stroke={SCENE_COLORS.materials.metalBorder}
         strokeWidth={STROKE.objectLine}
-        rx={6}
+        rx={Math.max(2, width * 0.05)}
       />
       <text
-        x={width / 2} y={height / 2 + 5}
+        x={width / 2} y={height / 2}
+        dominantBaseline="central"
         textAnchor="middle"
         fontSize={font(FONT.small)}
-        fill="white" fontWeight="bold"
+        fill={SCENE_COLORS.text.onDark}
+        fontWeight="bold"
       >
         XXX
       </text>
-      {/* TODO: 补充设备特有结构 */}
+      {/* TODO: 补充设备特有结构（按 width / height 相对比例绘制） */}
     </g>
   )
 }
@@ -267,7 +265,7 @@ export function XxxEquipment({
 - 支撑：底部两个圆形支撑轮（两个 `<circle>`）
 - 进料端：高端（左），漏斗形加料口；出料端：低端（右），收料罩
 - 颜色：`industrialEquipment.roastingFurnace`（深砖红），`materials.metal`
-- 运行动画：筒身绕中轴缓慢旋转（CSS `animation: spin 6s linear infinite`）
+- 运行动画：筒身绕中轴缓慢旋转（SVG `<animateTransform>` 或 Tailwind `animate-spin`）
 
 ```tsx
 // RotaryKilnEquipment 结构参考
@@ -276,8 +274,8 @@ export function XxxEquipment({
 //   <ellipse cx={cx-length/2} cy={cy} rx={r*0.4} ry={r} />         // 左截面
 //   <ellipse cx={cx+length/2} cy={cy} rx={r*0.4} ry={r} />         // 右截面
 // </g>
-// 支撑轮：<circle cx={cx-length/4} cy={cy+r+10} r={15} />
-//         <circle cx={cx+length/4} cy={cy+r+10} r={15} />
+// 支撑轮：<circle cx={cx-length/4} cy={cy+r+wheelR*0.7} r={wheelR} />
+//         <circle cx={cx+length/4} cy={cy+r+wheelR*0.7} r={wheelR} />
 ```
 
 **浸出槽 / 反应釜（Leaching Reactor）**
@@ -288,7 +286,7 @@ export function XxxEquipment({
 **吸收塔 / 洗涤塔（Absorption Tower）**
 - 主体：高竖矩形（高:宽 ≈ 2.5:1），`industrialEquipment.absorptionTower`（水洗蓝）
 - 进气口：底部居中或左下角，箭头向上；出气口：顶部居中，箭头向上
-- 内部填料（可选）：蜂格纹，`withAlpha(CANVAS_COLORS.grid, 0.3)`
+- 内部填料（可选）：蜂格纹，`withAlpha(SCENE_COLORS.materials.asbestos, 0.3)`（器材严禁混用 `CANVAS_COLORS`）
 
 ### 3C：管道与流向绘制
 
@@ -338,11 +336,18 @@ strokeWidth={STROKE.reference}    // 1    — 内部结构线/刻度
 ## Step 5：动画规范
 
 ```tsx
-// ✅ CSS animation（不使用裸 requestAnimationFrame，见 AGENTS.md 铁律 1）
-<g style={{
-  transformOrigin: `${cx}px ${cy}px`,
-  animation: isRunning ? 'spin 4s linear infinite' : 'none'
-}}>
+// ✅ SVG 原生 SMIL <animateTransform> 或 Tailwind `animate-spin`（仓库 CSS 未全局声明裸 `@keyframes spin`）
+<g>
+  {isRunning && (
+    <animateTransform
+      attributeName="transform"
+      type="rotate"
+      from={`0 ${cx} ${cy}`}
+      to={`360 ${cx} ${cy}`}
+      dur="4s"
+      repeatCount="indefinite"
+    />
+  )}
   ...
 </g>
 
@@ -376,7 +381,7 @@ export type { XxxEquipmentProps } from './XxxEquipment'
  * RoastingFurnaceEquipment — 焙烧炉（高考化工流程）
  *
  * 适用高考化工场景：
- * - 硫铁矿焙烧制 SO₂（FeS₂ + O₂ → Fe₂O₃ + SO₂）
+ * - 硫铁矿焙烧制 SO₂（4FeS₂ + 11O₂ =高温= 2Fe₂O₃ + 8SO₂）
  * - 铝矾土焙烧脱水
  *
  * 颜色：`SCENE_COLORS.industrialEquipment.roastingFurnace`（砖红色）

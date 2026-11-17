@@ -126,23 +126,23 @@ export function FlashCardCenterView({
               高考规范答题踩分点与盲盒高频事实大题手算
             </h3>
             <span className="text-xs text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md font-medium border border-emerald-200">
-              权威试题踩分规范
+              规范答题踩分点
             </span>
           </div>
           <ScoringCardSection steps={quizData.scoringSteps} />
         </div>
       )}
 
-      {/* 视角 2：高考真题变式 */}
+      {/* 视角 2：变式演练 */}
       {params.viewMode === 2 && quizData && (
         <div className="w-full flex-1 flex flex-col gap-3">
           <div className="flex items-center justify-between border-b pb-2">
             <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2">
               <HelpCircle className="w-4 h-4 text-amber-600" />
-              高考真题变式选择题 & 详细解析 (近几年高考权威试题)
+              高考高频易错考点变式选择题 & 详细解析
             </h3>
             <span className="text-xs text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md font-medium border border-amber-200">
-              近几年高考易错真题复现
+              高频易错情境变式
             </span>
           </div>
           <GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />

@@ -58,13 +58,16 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
       gasVolumeRight = (molesElectron / 2) * 22.4 // 阴极 H₂ 标况体积
       molesMembraneIon = molesElectron // 穿膜 Na⁺ 或 Cl⁻ 或 BPM 裂解产物
     } else {
-      // 模式 3：电解硫酸铜溶液 (阳极析出 O₂，阴极沉积金属 Cu)
-      molesProductLeft = molesElectron / 4 // O₂
-      molesProductRight = molesElectron / 2 // Cu
+      // 模式 3：电解硫酸铜溶液（按 1 L 溶液计：Cu²⁺ 上限为 electrolyteConc mol）
+      const maxCuElectrons = Math.max(0, electrolyteConc * 2)
+      const cuElectrons = Math.min(molesElectron, maxCuElectrons)
+      const h2Electrons = Math.max(0, molesElectron - cuElectrons)
+      molesProductLeft = molesElectron / 4 // 阳极全程析出 O₂
+      molesProductRight = cuElectrons / 2 // 阴极析出 Cu（Cu²⁺ 耗尽后转为放 H₂）
       massChangeLeft = 0
       massChangeRight = molesProductRight * 63.55 // 阴极析出 Cu 质量
       gasVolumeLeft = (molesElectron / 4) * 22.4 // 阳极析出 O₂ 标况体积
-      gasVolumeRight = 0
+      gasVolumeRight = (h2Electrons / 2) * 22.4 // 若 Cu²⁺ 耗尽则阴极继而产生 H₂
       molesMembraneIon = molesElectron
     }
 
@@ -88,7 +91,7 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
       molesMembraneIon: +molesMembraneIon.toFixed(5),
       deltaPH,
     }
-  }, [currentAmp, timeSec, mode])
+  }, [currentAmp, timeSec, mode, electrolyteConc])
 
   /**
    * 反应与电极元数据构建
@@ -211,7 +214,7 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
       // 因此必须另取一份不含 $…$ 数学定界符的表述，否则 $ 会字面显示在学生眼前。
       let membranePlain = '无膜/普通隔膜'
       if (membraneType === 1) membranePlain = '阳离子交换膜（只允许 Na⁺、H⁺ 等阳离子通过）'
-      if (membraneType === 2) membranePlain = '阴离子交换膜（只允许 Cl⁻、SO₄²⁻ 等阴离子通过）'
+      if (membraneType === 2) membranePlain = '阴离子交换膜（允许 Cl⁻、OH⁻ 迁向阳极；氯碱工业单用会引起 Cl₂ 与 OH⁻ 副反应）'
       if (membraneType === 3) membranePlain = '双极膜 BPM（在电场作用下催化 H₂O 解离为 H⁺ 和 OH⁻）'
 
       return {
@@ -247,7 +250,7 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
       leftElectrode: {
         name: '阳极 (接电源正极) - 氧化反应',
         poleType: 'anode',
-        reactionFormula: '4\\text{OH}^- - 4e^- \\rightarrow 2\\text{H}_2\\text{O} + \\text{O}_2\\uparrow',
+        reactionFormula: '2\\text{H}_2\\text{O} - 4e^- \\rightarrow \\text{O}_2\\uparrow + 4\\text{H}^+',
         electronChange: `转移 ${quantResult.molesElectron} mol 电子`,
         phenomenon: `析出 O₂ 体积 (标况)：${quantResult.gasVolumeLeft} L`,
       },

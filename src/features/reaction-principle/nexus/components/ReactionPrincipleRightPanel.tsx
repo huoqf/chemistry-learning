@@ -85,7 +85,7 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
     }
 
     if (chartTab === 'le-chatelier') {
-      // 勒夏特列平衡移动：监控温度、压强与即时平衡常数 Kc
+      // 勒夏特列平衡移动：监控温度、压强与标准平衡常数 K⊖(Kp)
       return [
         {
           label: '体系温度 T',
@@ -101,8 +101,8 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
         },
         ...baseQuantities,
         {
-          label: '化学平衡常数 Kc',
-          value: vantHoffData.currentKc,
+          label: '标准平衡常数 K⊖ (Kp)',
+          value: vantHoffData.currentK,
           unit: '',
           color: '#10B981',
         },
@@ -163,7 +163,7 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
         color: '#8B5CF6',
       },
     ]
-  }, [chartTab, system.deltaH, eaForward, eaReverse, boltzmannData.activatedFraction, vantHoffData.currentKc, vantHoffData.currentLnK, vantHoffData.intercept, params.temperature, params.pressure, alphaTpData, isMultistep, stepBarriers, barrierCount])
+  }, [chartTab, system.deltaH, eaForward, eaReverse, boltzmannData.activatedFraction, vantHoffData.currentK, vantHoffData.currentLnK, vantHoffData.intercept, params.temperature, params.pressure, alphaTpData, isMultistep, stepBarriers, barrierCount])
 
   // 2. 依当前 chartTab 动态提供核心公式
   const formulas = useMemo(() => {
@@ -245,8 +245,8 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
       reactionFormula,
       {
         name: '范特霍夫方程 (Van\'t Hoff)',
-        latex: '\\ln K = -\\frac{\\Delta H}{R} \\cdot \\frac{1}{T} + C',
-        note: `ln K 与 1/T 呈线性关系：斜率严格由反应热决定 (k = -ΔH/R)。截距 C 并非自由参数，由热力学恒等式 ΔG° = ΔH° - TΔS° 与 ΔG° = -RT·lnK 联立可得 C = ΔS°/R；本体系 ΔS° ≈ ${system.deltaS} J/(mol·K) ⇒ C ≈ ${(system.deltaS / 8.314).toFixed(2)}。`,
+        latex: '\\ln K^\\ominus = -\\frac{\\Delta_r H^\\ominus}{R} \\cdot \\frac{1}{T} + \\frac{\\Delta_r S^\\ominus}{R}',
+        note: `ln K⊖ 与 1/T 呈线性关系：此处由 ΔG° = ΔH° - TΔS° 导出的是标准热力学平衡常数 K⊖ (对应气相分压 Kp)，而非浓度平衡常数 Kc。斜率 k = -ΔH°/R，截距 C = ΔS°/R；本体系 ΔS° ≈ ${system.deltaS} J/(mol·K) ⇒ C ≈ ${(system.deltaS / 8.314).toFixed(2)}。`,
         level: 'core' as const,
       },
       {

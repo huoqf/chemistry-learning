@@ -139,15 +139,19 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
 
   // 玻尔兹曼分布（当前态与基准态对照）
   const boltzmannData = useMemo(() => {
+    const maxEnergy = Math.max(
+      120,
+      Math.ceil((Math.max(eaForward, system.baseEaForward) + 40) / 20) * 20
+    )
     const calcDistribution = (T: number, ea: number) => {
       const data: { energy: number; fraction: number; isActivated: boolean }[] = []
       // 麦克斯韦-玻尔兹曼能量分布函数: f(E) ~ √(E/(kT)) · exp(-E/(kT))
-      // 注：为让曲线在 0~120 kJ/mol 的横轴上完整展开（真实 kT(298 K) ≈ 2.48 kJ/mol，
+      // 注：为让曲线在可视横轴上完整展开（真实 kT(298 K) ≈ 2.48 kJ/mol，
       // 曲线会全部挤在 5 kJ/mol 以内而无法读图），此处 kT 采用**教学标定尺度** 0.085·T，
-      // 即 298 K → kT ≈ 25.3 kJ/mol。
-      // 该分布的极大值点严格在 E = kT/2 处：298 K 时 ≈ 12.7 kJ/mol（不是 25.3）。
+      // 即 298 K → kT ≈ 25.3 kJ/mol（高温高活化能反应如合成氨自动按 Ea 扩展横轴）。
+      // 该分布的极大值点严格在 E = kT/2 处：298 K 时 ≈ 12.7 kJ/mol。
       const kT = 0.085 * T
-      for (let e = 0; e <= 120; e += 1.5) {
+      for (let e = 0; e <= maxEnergy; e += 1.5) {
         const x = e / kT
         const f = Math.sqrt(x) * Math.exp(-x) * 1.5
         data.push({
@@ -198,12 +202,12 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
       })
     }
     const currentLnK = -deltaH_J / (R * params.temperature) + intercept
-    const currentKc = Math.exp(currentLnK)
+    const currentK = Math.exp(currentLnK)
 
     return {
       points,
       currentLnK: Math.round(currentLnK * 100) / 100,
-      currentKc: Math.round(currentKc * 1000) / 1000,
+      currentK: Math.round(currentK * 1000) / 1000,
       intercept: Math.round(intercept * 100) / 100,
     }
   }, [system, params.temperature])
@@ -257,10 +261,12 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
     const MAX_TIME = 10
     const dt = 0.2
 
-    let cReactant = 2.0
+    const c0Reactant = 2.0
+    let cReactant = c0Reactant
     let cProduct = 1.0
     let vF = 1.0
     let vR = 1.0
+    let minReactantAfterPerturb = 0
 
     const perturbTime = 4.0
 
@@ -277,41 +283,55 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
           vF *= catBoost
           vR *= catBoost
         } else if (params.addedReactant > 0) {
-          // 突加反应物：cReactant 瞬增，vF 瞬增，vR 瞬间不变！
+          // 突加反应物：cReactant 瞬增，vF 瞬增，vR 瞬间不变！新平衡浓度仍高于原平衡 (减弱而不抵消)
           cReactant += params.addedReactant
+          minReactantAfterPerturb = c0Reactant + params.addedReactant * 0.25
           vF *= 1 + params.addedReactant * 0.8
         } else if (params.temperature !== system.defaultTemp) {
-          // 升降温：吸放热差异响应
+          // 升降温：采用指数热响应因子避免低温双截断停滞；放热反应升温逆移 (vR > vF)，降温正移 (vF > vR)
           const factor = (params.temperature - system.defaultTemp) / 100
-          vF = Math.max(0.05, vF + 0.8 * factor)
-          vR = Math.max(0.05, vR + 1.4 * factor)
+          vF *= Math.exp(0.6 * factor)
+          vR *= Math.exp(1.2 * factor)
         } else if (params.pressure !== system.defaultPressure) {
-          // 增减压：气体减小反应正逆均突变
+          // 增减压：体积与总压成反比，各气体组分浓度瞬间等比例跳变！
           const pFactor = params.pressure / system.defaultPressure
+          cReactant *= pFactor
+          cProduct *= pFactor
+          if (pFactor > 1) {
+            // 增压：新平衡浓度仍高于原平衡 (减弱但不抵消)
+            minReactantAfterPerturb = c0Reactant + (cReactant - c0Reactant) * 0.4
+          }
           vF *= pFactor * pFactor
           vR *= pFactor
         } else if (params.inertGasMode === 'constant-p') {
-          // 恒温恒压充惰性气体：体积膨胀，各组分分压骤减
+          // 恒温恒压充惰性气体：体积膨胀，各组分分压与浓度同比例骤降
+          cReactant *= 0.5
+          cProduct *= 0.5
           vF *= 0.5
           vR *= 0.7
         }
       } else {
-        const decay = Math.exp(-(timeRound - perturbTime) * 0.8)
-        // 浓度变化量之比 = 化学计量数之比：Δc(产物) = Δc(反应物) × ν(产物)/ν(反应物)
-        const dC = 0.05 * (1 - decay)
+        // 趋向新平衡的弛豫阶段：正逆速率差指数衰减直至 v'正 = v'逆
+        const gap = Math.abs(vF - vR)
         const stoichRatio = system.cProductPerCReactant
-        if (vF > vR) {
-          const gap = vF - vR
-          vF -= gap * 0.2 * (1 - decay)
-          vR += gap * 0.2 * (1 - decay)
-          cReactant = Math.max(0, cReactant - dC)
-          cProduct += dC * stoichRatio
-        } else if (vR > vF) {
-          const gap = vR - vF
-          vF += gap * 0.2 * (1 - decay)
-          vR -= gap * 0.2 * (1 - decay)
-          cReactant += dC
-          cProduct = Math.max(0, cProduct - dC * stoichRatio)
+        const stepFactor = 0.3
+        const dC = Math.min(0.06, (gap / Math.max(vF, vR, 1)) * 0.12)
+        if (vF > vR + 1e-4) {
+          const dv = (vF - vR) * stepFactor
+          vF -= dv * 0.55
+          vR += dv * 0.45
+          const nextReactant = Math.max(minReactantAfterPerturb, cReactant - dC)
+          const actualDelta = cReactant - nextReactant
+          cReactant = nextReactant
+          cProduct += actualDelta * stoichRatio
+        } else if (vR > vF + 1e-4) {
+          const dv = (vR - vF) * stepFactor
+          vF += dv * 0.45
+          vR -= dv * 0.55
+          const nextProduct = Math.max(0.05, cProduct - dC * stoichRatio)
+          const actualDeltaProd = cProduct - nextProduct
+          cProduct = nextProduct
+          cReactant += actualDeltaProd / stoichRatio
         }
       }
 

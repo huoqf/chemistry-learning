@@ -147,10 +147,11 @@ export function computeCollisionKinetics(params: {
   const mb = computeMaxwellBoltzmann(temperature, activationEnergy, hasCatalyst)
   const f = mb.activationFraction
 
-  // 总碰撞频率与浓度成正比，与温度的平方根成正比
-  const zTotal = 120 * concentration * Math.sqrt(temperature / 298)
+  // 总碰撞频率与浓度成正比，与温度的平方根成正比；反应速率与有效碰撞频率 Z_eff 严格成正比
+  const tempFactor = Math.sqrt(Math.max(1, temperature) / 298)
+  const zTotal = 120 * concentration * tempFactor
   const zEff = zTotal * f
-  const k = 100 * f
+  const k = 100 * f * tempFactor
   const v = k * concentration
 
   return {

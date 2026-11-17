@@ -13,7 +13,7 @@ export const FLASH_CARDS: FlashCard[] = [
     explanation: 'SO₂ 漂白属于结合型（与色素生成不稳定无色物质，加热解离复红）；Cl₂ 漂白是因为生成强氧化性的 HClO 破坏色素结构，不可逆且加热不复红。',
     chemicalEquations: [
       'SO_2 + \\text{品红} \\rightleftharpoons \\text{无色不稳定产物} (结合型漂白，加热解离复红)',
-      'Cl_2 + H_2O = HCl + HClO (氧化型漂白破坏色素，加热不复红)',
+      'Cl_2 + H_2O \\rightleftharpoons HCl + HClO (氧化型漂白破坏色素，加热不复红)',
     ],
     warningTip: '高考避坑红线：区分结合型漂白（SO₂）、氧化型漂白（Cl₂/HClO/O₃/Na₂O₂）与吸附型漂白（活性炭）。仅 SO₂ 漂白加热可复红！',
     examPoint: 'SO₂ 漂白的物理化学可逆性与 Cl₂ 强氧化性不可逆漂白的机理辨析',
@@ -54,7 +54,7 @@ export const FLASH_CARDS: FlashCard[] = [
     ],
     warningTip: '高考避坑红线：SO₂ 使酸性 KMnO₄ 褪色是还原性（发生了氧化还原反应），而不是漂白性！',
     examPoint: 'SO₂ 的还原性与漂白性的严格区分，以及 CO₂/SO₂ 气体检验顺序链',
-    relatedKnowledgeIds: ['sulfur', 'carbon-dioxide'],
+    relatedKnowledgeIds: ['sulfur', 'ion-identification'],
     sceneType: 'bleach-heating',
   },
   {
@@ -66,7 +66,7 @@ export const FLASH_CARDS: FlashCard[] = [
     optionA: '错，常温发生钝化（表面氧化为致密薄膜），钝化属于化学变化',
     optionB: '对，常温下铁金属性弱无法与浓硫酸反应，加热才能反应',
     correctOption: 'A',
-    explanation: '常温下浓硫酸、浓硝酸具有强氧化性，使 Fe、Al 表面立即氧化生成一层致密的钝化氧化膜（主要为 Fe₂O₃、Al₂O₃ 等），阻止反应继续进行。钝化是化学变化！',
+    explanation: '常温下浓硫酸、浓硝酸具有强氧化性，使 Fe、Al 表面立即氧化生成一层致密的氧化物保护膜（钝化膜），阻止反应继续进行。钝化是化学变化！',
     chemicalEquations: [
       '\\text{Fe, Al} \\xrightarrow{\\text{常温浓 } \\mathrm{H_2SO_4 / HNO_3}} \\text{致密氧化膜} (钝化属于化学变化)',
       '2\\mathrm{Fe} + 6\\mathrm{H_2SO_4}(\\text{浓}) \\xrightarrow{\\Delta} \\mathrm{Fe_2(SO_4)_3} + 3\\mathrm{SO_2}\\uparrow + 6\\mathrm{H_2O} (加热破膜剧烈反应)',
@@ -167,7 +167,7 @@ export const FLASH_CARDS: FlashCard[] = [
     ],
     warningTip: '高考避坑红线：Na₂O₂ 无论与 CO₂ 还是 H₂O 反应，自身既作氧化剂又作还原剂，转移电子数与生成 O₂ 摩尔比恒为 2:1！',
     examPoint: '过氧化钠歧化反应本质、双向电子转移数目计算及极端增重守恒',
-    relatedKnowledgeIds: ['sodium', 'redox-reaction'],
+    relatedKnowledgeIds: ['sodium', 'redox-basic'],
     sceneType: 'na-water-cuso4',
   },
   {
@@ -185,7 +185,7 @@ export const FLASH_CARDS: FlashCard[] = [
     ],
     warningTip: '高考避坑红线：制备胶体绝对不能加 NaOH（会直接出沉淀），不能用玻璃棒搅拌，不能过度加热！胶体与浊液用过滤分开，胶体与溶液用半透膜分开。',
     examPoint: '胶体制备实验规范、丁达尔效应物理本质与渗析分离净化原理',
-    relatedKnowledgeIds: ['iron', 'mixture-separation'],
+    relatedKnowledgeIds: ['iron', 'separation-purification'],
     sceneType: 'colloid-tyndall',
   },
   {
@@ -205,7 +205,7 @@ export const FLASH_CARDS: FlashCard[] = [
     ],
     warningTip: '高考避坑红线：未酸化直接加 AgNO₃ 产生棕黑色沉淀是高考常见丢分点！切记必须用“稀硝酸”，不能用盐酸酸化！',
     examPoint: '卤代烃水解实验完整检验链：水解→加稀硝酸酸化→加AgNO₃→观察沉淀颜色',
-    relatedKnowledgeIds: ['haloalkane', 'chlorine'],
+    relatedKnowledgeIds: ['halogenated-hydrocarbon', 'chlorine'],
     sceneType: 'haloalkane-test',
   },
   {
@@ -224,7 +224,7 @@ export const FLASH_CARDS: FlashCard[] = [
     ],
     warningTip: '高考避坑红线：温度计水银球测反应液温度（浸入液体中）vs 测馏分沸点（位于支管口下沿）必须严格区分！',
     examPoint: '有机反应温度控制对产物选择性的决定性影响与副反应控制',
-    relatedKnowledgeIds: ['ethanol', 'alkene'],
+    relatedKnowledgeIds: ['ethanol', 'ethylene'],
     sceneType: 'ethanol-reaction',
   },
   {
@@ -261,7 +261,7 @@ export const FLASH_CARDS: FlashCard[] = [
     ],
     warningTip: '高考避坑红线：芳香烃基团相互影响包括两面：苯环活化侧链（使甲基易氧化）；侧链活化苯环（邻对位定位效应使苯环易硝化生成TNT）。',
     examPoint: '有机物分子中基团间相互影响的双向性及官能团活化理论',
-    relatedKnowledgeIds: ['benzene', 'carboxylic-acid'],
+    relatedKnowledgeIds: ['benzene', 'carboxylic-acid-ester'],
     sceneType: 'ethanol-reaction',
   },
   {
@@ -300,7 +300,7 @@ export const FLASH_CARDS: FlashCard[] = [
     ],
     warningTip: '高考避坑红线：操作描述严禁出现“搅拌”字样！搅拌会戳破滤纸或使沉淀透过滤纸孔隙流失。',
     examPoint: '过滤操作规范、沉淀洗涤三步法踩分点与实验安全规程',
-    relatedKnowledgeIds: ['mixture-separation'],
+    relatedKnowledgeIds: ['separation-purification'],
     sceneType: 'colloid-tyndall',
   },
   {
@@ -323,7 +323,7 @@ export const FLASH_CARDS: FlashCard[] = [
     ],
     warningTip: '高考避坑红线：必须明确写出“取最后一次洗涤液”！写“取滤液”或“取漏斗中液体”直接扣除步骤分。',
     examPoint: '沉淀洗涤终点检验的标准句式、排除干扰离子的试剂选择与踩分要点',
-    relatedKnowledgeIds: ['mixture-separation', 'chlorine'],
+    relatedKnowledgeIds: ['separation-purification', 'chlorine'],
     sceneType: 'colloid-tyndall',
   },
   {
@@ -346,7 +346,7 @@ export const FLASH_CARDS: FlashCard[] = [
     ],
     warningTip: '高考避坑红线：必须包含“最后半滴”、“由某色变为某色”、“半分钟内不褪色（不恢复原色）”三大采分核心词！',
     examPoint: '酸碱与氧化还原滴定终点标准规范答题术语及误差分析',
-    relatedKnowledgeIds: ['redox-reaction', 'iron'],
+    relatedKnowledgeIds: ['redox-basic', 'iron'],
     sceneType: 'fe-kscn-equilibrium',
   },
   {

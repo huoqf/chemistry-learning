@@ -30,7 +30,7 @@ export function OrganicRetrosynthesisRightPanel({
       unit: `Step ${currentStep.stepIndex}`,
     },
     {
-      label: '理论原子利用率',
+      label: '本步理论原子经济性',
       value: currentStep.atomEconomy,
       unit: '%',
       highlight: (currentStep.atomEconomy >= 80 ? 'positive' : 'negative') as 'positive' | 'negative',
@@ -43,16 +43,23 @@ export function OrganicRetrosynthesisRightPanel({
     },
   ]
 
-  // 2. 反应方程式与合成子公式 (formulas) — 符合人类阅读习惯的多行紧凑对齐，绝不溢出
+  // 2. 反应方程式与合成子公式 (formulas) — 随 currentStep.stepIndex 动态联动，避免切步时公式静态滞留
   const getModelSpecificFormulas = () => {
+    const stepName = currentStep.title.split('：')[1] || currentStep.title
     switch (currentModel.id) {
-      case 'aspirin-benorilate':
+      case 'aspirin-benorilate': {
+        const stepFormula =
+          currentStep.stepIndex === 1
+            ? '\\begin{aligned} &\\mathrm{C_{17}H_{15}NO_5\\,(贝诺酯)} \\\\[2pt] &\\quad \\xRightarrow{\\text{✂ 切断酯键}} \\mathrm{C_9H_8O_4 + C_8H_9NO_2} \\end{aligned}'
+            : currentStep.stepIndex === 2
+            ? '\\begin{aligned} &\\mathrm{Ar(OH)COOH + (CH_3CO)_2O} \\\\[2pt] &\\quad \\xrightarrow{\\mathrm{H^+}} \\mathrm{Ar(OCOCH_3)COOH + CH_3COOH} \\end{aligned}'
+            : '\\begin{aligned} &\\mathrm{Ar(OCOCH_3)COOH + HO\\text{-}C_6H_4NHAc} \\\\[2pt] &\\quad \\xrightarrow{\\text{DCC/SOCl}_2} \\mathrm{贝诺酯 + H_2O} \\end{aligned}'
         return [
           {
-            name: currentStep.title.split('：')[1] || currentStep.title,
-            latex: '\\begin{aligned} &\\mathrm{Ar\\text{-}OH + (Ac)_2O} \\\\[2pt] &\\quad \\xrightarrow{\\mathrm{H^+}} \\mathrm{Ar\\text{-}OAc + AcOH} \\end{aligned}',
+            name: stepName,
+            latex: stepFormula,
             condition: currentStep.reagents,
-            note: '水杨酸酚羟基发生选择性亲核酰化保护。',
+            note: currentStep.description,
           },
           {
             name: '酯键逆向切断与合成子 (Synthons)',
@@ -67,13 +74,20 @@ export function OrganicRetrosynthesisRightPanel({
             note: '箭头上下必须写全主试剂与反应条件，保护与脱保护必须配对。',
           },
         ]
-      case 'diels-alder-acetal':
+      }
+      case 'diels-alder-acetal': {
+        const stepFormula =
+          currentStep.stepIndex === 1
+            ? '\\begin{aligned} &\\mathrm{CH_2=CH\\text{-}CH=CH_2 + CH_2=CH\\text{-}CHO} \\\\[2pt] &\\quad \\xrightarrow{\\Delta\\;[4+2]} \\mathrm{3\\text{-}环己烯甲酸甲酯衍生物} \\end{aligned}'
+            : currentStep.stepIndex === 2
+            ? '\\begin{aligned} &\\mathrm{R\\text{-}CHO + HOCH_2CH_2OH} \\\\[2pt] &\\quad \\xrightleftharpoons{\\text{TsOH/分水}} \\mathrm{环状缩醛 + H_2O} \\end{aligned}'
+            : '\\begin{aligned} &\\mathrm{缩醛\\text{-}环己烯酯} \\xrightarrow{\\text{1. LiAlH}_4} \\mathrm{缩醛醇} \\\\[2pt] &\\quad \\xrightarrow{\\text{2. H}_3\\mathrm{O}^+,\\,\\Delta} \\mathrm{TM + HO(CH_2)_2OH} \\end{aligned}'
         return [
           {
-            name: currentStep.title.split('：')[1] || currentStep.title,
-            latex: '\\begin{aligned} &\\mathrm{R\\text{-}CHO + (CH_2OH)_2} \\\\[2pt] &\\quad \\rightleftharpoons \\mathrm{环状缩醛 + H_2O} \\end{aligned}',
+            name: stepName,
+            latex: stepFormula,
             condition: currentStep.reagents,
-            note: '醛基在 TsOH 催化下与乙二醇脱水生成 1,3-二氧五环。',
+            note: currentStep.description,
           },
           {
             name: 'Diels-Alder [4+2] 环加成逆推',
@@ -88,13 +102,20 @@ export function OrganicRetrosynthesisRightPanel({
             note: '强还原剂反应后，必须加入稀酸 (H₃O⁺) 加热水解复原醛基。',
           },
         ]
-      case 'double-bond-protection':
+      }
+      case 'double-bond-protection': {
+        const stepFormula =
+          currentStep.stepIndex === 1
+            ? '\\begin{aligned} &\\mathrm{Ar\\text{-}CH_2CH=CH_2 + Br_2} \\\\[2pt] &\\quad \\xrightarrow{\\mathrm{CCl_4}} \\mathrm{Ar\\text{-}CH_2CHBr\\text{-}CH_2Br} \\end{aligned}'
+            : currentStep.stepIndex === 2
+            ? '\\begin{aligned} &\\mathrm{HO\\text{-}C_6H_4\\text{-}C_3H_5Br_2 + CH_3I} \\\\[2pt] &\\quad \\xrightarrow{\\mathrm{K_2CO_3,\\,\\text{丙酮}}} \\mathrm{CH_3O\\text{-}C_6H_4\\text{-}C_3H_5Br_2 + KI} \\end{aligned}'
+            : '\\begin{aligned} &\\mathrm{CH_3O\\text{-}C_6H_4\\text{-}CH_2CHBrCH_2Br + Zn} \\\\[2pt] &\\quad \\xrightarrow{\\mathrm{EtOH,\\,\\Delta}} \\mathrm{4\\text{-}烯丙基苯甲醚 + ZnBr_2} \\end{aligned}'
         return [
           {
-            name: currentStep.title.split('：')[1] || currentStep.title,
-            latex: '\\begin{aligned} &\\mathrm{R\\text{-}CH=CH_2 + Br_2} \\\\[2pt] &\\quad \\rightarrow \\mathrm{R\\text{-}CHBr\\text{-}CH_2Br} \\end{aligned}',
+            name: stepName,
+            latex: stepFormula,
             condition: currentStep.reagents,
-            note: '亲电加成消除双键不饱和性，保护骨架抗强氧化与强碱。',
+            note: currentStep.description,
           },
           {
             name: '金属 Zn 粉还原消去脱溴',
@@ -109,13 +130,16 @@ export function OrganicRetrosynthesisRightPanel({
             note: '高考答题框中，绝不能遗漏最后一步 Zn/EtOH 脱溴步骤！',
           },
         ]
+      }
       case 'carbon-carbon-builder':
         return [
           {
-            name: currentStep.title.split('：')[1] || currentStep.title,
-            latex: '\\begin{aligned} &\\mathrm{Ph\\text{-}CHO + MeCOPh} \\\\[2pt] &\\quad \\xrightarrow{\\mathrm{OH^-}} \\mathrm{Ph\\text{-}CH=CH\\text{-}COPh + H_2O} \\end{aligned}',
+            name: stepName,
+            latex: currentStep.stepIndex === 1
+              ? '\\begin{aligned} &\\mathrm{Ph\\text{-}CH=CH\\text{-}COPh} \\\\[2pt] &\\quad \\xRightarrow{\\text{✂ 切断 C=C}} \\mathrm{Ph\\text{-}CHO + CH_3COPh} \\end{aligned}'
+              : '\\begin{aligned} &\\mathrm{Ph\\text{-}CHO + MeCOPh} \\\\[2pt] &\\quad \\xrightarrow{\\mathrm{OH^-}} \\mathrm{Ph\\text{-}CH=CH\\text{-}COPh + H_2O} \\end{aligned}',
             condition: currentStep.reagents,
-            note: '碱催化羟醛缩合脱水构建共轭 α,β-不饱和烯酮。',
+            note: currentStep.description,
           },
           {
             name: 'α,β-不饱和烯酮 C=C 双键切断',

@@ -78,11 +78,14 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
                 k = {kStr}
               </text>
 
-              {/* 原方程式 */}
-              <text x={100} y={34} fontSize={font(14)} fontWeight="bold" fill="#334155">
-                {step.equation.label}
+              {/* 乘倍/反向后方程式 */}
+              <text x={100} y={32} fontSize={font(13)} fontWeight="bold" fill="#334155">
+                {step.equation.label} {step.k < 0 ? '（反向叠加）' : ''}
               </text>
-              <text x={100} y={58} fontSize={font(12)} fill="#475569" className="font-mono">
+              <text x={100} y={54} fontSize={font(12)} fill={step.k < 0 ? '#B91C1C' : '#0F172A'} fontWeight="bold" className="font-mono">
+                变换式: {step.transformedText}
+              </text>
+              <text x={100} y={76} fontSize={font(11)} fill="#64748B" className="font-mono">
                 原 ΔH = {step.equation.deltaH} kJ/mol
               </text>
 
@@ -170,7 +173,7 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
           </text>
           <rect x={20} y={260 - barHeightReactant + 30} width={80} height={barHeightReactant} rx={8} fill="#FCA5A5" stroke="#EF4444" strokeWidth={2} />
           <text x={60} y={260 - barHeightReactant + 20} fontSize={font(14)} fontWeight="bold" fill="#991B1B" textAnchor="middle" className="font-mono">
-            +{reactantEnergySum} kJ
+            +{reactantEnergySum} kJ/mol
           </text>
 
           {/* 键列表明细 */}
@@ -199,7 +202,7 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
           </text>
           <rect x={20} y={260 - barHeightProduct + 30} width={80} height={barHeightProduct} rx={8} fill="#86EFAC" stroke="#22C55E" strokeWidth={2} />
           <text x={60} y={260 - barHeightProduct + 20} fontSize={font(14)} fontWeight="bold" fill="#14532D" textAnchor="middle" className="font-mono">
-            -{productEnergySum} kJ
+            -{productEnergySum} kJ/mol
           </text>
 
           {/* 键列表明细 */}
@@ -414,10 +417,10 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
           <div className="flex items-center justify-between border-b pb-2 shrink-0">
             <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2">
               <HelpCircle className="w-4 h-4 text-amber-600" />
-              高考真题变式选择题 & 详细解析
+              考点变式选择题 & 详细解析
             </h3>
             <span className="text-xs text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md font-medium border border-amber-200">
-              收录近年高考权威真题
+              覆盖盖斯定律与键能高频变式
             </span>
           </div>
           <GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />

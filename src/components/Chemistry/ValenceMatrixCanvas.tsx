@@ -159,7 +159,7 @@ export function ValenceMatrixCanvas({
     <LeftPanel>
       <LeftPanelSection
         title="价类二维图元素库 (40 种)"
-        subtitle="30 种高考核心 + 10 种工业/信息拓展 · 非金属(14) · 主族金属(14) · 过渡金属(12)"
+        subtitle="30 种高考核心 + 10 种【信息题素材】 · 非金属(14) · 主族金属(14) · 过渡金属(12)"
       >
         <div className="flex flex-col gap-2.5 pt-1">
           {/* A. 主族非金属 */}
@@ -561,13 +561,13 @@ export function ValenceMatrixCanvas({
         </div>
       )}
 
-      {/* 3. 视角 C: 近 3 年高考真实情境变式盲盒 */}
+      {/* 3. 视角 C: 母题情境变式演练 */}
       {mainView === 'quiz' && (
         <div className="w-full h-full p-6 bg-slate-50 overflow-y-auto flex flex-col gap-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-200 shrink-0">
             <h3 className="font-bold text-slate-800 text-base flex items-center gap-2">
               <HelpCircle className="w-5 h-5 text-indigo-600" />
-              近 3 年高考真实情境变式盲盒 (母题拆解)
+              母题高频考点情境变式演练
             </h3>
             <span className="text-xs text-slate-500 font-medium">
               变式强化 · 工业流程与选择题压轴

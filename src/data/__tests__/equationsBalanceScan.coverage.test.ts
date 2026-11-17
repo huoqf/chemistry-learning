@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { ION_DATA } from '@/features/inorganic-ion-matrix/constants'
+import { VALENCE_MATRIX_DATA } from '../valence-matrix'
 import { MAIN_GROUP_CONFLICTS } from '@/features/inorganic-ion-matrix/data/conflicts/mainGroupConflicts'
 import { TRANSITION_METAL_CONFLICTS } from '@/features/inorganic-ion-matrix/data/conflicts/transitionMetalConflicts'
 import {
@@ -31,6 +32,7 @@ import { isBalanceWhitelisted } from './helpers/balanceWhitelist'
 const EQUATION_FIELDS = new Set([
   'equation',
   'testEquation',
+  'testReaction',
   'protectionEquation',
   'deprotectionEquation',
   'reactionFormula',
@@ -41,6 +43,7 @@ const EQUATION_FIELDS = new Set([
 ])
 
 const SOURCES: Array<[string, unknown]> = [
+  ['VALENCE_MATRIX_DATA', VALENCE_MATRIX_DATA],
   ['ION_DATA', ION_DATA],
   ['MAIN_GROUP_CONFLICTS', MAIN_GROUP_CONFLICTS],
   ['TRANSITION_METAL_CONFLICTS', TRANSITION_METAL_CONFLICTS],

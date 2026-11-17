@@ -146,7 +146,7 @@ export const modelValenceMatrix: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'var-1',
-      yearProvince: '2024 新课标卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-valence-matrix',
       title: '铬/铁元素价类二维图在废渣浸出中的迁移',
       contextDescription: '某工业含铬废渣中含有 Cr(III) 与 Fe(II)，利用价态转化为 Cr(VI) 溶于水分离。',
@@ -166,7 +166,7 @@ export const modelValenceMatrix: ModelQuizData = {
     },
     {
       id: 'var-2',
-      yearProvince: '2023 广东卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-valence-matrix',
       title: '硫元素价类二维图与 SO₂ / H₂S 归中反应分析',
       contextDescription: '将 H₂S 气体与 SO₂ 气体按 2:1 混合后通入水中，观察到产生淡黄色沉淀。',
@@ -186,7 +186,7 @@ export const modelValenceMatrix: ModelQuizData = {
     },
     {
       id: 'var-3',
-      yearProvince: '2024 山东卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-valence-matrix',
       title: '氮元素价类二维图与 NH₃ ➔ NO ➔ NO₂ ➔ HNO₃ 连续催化氧化链',
       contextDescription: '工业上以 NH₃ 为原料经催化氧化制备 HNO₃ 的价类二维转化路径如 N 元素价类图所示。',
@@ -206,7 +206,7 @@ export const modelValenceMatrix: ModelQuizData = {
     },
     {
       id: 'var-4',
-      yearProvince: '2024 浙江卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-valence-matrix',
       title: '铁元素价类二维图与 Fe²⁺ / Fe³⁺ 氧化还原及 KSCN 特征显色',
       contextDescription: '某实验小组研究铁及其化合物的价态转化，绘制了铁元素价类二维坐标图。',
@@ -226,7 +226,7 @@ export const modelValenceMatrix: ModelQuizData = {
     },
     {
       id: 'var-5',
-      yearProvince: '2024 江苏卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-valence-matrix',
       title: '钴元素价类二维图与废旧锂电池 LiCoO₂ 酸浸还原回收',
       contextDescription: '从废旧锂电池正极材料 LiCoO₂ 中回收钴时，采用 H₂SO₄ 与 H₂O₂ 混合液在 80℃ 下浸出。',
@@ -246,7 +246,7 @@ export const modelValenceMatrix: ModelQuizData = {
     },
     {
       id: 'var-6',
-      yearProvince: '2024 新课标全国卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-valence-matrix',
       title: '磷元素价类二维图与次磷酸钠化学镀应用',
       contextDescription: '次磷酸钠 (NaH₂PO₂) 广泛用于工业化学镀镍，反应过程中将 Ni²⁺ 还原为 Ni，自身被氧化为亚磷酸盐。',
@@ -266,7 +266,7 @@ export const modelValenceMatrix: ModelQuizData = {
     },
     {
       id: 'var-7',
-      yearProvince: '2023 全国乙卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-valence-matrix',
       title: '氯元素价类二维图与 Cl₂ 强碱歧化及漂白原理',
       contextDescription: 'Cl₂ 及其含氧酸盐的价态转化关系如图所示，Cl₂ 通入冷 NaOH 溶液中生成 NaCl 和 NaClO。',

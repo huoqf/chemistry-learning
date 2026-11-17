@@ -112,15 +112,15 @@ export function computeEnergyProfile(
   const ea1Normal = activationEnergy
   const ea2Normal = ea1Normal - deltaH
 
-  // 催化剂降低活化能（通常降低 30%~50%）。
-  // 降幅系数必须与 @/chemistry/collision 的 CATALYST_EA_FACTOR 共用同一常量：
-  // 同一页面的「活化分子百分数 f」由 collision.ts 计算，若此处再手写一份 0.55，
-  // 一旦其中一个被调整，势能曲线与「Ea 门槛左移」就会对不上。
-  //
-  // 注意：本函数**恒**计算催化路径（两条曲线同时供调用方绘制），
-  // 是否显示由 EnergyProfileChart 依据 hasCatalyst 决定 —— 故两个分支的表达式相同，
-  // 参数只作语义标记，不代表「不加催化剂就不算催化路径」。
-  const ea1Catalyst = hasCatalyst ? ea1Normal * CATALYST_EA_FACTOR : ea1Normal * CATALYST_EA_FACTOR
+  // 催化剂降低活化能：放热反应按 CATALYST_EA_FACTOR 降低正活化能；
+  // 吸热反应 (ΔH > 0) 受热力学约束，正反应活化能必须大于 ΔH（否则逆活化能 Ea2 <= 0），
+  // 故对吸热反应将超出 ΔH 的能垒部分按 CATALYST_EA_FACTOR 降低，确保 Ea1_cat > ΔH 且 < Ea1。
+  const rawCatEa1 = ea1Normal * CATALYST_EA_FACTOR
+  const ea1Catalyst =
+    reactionType === 'endothermic'
+      ? Math.max(rawCatEa1, deltaH + Math.max(0.5, (ea1Normal - deltaH) * CATALYST_EA_FACTOR))
+      : rawCatEa1
+  void hasCatalyst
 
   // ── 1. 锚点（唯一来源：曲线与标注都从这里取）──
   // 无催化剂：反应物 -> 过渡态(峰高严格 = 反应物 + Ea1) -> 生成物
@@ -136,7 +136,17 @@ export function computeEnergyProfile(
     x: X_CAT_INTERMEDIATE,
     y: reactantsEnergy + ea1Catalyst * 0.3,
   }
-  const catPeak2: EnergyPoint = { x: X_CAT_PEAK2, y: reactantsEnergy + ea1Catalyst * 0.95 }
+  const catPeak2Energy =
+    reactionType === 'endothermic'
+      ? Math.max(
+          productsEnergy + (ea1Catalyst - deltaH) * 0.75,
+          reactantsEnergy + ea1Catalyst * 0.95
+        )
+      : reactantsEnergy + ea1Catalyst * 0.95
+  const catPeak2: EnergyPoint = {
+    x: X_CAT_PEAK2,
+    y: Math.min(reactantsEnergy + ea1Catalyst - 0.1, catPeak2Energy),
+  }
   const catalystAnchors: EnergyPoint[] = [
     { x: 0, y: reactantsEnergy },
     catPeak1,

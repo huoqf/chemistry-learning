@@ -44,7 +44,7 @@ export const modelHessLaw: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'var-hess-1',
-      yearProvince: '2024 全国甲卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-hess-law',
       title: 'CO₂ 资源化利用与多步协同盖斯定律',
       contextDescription: '利用 CO₂ 与 CH₄ 重整制备合成气 (CO + H₂)，涉及催化积碳与消碳循环。已知以下热化学方程式：\n① CH₄(g) = C(s) + 2H₂(g) ΔH₁ = +74.8 kJ/mol\n② CO₂(g) + 2H₂(g) = C(s) + 2H₂O(g) ΔH₂ = -90.1 kJ/mol\n③ C(s) + H₂O(g) = CO(g) + H₂(g) ΔH₃ = +131.3 kJ/mol',
@@ -60,7 +60,7 @@ export const modelHessLaw: ModelQuizData = {
     },
     {
       id: 'var-hess-2',
-      yearProvince: '2023 全国卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-hess-law',
       title: '高频微观键能与晶体结构键数陷阱计算',
       contextDescription: '已知几种化学键的键能如下表：\nSi-Si: 222 kJ/mol, Si-O: 460 kJ/mol, O=O: 498 kJ/mol。\n晶体硅与二氧化硅均为立体网状晶体。',
@@ -76,7 +76,7 @@ export const modelHessLaw: ModelQuizData = {
     },
     {
       id: 'var-hess-3',
-      yearProvince: '2024 新课标卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-hess-law',
       title: '反应历程能量高程图与催化机理解析',
       contextDescription: '某催化反应历程的能量高程变化图，包含无催化剂路径和加入催化剂 X 后的两步中间体路径。',

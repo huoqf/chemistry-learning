@@ -215,16 +215,16 @@ export function ReagentStepCenterView({
         <div className="flex-1 h-full min-w-0 flex flex-col">
           <div className="flex-1 min-h-0 w-full p-2 border-b border-slate-200/60">
             <BaseChart
-              title="沉淀生成/溶解定量图像 n(沉淀) - V(滴加)"
+              title="沉淀生成/溶解定量图像 (相对最大沉淀量 % - V 滴加)"
               xDomain={[0, 10]}
               yDomain={[0, 120]}
               xLabel="滴加体积 V (mL)"
-              yLabel="沉淀量 n (mmol)"
+              yLabel="沉淀相对量 (%)"
             >
               <ChartLine points={pptChartPoints} color={CHEMISTRY_COLORS.concentration} strokeWidth={2} />
               <ChartCursor
                 x={currentVolume}
-                dataPoints={[{ y: currentPptMass, label: `沉淀量: ${currentPptMass} mmol` }]}
+                dataPoints={[{ y: currentPptMass, label: `沉淀相对量: ${currentPptMass}%` }]}
               />
             </BaseChart>
           </div>

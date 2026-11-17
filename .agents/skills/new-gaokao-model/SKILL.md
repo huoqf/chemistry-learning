@@ -37,6 +37,7 @@ import {
   ParamControl,
   ScoringCardSection,
   GaokaoVariantQuiz,
+  ChemistryPanel,
 } from '@/components/UI'
 import { ChemistryVectorArrow } from '@/components/Chemistry'
 import { useAnimationViewport, useSceneScale } from '@/hooks'
@@ -50,7 +51,7 @@ export const XxxCanvas: React.FC = () => {
   const model = getGaokaoModel(modelId)
   const quizData = getModelQuizData(modelId)
 
-  // 视角模式 (0: 图谱探究 | 1: 规范踩分 | 2: 真题研析)
+  // 视角模式 (0: 图谱探究 | 1: 规范踩分 | 2: 变式演练)
   const [viewMode, setViewMode] = useState<number>(0)
 
   // 1. 根据化学内容选择 Preset（非预先推荐，纯内容驱动）：
@@ -69,11 +70,11 @@ export const XxxCanvas: React.FC = () => {
     anchor: 'center',
   })
 
-  // 3. 将物理逻辑坐标精确变换为设计像素坐标，保障多设备/DPR 下矢量与标注 100% 零偏移
-  const targetPos = worldToDesign({ x: 1.5, y: 2.0 }, sceneScale)
+  // 3. 将化学/物理逻辑坐标精确变换为设计像素坐标（注意返回值为 { px, py }）
+  const targetPos = worldToDesign(1.5, 2.0, sceneScale)
 
   return (
-    <div className="w-full h-screen flex flex-col font-sans text-slate-900 bg-slate-100 overflow-hidden select-none">
+    <div className="w-full h-full flex flex-col font-sans overflow-hidden select-none">
       {/* 4. 必须直接使用 GaokaoToolHeader 渲染统一 Header 导航与右侧视角 Tabs */}
       <GaokaoToolHeader
         modelId={modelId}
@@ -81,50 +82,51 @@ export const XxxCanvas: React.FC = () => {
         onViewModeChange={setViewMode}
       />
 
-        <ThreePanel
-          left={
-            <LeftPanel>
-              <LeftPanelSection title="参数调控">
-                {/* 必须使用 ParamControl 滑块组件 */}
-              </LeftPanelSection>
-            </LeftPanel>
-          }
-          center={
-            <div className="w-full h-full flex flex-col overflow-hidden">
-              {viewMode === 0 && (
-                // 中屏自适应 SVG 画布（透出 Theme 统一背景，严禁自写浅色/深色/杂色背景 div）
-                <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
-                  <ChemistryVectorArrow
-                    x1={0}
-                    y1={0}
-                    x2={targetPos.x}
-                    y2={targetPos.y}
-                    label="c = 0.1 mol/L"
-                    fontSize={canvasSize.font(12)}
-                  />
-                </AnimationSvgCanvas>
-              )}
+      <ThreePanel
+        left={
+          <LeftPanel>
+            <LeftPanelSection title="参数调控">
+              {/* 必须使用 ParamControl 滑块组件 */}
+            </LeftPanelSection>
+          </LeftPanel>
+        }
+        center={
+          <div className="w-full h-full flex flex-col overflow-hidden">
+            {viewMode === 0 && (
+              // 中屏自适应 SVG 画布（透出 Theme 统一背景，严禁自写浅色/深色/杂色背景 div）
+              <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
+                <ChemistryVectorArrow
+                  origin={{ x: 0, y: 0 }}
+                  vector={{ x: targetPos.px ? 1.5 : 0, y: 2.0 }}
+                  type="concentration"
+                  sceneScale={sceneScale}
+                  label="c = 0.1 mol/L"
+                  font={canvasSize.font}
+                />
+              </AnimationSvgCanvas>
+            )}
 
-              {viewMode === 1 && quizData && (
-                <div className="w-full max-w-4xl mx-auto py-4 overflow-y-auto">
-                  <ScoringCardSection steps={quizData.scoringSteps} />
-                </div>
-              )}
+            {viewMode === 1 && quizData && (
+              <div className="w-full max-w-4xl mx-auto py-4 overflow-y-auto">
+                <ScoringCardSection steps={quizData.scoringSteps} />
+              </div>
+            )}
 
-              {viewMode === 2 && quizData && (
-                <div className="w-full max-w-4xl mx-auto py-4 overflow-y-auto">
-                  <GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />
-                </div>
-              )}
-            </div>
-          }
-          right={
-            <div className="w-full h-full p-4 overflow-y-auto">
-              {/* 右屏统一展示化学量、公式与高考要点 */}
-            </div>
-          }
-        />
-      </div>
+            {viewMode === 2 && quizData && (
+              <div className="w-full max-w-4xl mx-auto py-4 overflow-y-auto">
+                <GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />
+              </div>
+            )}
+          </div>
+        }
+        right={
+          <ChemistryPanel
+            quantities={[]}
+            formulas={[]}
+            gaokaoPoints={[]}
+          />
+        }
+      />
     </div>
   )
 }
@@ -138,14 +140,14 @@ export const XxxCanvas: React.FC = () => {
 
 | 页面层级/需求 | 必须调用的现成资源 | 导入路径 | 职责与效果 |
 |---|---|---|---|
-| **页面顶栏** | `<GaokaoToolHeader>` | `@/components/UI` | 渲染统一黑金 Header 与 `[图谱探究] [规范踩分] [真题研析]` 视角 Tabs。禁止手写 Header。 |
+| **页面顶栏** | `<GaokaoToolHeader>` | `@/components/UI` | 渲染统一 Header 与 `[图谱探究] [规范踩分] [变式演练]` 视角 Tabs。禁止手写 Header。 |
 | **页面三栏基座** | `<ThreePanel>` | `@/components/Layout` | 响应式三栏承载容器。 |
 | **画布自适应 Viewport** | `useAnimationViewport` | `@/hooks` | 传入内容决定的 Preset，自动计算 `containerRef`, `canvasSize.font`, `vp.transform`。 |
-| **坐标转换与缩放** | `useSceneScale` + `worldToDesign` | `@/hooks` / `@/scene` | 将逻辑坐标转换为设计像素，保证图形与标注**在任何屏幕设备/DPR 下零偏移、鼠标交互坐标精准**。 |
+| **坐标转换与缩放** | `useSceneScale` + `worldToDesign` | `@/hooks` / `@/scene` | 将逻辑坐标转换为设计像素 `{ px, py }`，保证图形与标注在各 DPR 下零偏移。 |
 | **中屏 SVG 画布** | `<AnimationSvgCanvas>` | `@/components/Layout` | 中屏只放 SVG 场景与矢量图表，**外层绝对严禁包裹深色/杂色 `div`**。 |
-| **矢量箭头与标注** | `<ChemistryVectorArrow>` / `<VectorArrow>` | `@/components/Chemistry` | 绘制精准矢量箭头，结合 `canvasSize.font(N)` 进行字号自适应。 |
+| **矢量箭头与标注** | `<ChemistryVectorArrow>` / `<VectorArrow>` | `@/components/Chemistry` | 绘制精准矢量箭头，结合 `font={canvasSize.font}` 进行字号自适应。 |
 | **视角 1 踩分卡** | `<ScoringCardSection>` | `@/components/UI` | `viewMode 1` 时在 DOM 层渲染高考踩分步骤。 |
-| **视角 2 真题变式** | `<GaokaoVariantQuiz>` | `@/components/UI` | `viewMode 2` 时在 DOM 层渲染压轴真题与变式。 |
+| **视角 2 变式演练** | `<GaokaoVariantQuiz>` | `@/components/UI` | `viewMode 2` 时在 DOM 层渲染情境变式训练题（严禁编造年份省份伪真题）。 |
 | **左屏控制面板** | `<LeftPanel>` / `<LeftPanelSection>` / `<ParamControl>` | `@/components/UI` | 声明式组件控制，禁止手写原生的 `<input type="range">` 或散乱按钮。 |
 
 ---
@@ -172,17 +174,17 @@ export const XxxCanvas: React.FC = () => {
 2. **高中化学学科真理与新高考对标**：
    - **教材边界**：严格以高中必修+选择性必修教材为事实源，严禁引入大学物理化学超纲展开；
    - **反应式与介质**：酸性介质补 H⁺，碱性介质补 OH⁻，水溶液严禁出现自由 O²⁻；严格配平原子与电荷；
-   - **高考解题闭环**：公式必须采用高考标准守恒式（如法拉第电子守恒链、勒夏特列商商对比），考点与警示直接切中真题采分点与丢分陷阱；
+   - **高考解题闭环**：公式必须采用高考标准守恒式（如法拉第电子守恒链、勒夏特列商数对比 $Q$ 与 $K$），考点与警示切中核心采分点与丢分陷阱；
    - **单容器流**：右屏统一使用垂直流呈现（化学量 ➔ 公式 ➔ 高考要点 ➔ 易错警示），取消生硬嵌套 Tab。
 
 ---
 
 ## 5. 职责拆分与题库数据质量铁律
 
-### 5.1 高考真题与变式题质量铁律（原文 + 客观原图 + 默认隐藏解题线索）
-1. **题干与答案原文一致性**：`contextDescription`、`questionText` 与选项/答案描述必须与高考官方原题完全一致，不得随意删除、简化或改写条件，保障试题逻辑严谨性。
-2. **客观配图还原**：变式题插图必须是考生在高考考场上看到的**官方客观原图高保真复现**。
-3. **解题线索默认隐蔽**：默认插图与题干视图中，**绝对严禁直接标注解题切口（如剪刀切断线 ✂）、答案提示文本、加成取向箭头或归中反应结论**。所有的机理剖析、断键取向与答案推导，**必须且只能放置在“盲盒解密 / 详解分析”折叠卡展开后呈现**，保障考场真实刷题探究体验。
+### 5.1 情境变式题库质量铁律（客观原图 + 禁造伪真题 + 默认隐藏解题线索）
+1. **严禁伪造真题署名**：`variantQuizzes` 定位为“核心考点 · 情境变式演练”，严禁在 `title` / `yearProvince` / 题干中使用虚假高考年份、省份卷名或「真题精选 / 实验原图」等误导文案。
+2. **客观配图**：变式题插图必须符合化学事实与题目已知条件，不预设无关线索。
+3. **解题线索默认隐蔽**：默认插图与题干视图中，**绝对严禁直接标注解题切口（如剪刀切断线 ✂）、答案提示文本、加成取向箭头或归中反应结论**。所有的机理剖析、断键取向与答案推导，**必须且只能放置在“详解分析”折叠卡展开后呈现**。
 
 ### 5.2 职责拆分与数据注册
 复杂母题按**单一职责**拆分：

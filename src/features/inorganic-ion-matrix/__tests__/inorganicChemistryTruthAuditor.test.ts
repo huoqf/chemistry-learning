@@ -136,7 +136,7 @@ describe('无机离子与共存互斥矩阵 — 新高考化学真理性自动�
       expect(alHco3.equation).toContain('Al(OH)_3\\downarrow')
       expect(alHco3.equation).toContain('CO_2\\uparrow')
 
-      const alAlO2 = MAIN_GROUP_CONFLICTS['Al3+:AlO2-']
+      const alAlO2 = MAIN_GROUP_CONFLICTS['Al3+:[Al(OH)4]-']
       expect(alAlO2.status).toBe('conflict')
       expect(alAlO2.category).toBe('double-hydrolysis')
       expect(alAlO2.equation).toContain('Al(OH)_3\\downarrow')

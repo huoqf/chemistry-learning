@@ -52,7 +52,7 @@ export const modelAvogadroConstant: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'var-na-1',
-      yearProvince: '2024 全国甲卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-avogadro-constant',
       title: '设 $N_{\\text{A}}$ 为阿伏加德罗常数的值，下列说法正确的是？',
       contextDescription: '考查过氧化物歧化电子转移、弱电解质电离与标准状况物理状态。',
@@ -68,7 +68,7 @@ export const modelAvogadroConstant: ModelQuizData = {
     },
     {
       id: 'var-na-2',
-      yearProvince: '2024 湖南卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-avogadro-constant',
       title: '设 $N_{\\text{A}}$ 为阿伏加德罗常数的值，下列说法正确的是？',
       contextDescription: '考查弱电解质水解、可逆反应受限与歧化反应电子转移。',
@@ -84,7 +84,7 @@ export const modelAvogadroConstant: ModelQuizData = {
     },
     {
       id: 'var-na-3',
-      yearProvince: '2024 广东卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-avogadro-constant',
       title: '设 $N_{\\text{A}}$ 为阿伏加德罗常数的值，下列说法正确的是？',
       contextDescription: '考查晶体共价键均摊法（SiO₂ 与 P₄）及 14C 同位素中子数。',

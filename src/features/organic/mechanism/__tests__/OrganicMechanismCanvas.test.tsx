@@ -95,16 +95,13 @@ describe('OrganicMechanismCanvas Component', () => {
     expect(screen.getByText(/机制 6 踩分/i)).toBeDefined()
     expect(screen.getByText(/新高考压轴踩分/i)).toBeDefined()
 
-    // 切换到视图 C：真题变式
-    const quizTab = screen.getAllByText(/真题/i)[0]
+    // 切换到视图 C：变式演练
+    const quizTab = screen.getAllByText(/变式演练/i)[0]
     fireEvent.click(quizTab)
-    expect(screen.getByText(/高考真题变式选择题/i)).toBeDefined()
-    expect(screen.getByText(/包含 8 大机制对应的近几年高考真题/i)).toBeDefined()
-    // P1-X2 署名降级后，变式题标签为「年份/卷别 · 情境变式」
-    expect(screen.getByText(/2024 新课标卷 · 情境变式/)).toBeDefined()
-    expect(screen.getByText(/2024 全国甲卷 · 情境变式/)).toBeDefined()
-    expect(screen.getByText(/2024 山东卷 · 情境变式/)).toBeDefined()
-    expect(screen.getByText(/2024 广东卷 · 情境变式/)).toBeDefined()
+    expect(screen.getByText(/有机机理考点变式选择题/i)).toBeDefined()
+    expect(screen.getByText(/包含 6 大核心机制及拓展情境变式/i)).toBeDefined()
+    // 移除虚假年份省份后，统一显示「核心考点 · 情境变式」
+    expect(screen.getAllByText(/核心考点 · 情境变式/).length).toBeGreaterThan(0)
   })
 
   it('should synchronize left panel teaching guide and right chemistry panel with stage and solvent controls', () => {

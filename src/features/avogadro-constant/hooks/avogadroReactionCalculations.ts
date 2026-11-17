@@ -6,32 +6,37 @@ import type { AvogadroParams, AvogadroResult } from '../types'
 export function calculateElectrolyteHydrolysisTrap(
   item: 'CH3COOH' | 'FeCl3' | 'Na2CO3' | 'NaHSO4-molten' | 'pureH2O',
   vol: number,
-  conc: number
+  conc: number,
+  amountValue = 1,
+  amountUnit: 'mol' | 'L' | 'g' = 'mol'
 ): AvogadroResult {
   const totalMoles = vol * conc
 
   switch (item) {
     case 'NaHSO4-molten': {
+      const moltenMoles = amountUnit === 'g' ? amountValue / 120 : amountValue
+      const ionActual = moltenMoles * 2
+      const ionTrap = moltenMoles * 3
       return {
         title: 'NaHSO₄ (硫酸氢钠) 熔融 vs 溶液电离离子数陷阱',
-        subtitle: '熔融状态下电离为 Na⁺ 和 HSO₄⁻ (1 mol 熔融 NaHSO₄ 含 2 mol 离子)',
+        subtitle: `熔融状态下电离为 Na⁺ 和 HSO₄⁻ (${moltenMoles.toFixed(2)} mol 熔融 NaHSO₄ 含 ${ionActual.toFixed(2)} mol 离子)`,
         isStateGas: false,
         physicalState: '熔融态',
         vmValue: 22.4,
         particleStats: [
-          { label: '熔融态 阴阳离子总数', theoreticalMoles: 3, actualMoles: 2, unit: 'N_A', isTrap: true, trapExplanation: '错把熔融态误认为水溶液！熔融时 HSO₄⁻ 内共价键不断裂，仅电离出 Na⁺ 和 HSO₄⁻ (2 mol 离子)！' },
-          { label: '水溶液 离子总数', theoreticalMoles: 3, actualMoles: 3, unit: 'N_A', isTrap: false, trapExplanation: '在水溶液中受水分子作用 HSO₄⁻ 完全电离为 H⁺ 和 SO₄²⁻，离子总数为 3 mol！' },
+          { label: '熔融态 阴阳离子总数', theoreticalMoles: ionTrap, actualMoles: ionActual, unit: 'N_A', isTrap: true, trapExplanation: `错把熔融态误认为水溶液！熔融时 HSO₄⁻ 内共价键不断裂，仅电离出 Na⁺ 和 HSO₄⁻ (${ionActual.toFixed(2)} mol 离子)！` },
+          { label: '水溶液 离子总数', theoreticalMoles: ionTrap, actualMoles: ionTrap, unit: 'N_A', isTrap: false, trapExplanation: `在水溶液中受水分子作用 HSO₄⁻ 完全电离为 H⁺ 和 SO₄²⁻，离子总数为 ${ionTrap.toFixed(2)} mol！` },
         ],
         trapType: '熔融态与水溶液电离陷阱',
-        trapBadge: '熔融 2 mol 离子',
+        trapBadge: '熔融 2 mol 离子/mol',
         trapLevel: 'high',
         keyPointAnalysis: [
-          '熔融状态下：NaHSO₄ = Na⁺ + HSO₄⁻（仅克服离子键，共价键 O-H 不断裂，生成 2 mol 离子）。',
-          '水溶液状态下：NaHSO₄ = Na⁺ + H⁺ + SO₄²⁻（克服离子键与共价键，生成 3 mol 离子）。',
-          '高考高频陷阱：“1 mol 熔融 NaHSO₄ 中含有 3 N_A 个离子”（错误！仅为 2 N_A）。',
+          '熔融状态下：NaHSO₄ = Na⁺ + HSO₄⁻（仅克服离子键，共价键 O-H 不断裂，1 mol 生成 2 mol 离子）。',
+          '水溶液状态下：NaHSO₄ = Na⁺ + H⁺ + SO₄²⁻（克服离子键与共价键，1 mol 生成 3 mol 离子）。',
+          `当前 ${moltenMoles.toFixed(2)} mol 熔融 NaHSO₄ 中含有 ${ionActual.toFixed(2)} N_A 个离子（水溶液中为 ${ionTrap.toFixed(2)} N_A）。`,
         ],
         formulaLatex: '\\text{熔融: NaHSO}_4 = \\text{Na}^+ + \\text{HSO}_4^- \\quad | \\quad \\text{水溶液: NaHSO}_4 = \\text{Na}^+ + \\text{H}^+ + \\text{SO}_4^{2-}',
-        correctAnswerSummary: `1 mol 熔融 NaHSO₄ 含有 2 N_A 个离子；水溶液中为 3 N_A`,
+        correctAnswerSummary: `${moltenMoles.toFixed(2)} mol 熔融 NaHSO₄ 含有 ${ionActual.toFixed(2)} N_A 个离子；水溶液中为 ${ionTrap.toFixed(2)} N_A`,
         stepByStepMatrix: [
           { stepName: '一审环境', checkTarget: '熔融态环境', pass: false, finding: '熔融态！无水分子作用！' },
           { stepName: '二审状态', checkTarget: '熔融液体', pass: true, finding: '熔融态' },

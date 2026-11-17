@@ -52,7 +52,13 @@ export function useAvogadroChemistry(params: AvogadroParams): AvogadroResult {
 
     // 3. 弱电解质电离与盐类水解微粒数变动陷阱
     if (trapCategory === 'electrolyte-hydrolysis') {
-      return calculateElectrolyteHydrolysisTrap(electrolyteItem, solutionVolume, solutionConcentration)
+      return calculateElectrolyteHydrolysisTrap(
+        electrolyteItem,
+        solutionVolume,
+        solutionConcentration,
+        amountValue,
+        amountUnit
+      )
     }
 
     // 4. 氧化还原反应电子转移数 (n_e) 陷阱

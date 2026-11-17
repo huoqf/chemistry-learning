@@ -54,7 +54,7 @@ export const BE_CONFIG: ElementValenceConfig = {
       colorStyle: 'bg-slate-50 text-slate-800 border-slate-300',
       rgbColor: colors.neutral[100],
       testReaction: '气态下为直线型共价分子（sp 杂化），固态为通过氯桥键形成的链状聚合物；极易水解酸解',
-      equation: 'BeCl₂ + 2H₂O ⇌ Be(OH)₂↓ + 2HCl',
+      equation: 'BeCl₂ + 2H₂O ⇌ Be(OH)₂ + 2HCl',
       roleDescription: '共价氯化物，氯桥配位模型',
     },
   ],

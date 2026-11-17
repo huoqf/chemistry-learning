@@ -54,7 +54,7 @@ export const modelReagentStep: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'var-reagent-1',
-      yearProvince: '2024 新课标卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-reagent-step',
       title: '两性金属离子滴定图像与 $n(\\text{沉淀})-V(\\text{滴加})$ 定量分析',
       contextDescription: '向 100 mL 含有 Al³⁺ 与 Mg²⁺ 的混合溶液中逐滴加入 1 mol/L NaOH 溶液，沉淀质量与滴加体积关系如图所示。',
@@ -74,7 +74,7 @@ export const modelReagentStep: ModelQuizData = {
     },
     {
       id: 'var-reagent-2',
-      yearProvince: '2024 广东卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-reagent-step',
       title: 'Fe(OH)₂ 白色沉淀制备与防氧化隔绝措施分析',
       contextDescription: '某实验小组设计利用新制 FeSO₄ 溶液与 NaOH 溶液制备 Fe(OH)₂ 白色沉淀。',
@@ -90,7 +90,7 @@ export const modelReagentStep: ModelQuizData = {
     },
     {
       id: 'var-reagent-3',
-      yearProvince: '2024 浙江卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-reagent-step',
       title: 'AlCl₃ 溶液中滴加一水合氨 vs 强碱 NaOH 沉淀图像对比',
       contextDescription: '向 20 mL 0.1 mol/L AlCl₃ 溶液中分别滴加 0.1 mol/L 氨水与 0.1 mol/L NaOH 溶液。',
@@ -106,7 +106,7 @@ export const modelReagentStep: ModelQuizData = {
     },
     {
       id: 'var-reagent-4',
-      yearProvince: '2023 全国甲卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-reagent-step',
       title: 'CuSO₄ 溶液逐滴加入氨水浅蓝沉淀至深蓝络合溶液转化',
       contextDescription: '向 CuSO₄ 溶液中逐滴加入浓氨水至过量，首先产生浅蓝色沉淀，继续滴加沉淀溶解得到深蓝色透明溶液。',
@@ -122,7 +122,7 @@ export const modelReagentStep: ModelQuizData = {
     },
     {
       id: 'var-reagent-5',
-      yearProvince: '2023 山东卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-reagent-step',
       title: '分步滴定中 Fe³⁺、Al³⁺、Mg²⁺ 离子沉淀竞争顺序',
       contextDescription: '向含有等物质的量浓度 Fe³⁺、Al³⁺、Mg²⁺ 的酸性混合溶液中逐滴加入 1 mol/L NaOH 溶液。',
@@ -134,7 +134,7 @@ export const modelReagentStep: ModelQuizData = {
         { label: 'D', text: '三种离子同时开始沉淀', isCorrect: false },
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查不同金属氢氧化物 Ksp 决定沉淀顺序：Ksp[Fe(OH)₃] (4×10⁻³⁸) < Ksp[Al(OH)₃] (1×10⁻³³) < Ksp[Mg(OH)₂] (5.6×10⁻¹²)。',
-      detailedExplanation: 'Ksp 越小，沉淀所需 pH 越低，越先开始沉淀。Fe(OH)₃ 在 pH~1.5 即开始沉淀，Al(OH)₃ 在 pH~3.3 开始沉淀，Mg(OH)₂ 须到 pH~9.4 才开始沉淀。故先后顺序为 Fe³⁺ ➔ Al³⁺ ➔ Mg²⁺。',
+      detailedExplanation: 'Ksp 越小，同浓度下沉淀所需 pH 越低，越先开始沉淀。以 0.1 mol/L 离子计，Fe(OH)₃ 在 pH≈1.5 开始沉淀，Al(OH)₃ 在 pH≈3.3 开始沉淀，Mg(OH)₂ 需 pH≈8.9（若 0.01 mol/L 约为 9.4）才开始沉淀。故先后顺序为 Fe³⁺ ➔ Al³⁺ ➔ Mg²⁺。',
       diagramType: 'precipitation-curve',
       diagramConfig: {
         title: 'Fe³⁺、Al³⁺、Mg²⁺ 混合液滴加强碱分步沉淀 lg c - pH 竞争曲线图',
@@ -142,7 +142,7 @@ export const modelReagentStep: ModelQuizData = {
     },
     {
       id: 'var-reagent-6',
-      yearProvince: '2024 新课标卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-reagent-step',
       title: '沉淀转化实验设计评价与沉淀剂过量陷阱辨析',
       contextDescription: '下列实验操作、现象与所得到的实验结论均正确且相符的是：',

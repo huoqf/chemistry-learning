@@ -40,8 +40,8 @@ export const ElementPeriodicLeftPanel: React.FC<ElementPeriodicLeftPanelProps> =
   ]
 
   const inferenceOptions = [
-    { label: '2024 山东短周期推算', value: 'case-2024-shandong' },
-    { label: '2024 全国甲卷过渡元素', value: 'case-2024-quanguo' },
+    { label: '短周期位-构-性推算', value: 'case-short-period' },
+    { label: '第四周期 d/ds 区特例', value: 'case-transition-3d' },
   ]
 
   // 快捷常用元素按钮
@@ -149,7 +149,7 @@ export const ElementPeriodicLeftPanel: React.FC<ElementPeriodicLeftPanelProps> =
       )}
 
       {params.exploreMode === 'inference-nexus' && (
-        <LeftPanelSection title="3. 高考真题推断案例">
+        <LeftPanelSection title="3. 经典推断模型案例">
           <SegmentedControl
             options={inferenceOptions}
             value={params.inferenceId}

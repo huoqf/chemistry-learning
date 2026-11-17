@@ -140,7 +140,7 @@ export const AL_CONFIG: ElementValenceConfig = {
       toSubstance: 'Al(OH)₃',
       reagent: '通入过量 CO₂',
       equation: '[Al(OH)₄]⁻ + CO₂ = Al(OH)₃↓ + HCO₃⁻',
-      electronTransfer: '非氧化还原 (弱酸制强酸/胶体生成)',
+      electronTransfer: '非氧化还原 (较强酸制较弱酸，生成沉淀)',
       type: 'other',
     },
   ],

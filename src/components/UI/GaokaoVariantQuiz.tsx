@@ -9,10 +9,10 @@ interface GaokaoVariantQuizProps {
 }
 
 /**
- * GaokaoVariantQuiz — 近 3 年高考真实情境变式盲盒组件
+ * GaokaoVariantQuiz — 高考核心母题情境变式演练组件
  *
  * 遵循项目统一 Light Theme 视觉规范。
- * 铁律：题目区纯净只包含真题原题与选项，绝对不泄漏解析与提示；
+ * 铁律：题目区纯净只包含题干与选项，绝对不泄漏解析与提示；
  * 只有在作答后或显式点击【查看解题解密与详细解析】时才展示解题解密区块。
  */
 export const GaokaoVariantQuiz: React.FC<GaokaoVariantQuizProps> = ({ quizzes = [] }) => {
@@ -24,7 +24,7 @@ export const GaokaoVariantQuiz: React.FC<GaokaoVariantQuizProps> = ({ quizzes = 
   if (safeQuizzes.length === 0) {
     return (
       <div className="p-8 text-center text-slate-400 bg-white rounded-xl border border-slate-200 my-2">
-        暂无高考真题研析数据
+        暂无考点变式演练数据
       </div>
     )
   }
@@ -48,12 +48,12 @@ export const GaokaoVariantQuiz: React.FC<GaokaoVariantQuizProps> = ({ quizzes = 
             <Sparkles className="w-4 h-4" />
           </div>
           <div>
-            <h4 className="text-xs font-bold text-slate-800">近 3 年高考真实情境变式盲盒</h4>
+            <h4 className="text-xs font-bold text-slate-800">母题高频考点变式演练</h4>
             <p className="text-[11px] text-slate-500">母题模型迁移 · 新情境对齐与考场刷题探究</p>
           </div>
         </div>
         <span className="text-[10px] font-bold px-2 py-0.5 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-full flex items-center gap-1">
-          <Compass className="w-3 h-3 text-indigo-600" /> 真题对齐
+          <Compass className="w-3 h-3 text-indigo-600" /> 考点对齐
         </span>
       </div>
 
@@ -70,10 +70,10 @@ export const GaokaoVariantQuiz: React.FC<GaokaoVariantQuizProps> = ({ quizzes = 
               key={quiz.id}
               className="bg-slate-50/70 rounded-lg p-3.5 border border-slate-200/80 shadow-2xs"
             >
-              {/* 年份标签与标题 */}
+              {/* 考点标签与标题 */}
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0 mr-2">
-                  {quiz.yearProvince || '情境变式题'}
+                  {quiz.yearProvince || '情境变式'}
                 </span>
                 <span className="text-xs font-bold text-slate-800 flex-1 text-right leading-snug">
                   <KatexText text={quiz.title || ''} />

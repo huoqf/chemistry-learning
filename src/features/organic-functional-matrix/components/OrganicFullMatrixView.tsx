@@ -646,7 +646,7 @@ export const OrganicFullMatrixView: React.FC<OrganicFullMatrixViewProps> = ({
                                   <div className="p-3 bg-blue-50/80 rounded-lg border border-blue-100 space-y-1.5 text-xs">
                                     <div className="font-bold text-blue-950 flex items-center gap-1.5">
                                       <Radio className="w-3.5 h-3.5 text-blue-700" />
-                                      <span>现代仪器波谱定性分析 (高考前沿真题)</span>
+                                      <span>现代仪器波谱定性分析 (IR 与 ¹H-NMR)</span>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-slate-700">
                                       <div>

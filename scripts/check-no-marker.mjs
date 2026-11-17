@@ -60,7 +60,7 @@ for (const dir of TARGET_DIRS) {
 // ── 输出 ───────────────────────────────────────────────────
 if (violations.length > 0) {
   console.error('❌ Handwritten <marker> elements detected (铁律1-5: 禁止自造 marker)。')
-  console.error('   使用 VectorDefs 组件统一管理 SVG marker 定义。')
+  console.error('   使用 ChemistryVectorArrow / VectorArrow 组件绘制箭头，禁止在特征/通用组件中手写 <marker>。')
   console.error('')
   for (const v of violations) {
     console.error(`  ${v.file}:${v.line}  ${v.text}`)

@@ -1,32 +1,46 @@
 import { describe, it, expect } from 'vitest'
-import { registerQuantityBuilder, getChemistryQuantities } from '../chemistryQuantities'
+import { getChemistryQuantities } from '../chemistryQuantities'
+import { reactionPrincipleAnimations } from '../registries/reaction-principle'
+import { structureAnimations } from '../registries/structure'
+import { inorganicAnimations } from '../registries/inorganic'
+import { experimentAnimations } from '../registries/experiment'
 
-describe('chemistryQuantities', () => {
+const ALL_REGISTRATIONS = {
+  ...reactionPrincipleAnimations,
+  ...structureAnimations,
+  ...inorganicAnimations,
+  ...experimentAnimations,
+}
+
+describe('chemistryQuantities — 全量 12 动画化学量注册覆盖守门', () => {
   it('未注册的 animationId 返回空数组', () => {
     expect(getChemistryQuantities('nonexistent', {}, 0)).toEqual([])
   })
 
-  it('注册后可获取化学量列表', () => {
-    registerQuantityBuilder('equilibrium-test', (_params, time) => [
-      { key: 'concA', label: 'A 浓度', value: 1.0 - time * 0.1, unit: 'mol/L', colorKey: 'concentration' },
-      { key: 'concB', label: 'B 浓度', value: time * 0.1, unit: 'mol/L', colorKey: 'concentration' },
-    ])
+  it('全库全部注册动画均绑定了化学量构建器且在默认参数下无 NaN / Infinity', () => {
+    const entries = Object.entries(ALL_REGISTRATIONS)
+    expect(entries.length).toBeGreaterThanOrEqual(12)
 
-    const quantities = getChemistryQuantities('equilibrium-test', {}, 5)
-    expect(quantities).toHaveLength(2)
-    expect(quantities[0].value).toBeCloseTo(0.5)
-    expect(quantities[1].value).toBeCloseTo(0.5)
+    for (const [animId, config] of entries) {
+      const defaults = (config.defaultParams || {}) as Record<string, number>
+      for (const t of [0, 2.5]) {
+        const list = getChemistryQuantities(animId, defaults, t)
+        expect(list.length, `${animId} 在 t=${t} 返回了空化学量列表`).toBeGreaterThan(0)
+        for (const item of list) {
+          expect(item.key, `${animId} 存在空 key`).toBeTruthy()
+          expect(item.label, `${animId}.${item.key} 存在空 label`).toBeTruthy()
+          expect(
+            typeof item.value === 'number' && Number.isFinite(item.value),
+            `${animId}.${item.key} 值非有限数字: ${String(item.value)}`
+          ).toBe(true)
+        }
+      }
+    }
   })
 
-  it('化学量列表随 params 变化', () => {
-    registerQuantityBuilder('rate-test', (params) => [
-      { key: 'rate', label: '反应速率', value: params.k as number * 0.5, unit: 'mol/(L·s)', colorKey: 'reactionRate' },
-    ])
-
-    const q1 = getChemistryQuantities('rate-test', { k: 2 }, 0)
-    expect(q1[0].value).toBe(1.0)
-
-    const q2 = getChemistryQuantities('rate-test', { k: 4 }, 0)
-    expect(q2[0].value).toBe(2.0)
+  it('化学量输出随核心输入参数变化', () => {
+    const qLow = getChemistryQuantities('anim-collision-theory', { temperature: 298, concentration: 1.0, activationEnergy: 80, catalyst: 0 }, 0)
+    const qHigh = getChemistryQuantities('anim-collision-theory', { temperature: 450, concentration: 1.0, activationEnergy: 80, catalyst: 0 }, 0)
+    expect(qLow).not.toEqual(qHigh)
   })
 })

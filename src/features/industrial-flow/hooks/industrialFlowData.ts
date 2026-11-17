@@ -335,12 +335,21 @@ export function getReagentEvaluations(systemId: IndustrialFlowSystemId): Reagent
   } else if (systemId === 'ti-fe') {
     return [
       {
-        reagent: 'NaOH',
+        reagent: 'NH3·H2O',
         isRecommended: true,
-        label: '稀 NaOH (精密滴定)',
-        tag: '中和酸度',
+        label: '稀氨水 (温和微调)',
+        tag: '防局部过碱',
+        category: 'external',
+        reaction: 'H⁺ + NH₃·H₂O = NH₄⁺ + H₂O',
+      },
+      {
+        reagent: 'NaOH',
+        isRecommended: false,
+        label: 'NaOH (强碱慎用)',
+        tag: '易局部过碱',
         category: 'external',
         reaction: 'H⁺ + OH⁻ = H₂O',
+        warning: '强碱 NaOH 易造成局部过碱，导致 TiO²⁺ 提前水解沉淀损失或 Fe²⁺ 局部沉淀',
       },
       {
         reagent: 'CaCO3',
@@ -355,20 +364,21 @@ export function getReagentEvaluations(systemId: IndustrialFlowSystemId): Reagent
   } else if (systemId === 'ni-co-li') {
     return [
       {
-        reagent: 'NaOH',
-        isRecommended: true,
-        label: '稀 NaOH 溶液',
-        tag: '精准沉淀铁铝',
-        category: 'external',
-        reaction: 'OH⁻ + H⁺ = H₂O',
-      },
-      {
         reagent: 'Na2CO3',
         isRecommended: true,
         label: 'Na₂CO₃ (纯碱)',
         tag: '温和沉淀剂',
         category: 'external',
         reaction: 'CO₃²⁻ + 2H⁺ = CO₂↑ + H₂O',
+      },
+      {
+        reagent: 'NaOH',
+        isRecommended: false,
+        label: 'NaOH (强碱慎用)',
+        tag: '易局部过碱',
+        category: 'external',
+        reaction: 'OH⁻ + H⁺ = H₂O',
+        warning: '强碱 NaOH 易局部过碱导致 Al(OH)₃ 反溶及 Co²⁺/Ni²⁺ 提前共沉淀损失，宜用 Na₂CO₃ 温和调 pH',
       },
       {
         reagent: 'CaCO3',

@@ -250,7 +250,7 @@ export const OrganicRightPanel: React.FC<OrganicRightPanelProps> = ({
           <div className="space-y-1">
             <div className="text-xs font-bold text-slate-700 flex items-center gap-1">
               <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
-              <span>高考真题推断规律精析</span>
+              <span>经典母题推断规律精析</span>
             </div>
             <div className="p-2 bg-white rounded-lg border border-slate-200/80 text-xs text-slate-700 leading-relaxed">
               {activePreset.examAnalysis}
@@ -434,7 +434,7 @@ export const OrganicRightPanel: React.FC<OrganicRightPanelProps> = ({
       {/* ────────────────── 5. 空态引导提示 ────────────────── */}
       {!activePreset && !activeSelectedGroup && relevantClues.length === 0 && (
         <div className="p-6 text-center text-slate-400 text-xs bg-slate-50 rounded-xl border border-dashed border-slate-200">
-          请在左侧选择经典母题或在全景大表中点击官能团，右屏将实时同步考点精讲与真题题眼。
+          请在左侧选择经典母题或在全景大表中点击官能团，右屏将实时同步考点精讲与推断题眼。
         </div>
       )}
     </div>

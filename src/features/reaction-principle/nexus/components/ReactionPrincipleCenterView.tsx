@@ -39,18 +39,18 @@ export const ReactionPrincipleCenterView: React.FC<ReactionPrincipleCenterViewPr
     )
   }
 
-  // 2. 视角 2：真题研析
+  // 2. 视角 2：变式演练
   if (viewMode === 2) {
     return (
       <div className="w-full h-full flex flex-col p-4 overflow-y-auto">
         <h2 className="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-indigo-500" />
-          高考反应原理大题高保真真题研析
+          反应原理核心考点变式演练
         </h2>
         {quizData?.variantQuizzes ? (
           <GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />
         ) : (
-          <p className="text-xs text-slate-500">真题题库加载中...</p>
+          <p className="text-xs text-slate-500">变式题库加载中...</p>
         )}
       </div>
     )

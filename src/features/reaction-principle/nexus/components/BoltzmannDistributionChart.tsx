@@ -27,8 +27,11 @@ export const BoltzmannDistributionChart: React.FC<BoltzmannDistributionChartProp
   const chartWidth = width - padding.left - padding.right
   const chartHeight = height - padding.top - padding.bottom
 
-  // 标定能量范围 0 ~ 120，让曲线峰值位于约 1/4~1/3，右侧活化区饱满展开
-  const maxE = 120
+  // 动态标定能量范围，确保合成氨 (Ea=176) 与甲烷醇等高能垒反应均完整展开
+  const maxE = Math.max(
+    120,
+    boltzmannData.distribution[boltzmannData.distribution.length - 1]?.energy ?? 120
+  )
   const maxF = Math.max(
     ...boltzmannData.distribution.map((d) => d.fraction),
     ...(boltzmannData.baselineDistribution?.map((d) => d.fraction) || []),

@@ -32,7 +32,7 @@ export interface ClaimGuardEntry {
 
 export const CLAIM_GUARD_ENTRIES: ClaimGuardEntry[] = [
   {
-    all: [/亚硝酸|NO₂|NO2|NO_2/, /淡蓝色|浅蓝色|蓝色溶液/],
+    all: [/亚硝酸|NO₂|NO2|NO_2/, /(?:溶液|均|呈|显|为)\s*(?:淡蓝色|浅蓝色|蓝色溶液)/],
     unless: /无色|不显|并非|不是淡蓝|绝不/,
     reason: '亚硝酸及其盐（NaNO₂/HNO₂）的溶液无色（浓时微黄），绝无“淡蓝色”。酸化后逸出无色 NO，管口遇空气变红棕色 NO₂。',
     targetDate: '2027-01-31',
@@ -68,19 +68,32 @@ export const CLAIM_GUARD_ENTRIES: ClaimGuardEntry[] = [
   {
     all: [/Al³⁺|Al3\+/, /Mg²⁺|Mg2\+/, /同时(开始)?沉淀/],
     unless: /不是|并非|而非|绝不会/,
-    reason: 'Ksp[Al(OH)₃]≈1×10⁻³³ 远小于 Ksp[Mg(OH)₂]≈5.6×10⁻¹²，Al³⁺ 在 pH≈3.3 即开始沉淀，Mg²⁺ 需 pH≈9.4，故 Al³⁺ 必定先沉淀，不存在“同时沉淀”。',
+    reason: 'Ksp[Al(OH)₃]≈1×10⁻³³ 远小于 Ksp[Mg(OH)₂]≈5.6×10⁻¹²，Al³⁺(0.1 mol/L) 在 pH≈3.3 即开始沉淀，Mg²⁺(0.1 mol/L) 在 pH≈8.9（0.01 mol/L 时 pH≈9.4）开始沉淀，故 Al³⁺ 必定先沉淀，不存在“同时沉淀”。',
     targetDate: '2027-01-31',
   },
 ]
 
-/** 返回 `text` 命中的全部违规条目（已应用 unless 豁免） */
+/** 按分句切分文本，避免前一句错误声明被后一句澄清文本的 `unless` 整体放行（“免死金牌”漏洞） */
+function splitClaimClauses(text: string): string[] {
+  return text
+    .split(/[。！？；;\n]/)
+    .map(c => c.trim())
+    .filter(Boolean)
+}
+
+/** 返回 `text` 命中的全部违规条目（分句级应用 all 与 unless） */
 export function findClaimViolations(text: string): ClaimGuardEntry[] {
   if (!text) return []
-  return CLAIM_GUARD_ENTRIES.filter(entry => {
-    if (!entry.all.every(re => re.test(text))) return false
-    if (entry.unless && entry.unless.test(text)) return false
-    return true
-  })
+  const clauses = splitClaimClauses(text)
+  const matched = new Set<ClaimGuardEntry>()
+  for (const clause of clauses) {
+    for (const entry of CLAIM_GUARD_ENTRIES) {
+      if (!entry.all.every(re => re.test(clause))) continue
+      if (entry.unless && entry.unless.test(clause)) continue
+      matched.add(entry)
+    }
+  }
+  return Array.from(matched)
 }
 
 /** 从任意嵌套结构中按字段名白名单收集全部字符串 */

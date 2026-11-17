@@ -594,13 +594,13 @@ export const PRESET_MOLECULES: PresetMoleculeDetail[] = [
     chemicalName: '甲酸苯酯 (HCOO-C₆H₅)',
     subtitle: '甲酸酯 + 酚酯 ➔ 银镜 + 耗 2 NaOH',
     structureFormula: 'HCOO-C₆H₅',
-    counts: { 'phenol-ester': 1, 'aldehyde-cho': 1 },
+    counts: { 'phenol-ester': 1 },
     focusGroupId: 'phenol-ester',
     breakdownSummary: '发生银镜反应出 2 Ag；水解消耗 2 mol NaOH（生成甲酸钠 + 苯酚钠）',
     examAnalysis:
       '新高考超高频双重特性母题：分子中所含官能团为【酯基】（甲酸酯基），因含有甲酰基 (H-C=O) 结构而兼具【醛基的还原性】。水解生成 1 mol 甲酸钠与 1 mol 苯酚钠，共消耗 2 mol NaOH；产物甲酸钠依然能发生银镜反应！高考答题注意：问官能团名称必须答“酯基”（或甲酸酯基），写“醛基”会判错。',
     keyEquations: [
-      'HCOO-C_6H_5 + 2[Ag(NH_3)_2]OH \\xrightarrow{\\Delta} NH_4O-COO-C_6H_5 + 2Ag\\downarrow + 3NH_3 + H_2O',
+      'HCOO-C_6H_5 + 2[Ag(NH_3)_2]OH \\xrightarrow{\\Delta} (NH_4)_2CO_3 + C_6H_5OH + 2Ag\\downarrow + 2NH_3\\uparrow',
       'HCOO-C_6H_5 + 2NaOH \\xrightarrow{\\Delta} HCOONa + C_6H_5ONa + H_2O',
     ],
     examTraps:

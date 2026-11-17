@@ -105,7 +105,7 @@ describe('专题一：无机元素价类二维矩阵 深度化学科学性审计
         const fromValence = fromItems[0].valence
         const toValence = toItems[0].valence
 
-        // 1. 如果声明为单纯 oxidation，价态必不能降低；如果声明为单纯 reduction，价态必不能升高
+        // 1. 单纯 oxidation 价态必不能降低；单纯 reduction 价态必不能升高
         if (trans.type === 'oxidation' && toValence < fromValence) {
           inconsistencies.push(
             `[${elem.symbol}] 转化 ${trans.id} 声明为 oxidation，但中心元素价态从 ${fromValence} 降至 ${toValence}`
@@ -117,6 +117,10 @@ describe('专题一：无机元素价类二维矩阵 深度化学科学性审计
         } else if (trans.type === 'other' && toValence !== fromValence) {
           inconsistencies.push(
             `[${elem.symbol}] 转化 ${trans.id} 声明为 other (非氧化还原)，但中心元素价态从 ${fromValence} 变到 ${toValence} (发生改变)`
+          )
+        } else if (trans.type === 'other' && /(失\s*\d*e|得\s*\d*e|还原剂|氧化剂|升至|降至)/.test(trans.electronTransfer)) {
+          inconsistencies.push(
+            `[${elem.symbol}] 转化 ${trans.id} 若存在实际电子转移（氧化剂/还原剂），不应强行标为 type: "other" (非氧化还原)`
           )
         } else if (toValence === fromValence) {
           // 中心元素价态未变时，若标记为 oxidation/reduction，必须是配位/阴离子或辅助还原剂发生氧化还原（并在 electronTransfer 中明确说明）

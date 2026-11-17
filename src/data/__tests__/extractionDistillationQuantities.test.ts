@@ -118,3 +118,34 @@ describe('萃取量面板：溶剂分支正确性（P0-4 回归锁）', () => {
     }
   })
 })
+
+describe('蒸馏分馏量面板：experimentMode = 1 温度平台与误操作反馈', () => {
+  it('正常加热至沸腾后显示 CCl₄ 沸点平台且馏出液积聚量 > 0', () => {
+    const list = buildExtractionDistillationQuantities(
+      { experimentMode: 1, power: 500, misoperation: 0 },
+      10
+    )
+    expect(find(list, 'T')?.value).toBeCloseTo(76.8, 1)
+    expect(find(list, 'Tb')?.value).toBeCloseTo(76.8, 1)
+    expect(find(list, 'VDist')?.value).toBeGreaterThan(0)
+    expect(find(list, 'vVapor')?.value).toBeGreaterThan(0)
+    expect(find(list, 'eHarm')?.value).toBe(0)
+  })
+
+  it('误操作 1（温度计插液面）显示偏高沸点 86.5°C；误操作 2（冷凝水反向）显著降低冷凝速率', () => {
+    const normal = buildExtractionDistillationQuantities(
+      { experimentMode: 1, power: 500, misoperation: 0 },
+      10
+    )
+    const misTherm = buildExtractionDistillationQuantities(
+      { experimentMode: 1, power: 500, misoperation: 1 },
+      10
+    )
+    const misCondenser = buildExtractionDistillationQuantities(
+      { experimentMode: 1, power: 500, misoperation: 2 },
+      10
+    )
+    expect(find(misTherm, 'T')?.value).toBeCloseTo(86.5, 1)
+    expect(find(misCondenser, 'vVapor')?.value ?? 0).toBeLessThan(find(normal, 'vVapor')?.value ?? 0)
+  })
+})

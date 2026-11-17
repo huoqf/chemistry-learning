@@ -54,8 +54,8 @@ export const NI_CONFIG: ElementValenceConfig = {
       colorText: '翠绿色晶体或溶液 (六水硫酸镍)',
       colorStyle: 'bg-emerald-50 text-emerald-900 border-emerald-300',
       rgbColor: PHENOMENON_COLORS.ni2Plus,
-      testReaction: '电镀镍主要主盐，遇丁二酮肟 (DMG) 在氨性条件下生成鲜红色螯合物沉淀（Ni²⁺ 专属灵敏定性检验；DMG 为大学分析化学试剂，属【信息题素材】）',
-      equation: 'Ni²⁺ + 2DMG + 2NH₃ = Ni(DMG)₂↓ (鲜红色) + 2NH₄⁺',
+      testReaction: '电镀镍主要主盐，遇丁二酮肟 (HDMG) 在氨性条件下生成鲜红色螯合物沉淀（Ni²⁺ 专属灵敏定性检验；HDMG 为大学分析化学试剂，属【信息题素材】）',
+      equation: 'Ni²⁺ + 2HDMG + 2NH₃·H₂O = Ni(DMG)₂↓ (鲜红色) + 2NH₄⁺ + 2H₂O',
       roleDescription: '电镀主盐，三元正极前驱体',
     },
     {

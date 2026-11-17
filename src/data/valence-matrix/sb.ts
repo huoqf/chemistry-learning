@@ -77,7 +77,7 @@ export const SB_CONFIG: ElementValenceConfig = {
       toSubstance: 'Sb₂O₃ (三氧化二锑/锑白)',
       reagent: '空气中高温焙烧',
       equation: '2Sb₂S₃ + 9O₂ =高温= 2Sb₂O₃ + 6SO₂',
-      electronTransfer: 'S 由 -2 升至 +4，O₂ 得电子',
+      electronTransfer: 'S 由 -2 升至 +4 失电子被氧化，O₂ 降至 -2 得电子（Sb +3 价态保持不变）',
       type: 'oxidation',
     },
     {

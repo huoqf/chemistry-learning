@@ -108,24 +108,9 @@ src/components/Chemistry3D/
  */
 import { useAnimationStore } from '@/stores'
 import { useShallow } from 'zustand/react/shallow'
-import { isWebGLAvailable } from '@/components/Chemistry3D'
+import { isWebGLAvailable, WebGLFallback } from '@/components/Chemistry3D'
 import { <Topic>Scene } from './components/<Topic>Scene'
 import { use<Topic>Chemistry } from './hooks/use<Topic>Chemistry'
-
-function WebGLFallback() {
-  return (
-    // 铁律 1：中屏背景一律由系统 Light Theme 提供 —— fallback 容器同样
-    // 不得写 bg-transparent / bg-slate-50 / bg-white 等任何背景类
-    <div className="flex flex-col items-center justify-center h-full p-8 text-center border border-slate-200 rounded-xl">
-      <div className="text-6xl mb-4">🔬</div>
-      <h2 className="text-xl font-bold text-slate-800 mb-2">WebGL 不可用</h2>
-      <p className="text-sm text-slate-500 max-w-md">
-        当前浏览器不支持 WebGL，无法渲染 3D 模型。
-        请使用 Chrome / Firefox / Safari 最新版本，或开启硬件加速。
-      </p>
-    </div>
-  )
-}
 
 export default function <Topic>Animation() {
   const { params } = useAnimationStore(
@@ -153,9 +138,8 @@ export default function <Topic>Animation() {
  * <Topic>Scene — R3F 3D 场景
  *
  * 性能与样式规范（铁律）：
- * - 静态场景必须 frameloop="demand"（只在交互时重绘）
+ * - 按交互需求选择 frameloop：静态展示可用 frameloop="demand"（配合 enableDamping={false}）；需顺滑阻尼拖拽或实时旋转（如晶胞对比、分子演示）时可用 frameloop="always" + enableDamping dampingFactor={0.05}
  * - dpr={[1, 2]} 上限约束（避免高分屏过度渲染）
- * - enableDamping={false}（demand 模式下阻尼失效）
  * - 触摸容器必须 touch-action: none（避免滚动冲突）
  * - 严禁在 Canvas 标签上手写 style={{ background: '#f8fafc' }} 等背景色，统一由系统 Light Theme 提供
  */
@@ -176,7 +160,7 @@ export function <Topic>Scene({ chemistry, className = '' }: <Topic>SceneProps) {
     <div className={`w-full h-full relative ${className}`} style={{ touchAction: 'none' }}>
       <Canvas
         orthographic          // 或 perspective，取决于 Step 0A 决策
-        frameloop="demand"    // 静态场景必须 demand
+        frameloop="always"    // 纯静态省电场景可改用 "demand" + enableDamping={false}
         dpr={[1, 2]}          // 高分屏上限约束
         camera={{
           zoom: 120,          // 正交相机缩放
@@ -195,8 +179,8 @@ export function <Topic>Scene({ chemistry, className = '' }: <Topic>SceneProps) {
   )
 }
 
-function SceneContent({ data, selectedId, onSelect }: {
-  data: <Topic>Data
+function SceneContent({ chemistry, selectedId, onSelect }: {
+  chemistry: <Topic>ChemistryResult
   selectedId: string | null
   onSelect: (id: string | null) => void
 }) {
@@ -208,8 +192,8 @@ function SceneContent({ data, selectedId, onSelect }: {
       {/* 场景内容 */}
       {/* ... meshes, lines, etc. */}
 
-      {/* OrbitControls — 关闭 damping */}
-      <OrbitControls enableDamping={false} makeDefault />
+      {/* OrbitControls：always 模式下可启用 damping；demand 模式下应置为 enableDamping={false} */}
+      <OrbitControls enableDamping dampingFactor={0.05} makeDefault />
     </>
   )
 }
@@ -326,21 +310,13 @@ export const DATA: <Topic>Data = {
 
 ---
 
-## Step 3：路由注册
+## Step 3：注册与挂载（禁止手写 App.tsx 零散路由）
 
-### 3A：App.tsx 添加路由
+- **教材章节动画 3D 页**：在 `src/data/registries/structure.ts` 注册 `anim-<topic>`，由 `AnimationPage` + `ThreePanel` 自动承载（路由 `/#/animation/anim-<topic>`）；
+- **高考解题母题 3D 工具**：在 `src/data/gaokaoModels.ts` 注册 `model-<topic>`，并在 `src/pages/GaokaoToolPage.tsx` 挂载（路由 `/#/gaokao-tool/model-<topic>`）。
 
-```tsx
-// src/App.tsx
-const UnitCellPage = lazy(() => import('./features/unit-cell/UnitCellPage'))
-
-// 在 Routes 中添加
-<Route path="/unit-cell" element={<UnitCellPage />} />
-```
-
-### 3B：Layout.tsx 面包屑（可选）
-
-当前 Layout 只处理 `/animation/:id` 的面包屑。3D 页面如需面包屑，需在 Layout 中扩展路由匹配规则。
+### 面包屑规则
+`Layout` 自动根据 `knowledgeTree` 与 `gaokaoModels` 解析当前路由的面包屑，无需在 `App.tsx` 硬编码页面路由。
 
 ---
 
@@ -370,7 +346,7 @@ import { SCENE_COLORS, CANVAS_COLORS } from '@/theme'
 ```tsx
 <Canvas
   orthographic              // 或 perspective
-  frameloop="demand"        // 静态场景必须 demand，避免空闲重绘
+  frameloop="always"        // 交互顺滑模式；静态极简场景可用 "demand"
   dpr={[1, 2]}              // 高分屏上限约束，避免 3x/4x 过度渲染
   camera={{ ... }}
 >
@@ -380,12 +356,11 @@ import { SCENE_COLORS, CANVAS_COLORS } from '@/theme'
 
 ```tsx
 <OrbitControls
-  enableDamping={false}     // demand 模式下阻尼衰减帧不会被触发
+  enableDamping             // 若 frameloop="demand" 且无 invalidate 钩子，则改为 enableDamping={false}
+  dampingFactor={0.05}
   makeDefault
 />
 ```
-
-> 如果需要 damping 体验，必须在 `useFrame` 中检测 `controls.update()` 是否仍在运动来决定是否 `invalidate()`。当前阶段先关闭 damping。
 
 ### 5C：触摸事件
 
@@ -442,34 +417,9 @@ function AnimatedMesh() {
   return <mesh ref={ref}>...</mesh>
 }
 
+// ❌ 禁止在底层的纯 Scene/Mesh 组件（<Topic>Scene.tsx / *Mesh.tsx）中直接访问 useAnimationStore（Store 订阅只允许在顶层 <Topic>Animation.tsx 入口完成）
 // ❌ 禁止在 3D 组件中直接调用 requestAnimationFrame
-// ❌ 禁止在 3D 组件中 import useAnimationStore（无副作用原则）
-```
-
-> `useFrame` 内部调用 rAF，但业务代码中不会出现 `requestAnimationFrame(` 文本匹配，不触发 `check-no-raf` lint 检查。
-
----
-
-## Step 6：状态管理规范
-
-### 6A：选择原则
-
-| 复杂度 | 方案 | 示例 |
-|--------|------|------|
-| 简单（选中/高亮） | 局部 React state | `useState<string \| null>(null)` |
-| 中等（多个交互状态） | 局部 useReducer | 选中原子 + 显示模式 + 高亮类型 |
-| 复杂（跨组件共享） | 独立 Zustand store | 多个 3D 页面共享同一数据源 |
-
-**默认使用局部 React state**，不引入额外状态管理库。
-
-### 6B：禁止事项
-
-```tsx
-// ❌ 禁止在 3D 组件中访问 useAnimationStore
-const { time, isPlaying } = useAnimationStore()
-
-// ❌ 禁止在 3D 组件中使用 useAnimationViewport / useSceneScale
-const { vp } = useAnimationViewport({ preset: CANVAS_PRESETS.full })
+// ❌ 禁止在 3D 场景组件中混用 2D 的 useAnimationViewport / useSceneScale
 ```
 
 > 3D 页面有独立的坐标系和渲染管线，不复用 2D 的 viewport/sceneScale 体系。
@@ -485,7 +435,7 @@ const { vp } = useAnimationViewport({ preset: CANVAS_PRESETS.full })
 // 无需手动处理
 <mesh>
   <sphereGeometry args={[1, 32, 32]} />
-  <meshStandardMaterial color="red" />
+  <meshStandardMaterial color={SCENE_COLORS.atoms.oxygen} />
 </mesh>
 ```
 
@@ -565,12 +515,11 @@ import { DATA } from '../data/simpleCubic'
 ## 执行前 Checklist
 
 - [ ] **场景类型**：正交/透视已确认（晶胞用正交，分子用透视）
-- [ ] **布局**：独立全屏布局（不走 AnimationPage 三屏）；路由已在 App.tsx 注册
-- [ ] **WebGL 检测**：isWebGLAvailable() 惰性缓存 + fallback 已实现
-- [ ] **Canvas 配置**：frameloop="demand" + dpr={[1,2]} + touch-action: none
-- [ ] **OrbitControls**：enableDamping={false}
-- [ ] **坐标转换**：分数→世界坐标使用独立转换函数，不复用 physicsToDesign
-- [ ] **状态管理**：局部 React state，不访问 useAnimationStore
+- [ ] **布局**：已接入 ThreePanel（via registry 或 GaokaoToolPage），未在 App.tsx 硬编码零散路由
+- [ ] **WebGL 检测**：已使用 `@/components/Chemistry3D` 导出的 `isWebGLAvailable()` 与统一 `<WebGLFallback />`
+- [ ] **Canvas 配置**：dpr={[1,2]} + touch-action: none，按需求配置 frameloop 与 OrbitControls damping
+- [ ] **坐标转换**：分数→世界坐标使用独立转换函数（如 `fracToWorld`），不复用 2D 的 `worldToDesign`
+- [ ] **状态管理**：Store 仅由顶层 `<Topic>Animation` 订阅，底层 3D 组件仅用局部 state / props 驱动
 - [ ] **资源管理**：标准 mesh 自动 dispose，自定义 geometry 手动 dispose
 - [ ] **真机验证**：触摸手势 + DPR + frameloop="demand" 空闲 CPU ≈ 0 已测试
 - [ ] **代码**：barrel import；`tsc --noEmit` 通过

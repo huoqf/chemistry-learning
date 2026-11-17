@@ -1,6 +1,6 @@
 /**
  * src/data/quiz/model-gas-chain.ts
- * 实验一：气体制备/净化/尾气处理装置链工具 - 高考规范踩分卡与真题研析题库
+ * 实验一：气体制备/净化/尾气处理装置链工具 - 规范踩分卡与考点变式题库
  */
 
 import type { ModelQuizData } from './types'
@@ -59,11 +59,11 @@ export const modelGasChainQuiz: ModelQuizData = {
     },
   ],
 
-  // 2. 高考真题研析与变式题
+  // 2. 核心考点情境变式题
   variantQuizzes: [
     {
       id: 'gas-quiz-1',
-      yearProvince: '2024 新课标卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-gas-chain',
       title: '强氧化性气体 Cl₂ 制备及提纯装置链辨析',
       contextDescription: '某化学兴趣小组利用 MnO₂ 和浓盐酸加热制备纯净、干燥的 Cl₂，并探究其与金属铜的反应。实验装置链依次为：发生装置(A) ➔ 洗气瓶(B) ➔ 洗气瓶(C) ➔ 集气瓶(D) ➔ 尾气处理(E)。',
@@ -95,7 +95,7 @@ export const modelGasChainQuiz: ModelQuizData = {
     },
     {
       id: 'gas-quiz-2',
-      yearProvince: '2024 浙江卷压轴 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-gas-chain',
       title: '极易溶气体 NH₃ 制备干燥与防倒吸装置验证',
       contextDescription: '利用固体 NH₄Cl 和 Ca(OH)₂ 加热制取 NH₃，要求收集一瓶干燥的 NH₃ 并进行尾气吸收。',
@@ -127,7 +127,7 @@ export const modelGasChainQuiz: ModelQuizData = {
     },
     {
       id: 'gas-quiz-3',
-      yearProvince: '2024 山东卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-gas-chain',
       title: 'SO₂ 发生与检验装置链顺序辨析',
       contextDescription: '利用 Cu 与浓 H₂SO₄ 加热制备 SO₂，气体依次通过品红溶液（检验漂白性）➔ 酸性 KMnO₄ 溶液（检验还原性）➔ NaOH 尾气吸收瓶。',
@@ -143,7 +143,7 @@ export const modelGasChainQuiz: ModelQuizData = {
     },
     {
       id: 'gas-quiz-4',
-      yearProvince: '2023 湖北卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-gas-chain',
       title: '排水集气法与极易溶气体安全缓冲瓶防倒吸结构',
       contextDescription: '实验室集气时，对于不溶于水的气体 (如 NO、O₂、H₂) 采用排水集气法；对于极易溶于水的气体 (如 HCl) 需接安全瓶防倒吸。',
@@ -159,7 +159,7 @@ export const modelGasChainQuiz: ModelQuizData = {
     },
     {
       id: 'gas-quiz-5',
-      yearProvince: '2023 全国甲卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-gas-chain',
       title: '固液不加热发生装置 (启普发生器原理) 与随开随用',
       contextDescription: '利用块状石灰石 (CaCO₃) 与稀盐酸反应制备 CO₂，采用带孔塑料板和止水夹的简易发生装置。',

@@ -53,7 +53,7 @@ export const modelTitrationErrorPurity: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'var-err-1',
-      yearProvince: '2024 河北/湖北卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-titration-error-purity',
       title: '重铬酸钾返滴定法测定水体 COD 与定量误差评估',
       contextDescription:
@@ -62,7 +62,7 @@ export const modelTitrationErrorPurity: ModelQuizData = {
       diagramType: 'titration-error-diagram',
       diagramConfig: {
         errorDiagramType: 'cod-back-titration',
-        title: 'K₂Cr₂O₇ 消解与 FeSO₄ 返滴定测定水体 COD 实验原图',
+        title: 'K₂Cr₂O₇ 消解与 FeSO₄ 返滴定测定水体 COD 示意图',
       },
       options: [
         {
@@ -93,7 +93,7 @@ export const modelTitrationErrorPurity: ModelQuizData = {
     },
     {
       id: 'var-err-2',
-      yearProvince: '2023 全国甲卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-titration-error-purity',
       title: '草酸钠纯度测定与高锰酸钾滴定视角读数误差分析',
       contextDescription:
@@ -133,7 +133,7 @@ export const modelTitrationErrorPurity: ModelQuizData = {
     },
     {
       id: 'var-err-3',
-      yearProvince: '2024 山东/湖南卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-titration-error-purity',
       title: '工业粗品碱式碳酸铜纯度与间接碘量法滴定计算',
       contextDescription:

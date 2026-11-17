@@ -182,7 +182,7 @@ export function HybridOrbitalScene({
     ? {
         title: `${model.centers[0]?.element} 原子`,
         role: '杂化中心原子',
-        detail: `采取 ${model.hybridType} 杂化，具有 ${model.centers[0]?.hybridOrbitals.length} 个轨道方向 (理想键角 ${model.bondAngle}°)。`,
+        detail: `采取 ${model.hybridType} 杂化，具有 ${model.centers[0]?.hybridOrbitals.filter((o) => o.type !== 'unhybridizedP').length ?? 0} 个杂化轨道方向 (理想键角 ${model.bondAngle}°)。`,
         color: model.centers[0]?.color,
       }
     : selectedId?.startsWith('ligand-')

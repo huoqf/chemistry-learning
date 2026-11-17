@@ -8,6 +8,7 @@ import {
   extractionEquilibrium,
   extractionMixProgress,
   miscibleUniformConcentration,
+  computeDistillationState,
 } from '@/chemistry'
 
 export interface UseExtractionDistillationChemistryParams {
@@ -238,7 +239,7 @@ export function useExtractionDistillationChemistry({
     } else {
       // 苯 密度 < 水: 上层苯相, 下层水相
       waterLayerLabel = '下层：水相 (近无色)'
-      orgLayerLabel = '上层：苯溶碘相 (橙红色)'
+      orgLayerLabel = '上层：苯溶碘相 (紫红色)'
       if (time < 2.0) {
         bottomLevel = 0.35
         topLevel = 0.35
@@ -258,7 +259,7 @@ export function useExtractionDistillationChemistry({
         topLevel = 0.35
         bottomColor = fadedWaterColor
         topColor = orgColor
-        progressText = '3. 放回铁圈静置分层 (上层橙红苯溶碘相，下层水相近无色)'
+        progressText = '3. 放回铁圈静置分层 (上层紫红苯溶碘相，下层水相近无色)'
       } else if (time < 10.0) {
         if (extractionMisoperation === 1) {
           bottomLevel = 0.28
@@ -280,7 +281,7 @@ export function useExtractionDistillationChemistry({
           progressText = '4. 拔开玻璃塞连通大气，开活塞，45°斜切尖嘴贴烧杯内壁下放水相'
         }
       } else {
-        // 倒出上层橙红苯相至烧杯 B
+        // 倒出上层紫红苯相至烧杯 B
         const pourProg = Math.min(1, (time - 10.0) / 2.0)
         bottomLevel = 0
         topLevel = Math.max(0, 0.35 * (1 - pourProg))
@@ -290,7 +291,7 @@ export function useExtractionDistillationChemistry({
         beakerBFillColor = orgColor
         bottomColor = fadedWaterColor
         topColor = orgColor
-        progressText = '5. 【高考铁律】关活塞，上层橙红苯相由分液漏斗上口倒入烧杯 B (严禁混流)'
+        progressText = '5. 【高考铁律】关活塞，上层紫红苯相由分液漏斗上口倒入烧杯 B (严禁混流)'
       }
     }
 
@@ -322,20 +323,13 @@ export function useExtractionDistillationChemistry({
       progressText,
     }
 
-    // ─── 2. 蒸馏分馏精细状态推演 (t = 0 ~ 12s) ───
-    const tBoil = 76.8 // CCl4 沸点
-    const tEnv = 20.0
-    // 错操作 1：温度计深入液面，温度测得液体过热沸腾温度 86.5°C 偏高
-    const targetBoilTemp = misoperation === 1 ? 86.5 : tBoil
-    const heatSpeed = (power / 500) * 14.0 // °C/s
-    const currentTemp = Math.min(targetBoilTemp, tEnv + heatSpeed * time)
-
-    const boilTime = Math.max(0, time - (targetBoilTemp - tEnv) / heatSpeed)
+    // ─── 2. 蒸馏分馏精细状态推演 (t = 0 ~ 12s，与量面板共用 computeDistillationState) ───
+    const distState = computeDistillationState(power, time, misoperation)
+    const { tBoil, targetBoilTemp, currentTemp, boilTime, flowMultiplier } = distState
     const boilProgress = Math.min(1, boilTime * 0.4)
     const vaporDensity = boilTime > 0 ? Math.min(1, boilTime * 0.28) : 0
 
     // 错操作 2：冷凝水反向 (上进下出)，冷凝管无法充满水 (仅 35% 满)，冷凝效率大幅降低
-    const flowMultiplier = misoperation === 2 ? 0.35 : 1.0
     const waterFillLevel = misoperation === 2 ? 0.35 : 1.0
     const distillateLevel = Math.min(0.6, boilTime * 0.09 * flowMultiplier)
 
@@ -411,13 +405,11 @@ export function useExtractionDistillationChemistry({
         }
       } else {
         // 蒸馏 T-t: val1: 温度计测得温度 (°C), val2: 累计馏出量 (mL)
-        const temp = Math.min(targetBoilTemp, tEnv + heatSpeed * t)
-        const dT = Math.max(0, t - (targetBoilTemp - tEnv) / heatSpeed)
-        const vD = Math.min(40, dT * (power / 500) * 5.2 * flowMultiplier)
+        const pointDist = computeDistillationState(power, t, misoperation)
         chartHistory.push({
           time: t,
-          val1: parseFloat(temp.toFixed(1)),
-          val2: parseFloat(vD.toFixed(1)),
+          val1: parseFloat(pointDist.currentTemp.toFixed(1)),
+          val2: parseFloat(pointDist.distilledVolumeMl.toFixed(1)),
         })
       }
     }

@@ -57,8 +57,13 @@ export function transferredElectronMoles(current: number, time: number): number 
  * 由碱性室 OH⁻ 物质的量求 pH（叠加中性本底，t=0 时回 7.00）。
  * c(OH⁻) = n(OH⁻) / V；pOH = −lg c(OH⁻)；pH = 14 − pOH。
  */
-export function pHFromHydroxideMoles(hydroxideMoles: number): number {
-  const cOH = hydroxideMoles / ELECTROLYTE_VOLUME_L + WATER_BASELINE;
+export function pHFromHydroxideMoles(
+  hydroxideMoles: number,
+  volume: number = ELECTROLYTE_VOLUME_L
+): number {
+  const safeVol = volume > 0 ? volume : ELECTROLYTE_VOLUME_L;
+  const safeMoles = Math.max(0, hydroxideMoles);
+  const cOH = safeMoles / safeVol + WATER_BASELINE;
   const pOH = -Math.log10(cOH);
   return 14 - pOH;
 }
@@ -67,7 +72,12 @@ export function pHFromHydroxideMoles(hydroxideMoles: number): number {
  * 由酸性室 H⁺ 物质的量求 pH（叠加中性本底，t=0 时回 7.00）。
  * c(H⁺) = n(H⁺) / V；pH = −lg c(H⁺)。
  */
-export function pHFromHydrogenMoles(hydrogenMoles: number): number {
-  const cH = hydrogenMoles / ELECTROLYTE_VOLUME_L + WATER_BASELINE;
+export function pHFromHydrogenMoles(
+  hydrogenMoles: number,
+  volume: number = ELECTROLYTE_VOLUME_L
+): number {
+  const safeVol = volume > 0 ? volume : ELECTROLYTE_VOLUME_L;
+  const safeMoles = Math.max(0, hydrogenMoles);
+  const cH = safeMoles / safeVol + WATER_BASELINE;
   return -Math.log10(cH);
 }

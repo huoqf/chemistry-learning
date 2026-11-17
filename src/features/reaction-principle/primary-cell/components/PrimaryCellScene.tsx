@@ -361,7 +361,7 @@ export function PrimaryCellScene({
             anodeEquation="Pb + SO₄²⁻ - 2e⁻ = PbSO₄"
             anodeDelta={`Δm = +${anodeDeltaM.toFixed(2)} g`}
             cathodeTitle="正极 (PbO₂ 还原)"
-            cathodeEquation="PbO₂ + 4H⁺ + SO₄²⁻ + 2e⁻ = PbSO₄"
+            cathodeEquation="PbO₂ + 4H⁺ + SO₄²⁻ + 2e⁻ = PbSO₄ + 2H₂O"
             cathodeDelta={`Δm = +${cathodeDeltaM.toFixed(2)} g`}
             font={font}
           />

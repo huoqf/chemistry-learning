@@ -86,14 +86,14 @@ export function OrganicRetrosynthesisCenterView({
     )
   }
 
-  // 视角 2: 高考真题变式视角
+  // 视角 2: 变式演练视角
   if (viewMode === 2) {
     return (
       <div className="w-full h-full flex flex-col p-4 overflow-y-auto">
         {quizData && quizData.variantQuizzes.length > 0 ? (
           <GaokaoVariantQuiz quizzes={quizData.variantQuizzes} />
         ) : (
-          <div className="p-8 text-center text-slate-500 text-sm">暂无高考真题变式数据</div>
+          <div className="p-8 text-center text-slate-500 text-sm">暂无考点变式数据</div>
         )}
       </div>
     )
@@ -343,8 +343,11 @@ export function OrganicRetrosynthesisCenterView({
                   filter="drop-shadow(0 4px 8px rgba(15, 23, 42, 0.06))"
                 />
 
-                {/* 矢量化学苯环结构 */}
-                {renderBenzeneRing(-58, -4, 18)}
+                {/* 仅对实际含有苯环骨架的芳香分子渲染苯环图标，非芳香试剂/环己烯体系不误绘苯环 */}
+                {node.role !== 'reagent' &&
+                  currentModel.id !== 'diels-alder-acetal' &&
+                  !['by', 'h2o', 'salt', 'dep', 'ac', 'br', 'me', 'zn', 'eg', 'eg_free', 'rg'].includes(node.id) &&
+                  renderBenzeneRing(-58, -4, 18)}
 
                 {/* 合成子极性徽章 (δ+ / δ-) */}
                 {node.synthonCharge && (

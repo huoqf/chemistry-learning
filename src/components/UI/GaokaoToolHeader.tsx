@@ -42,7 +42,7 @@ export interface GaokaoToolHeaderProps {
   subtitle?: string
   badgeText?: string
   badgeColor?: string
-  /** 视角模式 (0: 图谱探究 | 1: 规范踩分 | 2: 真题研析) */
+  /** 视角模式 (0: 图谱探究 | 1: 规范踩分 | 2: 变式演练) */
   viewMode?: number
   onViewModeChange?: (mode: number) => void
   /** 是否开启视角 Tab（默认 true） */
@@ -142,7 +142,7 @@ export const GaokaoToolHeader: React.FC<GaokaoToolHeaderProps> = ({
               }`}
             >
               <BookOpen className="w-3.5 h-3.5" />
-              真题研析
+              变式演练
             </button>
           </div>
         )}

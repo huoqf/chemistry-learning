@@ -78,17 +78,17 @@ export const CRYSTAL_DATA_MAP: Record<CrystalTypeId, CrystalTypeData> = {
       { startFrac: [1, 0, 0], endFrac: [0, 1, 1] },
     ],
     atoms: [
-      // Cl⁻ 顶点 8个
-      { id: 'cl-c0', element: 'Cl⁻', fracPos: [0, 0, 0], locationType: 'corner', sharingRatio: 1 / 8, sharingLabel: '顶点 (1/8)', color: ATOM_COLORS.Cl, radius: 0.22 },
-      { id: 'cl-c1', element: 'Cl⁻', fracPos: [1, 0, 0], locationType: 'corner', sharingRatio: 1 / 8, sharingLabel: '顶点 (1/8)', color: ATOM_COLORS.Cl, radius: 0.22 },
-      { id: 'cl-c2', element: 'Cl⁻', fracPos: [0, 1, 0], locationType: 'corner', sharingRatio: 1 / 8, sharingLabel: '顶点 (1/8)', color: ATOM_COLORS.Cl, radius: 0.22 },
-      { id: 'cl-c3', element: 'Cl⁻', fracPos: [1, 1, 0], locationType: 'corner', sharingRatio: 1 / 8, sharingLabel: '顶点 (1/8)', color: ATOM_COLORS.Cl, radius: 0.22 },
-      { id: 'cl-c4', element: 'Cl⁻', fracPos: [0, 0, 1], locationType: 'corner', sharingRatio: 1 / 8, sharingLabel: '顶点 (1/8)', color: ATOM_COLORS.Cl, radius: 0.22 },
-      { id: 'cl-c5', element: 'Cl⁻', fracPos: [1, 0, 1], locationType: 'corner', sharingRatio: 1 / 8, sharingLabel: '顶点 (1/8)', color: ATOM_COLORS.Cl, radius: 0.22 },
-      { id: 'cl-c6', element: 'Cl⁻', fracPos: [0, 1, 1], locationType: 'corner', sharingRatio: 1 / 8, sharingLabel: '顶点 (1/8)', color: ATOM_COLORS.Cl, radius: 0.22 },
-      { id: 'cl-c7', element: 'Cl⁻', fracPos: [1, 1, 1], locationType: 'corner', sharingRatio: 1 / 8, sharingLabel: '顶点 (1/8)', color: ATOM_COLORS.Cl, radius: 0.22 },
+      // Cl⁻ 顶点 8个（r(Cl⁻) = 181 pm > r(Cs⁺) = 169 pm）
+      { id: 'cl-c0', element: 'Cl⁻', fracPos: [0, 0, 0], locationType: 'corner', sharingRatio: 1 / 8, sharingLabel: '顶点 (1/8)', color: ATOM_COLORS.Cl, radius: 0.25 },
+      { id: 'cl-c1', element: 'Cl⁻', fracPos: [1, 0, 0], locationType: 'corner', sharingRatio: 1 / 8, sharingLabel: '顶点 (1/8)', color: ATOM_COLORS.Cl, radius: 0.25 },
+      { id: 'cl-c2', element: 'Cl⁻', fracPos: [0, 1, 0], locationType: 'corner', sharingRatio: 1 / 8, sharingLabel: '顶点 (1/8)', color: ATOM_COLORS.Cl, radius: 0.25 },
+      { id: 'cl-c3', element: 'Cl⁻', fracPos: [1, 1, 0], locationType: 'corner', sharingRatio: 1 / 8, sharingLabel: '顶点 (1/8)', color: ATOM_COLORS.Cl, radius: 0.25 },
+      { id: 'cl-c4', element: 'Cl⁻', fracPos: [0, 0, 1], locationType: 'corner', sharingRatio: 1 / 8, sharingLabel: '顶点 (1/8)', color: ATOM_COLORS.Cl, radius: 0.25 },
+      { id: 'cl-c5', element: 'Cl⁻', fracPos: [1, 0, 1], locationType: 'corner', sharingRatio: 1 / 8, sharingLabel: '顶点 (1/8)', color: ATOM_COLORS.Cl, radius: 0.25 },
+      { id: 'cl-c6', element: 'Cl⁻', fracPos: [0, 1, 1], locationType: 'corner', sharingRatio: 1 / 8, sharingLabel: '顶点 (1/8)', color: ATOM_COLORS.Cl, radius: 0.25 },
+      { id: 'cl-c7', element: 'Cl⁻', fracPos: [1, 1, 1], locationType: 'corner', sharingRatio: 1 / 8, sharingLabel: '顶点 (1/8)', color: ATOM_COLORS.Cl, radius: 0.25 },
       // Cs⁺ 体心 1个
-      { id: 'cs-b0', element: 'Cs⁺', fracPos: [0.5, 0.5, 0.5], locationType: 'body', sharingRatio: 1, sharingLabel: '体心 (1)', color: ATOM_COLORS.Cs, radius: 0.25, label: 'Cs⁺ 体心' },
+      { id: 'cs-b0', element: 'Cs⁺', fracPos: [0.5, 0.5, 0.5], locationType: 'body', sharingRatio: 1, sharingLabel: '体心 (1)', color: ATOM_COLORS.Cs, radius: 0.21, label: 'Cs⁺ 体心' },
     ],
     bonds: [
       { fromIndex: 8, toIndex: 0 }, { fromIndex: 8, toIndex: 1 },
@@ -366,7 +366,7 @@ export const CRYSTAL_DATA_MAP: Record<CrystalTypeId, CrystalTypeData> = {
     tangentLines: [
       { startFrac: [0, 0, 0], endFrac: [0.5, 0, 0], label: '棱边相切 r(Ti)+r(O)=a/2' },
       { startFrac: [0, 0, 0], endFrac: [0, 0.5, 0] },
-      { startFrac: [0.5, 0.5, 0.5], endFrac: [0.5, 0.5, 0], label: 'Ca-O 面对角接触' },
+      { startFrac: [0.5, 0.5, 0.5], endFrac: [0.5, 0, 0], label: 'Ca-O 棱心相切 (d = √2a/2)' },
     ],
     atoms: [
       // Ca²⁺ 体心 1

@@ -239,23 +239,31 @@ export function ElectrolyticCellScene({
         {/* ── 7. 内电路离子定向迁移 (阴朝阳，阳朝阴) ── */}
         {time > 0 && (
           <g>
-            {/* 阴离子 (Cl⁻ / SO₄²⁻ / OH⁻) 向阳极 (左) 移动 */}
-            <g transform={`translate(${140 - ((time * 25) % 60)}, 160)`}>
+            {/* 阴离子向阳极 (左) 移动：氯碱阳膜模式下 Cl⁻ 被阻止在左室 (x < 115) 内移动 */}
+            <g
+              transform={`translate(${
+                cellType === 2 && membraneType === 0
+                  ? 102 - ((time * 18) % 32)
+                  : 140 - ((time * 25) % 60)
+              }, 160)`}
+            >
               <circle cx={0} cy={0} r={10} fill={withAlpha(CHEMISTRY_COLORS.anode, 0.2)} stroke={CHEMISTRY_COLORS.anode} strokeWidth={1.5} />
               <text x={0} y={3} textAnchor="middle" fontSize={font(9)} fill={CHEMISTRY_COLORS.anode} fontWeight="bold">
-                {cellType === 0 || cellType === 2 ? 'Cl⁻' : 'OH⁻'}
+                {cellType === 0 || cellType === 2 ? 'Cl⁻' : cellType === 4 ? 'O²⁻' : 'SO₄²⁻'}
               </text>
               <path d="M -12 0 L -18 0 L -14 -3 M -18 0 L -14 3" stroke={CHEMISTRY_COLORS.anode} strokeWidth={1.5} fill="none" />
             </g>
 
-            {/* 阳离子 (Cu²⁺ / Na⁺ / H⁺) 向阴极 (右) 移动 */}
-            <g transform={`translate(${90 + ((time * 25) % 60)}, 220)`}>
-              <circle cx={0} cy={0} r={10} fill={withAlpha(CHEMISTRY_COLORS.cathode, 0.2)} stroke={CHEMISTRY_COLORS.cathode} strokeWidth={1.5} />
-              <text x={0} y={3} textAnchor="middle" fontSize={font(9)} fill={CHEMISTRY_COLORS.cathode} fontWeight="bold">
-                {cellType === 2 ? 'Na⁺' : 'Cu²⁺'}
-              </text>
-              <path d="M 12 0 L 18 0 L 14 -3 M 18 0 L 14 3" stroke={CHEMISTRY_COLORS.cathode} strokeWidth={1.5} fill="none" />
-            </g>
+            {/* 阳离子向阴极 (右) 移动（氯碱阳膜模式下 Na⁺ 已由上方穿膜动画演示） */}
+            {!(cellType === 2 && membraneType === 0) && (
+              <g transform={`translate(${90 + ((time * 25) % 60)}, 220)`}>
+                <circle cx={0} cy={0} r={10} fill={withAlpha(CHEMISTRY_COLORS.cathode, 0.2)} stroke={CHEMISTRY_COLORS.cathode} strokeWidth={1.5} />
+                <text x={0} y={3} textAnchor="middle" fontSize={font(9)} fill={CHEMISTRY_COLORS.cathode} fontWeight="bold">
+                  {cellType === 2 ? 'Na⁺' : cellType === 4 ? 'Al³⁺' : 'Cu²⁺'}
+                </text>
+                <path d="M 12 0 L 18 0 L 14 -3 M 18 0 L 14 3" stroke={CHEMISTRY_COLORS.cathode} strokeWidth={1.5} fill="none" />
+              </g>
+            )}
           </g>
         )}
       </g>

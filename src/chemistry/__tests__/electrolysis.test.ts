@@ -12,7 +12,6 @@
 import { describe, it, expect } from 'vitest'
 import {
   ANODE_MATERIAL,
-  BLISTER_COPPER_CU_FRACTION,
   CU2_PLUS_SOLUTION_PH,
   ELECTROLYSIS_CELL,
   MOLAR_GAS_VOLUME,
@@ -105,25 +104,22 @@ describe('cellType = 2 氯碱工业', () => {
   })
 })
 
-describe('cellType = 3 粗铜精炼（P1-8 核心）', () => {
-  it('阳极失重 = 溶解铜质量 ÷ w(Cu)，比例恒为 1/0.95', () => {
+describe('cellType = 3 粗铜精炼（电荷-质量-浓度自洽校验）', () => {
+  it('阳极溶解（Cu + 活泼金属杂质）并伴有 5% 阳极泥脱落，严格大于阴极增重', () => {
     const state = electrolysisState(ELECTROLYSIS_CELL.copperRefining, 0, NE_MAX)
     expect(state.cathodeMassDelta).toBeGreaterThan(0)
     expect(state.anodeMassDelta).toBeLessThan(0)
-    expect(Math.abs(state.anodeMassDelta) / state.cathodeMassDelta).toBeCloseTo(
-      1 / BLISTER_COPPER_CU_FRACTION,
-      10
-    )
+    expect(Math.abs(state.anodeMassDelta)).toBeGreaterThan(state.cathodeMassDelta)
   })
 
-  it('阳极减少质量严格大于阴极增加质量（阳极泥所致）', () => {
+  it('随转移电子量增大，阳极总失重始终严格大于阴极纯铜增重', () => {
     for (const ne of [0.001, 0.005, NE_MAX]) {
       const state = electrolysisState(ELECTROLYSIS_CELL.copperRefining, 0, ne)
       expect(Math.abs(state.anodeMassDelta)).toBeGreaterThan(state.cathodeMassDelta)
     }
   })
 
-  it('活泼金属杂质(Zn/Fe)优先失电子溶解 → 电解液 c(Cu²⁺) 逐渐下降（高考铁律）', () => {
+  it('活泼金属杂质(Zn/Fe)优先失电子溶解 → 电解液 c(Cu²⁺) 逐渐下降（高考核心规律）', () => {
     const s0 = electrolysisState(ELECTROLYSIS_CELL.copperRefining, 0, 0)
     const s1 = electrolysisState(ELECTROLYSIS_CELL.copperRefining, 0, NE_MAX)
     expect(s0.concentration).toBe(ELECTROLYTE_INITIAL_CONC)
@@ -132,6 +128,13 @@ describe('cellType = 3 粗铜精炼（P1-8 核心）', () => {
       ELECTROLYTE_INITIAL_CONC - 0.5 * NE_MAX * 0.05,
       10
     )
+  })
+
+  it('支持自定义溶液体积 volume，pH 与浓度严格按 c = n/V 计算', () => {
+    const halfVolCuSO4 = electrolysisState(ELECTROLYSIS_CELL.copperSulfate, ANODE_MATERIAL.inert, 0.002, 1.0, 0.5)
+    const unitVolCuSO4 = electrolysisState(ELECTROLYSIS_CELL.copperSulfate, ANODE_MATERIAL.inert, 0.004, 1.0, 1.0)
+    expect(halfVolCuSO4.pH).toBeCloseTo(unitVolCuSO4.pH, 10)
+    expect(halfVolCuSO4.concentration).toBeCloseTo(unitVolCuSO4.concentration, 10)
   })
 
   it('n(e⁻) = 0 时两极质量变化均为 0', () => {
@@ -143,7 +146,7 @@ describe('cellType = 3 粗铜精炼（P1-8 核心）', () => {
 })
 
 describe('cellType = 4 熔融 Al₂O₃ 电解炼铝', () => {
-  it('每 3 mol e⁻ 析出 27 g Al；每 4 mol e⁻ 消耗 12 g C 并放出 22.4 L O₂', () => {
+  it('每 12 mol e⁻ 析出 4 mol Al (108 g)；阳极 O₂ 氧化碳电极消耗 3 mol C (36 g) 并产生等摩尔 CO₂（折合标况 3×22.4 L）', () => {
     const state = electrolysisState(ELECTROLYSIS_CELL.moltenAlumina, 0, 12)
     expect(state.cathodeMassDelta).toBeCloseTo(108, 6)
     expect(state.anodeMassDelta).toBeCloseTo(-36, 6)

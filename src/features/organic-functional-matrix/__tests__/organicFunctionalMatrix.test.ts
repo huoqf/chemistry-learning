@@ -117,17 +117,14 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
     expect(phenol?.consumptions.NaHCO3).toBe(0)
   })
 
-  it('甲酸苯酯母题模型：1 酚酯 + 1 醛基，消耗 2 NaOH 并生成 2 mol Ag 银镜', () => {
+  it('甲酸苯酯母题模型：官能团仅含 1 酚酯基，消耗 2 NaOH 并生成 2 mol Ag 银镜，酯羰基不与 H₂ 加成', () => {
     const { result } = renderHook(() =>
-      useOrganicQuantitative({
-        'phenol-ester': 1,
-        'aldehyde-cho': 1,
-      })
+      useOrganicQuantitative({ 'phenol-ester': 1 }, 'formic-phenyl-ester')
     )
     expect(result.current.NaOH).toBe(2)
     expect(result.current.precipitateAg).toBe(2)
-    expect(result.current.Br2).toBe(1) // 醛基被溴水氧化
-    expect(result.current.H2).toBe(1) // 醛基加氢还原
+    expect(result.current.precipitateCu2O).toBe(1)
+    expect(result.current.H2).toBe(0)
   })
 
   it('3D 空间球棍模型数据库应完整覆盖 16 大官能团与核心母题分子', async () => {
@@ -456,13 +453,14 @@ describe('有机官能团定性特征与定量转化反应矩阵数据与计算�
         expect(count).toBeGreaterThan(0)
       }
 
-      // 验证调用定量计算 hook 不报错且产物有效
-      const { result } = renderHook(() => useOrganicQuantitative(preset.counts))
+      // 传入真实 preset.id 确保位阻与甲酸苯酯等预设专有规则生效，且定量值全部为非负有限数
+      const { result } = renderHook(() => useOrganicQuantitative(preset.counts, preset.id))
       expect(result.current).toBeDefined()
-      expect(typeof result.current.NaOH).toBe('number')
-      expect(typeof result.current.Na).toBe('number')
-      expect(typeof result.current.Br2).toBe('number')
-      expect(typeof result.current.H2).toBe('number')
+      expect(Number.isFinite(result.current.NaOH) && result.current.NaOH >= 0).toBe(true)
+      expect(Number.isFinite(result.current.Na) && result.current.Na >= 0).toBe(true)
+      expect(Number.isFinite(result.current.Br2) && result.current.Br2 >= 0).toBe(true)
+      expect(Number.isFinite(result.current.H2) && result.current.H2 >= 0).toBe(true)
+      expect(Number.isFinite(result.current.precipitateAg) && result.current.precipitateAg >= 0).toBe(true)
     }
   })
 

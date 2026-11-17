@@ -43,9 +43,9 @@ export const modelOrganicMatrix: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'quiz-1',
-      yearProvince: '全国甲卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-organic-matrix',
-      title: '真题精选一：多官能团有机物结构推断与试剂消耗比',
+      title: '考点变式一：多官能团有机物结构推断与试剂消耗比',
       contextDescription: '某芳香族化合物 X 的分子式为 C₉H₈O₄。',
       questionText:
         '已知 1 mol X 分别发生如下反应：\n① 与足量 Na 反应生成 0.5 mol H₂；\n② 与足量 NaHCO₃ 溶液反应生成 1 mol CO₂；\n③ 与足量 NaOH 溶液反应消耗 3 mol NaOH。\n则化合物 X 分子中含有的官能团种类为？',
@@ -61,9 +61,9 @@ export const modelOrganicMatrix: ModelQuizData = {
     },
     {
       id: 'quiz-2',
-      yearProvince: '新课标卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-organic-matrix',
-      title: '真题精选二：双重特性甲酸酚酯水解产物银镜与耗碱模型',
+      title: '考点变式二：双重特性甲酸酚酯水解产物银镜与耗碱模型',
       contextDescription: '有机物 Y 的分子式为 C₇H₆O₂，能发生银镜反应。',
       questionText:
         '已知 1 mol Y 在 NaOH 溶液中完全水解消耗 2 mol NaOH，且水解产物酸化后其中一种产物仍能发生银镜反应。则化合物 Y 的结构简式为？',

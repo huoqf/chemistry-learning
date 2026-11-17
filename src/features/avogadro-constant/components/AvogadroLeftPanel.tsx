@@ -41,10 +41,10 @@ export const AvogadroLeftPanel: React.FC<AvogadroLeftPanelProps> = ({
     }
   }, [isCurrentNonGas, params.trapCategory, params.amountUnit, onUpdateParams])
 
-  // 高考典型真题一键预设
+  // 高考高频陷阱一键预设
   const handleLoadPreset = (presetKey: string) => {
     switch (presetKey) {
-      case '2024-p4':
+      case 'preset-p4':
         onUpdateParams({
           trapCategory: 'structure-bonds',
           structureItem: 'P4',
@@ -52,7 +52,7 @@ export const AvogadroLeftPanel: React.FC<AvogadroLeftPanelProps> = ({
           amountUnit: 'g',
         })
         break
-      case '2024-sio2':
+      case 'preset-sio2':
         onUpdateParams({
           trapCategory: 'structure-bonds',
           structureItem: 'SiO2',
@@ -60,7 +60,7 @@ export const AvogadroLeftPanel: React.FC<AvogadroLeftPanelProps> = ({
           amountUnit: 'g',
         })
         break
-      case '2024-fecl3':
+      case 'preset-fecl3':
         onUpdateParams({
           trapCategory: 'electrolyte-hydrolysis',
           electrolyteItem: 'FeCl3',
@@ -68,7 +68,7 @@ export const AvogadroLeftPanel: React.FC<AvogadroLeftPanelProps> = ({
           solutionConcentration: 0.1,
         })
         break
-      case '2024-na2o2':
+      case 'preset-na2o2':
         onUpdateParams({
           trapCategory: 'redox-electron',
           redoxItem: 'Na2O2-H2O',
@@ -76,7 +76,7 @@ export const AvogadroLeftPanel: React.FC<AvogadroLeftPanelProps> = ({
           amountUnit: 'g',
         })
         break
-      case '2024-so3':
+      case 'preset-so3':
         onUpdateParams({
           trapCategory: 'state-volume',
           stateItem: 'SO3',
@@ -349,40 +349,40 @@ export const AvogadroLeftPanel: React.FC<AvogadroLeftPanelProps> = ({
         </LeftPanelSection>
       )}
 
-      {/* 3. 高考真题一键预设直达 */}
-      <LeftPanelSection title="高考真题一键直达">
+      {/* 3. 高频考点一键预设直达 */}
+      <LeftPanelSection title="高频考点一键直达">
         <div className="grid grid-cols-2 gap-1.5">
           <Button
             variant="ghost"
-            onClick={() => handleLoadPreset('2024-sio2')}
+            onClick={() => handleLoadPreset('preset-sio2')}
             className="text-xs justify-start px-2 py-1.5 h-auto text-slate-700 hover:bg-slate-100 border border-slate-200"
           >
             <BookOpen className="w-3 h-3 text-sky-600 mr-1 shrink-0" />
-            2024 SiO₂ (4键)
+            SiO₂ (4键)
           </Button>
           <Button
             variant="ghost"
-            onClick={() => handleLoadPreset('2024-p4')}
+            onClick={() => handleLoadPreset('preset-p4')}
             className="text-xs justify-start px-2 py-1.5 h-auto text-slate-700 hover:bg-slate-100 border border-slate-200"
           >
             <Sparkles className="w-3 h-3 text-purple-600 mr-1 shrink-0" />
-            2024 P₄ (6键)
+            P₄ (6键)
           </Button>
           <Button
             variant="ghost"
-            onClick={() => handleLoadPreset('2024-fecl3')}
+            onClick={() => handleLoadPreset('preset-fecl3')}
             className="text-xs justify-start px-2 py-1.5 h-auto text-slate-700 hover:bg-slate-100 border border-slate-200"
           >
             <BookOpen className="w-3 h-3 text-emerald-600 mr-1 shrink-0" />
-            2024 Fe(OH)₃胶体
+            Fe(OH)₃ 胶体
           </Button>
           <Button
             variant="ghost"
-            onClick={() => handleLoadPreset('2024-na2o2')}
+            onClick={() => handleLoadPreset('preset-na2o2')}
             className="text-xs justify-start px-2 py-1.5 h-auto text-slate-700 hover:bg-slate-100 border border-slate-200"
           >
             <Sparkles className="w-3 h-3 text-amber-600 mr-1 shrink-0" />
-            2024 Na₂O₂ (1e⁻)
+            Na₂O₂ (1e⁻)
           </Button>
         </div>
       </LeftPanelSection>

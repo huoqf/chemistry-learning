@@ -13,8 +13,9 @@ describe('Vector2', () => {
     it('计算 (3, 4) 大小为 5', () => {
       expect(magnitude({ x: 3, y: 4 })).toBe(5)
     })
-    it('处理 Infinity 返回 0', () => {
+    it('处理 Infinity 和 NaN 返回 0', () => {
       expect(magnitude({ x: Infinity, y: 0 })).toBe(0)
+      expect(magnitude({ x: Number.NaN, y: 0 })).toBe(0)
     })
   })
 
@@ -32,6 +33,9 @@ describe('Vector2', () => {
   })
 
   describe('direction', () => {
+    it('零向量返回 0', () => {
+      expect(direction({ x: 0, y: 0 })).toBe(0)
+    })
     it('x 正方向角度为 0', () => {
       expect(direction({ x: 1, y: 0 })).toBeCloseTo(0)
     })

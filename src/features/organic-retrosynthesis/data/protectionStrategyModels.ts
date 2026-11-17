@@ -553,7 +553,7 @@ export const MODEL_DOUBLE_BOND_PROTECTION: RetrosynthesisModelData = {
   id: 'double-bond-protection',
   title: '模型三：碳碳双键加溴 Protection 与锌粉脱溴复原',
   subtitle: '双键抗氧化/强亲电试剂加成保护与 β-消去脱保护',
-  targetMolecule: '4-甲氧基苯丙烯 (TM)',
+  targetMolecule: '4-烯丙基苯甲醚 (TM)',
   targetFormula: 'C₁₀H₁₂O',
   difficulty: '信息题拓展',
   syllabusTiers: [
@@ -732,7 +732,7 @@ export const MODEL_DOUBLE_BOND_PROTECTION: RetrosynthesisModelData = {
         { name: '金属 Zn 粉', formula: 'Zn' },
       ],
       products: [
-        { name: '4-甲氧基苯丙烯 (TM)', formula: 'C₁₀H₁₂O' },
+        { name: '4-烯丙基苯甲醚 (TM)', formula: 'C₁₀H₁₂O' },
         { name: '副产物 溴化锌', formula: 'ZnBr₂' },
       ],
       reagents: 'Zn 粉 / CH₃CH₂OH / Δ 回流',
@@ -768,7 +768,7 @@ export const MODEL_DOUBLE_BOND_PROTECTION: RetrosynthesisModelData = {
         },
         {
           id: 'tm',
-          label: '4-甲氧基苯丙烯 (TM)',
+          label: '4-烯丙基苯甲醚 (TM)',
           formula: 'C₁₀H₁₂O',
           x: 420,
           y: 320,

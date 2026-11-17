@@ -315,7 +315,7 @@ function generateStandard3DModel(isomer: IsomerNode): Isomer3DModel {
     const label = n.label
     const isOxygen = label === 'O' || label === 'OH' || label.startsWith('O-')
 
-    if (label === 'COOH' || label === 'COO' || label === 'HCOO' || label === 'CHO') {
+    if (label === 'COOH' || label === 'COO' || label === 'HCOO' || label === 'CHO' || label === 'CO') {
       // 组合官能团复合拆解
       unpackComplexGroup(n.id, label, pos, atoms, bonds)
     } else {
@@ -353,35 +353,56 @@ function generateStandard3DModel(isomer: IsomerNode): Isomer3DModel {
   })
 
   // 3. 构建节点间的 C-C / C=C / C-O 主骨架化学键
+  // 酯基节点 (COO / HCOO) 需将其氧原子 (-O-) 串联在羰基碳与烷氧基端碳之间
+  const esterLinkMap = new Map<string, [number, number, number]>()
+  isomer.nodes.forEach((n) => {
+    if (n.label === 'COO' || n.label === 'HCOO') {
+      const oAtom = atoms.find((a) => a.id === `complex-${n.id}-o2`)
+      if (oAtom) esterLinkMap.set(n.id, oAtom.position)
+    }
+  })
+
   if (Array.isArray(isomer.bonds)) {
     isomer.bonds.forEach((b, idx) => {
       const p1 = node3dMap.get(b.fromId)
       const p2 = node3dMap.get(b.toId)
       if (p1 && p2) {
+        const fromNode = isomer.nodes.find((n) => n.id === b.fromId)
+        const toNode = isomer.nodes.find((n) => n.id === b.toId)
+        // 对于酯基右侧 (x 更大一端) 连接的烷基碳，将其起/终点改接至酯基氧 -O-
+        let startPt = p1
+        let endPt = p2
+        if (fromNode && (fromNode.label === 'COO' || fromNode.label === 'HCOO') && toNode && toNode.x > fromNode.x) {
+          startPt = esterLinkMap.get(fromNode.id) ?? p1
+        }
+        if (toNode && (toNode.label === 'COO' || toNode.label === 'HCOO') && fromNode && fromNode.x > toNode.x) {
+          endPt = esterLinkMap.get(toNode.id) ?? p2
+        }
+
         if (b.type === 'double') {
-          const dx = p2[0] - p1[0]
-          const dy = p2[1] - p1[1]
+          const dx = endPt[0] - startPt[0]
+          const dy = endPt[1] - startPt[1]
           const len = Math.sqrt(dx * dx + dy * dy) || 1
           const offsetX = (-dy / len) * 0.07
           const offsetY = (dx / len) * 0.07
 
           bonds.push({
             id: `bond-double-${idx}-a`,
-            start: [p1[0] + offsetX, p1[1] + offsetY, p1[2]],
-            end: [p2[0] + offsetX, p2[1] + offsetY, p2[2]],
+            start: [startPt[0] + offsetX, startPt[1] + offsetY, startPt[2]],
+            end: [endPt[0] + offsetX, endPt[1] + offsetY, endPt[2]],
             color: SCENE_COLORS.materials.metal,
           })
           bonds.push({
             id: `bond-double-${idx}-b`,
-            start: [p1[0] - offsetX, p1[1] - offsetY, p1[2]],
-            end: [p2[0] - offsetX, p2[1] - offsetY, p2[2]],
+            start: [startPt[0] - offsetX, startPt[1] - offsetY, startPt[2]],
+            end: [endPt[0] - offsetX, endPt[1] - offsetY, endPt[2]],
             color: SCENE_COLORS.materials.metal,
           })
         } else {
           bonds.push({
             id: `bond-single-${idx}`,
-            start: p1,
-            end: p2,
+            start: startPt,
+            end: endPt,
             color: SCENE_COLORS.materials.metal,
           })
         }
@@ -396,7 +417,15 @@ function generateStandard3DModel(isomer: IsomerNode): Isomer3DModel {
 
     const label = n.label
     // 跳过已由解包函数独立处理的复杂节点
-    if (label === 'COOH' || label === 'COO' || label === 'HCOO' || label === 'CHO' || label === 'OH' || label === 'O') {
+    if (
+      label === 'COOH' ||
+      label === 'COO' ||
+      label === 'HCOO' ||
+      label === 'CHO' ||
+      label === 'CO' ||
+      label === 'OH' ||
+      label === 'O'
+    ) {
       return
     }
 
@@ -518,17 +547,26 @@ function unpackComplexGroup(
     bonds.push({ id: `complex-bond-${nodeId}-s1`, start: cPos, end: oSinglePos, color: SCENE_COLORS.materials.metal })
     bonds.push({ id: `complex-bond-${nodeId}-s2`, start: oSinglePos, end: hPos, color: SCENE_COLORS.materials.metal })
   } else if (label === 'COO' || label === 'HCOO') {
-    // 酯基: =O 和 -O-
-    const oDoublePos: [number, number, number] = [cPos[0] + 0.3, cPos[1] + 0.9, cPos[2] + 0.2]
+    // 酯基: 羰基 =O 与酯氧 -O-
+    const oDoublePos: [number, number, number] = [cPos[0] + 0.15, cPos[1] + 0.9, cPos[2] + 0.2]
+    const oSinglePos: [number, number, number] = [cPos[0] + 0.95, cPos[1] - 0.15, cPos[2] - 0.1]
     atoms.push({ id: `complex-${nodeId}-o1`, element: 'O', position: oDoublePos, color: ATOM_COLORS.O, radius: 0.28 })
+    atoms.push({ id: `complex-${nodeId}-o2`, element: 'O', position: oSinglePos, color: ATOM_COLORS.O, radius: 0.28 })
     bonds.push({ id: `complex-bond-${nodeId}-d1`, start: [cPos[0] + 0.05, cPos[1], cPos[2]], end: [oDoublePos[0] + 0.05, oDoublePos[1], oDoublePos[2]], color: SCENE_COLORS.materials.metal })
     bonds.push({ id: `complex-bond-${nodeId}-d2`, start: [cPos[0] - 0.05, cPos[1], cPos[2]], end: [oDoublePos[0] - 0.05, oDoublePos[1], oDoublePos[2]], color: SCENE_COLORS.materials.metal })
+    bonds.push({ id: `complex-bond-${nodeId}-s1`, start: cPos, end: oSinglePos, color: SCENE_COLORS.materials.metal })
 
     if (label === 'HCOO') {
       const hPos: [number, number, number] = [cPos[0] - 0.8, cPos[1] - 0.3, cPos[2]]
       atoms.push({ id: `complex-${nodeId}-h`, element: 'H', position: hPos, color: ATOM_COLORS.H, radius: 0.2 })
       bonds.push({ id: `complex-bond-${nodeId}-h`, start: cPos, end: hPos, color: SCENE_COLORS.materials.metal })
     }
+  } else if (label === 'CO') {
+    // 酮羰基: =O
+    const oDoublePos: [number, number, number] = [cPos[0], cPos[1] + 0.9, cPos[2] + 0.2]
+    atoms.push({ id: `complex-${nodeId}-o1`, element: 'O', position: oDoublePos, color: ATOM_COLORS.O, radius: 0.28 })
+    bonds.push({ id: `complex-bond-${nodeId}-d1`, start: [cPos[0] + 0.05, cPos[1], cPos[2]], end: [oDoublePos[0] + 0.05, oDoublePos[1], oDoublePos[2]], color: SCENE_COLORS.materials.metal })
+    bonds.push({ id: `complex-bond-${nodeId}-d2`, start: [cPos[0] - 0.05, cPos[1], cPos[2]], end: [oDoublePos[0] - 0.05, oDoublePos[1], oDoublePos[2]], color: SCENE_COLORS.materials.metal })
   } else if (label === 'CHO') {
     // 醛基: =O 和 -H
     const oDoublePos: [number, number, number] = [cPos[0] + 0.4, cPos[1] + 0.9, cPos[2] + 0.2]

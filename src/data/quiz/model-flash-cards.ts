@@ -42,7 +42,7 @@ export const modelFlashCards: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'var-1',
-      yearProvince: '2024 全国卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-flash-cards',
       title: 'SO₂ 与 Cl₂ 漂白性对比及混合通入考查',
       contextDescription: '某实验小组研究气体漂白性，将两路气体分别通入品红溶液，并进行加热实验。',
@@ -58,7 +58,7 @@ export const modelFlashCards: ModelQuizData = {
     },
     {
       id: 'var-2',
-      yearProvince: '2023 湖北卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-flash-cards',
       title: '浓硫酸/浓硝酸与金属反应钝化与加热现象对比',
       contextDescription: '常温下将铁片投入盛有浓硫酸的试管中，无明显现象；加热该试管后有刺激性气体生成。',
@@ -74,7 +74,7 @@ export const modelFlashCards: ModelQuizData = {
     },
     {
       id: 'var-3',
-      yearProvince: '2024 山东卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-flash-cards',
       title: 'NO₂ 与 N₂O₄ 平衡体系加压与温度影响',
       contextDescription: '在带活塞的密闭注射器中充入 NO₂ 和 N₂O₄ 的混合气体，发生反应 $2NO_2(g) \\rightleftharpoons N_2O_4(g) \\quad \\Delta H < 0$。',
@@ -90,7 +90,7 @@ export const modelFlashCards: ModelQuizData = {
     },
     {
       id: 'var-4',
-      yearProvince: '2023 浙江卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-flash-cards',
       title: '卤代烃水解检验卤素原子中加入硝酸酸化的关键步骤',
       contextDescription: '在检验 1-溴丁烷中的溴元素时，在加入 NaOH 溶液加热水解后，再加入 AgNO₃ 溶液之前必须加入稀硝酸。',
@@ -106,7 +106,7 @@ export const modelFlashCards: ModelQuizData = {
     },
     {
       id: 'var-5',
-      yearProvince: '2024 全国甲卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-flash-cards',
       title: 'Na₂O₂ 过氧化物阴离子结构与转移电子数拆解',
       contextDescription: 'Na₂O₂ 广泛用作呼吸面具中的供氧剂，发生反应：2Na₂O₂ + 2CO₂ = 2Na₂CO₃ + O₂。',

@@ -1,6 +1,6 @@
 /**
  * src/data/quiz/model-industrial-flow.ts
- * 实验二：无机工艺流程与沉淀调 pH 工具 - 踩分卡与真题题库数据
+ * 实验二：无机工艺流程与沉淀调 pH 工具 - 踩分卡与考点变式题库数据
  */
 
 import type { ModelQuizData } from './types'
@@ -71,7 +71,7 @@ export const modelIndustrialFlow: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'var-industrial-1',
-      yearProvince: '2024 全国卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-industrial-flow',
       title: '软锰矿 (主要含 MnO₂，含 Fe₂O₃、Al₂O₃、SiO₂ 杂质) 提纯高纯 MnSO₄ 工艺',
       contextDescription:
@@ -95,7 +95,7 @@ export const modelIndustrialFlow: ModelQuizData = {
     },
     {
       id: 'var-industrial-2',
-      yearProvince: '2022 全国甲卷 / 2023 湖北卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-industrial-flow',
       title: '黄铜废渣 (主要含 ZnO、CuO，含 Fe₂O₃、Al₂O₃ 杂质) 制备高纯 ZnSO₄·7H₂O 工艺',
       contextDescription:
@@ -119,7 +119,7 @@ export const modelIndustrialFlow: ModelQuizData = {
     },
     {
       id: 'var-industrial-3',
-      yearProvince: '2023 新课标卷 / 2024 浙江卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-industrial-flow',
       title: '钛铁矿 (主要成分 FeTiO₃，含 Fe₂O₃、Al₂O₃ 杂质) 制钛白粉 (TiO₂) 并副产绿矾工艺',
       contextDescription:
@@ -159,7 +159,7 @@ export const modelIndustrialFlow: ModelQuizData = {
     },
     {
       id: 'var-industrial-4',
-      yearProvince: '2024 湖北/山东/广东卷热点 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-industrial-flow',
       title: '废旧三元锂电池正极材料 (含 LiNiₓCoᵧMn₁₋ₓ₋ᵧO₂ 及 Al、Fe 杂质) 回收高纯钴/镍盐工艺',
       contextDescription:
@@ -183,7 +183,7 @@ export const modelIndustrialFlow: ModelQuizData = {
     },
     {
       id: 'var-industrial-5',
-      yearProvince: '2023 全国乙卷 / 浙江卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-industrial-flow',
       title: '盐湖卤水 (含 Mg²⁺、Ca²⁺、Fe³⁺、Al³⁺) 制备高纯氧化镁 (MgO) 工艺',
       contextDescription:
@@ -207,17 +207,13 @@ export const modelIndustrialFlow: ModelQuizData = {
     },
     {
       id: 'var-industrial-6',
-      yearProvince: '2024 新课标全国卷 / 山东卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-industrial-flow',
       title: '铝土矿 (主要含 Al₂O₃，含 Fe₂O₃、SiO₂ 杂质) 拜耳法制备高纯氧化铝工艺',
       contextDescription:
         '铝土矿经足量过量 NaOH 溶液碱浸后，过滤除去赤泥滤渣 (主要含 Fe₂O₃ 及水合铝硅酸钠)；滤液中通入过量 CO₂ 气流，析出 Al(OH)₃ 白色沉淀，经高温煅烧得到高纯 α-Al₂O₃。',
       questionText:
         '下列关于该工艺流程各工序的化学分析中，正确的是：',
-      diagramType: 'precipitation-curve',
-      diagramConfig: {
-        title: '铝酸钠溶液在不同 pH 下铝元素存在形态分布图',
-      },
       options: [
         { label: 'A', text: '赤泥主要成分仅有未反应的 SiO₂，Fe₂O₃ 溶于强碱进入滤液', isCorrect: false },
         { label: 'B', text: '通入过量 CO₂ 析出 Al(OH)₃ 的离子方程式为：2[Al(OH)₄]⁻ + CO₂ = 2Al(OH)₃↓ + CO₃²⁻ + H₂O', isCorrect: false },
@@ -231,7 +227,7 @@ export const modelIndustrialFlow: ModelQuizData = {
     },
     {
       id: 'var-industrial-7',
-      yearProvince: '2024 全国甲卷 / 广东卷压轴 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-industrial-flow',
       title: '退役磷酸铁锂电池正极材料 (主要含 LiFePO₄，含碳黑杂质) 回收电池级碳酸锂工艺',
       contextDescription:

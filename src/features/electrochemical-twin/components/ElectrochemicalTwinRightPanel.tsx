@@ -211,16 +211,16 @@ export const ElectrochemicalTwinRightPanel: React.FC<Props> = ({ params, cellDet
       }
       if (membraneType === 2) {
         membraneFormula = {
-          name: '阴离子交换膜选择性透膜',
-          latex: '\\text{Cl}^-(\\text{阴极室}) \\xrightarrow{\\text{AEM}} \\text{Cl}^-(\\text{阳极室})',
-          note: '只允许阴离子穿膜进入阳极室放电。',
+          name: '阴离子交换膜 (氯碱工业反例对照)',
+          latex: '\\text{OH}^-/\\text{Cl}^-(\\text{阴极室}) \\xrightarrow{\\text{AEM}} \\text{阳极室（导致 Cl}_2 \\text{ 歧化生成 NaClO）}',
+          note: '若误用阴膜，阴极生成的 OH⁻ 会迁入阳极室与 Cl₂ 发生 Cl₂+2OH⁻=Cl⁻+ClO⁻+H₂O 副反应，故工业氯碱制碱只采用阳离子交换膜。',
           level: 'derived' as const,
         }
       } else if (membraneType === 3) {
         membraneFormula = {
           name: '双极膜 (BPM) 催化水分子解离',
-          latex: '\\text{H}_2\\text{O} \\xrightarrow{\\text{BPM催化层}} \\text{H}^+(\\text{移向阳极}) + \\text{OH}^-(\\text{移向阴极})',
-          note: '无需外加酸碱，直接高效生产高纯度无机强酸与强碱。',
+          latex: '\\text{H}_2\\text{O} \\xrightarrow{\\text{BPM催化层}} \\text{H}^+(\\text{移向阴极}) + \\text{OH}^-(\\text{移向阳极})',
+          note: '在电场作用下阳离子 H⁺ 移向阴极，阴离子 OH⁻ 移向阳极，可分别在两侧室制备高纯度酸与碱。',
           level: 'core' as const,
         }
       }
@@ -324,7 +324,7 @@ export const ElectrochemicalTwinRightPanel: React.FC<Props> = ({ params, cellDet
         importance: 'gaokao' as const,
       },
       {
-        text: '放电顺序优先性：阳极惰性极板 OH⁻ 优先放电析出 O₂；阴极 Cu²⁺ 氧化性强于 H⁺ 优先析出金属 Cu。',
+        text: '放电顺序优先性：惰性阳极时水分子放电析出 O₂ 并生成 H⁺（2H₂O - 4e⁻ = O₂↑ + 4H⁺）；阴极 Cu²⁺ 氧化性强于 H⁺ 优先析出金属 Cu。',
         importance: 'core' as const,
       },
       {

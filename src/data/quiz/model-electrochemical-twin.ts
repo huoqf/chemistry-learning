@@ -1,6 +1,6 @@
 /**
  * src/data/quiz/model-electrochemical-twin.ts
- * 母题二：原电池 vs 电解池双对比 - 踩分卡与高考真题变式题库
+ * 母题二：原电池 vs 电解池双对比 - 踩分卡与情境变式题库
  */
 
 import type { ModelQuizData } from './types'
@@ -49,7 +49,7 @@ export const modelElectrochemicalTwin: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'quiz-twin-1',
-      yearProvince: '2024 新课标卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-electrochemical-twin',
       title: '全钒液流电池充放电原理与膜迁移分析',
       contextDescription:
@@ -69,7 +69,7 @@ export const modelElectrochemicalTwin: ModelQuizData = {
     },
     {
       id: 'quiz-twin-2',
-      yearProvince: '2023 湖南卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-electrochemical-twin',
       title: '双极膜 (BPM) 电解法制备高纯度烧碱与硫酸',
       contextDescription:
@@ -88,7 +88,7 @@ export const modelElectrochemicalTwin: ModelQuizData = {
     },
     {
       id: 'quiz-twin-3',
-      yearProvince: '2024 浙江卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-electrochemical-twin',
       title: '锂离子电池 (LiCoO₂ / 石墨 C) 充放电嵌入与脱嵌',
       contextDescription: '锂离子电池工作原理为 Li⁺ 在正负极材料中的嵌入与脱嵌：LiCoO₂ + C₆ ⇌ Li₁₋ₓCoO₂ + LiₓC₆。',
@@ -104,7 +104,7 @@ export const modelElectrochemicalTwin: ModelQuizData = {
     },
     {
       id: 'quiz-twin-4',
-      yearProvince: '2024 山东卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-electrochemical-twin',
       title: '海水电解协同制氢与阳极 Cl⁻ 优先放电',
       contextDescription: '利用太阳能电池电解海水制取 H₂，阳极产生 Cl₂ 气体，阴极产生 H₂ 气体。',
@@ -120,7 +120,7 @@ export const modelElectrochemicalTwin: ModelQuizData = {
     },
     {
       id: 'quiz-twin-5',
-      yearProvince: '2023 全国乙卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-electrochemical-twin',
       title: '铜锌原电池 vs 粗铜电解精炼阴阳极极性对比',
       contextDescription: '同屏对比铜锌原电池 (Cu-Zn-H₂SO₄) 与粗铜电解精炼池 (粗铜-纯铜-CuSO₄)。',

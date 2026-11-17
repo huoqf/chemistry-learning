@@ -144,61 +144,70 @@ export const GasChainLeftPanel: React.FC<GasChainLeftPanelProps> = ({
                 />
               </div>
 
-              {/* ② 净化试剂（第 1 步洗气瓶试剂） */}
+              {/* ② 净化试剂（按 role/device 精确匹配净化步骤，与干燥步互不覆盖） */}
               <div className="space-y-2">
-                <SegmentedControl
-                  label="② 净化洗气瓶试剂"
-                  value={params.washingSteps[0]?.reagent ?? 'none'}
-                  onChange={(val) => {
-                    const steps = [...params.washingSteps]
-                    if (val === 'none') {
-                      // 无净化：移除第一步（若为 wash-bottle）
-                      const filtered = steps.filter((s, i) => i !== 0 || s.device !== 'wash-bottle')
-                      updateParam('washingSteps', filtered)
-                    } else {
-                      if (steps[0]?.device === 'wash-bottle' || steps[0]?.device === 'acid-bottle') {
-                        steps[0] = { ...steps[0], reagent: val as WashStepReagent }
-                      } else {
-                        steps.unshift({ id: 'w0', device: 'wash-bottle', reagent: val as WashStepReagent, role: 'purify' })
-                      }
-                      updateParam('washingSteps', steps)
-                    }
-                  }}
-                  cols={2}
-                  options={[
-                    { label: '饱和食盐水 (除HCl)', value: 'sat-nacl' },
-                    { label: '饱和 NaHCO₃ (除HCl)', value: 'nahco3' },
-                    { label: '饱和 CuSO₄ (除H₂S)', value: 'cuso4' },
-                    { label: '饱和 NaHSO₃', value: 'nahso3' },
-                    { label: 'NaOH 溶液 (除酸气)', value: 'naoh' },
-                    { label: '品红溶液 (SO₂检验)', value: 'fuchsin' },
-                    { label: '酸性 KMnO₄', value: 'kmno4' },
-                    { label: '蒸馏水', value: 'water' },
-                    { label: '无净化', value: 'none' },
-                  ]}
-                />
+                {(() => {
+                  const purifyIdx = params.washingSteps.findIndex(
+                    (s) => s.role === 'purify' || s.role === 'detect' || s.device === 'wash-bottle'
+                  )
+                  const currentPurify = purifyIdx >= 0 ? params.washingSteps[purifyIdx] : undefined
+                  return (
+                    <>
+                      <SegmentedControl
+                        label="② 净化洗气瓶试剂"
+                        value={currentPurify?.reagent ?? 'none'}
+                        onChange={(val) => {
+                          const drySteps = params.washingSteps.filter(
+                            (s) => s.role === 'dry' || s.device === 'dry-tube' || s.device === 'acid-bottle'
+                          )
+                          if (val === 'none') {
+                            updateParam('washingSteps', drySteps)
+                          } else {
+                            const nextPurify = currentPurify
+                              ? { ...currentPurify, reagent: val as WashStepReagent }
+                              : { id: 'w0', device: 'wash-bottle' as const, reagent: val as WashStepReagent, role: 'purify' as const }
+                            updateParam('washingSteps', [nextPurify, ...drySteps])
+                          }
+                        }}
+                        cols={2}
+                        options={[
+                          { label: '饱和食盐水 (除HCl)', value: 'sat-nacl' },
+                          { label: '饱和 NaHCO₃ (除HCl)', value: 'nahco3' },
+                          { label: '饱和 CuSO₄ (除H₂S)', value: 'cuso4' },
+                          { label: '饱和 NaHSO₃', value: 'nahso3' },
+                          { label: 'NaOH 溶液 (除酸气)', value: 'naoh' },
+                          { label: '品红溶液 (SO₂检验)', value: 'fuchsin' },
+                          { label: '酸性 KMnO₄', value: 'kmno4' },
+                          { label: '蒸馏水', value: 'water' },
+                          { label: '无净化', value: 'none' },
+                        ]}
+                      />
 
-                {/* 洗气瓶接法开关 */}
-                <div className="flex items-center justify-between p-2 rounded-lg bg-neutral-50 border border-neutral-200">
-                  <ToggleSwitch
-                    label="管路接法"
-                    checked={!(params.washingSteps[0]?.reversed)}
-                    onChange={(checked) => {
-                      const steps = [...params.washingSteps]
-                      if (steps[0]) steps[0] = { ...steps[0], reversed: !checked }
-                      updateParam('washingSteps', steps)
-                    }}
-                  />
-                  {!(params.washingSteps[0]?.reversed) ? (
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700">
-                      ✓ 长进短出
-                    </span>
-                  ) : (
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-100 text-rose-700">
-                      ❌ 短进长出 (误)
-                    </span>
-                  )}
-                </div>
+                      {/* 洗气瓶接法开关 */}
+                      <div className="flex items-center justify-between p-2 rounded-lg bg-neutral-50 border border-neutral-200">
+                        <ToggleSwitch
+                          label="管路接法"
+                          checked={!(currentPurify?.reversed)}
+                          onChange={(checked) => {
+                            if (purifyIdx < 0) return
+                            const steps = [...params.washingSteps]
+                            steps[purifyIdx] = { ...steps[purifyIdx], reversed: !checked }
+                            updateParam('washingSteps', steps)
+                          }}
+                        />
+                        {!(currentPurify?.reversed) ? (
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700">
+                            ✓ 长进短出
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-100 text-rose-700">
+                            ❌ 短进长出 (误)
+                          </span>
+                        )}
+                      </div>
+                    </>
+                  )
+                })()}
               </div>
 
               {/* ③ 干燥试剂（最后一步 dry-tube/acid-bottle） */}

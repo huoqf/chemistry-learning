@@ -57,9 +57,9 @@ export function ReagentStepRightPanel({
       },
       {
         key: 'pptVal',
-        label: '沉淀估算量',
+        label: '沉淀相对量',
         value: Math.round(interpolatedPptLevel * 200),
-        unit: 'mmol',
+        unit: '%',
         colorKey: 'amount',
       },
     ]

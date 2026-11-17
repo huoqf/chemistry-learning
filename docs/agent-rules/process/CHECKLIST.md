@@ -22,10 +22,9 @@
 - [ ] 新页面布局：使用 useAnimationViewport({ preset }) + AnimationSvgCanvas
 - [ ] 坐标转换：新页面使用 worldToDesign() + useSceneScale；禁止手写坐标计算
 - [ ] 交互拖拽坐标转换：使用 useViewportPointer(svgRef)
-- [ ] Canvas 元素 <= 7 个（黄金法则）
-- [ ] Canvas 文字标注 <= 5 个
+- [ ] 画布主屏保持教学聚焦（仅放化学量标注与坐标轴标签，禁止大段教学文本与公式推导）
 - [ ] 化学量颜色符合 CHEMISTRY_COLORS 语义规范
-- [ ] 参数区 <= 5 个控制项
+- [ ] 参数区聚焦核心教学变量（避免堆砌冗余控件）
 
 ## Canvas/SVG/图表检查
 
@@ -50,7 +49,7 @@
 
 ## 数据与注册表检查
 
-- [ ] 新增动画已在 animationRegistry.ts 注册（controlsMode 正确，defaultParams as const）
+- [ ] 新增动画已在对应领域注册表 `src/data/registries/*.ts` 注册（controlsMode 默认 `'timed'`，defaultParams as const）
 - [ ] 如有平衡终点，已配置 stopCondition
 - [ ] 如需逐步加试剂，已使用 controlMeta type='step'
 - [ ] 新增知识点已在 knowledgeTree.ts 更新（如适用）

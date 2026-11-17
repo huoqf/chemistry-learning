@@ -368,14 +368,14 @@ export const IndustrialFlowGuideModal: React.FC<IndustrialFlowGuideModalProps> =
                   </span>
                   <div className="flex-1">
                     <h4 className="font-bold text-xs text-slate-900">
-                      顶部切换【规范踩分】与【真题研析】
+                      顶部切换【规范踩分】与【变式演练】
                     </h4>
                     <p className="text-xs text-slate-600 mt-0.5">
                       探究机理完成后，点击右上角 Tab：
                       <br />
                       • <strong>【规范踩分】</strong>：逐条查看高考评分细则与满分规范表达句式；
                       <br />
-                      • <strong>【真题研析】</strong>：通过精选的经典官方高考真题进行巩固刷题与思路验证。
+                      • <strong>【变式演练】</strong>：通过精选的工艺流程考点变式题进行巩固刷题与思路验证。
                     </p>
                   </div>
                 </div>

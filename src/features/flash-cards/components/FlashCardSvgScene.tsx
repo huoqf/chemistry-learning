@@ -16,8 +16,8 @@ export function FlashCardSvgScene({
 }: FlashCardSvgSceneProps) {
   const sceneType = card.sceneType
 
-  // 1. 漂白性加热对比场景 (SO2 vs Cl2)
-  if (sceneType === 'bleach-heating') {
+  // 1. 漂白性加热对比场景 (仅针对 card-1: SO2 vs Cl2 品红加热复红)
+  if (sceneType === 'bleach-heating' && card.id === 'card-1') {
     const so2Color = isHeating ? '#EF4444' : withAlpha('#EF4444', 0.25)
     return (
       <svg viewBox="0 0 840 500" className="w-full h-full">
@@ -69,8 +69,8 @@ export function FlashCardSvgScene({
     )
   }
 
-  // 2. 钝化与加热反应场景 (Fe 在浓硫酸中)
-  if (sceneType === 'passivation-heat') {
+  // 2. 钝化与加热反应场景 (仅针对 card-4: Fe 在浓硫酸中钝化)
+  if (sceneType === 'passivation-heat' && card.id === 'card-4') {
     return (
       <svg viewBox="0 0 840 500" className="w-full h-full">
         <g transform="translate(270, 50)">
@@ -110,8 +110,8 @@ export function FlashCardSvgScene({
     )
   }
 
-  // 3. NO2 / N2O4 加压压缩显色场景
-  if (sceneType === 'gas-compress') {
+  // 3. NO2 / N2O4 加压压缩显色场景 (仅针对 card-6)
+  if (sceneType === 'gas-compress' && card.id === 'card-6') {
     const pistonX = isCompressing ? 280 : 480
     const gasOpacity = isCompressing ? 0.9 : 0.45
     return (
@@ -135,8 +135,8 @@ export function FlashCardSvgScene({
     )
   }
 
-  // 4. 金属 Na 投入 CuSO4 溶液场景（优化水面上游动浮球与蓝色沉淀，消除不真实的跳跃）
-  if (sceneType === 'na-water-cuso4') {
+  // 4. 金属 Na 投入 CuSO4 溶液场景 (仅针对 card-8)
+  if (sceneType === 'na-water-cuso4' && card.id === 'card-8') {
     return (
       <svg viewBox="0 0 840 500" className="w-full h-full">
         <g transform="translate(200, 30)">
@@ -225,8 +225,8 @@ export function FlashCardSvgScene({
     )
   }
 
-  // 5. 检验卤代烃中卤元素场景
-  if (sceneType === 'haloalkane-test') {
+  // 5. 检验卤代烃中卤元素场景 (仅针对 card-11)
+  if (sceneType === 'haloalkane-test' && card.id === 'card-11') {
     return (
       <svg viewBox="0 0 840 500" className="w-full h-full">
         <g transform="translate(180, 50)">
@@ -268,8 +268,8 @@ export function FlashCardSvgScene({
     )
   }
 
-  // 6. FeCl3 + KSCN 显色平衡场景
-  if (sceneType === 'fe-kscn-equilibrium') {
+  // 6. FeCl3 + KSCN 显色平衡场景 (仅针对 card-7)
+  if (sceneType === 'fe-kscn-equilibrium' && card.id === 'card-7') {
     return (
       <svg viewBox="0 0 840 500" className="w-full h-full">
         <g transform="translate(180, 50)">
@@ -308,8 +308,8 @@ export function FlashCardSvgScene({
     )
   }
 
-  // 7. 胶体丁达尔效应与渗析场景
-  if (sceneType === 'colloid-tyndall') {
+  // 7. 胶体丁达尔效应与渗析场景 (仅针对 card-10)
+  if (sceneType === 'colloid-tyndall' && card.id === 'card-10') {
     return (
       <svg viewBox="0 0 840 500" className="w-full h-full">
         <g transform="translate(140, 60)">
@@ -344,8 +344,8 @@ export function FlashCardSvgScene({
     )
   }
 
-  // 8. 乙醇消去 (170℃) 与乙醚生成 (140℃) 场景
-  if (sceneType === 'ethanol-reaction') {
+  // 8. 乙醇消去 (170℃) 与乙醚生成 (140℃) 场景 (仅针对 card-12)
+  if (sceneType === 'ethanol-reaction' && card.id === 'card-12') {
     return (
       <svg viewBox="0 0 840 500" className="w-full h-full">
         <g transform="translate(160, 50)">
@@ -390,16 +390,49 @@ export function FlashCardSvgScene({
     )
   }
 
-  // 默认备用通用对比场景
+  // 通用卡片机理与规范答题流程图示（确保每张卡图文严格对应）
+  const steps = card.templateSteps ?? []
   return (
     <svg viewBox="0 0 840 500" className="w-full h-full">
-      <rect x="120" y="80" width="600" height="340" rx="16" fill={withAlpha('#4F46E5', 0.05)} stroke="#C7D2FE" strokeWidth="2" />
-      <circle cx="420" cy="200" r="50" fill={withAlpha('#6366F1', 0.15)} />
-      <text x="420" y="205" textAnchor="middle" fill="#312E81" fontSize={font(18)} fontWeight="bold">
-        {card.title} 事实盲盒探究
+      <rect x="60" y="45" width="720" height="410" rx="18" fill={withAlpha('#4F46E5', 0.04)} stroke="#C7D2FE" strokeWidth="2" />
+      <rect x="85" y="68" width="140" height="28" rx="14" fill="#EEF2FF" stroke="#A5B4FC" />
+      <text x="155" y="87" textAnchor="middle" fill="#3730A3" fontSize={font(12)} fontWeight="bold">
+        {card.categoryLabel}
       </text>
-      <text x="420" y="270" textAnchor="middle" fill="#475569" fontSize={font(14)}>
-        点击盲盒“揭晓事实/解析”对比考点
+      <text x="420" y="132" textAnchor="middle" fill={colors.neutral[800]} fontSize={font(19)} fontWeight="bold">
+        {card.title}
+      </text>
+      {steps.length > 0 ? (
+        <g transform="translate(85, 175)">
+          {steps.slice(0, 3).map((st, idx) => (
+            <g key={st.step} transform={`translate(${idx * 230}, 0)`}>
+              <rect x="0" y="0" width="210" height="175" rx="12" fill="#FFFFFF" stroke="#93C5FD" strokeWidth="2" />
+              <circle cx="30" cy="30" r="14" fill="#2563EB" />
+              <text x="30" y="35" textAnchor="middle" fill="#FFFFFF" fontSize={font(12)} fontWeight="bold">
+                {st.step}
+              </text>
+              <text x="52" y="35" fill="#1E3A8A" fontSize={font(14)} fontWeight="bold">
+                {st.title}
+              </text>
+              <foreignObject x="14" y="54" width="182" height="110">
+                <div className="text-xs leading-relaxed text-slate-700">{st.desc}</div>
+              </foreignObject>
+            </g>
+          ))}
+        </g>
+      ) : (
+        <g transform="translate(95, 170)">
+          <rect x="0" y="0" width="650" height="170" rx="12" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="2" />
+          <text x="24" y="34" fill="#1E293B" fontSize={font(14)} fontWeight="bold">
+            核心辨析考点：{card.examPoint}
+          </text>
+          <foreignObject x="24" y="48" width="602" height="110">
+            <div className="text-xs leading-relaxed text-slate-700">{card.explanation}</div>
+          </foreignObject>
+        </g>
+      )}
+      <text x="420" y="415" textAnchor="middle" fill="#475569" fontSize={font(13)}>
+        请结合右侧核心方程式与“高考避坑红线”并在下方完成自测盲盒判定
       </text>
     </svg>
   )

@@ -59,7 +59,7 @@ export const TRIGONAL_BIPYRAMIDAL_MOLECULES: Record<string, VseprMolecule> = {
     electronGeometry: '三角双锥',
     molecularGeometry: '跷跷板形',
     hybridization: 'sp³d',
-    bondAngleText: '89°, 117°',
+    bondAngleText: '约 88°, 102°, 173°',
     description: 'SF₄ 孤电子对优先选择空间更广阔的赤道面，形成跷跷板形结构',
     centralColor: '#eab308',
     ligandColor: '#06b6d4',

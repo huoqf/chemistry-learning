@@ -134,7 +134,7 @@ export const structureKnowledge: KnowledgeNode[] = [
   },
   {
     id: 'atomic-crystal',
-    title: '原子晶体',
+    title: '共价晶体（原子晶体）',
     chapter: '选择性必修二',
     module: '物质结构',
     importance: 'core',

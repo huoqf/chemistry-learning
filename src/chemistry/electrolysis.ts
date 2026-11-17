@@ -39,12 +39,14 @@ export const ANODE_MATERIAL = {
 export const MOLAR_GAS_VOLUME = 22.4
 
 /**
- * 粗铜中 Cu 的质量分数（教学示意值）。
- * 工业粗铜（泡铜）纯度约 95%~99%，此处取 0.95。
- * 精炼时比 Cu 不活泼的杂质（Ag、Au）不溶解，随铜一起从阳极剥离成为阳极泥，
- * 故 阳极失重 = 溶解金属质量 ÷ w(Cu)。这正是「阳极减少质量 > 阴极增加质量」的定量来源。
+ * 粗铜中活性部分质量分数（Cu + 活泼金属杂质共占 95%，其余 5% 为 Au/Ag 阳极泥）。
+ * 阳极活泼部分失电子溶解时，随基体溃散脱离的不活泼贵金属同步成为阳极泥，
+ * 故 阳极总失重 = 溶解金属质量 ÷ BLISTER_COPPER_CU_FRACTION。
  */
 export const BLISTER_COPPER_CU_FRACTION = 0.95
+
+/** 粗铜活泼杂质（以 Zn 计）摩尔质量 (g/mol) */
+const BLISTER_ACTIVE_IMPURITY_MOLAR_MASS = 65.38
 
 /**
  * 粗铜中比 Cu 活泼的金属杂质（Zn、Fe、Ni 等）失电子分摊的转移电子份额比例 α。
@@ -118,7 +120,7 @@ export function electrolysisState(
         anodeGasVolume: ne * 0.25 * MOLAR_GAS_VOLUME,
         cathodeGasVolume: 0,
         concentration: Math.max(0.05, c0 - (ne * 0.5) / volume),
-        pH: pHFromHydrogenMoles(ne),
+        pH: pHFromHydrogenMoles(ne, volume),
       }
     }
     // 活性铜阳极：阳极 Cu − 2e⁻ = Cu²⁺，阴极 Cu²⁺ + 2e⁻ = Cu
@@ -144,24 +146,26 @@ export function electrolysisState(
       anodeGasVolume: ne * 0.5 * MOLAR_GAS_VOLUME,
       cathodeGasVolume: ne * 0.5 * MOLAR_GAS_VOLUME,
       concentration: Math.max(0.05, c0 - ne / volume),
-      pH: pHFromHydroxideMoles(ne),
+      pH: pHFromHydroxideMoles(ne, volume),
     }
   }
 
   if (cellType === ELECTROLYSIS_CELL.copperRefining) {
-    // 阳极：粗铜溶解。
-    //   · 活泼杂质（Zn、Fe、Ni）优先失电子溶解，分摊份额 α = BLISTER_ACTIVE_IMPURITY_ELECTRON_SHARE；
-    //   · Cu 失电子承担 (1 − α) 份额：n(Cu²⁺)阳 = 0.5·ne·(1 − α)；
-    //   · 不活泼杂质（Ag、Au）不溶解，成为阳极泥脱落。
-    // 阴极：仅 Cu²⁺ + 2e⁻ = Cu 析出：n(Cu²⁺)阴 = 0.5·ne，析出质量 cathodeMass = ne·0.5·63.55。
-    //
-    // 【高考核心考点】：
-    // 阳极补充的 Cu²⁺ 小于阴极消耗的 Cu²⁺，净消耗量 Δn(Cu²⁺) = 0.5·ne·α，
-    // 导致电解液中 c(Cu²⁺) 逐渐下降：c(Cu²⁺) = c₀ − Δn(Cu²⁺)/V。
+    // 阳极：粗铜溶解（总转移电子 ne 中，活泼杂质分摊份额 α，Cu 分摊 1−α）：
+    //   · 活泼杂质（以 Zn 计）溶解质量 = 0.5·ne·α × 65.38
+    //   · Cu 溶解质量 = 0.5·ne·(1−α) × 63.55
+    //   · 随溶解基体脱落的阳极泥（Ag、Au）占比 (1 − BLISTER_COPPER_CU_FRACTION)
+    // 阴极：仅 Cu²⁺ + 2e⁻ = Cu 析出，cathodeMass = ne·0.5·63.55。
+    // 净消耗 Δn(Cu²⁺) = 0.5·ne·α，电解液 c(Cu²⁺) 逐渐减小。
     const copperDepositedMass = ne * 0.5 * 63.55
+    const dissolvedCuMass = ne * 0.5 * (1 - BLISTER_ACTIVE_IMPURITY_ELECTRON_SHARE) * 63.55
+    const dissolvedImpurityMass =
+      ne * 0.5 * BLISTER_ACTIVE_IMPURITY_ELECTRON_SHARE * BLISTER_ACTIVE_IMPURITY_MOLAR_MASS
+    const anodeTotalLoss =
+      (dissolvedCuMass + dissolvedImpurityMass) / BLISTER_COPPER_CU_FRACTION
     const netCu2PlusConsumed = ne * 0.5 * BLISTER_ACTIVE_IMPURITY_ELECTRON_SHARE
     return {
-      anodeMassDelta: -(copperDepositedMass / BLISTER_COPPER_CU_FRACTION),
+      anodeMassDelta: -anodeTotalLoss,
       cathodeMassDelta: copperDepositedMass,
       anodeGasVolume: 0,
       cathodeGasVolume: 0,
@@ -171,8 +175,8 @@ export function electrolysisState(
   }
 
   // 熔融 Al₂O₃ 电解炼铝
-  // 阳极 2O²⁻ − 4e⁻ = O₂↑，C 电极与 O₂ 生成 CO₂ 而被消耗（每 4 mol e⁻ 消耗 1 mol C）
-  // 阴极 Al³⁺ + 3e⁻ = Al（每 3 mol e⁻ 析出 1 mol Al）
+  // 阴极 Al³⁺ + 3e⁻ = Al（每 12 mol e⁻ 析出 4 mol Al）
+  // 阳极 2O²⁻ − 4e⁻ = O₂↑；析出的 O₂ 在高温下与石墨电极反应 C + O₂ = CO₂↑（按完全转化计，每 4 mol e⁻ 消耗 1 mol C 并放出 1 mol CO₂，折合标况气体体积 22.4 L）
   return {
     anodeMassDelta: -(ne * 0.25 * 12.0),
     cathodeMassDelta: (ne / 3) * 27.0,

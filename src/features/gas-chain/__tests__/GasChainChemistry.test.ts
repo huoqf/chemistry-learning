@@ -292,7 +292,7 @@ describe('GasChainChemistry — 实验一 气体制备装置链化学核查测�
       expect(result.current.issues.some((i) => i.id === 'co2-water-warning')).toBe(true)
     })
 
-    it('C₂H₂ 误用 NaOH 洗气触发无法沉淀除硫警告', () => {
+    it('C₂H₂ 误用 NaOH 洗气触发无法除去 PH₃ 警告', () => {
       const params: GasChainParams = {
         viewMode: 0,
         systemId: 'custom',
@@ -376,19 +376,19 @@ describe('GasChainChemistry — 实验一 气体制备装置链化学核查测�
       }
     })
 
-    it('G3：SO₂ 净化文案不得出现杂质清单以外的 HCl', () => {
+    it('G3：SO₂ 净化文案不得出现无依据的气体杂质臆断，须与杂质清单（酸雾/水蒸气）一致', () => {
       const so2 = GAS_MATRIX_ITEMS.find((g) => g.formula === 'SO₂')
       expect(so2).toBeDefined()
-      expect(so2!.purifyReagent).not.toContain('HCl')
-      // 净化目标必须落在杂质清单内（SO₃ / 水蒸气）
-      expect(so2!.purifyReagent).toContain('SO₃')
+      expect(so2!.impurities.some((i) => i.includes('酸雾'))).toBe(true)
+      expect(so2!.purifyReagent).toContain('酸雾')
     })
 
-    it('P2：C₂H₂ 除 PH₃ 必须给出化学依据（Cu₃P₂ 难溶沉淀方程式）', () => {
+    it('P2：C₂H₂ 除 PH₃ 必须给出化学依据（氧化还原生成难溶磷化亚铜 Cu₃P 沉淀）', () => {
       const c2h2 = GAS_MATRIX_ITEMS.find((g) => g.formula === 'C₂H₂')
       expect(c2h2).toBeDefined()
       expect(c2h2!.purifyPrinciple).toContain('PH₃')
-      expect(c2h2!.purifyPrinciple).toContain('Cu₃P₂')
+      expect(c2h2!.purifyPrinciple).toContain('Cu₃P')
+      expect(c2h2!.purifyPrinciple).not.toContain('Cu₃P₂')
       expect(c2h2!.purifyPrinciple).toContain('NaOH')
     })
 

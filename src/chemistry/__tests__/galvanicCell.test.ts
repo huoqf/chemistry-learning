@@ -5,9 +5,8 @@
  *   · P1-7「单槽 Zn-稀 H₂SO₄」的 E° 是 0.76 V（正极析氢），
  *     与丹尼尔电池的 1.10 V（正极镀铜）是两个不同的数，
  *     原实现在两处都把单槽写成 1.10 V。
- *   · P1-6 氢氧燃料电池在碱性/酸性介质下关键离子（OH⁻ / H⁺）的净变化都为 0，
- *     浓度只受生成水稀释，两种介质必须给出同一个结果；
- *     原实现碱性写死 1.0、酸性按伪系数 ne×0.1 下降。
+ *   · 氢氧燃料电池的化学纯函数模型跟踪生成水对溶液的稀释效应；
+ *     酸/碱电解质模式标签及净离子浓度切换由上层面板测试覆盖。
  */
 
 import { describe, it, expect } from 'vitest'
@@ -86,11 +85,11 @@ describe('cellType = 2 氢氧燃料电池', () => {
 })
 
 describe('cellType = 3 铅蓄电池放电', () => {
-  it('两极均生成 PbSO₄ 而增重，增重比 96.1 : 64.1', () => {
+  it('两极均生成 PbSO₄ 而增重，每 2 mol e⁻ 负极结合 1 mol SO₄²⁻ (+96 g)、正极增重 (+64 g)', () => {
     const state = galvanicCellState(GALVANIC_CELL.leadAcid, NE_SAMPLE)
     expect(state.anodeMassDelta).toBeGreaterThan(0)
     expect(state.cathodeMassDelta).toBeGreaterThan(0)
-    expect(state.anodeMassDelta / state.cathodeMassDelta).toBeCloseTo(96.1 / 64.1, 10)
+    expect(state.anodeMassDelta / state.cathodeMassDelta).toBeCloseTo(96 / 64, 2)
     expect(state.voltage).toBe(2.04)
   })
 

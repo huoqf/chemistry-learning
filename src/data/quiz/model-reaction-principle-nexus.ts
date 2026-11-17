@@ -71,7 +71,7 @@ export const modelReactionPrincipleNexus: ModelQuizData = {
   variantQuizzes: [
     {
       id: 'nexus-var-1',
-      yearProvince: '2023 全国甲卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-reaction-principle-nexus',
       title: 'CO₂ 加氢合成甲醇反应历程与活化能图谱',
       contextDescription:
@@ -106,7 +106,7 @@ export const modelReactionPrincipleNexus: ModelQuizData = {
     },
     {
       id: 'nexus-var-2',
-      yearProvince: '2024 山东卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-reaction-principle-nexus',
       title: 'ln K - 1/T 范特霍夫图谱与热力学推导',
       contextDescription:
@@ -141,7 +141,7 @@ export const modelReactionPrincipleNexus: ModelQuizData = {
     },
     {
       id: 'nexus-var-3',
-      yearProvince: '2022 全国乙卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-reaction-principle-nexus',
       title: '2NO₂(g) ⇌ N₂O₄(g) v-t 速率-时间图与勒夏特列移动',
       contextDescription:
@@ -176,7 +176,7 @@ export const modelReactionPrincipleNexus: ModelQuizData = {
     },
     {
       id: 'nexus-var-4',
-      yearProvince: '2024 浙江卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-reaction-principle-nexus',
       title: '压强与温度双因素对平衡转化率 α-T-P 交叉图像解析',
       contextDescription: '对于可逆气体反应 A(g) + 2B(g) ⇌ 2C(g) ΔH < 0，不同压强 P₁ 与 P₂ 下 A 的平衡转化率 α 随温度 T 的变化关系如图所示。',
@@ -192,7 +192,7 @@ export const modelReactionPrincipleNexus: ModelQuizData = {
     },
     {
       id: 'nexus-var-5',
-      yearProvince: '2023 湖北卷 · 情境变式',
+      yearProvince: '核心考点 · 情境变式',
       modelId: 'model-reaction-principle-nexus',
       title: '压强平衡常数 Kp 分压计算公式代数推导',
       contextDescription: '在 T K、总压为 P 情况下，反应 N₂O₄(g) ⇌ 2NO₂(g) 达到平衡，N₂O₄ 的分解率为 α。',

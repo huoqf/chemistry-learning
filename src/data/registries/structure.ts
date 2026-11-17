@@ -452,11 +452,11 @@ export const structureAnimations = defineAnimations({
         showIf: 'isomerType',
         showIfValue: 3,
         options: [
-          { label: '邻甲酚', value: 0, description: '2-甲基苯酚 (FeCl₃显紫) · 5 种等效氢 · 191.0°C' },
-          { label: '间甲酚', value: 1, description: '3-甲基苯酚 (FeCl₃显紫) · 5 种等效氢 · 202.0°C' },
-          { label: '对甲酚', value: 2, description: '4-甲基苯酚 (高度对称) · 3 种等效氢 · 201.9°C' },
-          { label: '苯甲醇', value: 3, description: '芳香醇 (C₆H₅CH₂OH) · 4 种等效氢 · 205.0°C' },
-          { label: '苯甲醚', value: 4, description: '芳香醚 (C₆H₅OCH₃) · 3 种等效氢 · 154.0°C' },
+          { label: '邻甲酚', value: 0, description: '2-甲基苯酚 (FeCl₃显紫) · 6 种等效氢 · 191.0°C' },
+          { label: '间甲酚', value: 1, description: '3-甲基苯酚 (FeCl₃显紫) · 6 种等效氢 · 202.0°C' },
+          { label: '对甲酚', value: 2, description: '4-甲基苯酚 (高度对称) · 4 种等效氢 · 201.9°C' },
+          { label: '苯甲醇', value: 3, description: '芳香醇 (C₆H₅CH₂OH) · 5 种等效氢 · 205.0°C' },
+          { label: '苯甲醚', value: 4, description: '芳香醚 (C₆H₅OCH₃) · 4 种等效氢 · 154.0°C' },
         ],
       },
       {

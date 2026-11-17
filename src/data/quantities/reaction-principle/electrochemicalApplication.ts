@@ -138,7 +138,7 @@ export const electrochemicalFormulas: Array<{
     name: '阴离子膜阳极水氧化反应',
     latex: '2\\text{H}_2\\text{O} - 4e^- = \\text{O}_2\\uparrow + 4\\text{H}^+',
     level: 'important',
-    condition: '阴膜阻止阳离子，Cl⁻/SO₄²⁻ 穿膜',
+    condition: '阴膜阻止阳离子，含氧酸根 SO₄²⁻ 穿膜至阳极室',
   },
   {
     name: '串联电路电子守恒',
