@@ -37,13 +37,17 @@ export function resolveAnimationIds(
     ? Object.keys(registry)
     : [
         'anim-le-chatelier',
+        'anim-collision-theory',
+        'anim-electrochemical-application',
+        'anim-primary-cell',
+        'anim-electrolytic-cell',
         'anim-unit-cell-calculation',
         'anim-vsepr',
         'anim-hybrid-orbital',
         'anim-chirality',
         'anim-isomerism',
         'anim-redox-electron-transfer',
-
+        'anim-extraction-distillation',
       ]
 
   for (const animId of animIds) {

@@ -151,7 +151,7 @@ export function XxxApparatus({
 
 ```tsx
 // src/components/Chemistry/XxxEquipment.tsx
-import { SCENE_COLORS, STROKE, FONT, identityFontScaler } from '@/theme'
+import { SCENE_COLORS, CANVAS_COLORS, STROKE, FONT, identityFontScaler } from '@/theme'
 import type { FontScaler } from '@/theme'
 
 export interface XxxEquipmentProps {
@@ -198,7 +198,7 @@ export function XxxEquipment({
         dominantBaseline="central"
         textAnchor="middle"
         fontSize={font(FONT.small)}
-        fill={SCENE_COLORS.text.onDark}
+        fill={CANVAS_COLORS.white}
         fontWeight="bold"
       >
         XXX

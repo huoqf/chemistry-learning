@@ -1,7 +1,7 @@
 ﻿/**
  * src/theme/colors.ts
- * 唯一颜色 token 来源。Tailwind 配置从此导入，禁止在 tailwind.config.* 中重复定义颜色值。
- * 修改颜色必须先更新本文件，再同步 tailwind.config.ts。
+ * 唯一颜色 token 来源。src/index.css @theme 从此同步定义，禁止在其外重复定义离散颜色值。
+ * 修改颜色必须先更新本文件，再同步 src/index.css 中的 @theme 块。
  */
 
 export const colors = {

@@ -50,7 +50,7 @@ description: 新建 3D 场景页面 / 创建 React Three Fiber 场景 / 添加 3
 | 知识地图标准动画（推荐） | 在 `src/data/registries/structure.ts` 注册，知识树自动解析路由 `/#/animation/anim-<topic>` |
 | 高考解题母题工具 | 在 `src/data/gaokaoModels.ts` 注册，统一承载于 `/#/gaokao-tool/<model-id>` |
 
-**铁律**：严禁在 `App.tsx` 中直接硬编码手写散乱的新路由；所有 3D 页面通过 Registry 或 GaokaoModels 统一自动挂载。
+**铁律**：严禁在 `src/App.tsx` 中直接硬编码手写散乱的新路由；所有 3D 页面通过 Registry 或 GaokaoModels 统一自动挂载。
 
 ---
 
@@ -159,13 +159,13 @@ export function <Topic>Scene({ chemistry, className = '' }: <Topic>SceneProps) {
   return (
     <div className={`w-full h-full relative ${className}`} style={{ touchAction: 'none' }}>
       <Canvas
-        orthographic          // 或 perspective，取决于 Step 0A 决策
+        orthographic          // 正交相机；若为分子构型改用透视相机（去掉 orthographic 并设 near: 0.1, far: 100）
         frameloop="always"    // 纯静态省电场景可改用 "demand" + enableDamping={false}
         dpr={[1, 2]}          // 高分屏上限约束
         camera={{
-          zoom: 120,          // 正交相机缩放
+          zoom: 120,          // 正交相机缩放（透视相机改为 fov: 45）
           position: [2.5, 2.0, 3.8],
-          near: -100,
+          near: -100,         // 正交相机可用负 near；透视相机必须为正值（如 0.1）
           far: 100,
         }}
       >
@@ -316,7 +316,7 @@ export const DATA: <Topic>Data = {
 - **高考解题母题 3D 工具**：在 `src/data/gaokaoModels.ts` 注册 `model-<topic>`，并在 `src/pages/GaokaoToolPage.tsx` 挂载（路由 `/#/gaokao-tool/model-<topic>`）。
 
 ### 面包屑规则
-`Layout` 自动根据 `knowledgeTree` 与 `gaokaoModels` 解析当前路由的面包屑，无需在 `App.tsx` 硬编码页面路由。
+`Layout` 自动根据 `knowledgeTree` 与 `gaokaoModels` 解析当前路由的面包屑，无需在 `src/App.tsx` 硬编码页面路由。
 
 ---
 
@@ -328,12 +328,13 @@ export const DATA: <Topic>Data = {
 
 ```tsx
 // ✅ 正确
-import { SCENE_COLORS, CANVAS_COLORS } from '@/theme'
+import { SCENE_COLORS, ATOM_COLORS, CANVAS_COLORS } from '@/theme'
 <meshStandardMaterial color={SCENE_COLORS.materials.glass} />
+<meshStandardMaterial color={ATOM_COLORS.O} />
 
 // ❌ 禁止
-<meshStandardMaterial color="#E0F2FE" />        // 硬编码 hex
-<meshStandardMaterial color={colors.primary} />  // UI 色用于 3D 材质
+<meshStandardMaterial color="#E0F2FE" />               // 硬编码 hex
+<meshStandardMaterial color={colors.primary[500]} />     // UI 色用于 3D 材质
 <meshStandardMaterial color={CHEMISTRY_COLORS.concentration} />  // 化学量色用于材质
 ```
 
@@ -433,9 +434,11 @@ function AnimatedMesh() {
 ```tsx
 // R3F 对同一 Canvas 内的标准 mesh 卸载时自动 dispose
 // 无需手动处理
+import { ATOM_COLORS } from '@/theme'
+
 <mesh>
   <sphereGeometry args={[1, 32, 32]} />
-  <meshStandardMaterial color={SCENE_COLORS.atoms.oxygen} />
+  <meshStandardMaterial color={ATOM_COLORS.O} />
 </mesh>
 ```
 
@@ -444,9 +447,13 @@ function AnimatedMesh() {
 ```tsx
 // 如果创建了自定义 geometry 或 material，组件卸载时必须 dispose
 const geometry = useMemo(() => new THREE.BufferGeometry(), [])
+const material = useMemo(() => new THREE.MeshStandardMaterial({ color: ATOM_COLORS.C }), [])
 useEffect(() => {
-  return () => geometry.dispose()
-}, [geometry])
+  return () => {
+    geometry.dispose()
+    material.dispose()
+  }
+}, [geometry, material])
 ```
 
 ### 7C：GLTF 模型加载

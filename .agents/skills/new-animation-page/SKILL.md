@@ -58,8 +58,6 @@ src/features/<domain>/<topic>/
 
 ⚠️ **纯计算层唯一来源**：化学公式推导、平衡态演化、微观速率、电极转移电子数等核心计算必须在 `src/chemistry/` 集中收敛。Hook 与右屏 Quantities 构建器**100% 共同 import 同一纯函数**，严禁在两处各写一套导致数据脱节。
 
-如有 CenterExtra：根目录追加 `<Topic>CenterExtra.tsx`。
-
 **viewModel 约束**：如有 model/viewModel.ts，只返回化学坐标数据，**禁止**引入 vp.scale/transform/visibleW/H 或任何 SVG 坐标。
 
 ---
@@ -198,7 +196,7 @@ export function use<Topic>Chemistry({ c0, k, time }: Use<Topic>ChemistryParams):
 
 ```tsx
 // 颜色/Token 见 AGENTS.md 铁律 4B（化学量→CHEMISTRY_COLORS，器材→SCENE_COLORS，图表→CHART_COLORS）
-// 组件复用见 AGENTS.md 铁律 4（44+ 化学器材组件）
+// 组件复用见 AGENTS.md 铁律 4（完整清单见 docs/agent-rules/ui/COMPONENT_REGISTRY.md）
 // import 路径见 AGENTS.md 铁律 4C（统一 @/theme 入口，barrel import）
 import { VectorArrow } from '@/components/Chemistry'
 import { CHEMISTRY_COLORS, SCENE_COLORS, CANVAS_COLORS } from '@/theme'
@@ -227,7 +225,7 @@ export function <Topic>Scene({ chemistry, canvasSize, sceneScale }: <Topic>Scene
 
 ---
 
-## Step 3：Registry 注册（5 个文件，同一任务必须全部完成）
+## Step 3：Registry 注册（4 个核心文件 + 知识点同步，同一任务必须全部完成）
 
 ### 3A：动画注册表（`src/data/registries/<domain>.ts`）
 
@@ -275,7 +273,7 @@ export const <domain>Animations = defineAnimations({
 })
 ```
 
-> **label 支持 KaTeX**：`{ key: 'Ka', label: <KatexFormula formula="K_a" />, ... }`（从 `@/components/UI` 导入）。
+> **label 支持 KaTeX**：`label` 类型为 `string | ReactNode`，若需直接传入 `<KatexFormula formula="K_a" />`（从 `@/components/UI` 导入），注册表文件须使用 `.tsx` 扩展名；在纯 `.ts` 注册表中请使用纯字符串或 Unicode 下标（如 `Kₐ`、`NO₂`）。
 
 ### 3B：化学量构建器（`src/data/quantities/<domain>/<topic>.ts`）
 
@@ -303,11 +301,11 @@ import { build<Topic>Quantities } from './quantities/<domain>/<topic>'
 registerQuantityBuilder('anim-<topic>', build<Topic>Quantities)
 ```
 
-### 3C：知识树（`src/data/knowledgeTree.ts`）
+### 3C：知识树（`src/data/knowledgeTree.ts` & `src/data/knowledge/<domain>.ts`）
 
 需核对以下两处：
-1. `knowledgeId` 与 `knowledge/<domain>.ts` 中节点 `id` 一致（静默失败，必须手动核对）；
-2. 若需让新动画在首页**首屏同步渲染阶段**立即可见，需确认 `knowledgeTree.ts` 中 `loadExtendedRegistry()` 与初始 `animIds` 注入关联（全新领域还需在 `knowledge/<domain>.ts` 添加节点，并在 `knowledge/index.ts` 导出）。
+1. `knowledgeId` 与 `src/data/knowledge/<domain>.ts` 中节点 `id` 一致（静默失败，必须手动核对）；
+2. `src/data/knowledgeTree.ts` 的 `resolveAnimationIds` 在 `loadExtendedRegistry()` 后会自动按 `knowledgeId` 反向注入，同时需把新动画 ID 追加到同步回退列表 `animIds` 中（全新领域还需在 `knowledge/<domain>.ts` 添加节点，并在 `knowledge/index.ts` 导出）。
 
 ---
 
@@ -319,6 +317,6 @@ registerQuantityBuilder('anim-<topic>', build<Topic>Quantities)
 - [ ] **纯计算层**：复杂反应/平衡/动力学公式在 `src/chemistry/` 权威收敛，Hook 与右屏 Quantities 100% 同源引用
 - [ ] **时序图**：history 全量预计算 + `.filter(p => p.time <= time)`；图表显式传 `xDomain={[0, MAX_TIME]}`；stopCondition 用化学条件（非时间截断）；reset 路径同步清空衍生状态
 - [ ] **右屏**：`formulas`/`gaokaoPoints` 为动态函数形式（多模型页面必须）；LaTeX 中 `\text{}` 内中文 ≤ 6 字
-- [ ] **Registry**：5 个文件全部完成（注册表 as const + 化学量构建器 + 知识点 id 核对）
+- [ ] **Registry**：4 个核心文件 + 知识点核对全部完成（注册表 as const + 化学量构建器 + 登记 + 知识点 id 核对）
 - [ ] **化学逻辑**：热化学/平衡移动/滴定/电极极性已逐字对照教材核对三要素
 - [ ] **代码**：barrel import；无裸 requestAnimationFrame；`tsc --noEmit` 通过

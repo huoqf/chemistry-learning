@@ -24,7 +24,7 @@ import {
   CHART_COLORS,
   FONT,
   STROKE,
-} from '@/theme/chemistry'
+} from '@/theme'
 import type { FontScaler } from '@/theme'
 import { getVisibleRows } from '@/utils/scrollingTable'
 

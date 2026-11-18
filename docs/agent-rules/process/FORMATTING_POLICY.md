@@ -55,8 +55,7 @@ base: '6px',
 - 若在 CI 加 `prettier --check`，将**永久红灯**，等同于「训练所有人忽略 CI 信号」
   （这正是审查报告对 G3b 的批评）。
 
-**决策：不采用 prettier 作为门禁。** `.prettierrc` 保留但仅作文档性声明
-（`semi` 已修正为 `false`，与代码一致），`prettier` 依赖保留但**不接入任何脚本/钩子**。
+**决策：不采用 prettier 作为门禁。** 已移除根目录 `.prettierrc` 以避免编辑器自动格式化插件误触发并打乱列对齐；`prettier` 依赖暂保留于 `package.json` 的 `devDependencies` 中但**不接入任何脚本/钩子**。
 
 ---
 

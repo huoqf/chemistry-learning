@@ -2,7 +2,7 @@
 
 > 优先级：低于 core/ARCHITECTURE_RULES，高于其他专题
 > AI任务入口：涉及任何 UI 实现前必须读本文件
-> 最后更新：2026-07-19
+> 最后更新：2026-11-18
 
 ---
 
@@ -46,13 +46,13 @@ Canvas/SVG 中每类化学量有固定颜色，**权威色值见 `src/theme/chem
 
 核心摘要：
 
-| 化学量 | 颜色语义（token） | 用途与设计规范 |
+| 化学量 | 颜色语义（token） | 色值与用途 |
 |--------|------|------|
-| 浓度 c | concentration（经典蓝） | 浓度标注、c-t曲线 |
-| 反应速率 v | reactionRate（警示红） | 速率标注、v-t曲线 |
-| 活化能 Ea | activationEnergy（动力橙） | 能量图标注 |
-| pH | phValue（酸碱指示色） | pH 标注、滴定曲线 |
-| 电子 e- | electron（电场蓝） | 电子转移标注 |
+| 浓度 c | `concentration` | 经典蓝 `#3B82F6`，浓度标注、c-t 曲线 |
+| 反应速率 v | `reactionRate` / `rateForward` / `rateReverse` | 速率主色蓝 `#3B82F6`，正速率绿 `#22C55E`，逆速率红 `#EF4444` |
+| 活化能 Ea | `activationEnergy` | 紫色 `#8B5CF6`，能量图标注 |
+| pH | `pH` | 酸碱指示绿 `#22C55E`（acid 红 / base 蓝），pH 标注、滴定曲线 |
+| 电子 e- | `electron` | 青色 `#06B6D4`，电子转移标注 |
 
 **铁律规则**：
 1. 同一画面最多同时展示 5 种化学量颜色。
@@ -77,14 +77,14 @@ Canvas/SVG 中每类化学量有固定颜色，**权威色值见 `src/theme/chem
 
 ---
 
-## 4. 信息密度铁律
+## 4. 信息密度参考原则
 
-**Canvas 黄金规则：任意时刻可见元素 <= 7个**
+**主屏保持视觉聚焦**：避免在单个场景中同时堆砌无关图层，次要辅助矢量可通过 `showVectors` 等开关按需切换。
 
-三屏布局密度上限：
-- 左侧参数区：最多 5个参数
-- Canvas 中间：最多 7个元素，Canvas内文字标注 <= 5个
-- 右侧看板：最多 8行化学量 + 高考要点卡片（<= 3条，每条<= 30字）
+三屏布局推荐密度参考（来自 `src/theme/spacing.ts` `DENSITY`；高密高考矩阵、流程图、装配体页面以清晰可读为准，不作一刀切硬截断）：
+- 左侧参数区：推荐 ≤ 5 个核心参数
+- Canvas 中间：推荐聚焦 1 个核心场景与必要标注
+- 右侧看板：推荐 ≤ 8 行化学量 + 高考要点卡片（精选核心要点）
 
 ---
 
@@ -156,48 +156,50 @@ Canvas/SVG 中每类化学量有固定颜色，**权威色值见 `src/theme/chem
 
 化学组件统一存放在 `src/components/Chemistry/` 下。
 
-#### Chemistry — 化学场景渲染（@/components/Chemistry）
+#### Chemistry — 化学场景渲染（`@/components/Chemistry`）
+
+| 组件类别 | 代表组件（完整清单见 `COMPONENT_REGISTRY.md`） |
+|------|---------|
+| 矢量箭头 | `VectorArrow`、`ChemistryVectorArrow`、`OxidationBridgeArrow` |
+| 实验器材（Apparatus） | `BeakerApparatus`、`ErlenmeyerFlaskApparatus`、`BuretteApparatus`、`SeparatoryFunnelSetup`、`DistillationFlaskApparatus` 等（共 40+ 个） |
+| 化工设备（Equipment） | `CrusherEquipment`、`RoastingFurnaceEquipment`、`RotaryKilnEquipment`、`LeachingReactorEquipment`、`AbsorptionTowerEquipment` 等 |
+| 专题通用画布 | `GaokaoDiagram`、`ValenceMatrixCanvas`、`CarbonChain2D`、`ContrastCanvas`、`ReagentStepCanvas` |
+
+#### Chemistry3D — 3D 渲染（`@/components/Chemistry3D`）
+
+| 组件/工具 | 适用场景 |
+|------|---------|
+| `UnitCellMesh` / `AtomMesh` / `BondMesh` | 晶胞结构、球棍模型通用 3D Mesh |
+| `WebGLFallback` / `isWebGLAvailable` | WebGL 降级提示与惰性缓存检测 |
+
+#### Chart — 化学图表（`@/components/Chart`）
 
 | 组件 | 适用场景 |
 |------|---------|
-| VectorArrow | 视觉标注/几何图形/等长示意矢量箭头 |
-| ChemistryVectorArrow | 化学矢量箭头（浓度/速率等，禁止 pixelLength） |
-| VectorDefs | SVG marker 定义 |
+| `BaseChart` | 所有新图表的原子容器 |
+| `ChartLine` / `ChartArea` / `ChartCursor` / `ChartTangent` / `ChartSecant` | 曲线、面积、游标、切线、割线插件 |
+| `RelationChart` / `SvgDataTable` | 通用关系图与 SVG 内嵌数据表 |
+| `TitrationCurveChart` / `EnergyProfileChart` / `EquilibriumChart` / `PrecipitationEquilibriumChart` | 高考专项高阶图表 |
 
-> 化学器材组件（烧杯、试管、分子模型等）待后续开发时补充。
-
-#### Chart — 化学图表（@/components/Chart）
-
-| 组件 | 适用场景 |
-|------|---------|
-| BaseChart | 所有新图表的原子容器 |
-| ChartCursor | 图表游标 |
-| ChartArea | 曲线下方面积填充 |
-| ChartTangent | 切线 + 切点 |
-
-#### Layout — 布局（@/components/Layout）
+#### Layout — 布局（`@/components/Layout`）
 
 | 组件 | 适用场景 |
 |------|---------|
-| ThreePanel | 三栏主布局 |
-| AnimationSvgCanvas | SVG 画布容器 |
+| `ThreePanel` | 三栏主布局 |
+| `AnimationSvgCanvas` | SVG 画布容器 |
+| `PageLayout` | 页面基础布局容器 |
 
-#### UI — UI 基础（@/components/UI）
+#### UI — UI 基础与侧屏面板（`@/components/UI`）
 
 | 组件 | 适用场景 |
 |------|---------|
-| AnimationControls | 播放/暂停/重置控制条 |
-| LeftPanel | 左屏控制台顶层容器 |
-| LeftPanelSection | 左屏分区卡片 |
-| ParamControl | 参数滑块控件 |
-| ControlPanel | 声明式左屏控件渲染器 |
-| Slider | 通用滑条 |
-| SegmentedControl | 分段选择控件 |
-| ToggleSwitch | 开关切换 |
-| Button | 通用按钮 |
-| KatexFormula | KaTeX 公式渲染 |
-| MiniChart | 小型内嵌图表 |
-| TipCard | 提示卡片 |
+| `LeftPanel` / `LeftPanelSection` | 左屏控制台顶层容器与分区卡片 |
+| `ParamControl` / `ControlPanel` | 声明式参数滑块与非数值控件渲染器 |
+| `ChemistryPanel` / `FormulaSection` / `GaokaoSection` / `WarningSection` | 右侧屏化学量、公式、高考要点与易错警示 |
+| `AnimationControls` | 播放/暂停/重置控制条 |
+| `GaokaoToolHeader` / `ScoringCardSection` / `GaokaoVariantQuiz` | 高考母题顶栏、踩分卡、变式演练 |
+| `Slider` / `SegmentedControl` / `ToggleSwitch` / `OptionButton` / `Button` | 基础交互控件 |
+| `KatexFormula` / `KatexText` / `ChemicalFormula` / `MiniChart` / `TipCard` | 公式渲染、小型图与提示卡片 |
 
 > barrel import 规则：所有组件从对应目录的 barrel 入口导入，禁止子路径导入。
 
@@ -206,11 +208,11 @@ Canvas/SVG 中每类化学量有固定颜色，**权威色值见 `src/theme/chem
 ## 8. UI 专属禁止项
 
 - 禁止硬编码任何颜色值
-- Canvas 化学量颜色必须从 @/theme 引用
+- Canvas 化学量颜色必须从 `@/theme` 引用
 - 禁止在 Canvas 内使用 lucide 图标
 - 禁止单页面试验深色模式
 - 禁止发明新颜色或新 token
-- 禁止在 tailwind.config.* 中重复定义颜色值
+- 禁止脱离 `src/theme/colors.ts` 在 `src/index.css` `@theme` 之外另行定义离散颜色变量
 
 ---
 

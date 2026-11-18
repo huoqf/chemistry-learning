@@ -42,7 +42,7 @@ export default function GaokaoToolPage() {
     )
   }
 
-  // 15 个已完成专题分发
+  // 18 个已完成专题分发
   switch (model.id) {
     case 'model-valence-matrix':
       return <ValenceMatrixCanvas defaultElementSymbol="Fe" />

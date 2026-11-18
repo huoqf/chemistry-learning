@@ -1,7 +1,7 @@
 # 延后处理待办事项
 
 > **本文档是待完成计划，不是完成记录。**
-> 最后更新：2026-09-14
+> 最后更新：2026-11-18
 
 ---
 
@@ -23,7 +23,7 @@
 
 ```
 818  src/components/Chemistry/GaokaoDiagram/index.tsx            (已在 800 门禁豁免)
-801  src/features/industrial-flow/hooks/useIndustrialFlowChemistry.ts
+813  src/features/industrial-flow/hooks/useIndustrialFlowChemistry.ts (已在 800 门禁豁免)
 756  src/features/industrial-flow/components/IndustrialFlowCenterView.tsx
 756  src/features/industrial-flow/components/IndustrialFlowSvgFlowchart.tsx
 718  src/features/avogadro-constant/components/AvogadroScene.tsx
@@ -60,9 +60,7 @@
 402  src/features/titration-balance/hooks/useTitrationChemistry.ts
 ```
 
-**下一步（如需推进）**：优先把 `industrial-flow/hooks/useIndustrialFlowChemistry.ts` 内联的
-体系分支数据（8 体系 × 4 工序的文案/方程式）抽成 `industrialFlowData.ts` 中的数据表——
-它已有 801 行且逼近 800 门禁上限，是当前最可能触发 hard/soft 违规的文件。
+**现状**：`useIndustrialFlowChemistry.ts` 已随技术理由登记于 `scripts/check-large-files.mjs` 的 `ALLOWLIST`；若后续继续膨胀接近 1000 行，可评估将纯静态体系文本表与 Ksp/守恒计算进一步解耦。
 
 ---
 

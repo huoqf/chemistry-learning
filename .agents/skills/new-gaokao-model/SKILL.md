@@ -19,7 +19,7 @@ description: >
 
 1. [08_THREE_PANEL_RULES.md](file:///d:/code/chemistry-learning/docs/agent-rules/ui/08_THREE_PANEL_RULES.md) — 三屏职责划分与顶栏 Header 规范
 2. [07_CANVAS_SVG_CHART_RULES.md](file:///d:/code/chemistry-learning/docs/agent-rules/ui/07_CANVAS_SVG_CHART_RULES.md) — 预设 Preset 分辨率尺寸账本与画布背景规范
-3. [COMPONENT_REGISTRY.md](file:///d:/code/chemistry-learning/docs/agent-rules/ui/COMPONENT_REGISTRY.md) — 全量 44+ 可复用 UI 与化学器材组件注册表
+3. [COMPONENT_REGISTRY.md](file:///d:/code/chemistry-learning/docs/agent-rules/ui/COMPONENT_REGISTRY.md) — 全量可复用 UI 与化学器材组件注册表
 
 ---
 
@@ -72,6 +72,7 @@ export const XxxCanvas: React.FC = () => {
 
   // 3. 将化学/物理逻辑坐标精确变换为设计像素坐标（注意返回值为 { px, py }）
   const targetPos = worldToDesign(1.5, 2.0, sceneScale)
+  void targetPos // 若直接定位 SVG 元素（如 <circle cx={targetPos.px} cy={targetPos.py} />）使用此坐标
 
   return (
     <div className="w-full h-full flex flex-col font-sans overflow-hidden select-none">
@@ -97,10 +98,10 @@ export const XxxCanvas: React.FC = () => {
               <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
                 <ChemistryVectorArrow
                   origin={{ x: 0, y: 0 }}
-                  vector={{ x: targetPos.px ? 1.5 : 0, y: 2.0 }}
-                  type="concentration"
+                  vector={{ x: 1.5, y: 2.0 }}
+                  type="reactionRate"
                   sceneScale={sceneScale}
-                  label="c = 0.1 mol/L"
+                  label="v = 0.1 mol/(L·s)"
                   font={canvasSize.font}
                 />
               </AnimationSvgCanvas>

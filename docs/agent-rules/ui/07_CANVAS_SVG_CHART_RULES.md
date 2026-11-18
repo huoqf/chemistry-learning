@@ -1,7 +1,7 @@
 # Canvas/SVG/图表动态布局与渲染规范
 
 > 优先级：低于 02_UI_RULES.md
-> 最后更新：2026-07-19
+> 最后更新：2026-11-18
 
 ---
 
@@ -12,7 +12,7 @@
 | 静态分子结构图、化学键图解 | SVG | 标注清晰、可交互、易维护 |
 | 低频交互图解 | SVG | DOM 可访问性好 |
 | 高频粒子、实时反应模拟 | Canvas | 性能更稳定 |
-| 同屏大量分子或复杂场景 | PixiJS | 后期扩展 |
+| 3D 晶胞、分子构型与轨道 | Three.js / React Three Fiber | 空间旋转与真 3D 深度 |
 | 数据图表 | SVG 或 Canvas | 取决于数据量和交互复杂度 |
 
 **SVG 规范补充**：SVG 中的颜色、线宽、箭头、文字样式必须引用 @/theme 和 canvasStyle.ts。
@@ -65,7 +65,7 @@ export default function MyAnimation() {
 ```tsx
 const { containerRef, canvasSize, vp } = useAnimationViewport({
   preset: CANVAS_PRESETS.full,
-  overlayRight: Math.round(Math.max(280, canvasSize.width * 0.38)),
+  overlayRight: 280,
 })
 
 return (
@@ -154,9 +154,12 @@ return (
 | 组件 | 职责 | 使用场景 |
 |------|------|---------|
 | BaseChart | 原子层容器 | 所有新图表 |
+| ChartLine | 折线图曲线 | c-t / v-t / pH 曲线 |
 | ChartCursor | 十字竖线 + 数据点 | 需要游标的图表 |
 | ChartArea | 曲线下方面积填充 | 积分语义 |
-| ChartTangent | 切线 + 切点 | 速率/斜率展示 |
+| ChartTangent / ChartSecant | 切线 / 割线 + 数据点 | 速率/斜率展示 |
+| RelationChart / SvgDataTable | 通用关系图与 SVG 数据表 | 多变量对比与频闪数据 |
+| TitrationCurveChart / EnergyProfileChart / EquilibriumChart / PrecipitationEquilibriumChart | 专项化学高阶图表 | 滴定/能垒/速率平衡/沉淀溶解 |
 
 **铁律**：新增图表必须使用 BaseChart，禁止手写 toSvgX/toSvgY 坐标变换。
 

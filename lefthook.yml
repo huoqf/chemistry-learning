@@ -19,6 +19,12 @@ pre-commit:
       run: node scripts/check-no-webgl-leak.mjs
     check-code-style:
       run: node scripts/check-code-style.mjs
+    check-syllabus-tier:
+      run: node scripts/check-syllabus-tier.mjs
+    check-chemistry-symbols:
+      run: node scripts/check-chemistry-symbols.mjs
+    check-theme-import:
+      run: node scripts/check-theme-import.mjs
 
 pre-push:
   commands:

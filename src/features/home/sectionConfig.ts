@@ -27,7 +27,7 @@ export const INTERACTION_MAP: Record<
 /**
  * 高中化学 5 大高考学科板块配置
  * 严格遵循【铁律 4B 颜色语义层级隔离】：
- * 页面 UI 结构统一使用 @/theme/colors 中的系统级 UI Tokens (primary, warning, secondary, success, danger, neutral, accent)
+ * 页面 UI 结构统一使用 @/theme 统一导出的 colors 系统级 UI Tokens (primary, warning, secondary, success, danger, neutral, accent)
  * 禁止混用 CHEMISTRY_COLORS / SCENE_COLORS / CHART_COLORS
  */
 export const SECTIONS = [
@@ -95,7 +95,7 @@ export const SECTIONS = [
 
 export type ModuleKey = typeof SECTIONS[number]['key']
 
-// 重要性标签映射（全部引用 UI Token @/theme/colors）
+// 重要性标签映射（全部引用统一入口 @/theme 中的 colors）
 export const IMPORTANCE_MAP: Record<
   KnowledgeNode['importance'],
   { label: string; className: string }

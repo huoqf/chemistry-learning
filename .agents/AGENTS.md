@@ -1,6 +1,6 @@
 # AGENTS.md — 化学学习系统工作区规则（自动加载，优先级最高）
 
-> 本文件由 Trae IDE 自动加载，无需手动读取。铁律违反 = 本次任务无效。
+> 本文件为工作区 Agent 通用规则（由 Antigravity 等兼容工具自动加载），与 `.trae/rules/project_rules.md`（Trae IDE 自动加载）保持同源对齐，无需手动重复维护两套矛盾口径。
 > 详细规范见 `.trae/rules/project_rules.md` 与 `docs/agent-rules/` 下各文档。
 
 ---
@@ -8,16 +8,16 @@
 ## 三屏内容分配铁律（设计前必读）
 
 ```
-左屏（LeftPanel）         中屏（AnimationSvgCanvas）        右屏（右侧面板）
+左屏（LeftPanel）         中屏（AnimationSvgCanvas）        右屏（ChemistryPanel）
 ──────────────────        ──────────────────────────        ──────────────────────
-• paramMeta 数值参数      • 动画场景（SVG 主体）            • QuantitySection（化学量）
-• controlMeta 模式开关    • CenterExtra 图表（可选）         • FormulaSection（公式+条件）
-• SidebarExtra（复杂）    禁止大段教学文字                  • ExamPointSection（高考要点）
-                          禁止完整公式推导                   禁止动画控制控件
-                          禁止高考考点总结
+• paramMeta 数值参数      • 动画场景（SVG 主体）            • 化学量（quantities）
+• controlMeta 模式开关    • flex 分区图表（可选）           • FormulaSection（公式+条件）
+• SidebarExtra（复杂）    禁止大段教学文字                  • GaokaoSection（高考要点）
+                          禁止完整公式推导                  • WarningSection（易错警示）
+                          禁止高考考点总结                  禁止动画控制控件
 ```
 
-**主屏文字约束**：SVG 内只允许出现化学量数值标注（如 `c = 0.5 mol/L`）和坐标轴标签，禁止教学解释段落。
+**主屏文字约束**：SVG 内只允许出现化学量数值标注（如 `c = 0.5 mol/L`）和坐标轴标签，禁止教学解释段落。`AnimationPage` 当前不消费 `CenterExtra`，多图表页面请在 `<Topic>Animation.tsx` 中用 HTML DOM `flex` 分区与 `AnimationSvgCanvas` 平级组合。
 
 ## 布局 preset 选择铁律（分屏是主流，按动画方向选）
 
@@ -49,7 +49,7 @@
 | 直接 requestAnimationFrame(...) | useAnimationLifecycle / src/utils/animation.ts |
 | 写死 scale = 0.8 | useSceneScale({ vp, preset, anchor }) |
 | 任何魔法数字坐标 | worldToDesign() from @/scene |
-| **画布区或图表区的任何包裹 `div` 手写背景色**（深色如 `bg-slate-900`/`bg-gray-800`，或浅灰色如 `bg-gray-50`/`bg-slate-100`/`bg-neutral-100`/`bg-white`） | 全部删除；背景一律由系统 Light Theme 统一提供，`AnimationSvgCanvas` 自身无背景 |
+| **features/ 内画布区或图表区的包裹 `div` 手写背景色**（深色如 `bg-slate-900`/`bg-gray-800`，或浅灰色如 `bg-gray-50`/`bg-slate-100`/`bg-neutral-100`/`bg-white`） | 全部删除；`AnimationSvgCanvas` 自身无背景，中屏画布背景一律由框架壳（`AnimationPage`/`ThreePanel`）的 Light Theme 统一提供 |
 
 ### 铁律 2：新页面布局唯一路径
 
@@ -147,7 +147,7 @@ import { withAlpha } from '@/theme/chemistry/colors'
 import { SCENE_COLORS } from '@/theme/chemistry'
 ```
 
-### 铁律 4C：theme 统一入口（所有业务组件必须遵守）
+### 铁律 4C：theme 统一入口（所有业务组件必须遵守，由 `check-theme-import.mjs` 强制）
 
 所有业务组件（`src/components/`、`src/pages/`、`src/features/`）导入 theme token 必须 100% 使用统一入口 `'@/theme'`，绝对禁止使用任何子路径（如 `@/theme/chemistry` 或 `@/theme/colors`）。
 
@@ -219,8 +219,8 @@ const history = fullHistory.filter(p => p.time <= time)
 3. **分层结构**：XxxAnimation.tsx（编排）+ hooks/useXxxChemistry.ts（化学计算）+ components/XxxScene.tsx（渲染）
 4. **颜色来源（按语义隔离）**：化学量 -> CHEMISTRY_COLORS；场景器材 -> SCENE_COLORS；图表 -> CHART_COLORS；Canvas 基础设施 -> CANVAS_COLORS；透明度变体 -> withAlpha()
 5. **坐标系统**：worldToDesign() 转换，useSceneScale 比例尺，禁止手写 x * scale + offset；SVG 字体必须 font(N) 包裹
-6. **Registry 注册（5 个文件全部完成）**：data/registries/<domain>.ts（paramMeta/controlMeta/defaultParams as const）+ data/quantities/<domain>/<topic>.ts（化学量构建器）+ data/chemistryQuantities.ts（注册构建器）+ data/knowledgeTree.ts（确认知识点）
-7. **组件复用检查**：新增场景前必须查阅 COMPONENT_REGISTRY.md，有现成组件时禁止手写等效实现
+6. **Registry 注册（4 个核心文件全部完成 + 知识点核对）**：`data/registries/<domain>.ts`（`paramMeta`/`controlMeta`/`defaultParams as const`）+ `data/quantities/<domain>/<topic>.ts`（化学量构建器）+ `data/chemistryQuantities.ts`（注册构建器）+ `data/knowledge/<domain>.ts` 与 `data/knowledgeTree.ts`（确认 `knowledgeId` 存在及同步回退列表）
+7. **组件复用检查**：新增场景前必须查阅 `docs/agent-rules/ui/COMPONENT_REGISTRY.md` 与 `src/components/Chemistry/index.ts`，有现成组件时禁止手写等效实现
 8. **化学逻辑对照**：涉及热化学（ΔH）、平衡移动方向、酸碱滴定、电极极性时，完成代码后必须对照高中化学教材逐字核对"反应方向 - 吸/放热 - 浓度/压强/温度影响方向"三要素，禁止仅凭直觉编写化学逻辑
 
 ---
@@ -237,4 +237,4 @@ const history = fullHistory.filter(p => p.time <= time)
 
 ---
 
-*最后更新：2026-07-20 | 清理迁移遗留内容，统一 import 路径为 @/theme，移除存量禁止项*
+*最后更新：2026-11-18 | 同步组件/门禁名称，对齐 project_rules 与 docs/agent-rules 口径*

@@ -1,8 +1,8 @@
 # 08_THREE_PANEL_RULES — 三屏职责与侧屏组件规范
 
 > 优先级：低于 02_UI_RULES.md
-> AI任务入口：实现或修改左侧屏、右侧屏、CenterExtra 时必须读本文件
-> 最后更新：2026-07-19
+> AI任务入口：实现或修改左侧屏、右侧屏时必须读本文件
+> 最后更新：2026-11-18
 
 ---
 
@@ -29,7 +29,6 @@ LeftPanel                         <- AnimationPage 左屏唯一顶层容器
   +- LeftPanelSection             <- 同考点模型切换 / 声明式控件分组 / 自定义分区
   +- ControlPanel                 <- 由 animationRegistry.controlMeta 生成
   +- ParamControl                 <- 由 animationRegistry.paramMeta 生成
-  +- LeftPanelScrollArea          <- 承载复杂 SidebarExtra 长内容
 ```
 
 **布局顺序**：同考点模型切换 -> controlMeta 声明式控件 -> paramMeta 数值参数 -> 复杂 SidebarExtra。
@@ -48,7 +47,6 @@ LeftPanel                         <- AnimationPage 左屏唯一顶层容器
 |------|------|----------|
 | LeftPanel | 左屏顶层控制台容器 | AnimationPage 左侧屏 |
 | LeftPanelSection | 左屏分区卡片 | 模型选择、显示辅助、预设、提示 |
-| LeftPanelScrollArea | 左屏长内容滚动区 | SidebarExtra 内容较长时 |
 | ParamControl | 标准数值参数组 | registry paramMeta |
 | ControlPanel | 标准非数值控制组 | registry controlMeta |
 | Slider | 连续参数调节 | 仅在复杂 SidebarExtra 中临时使用 |
@@ -80,26 +78,14 @@ paramMeta: [
 
 #### 公式渲染
 
-左屏控件 `label` 统一支持 `string | React.ReactNode`，可直接传入 `<KatexFormula />` 渲染化学式、离子式、分式等：
+左屏控件 `label` 类型支持 `string | React.ReactNode`。若需在 `label` 中直接写入 `<KatexFormula />` JSX，对应注册表或面板组件文件必须使用 `.tsx` 扩展名；在纯 `.ts` 注册表中应使用纯字符串或 Unicode 下标（如 `c₀`、`NO₂`）：
 
-```ts
+```tsx
+// 仅在 .tsx 文件（如自定义 LeftPanel 组件或 .tsx 注册表）中直接传入 JSX：
 import { KatexFormula } from '@/components/UI'
 
 paramMeta: [
   { key: 'c0', label: <KatexFormula formula="c_0" />, min: 0.1, max: 5, step: 0.1, unit: 'mol/L' },
-  { key: 'Ka', label: <KatexFormula formula="K_a" />, min: 1e-5, max: 1, step: 1e-5 },
-]
-
-controlMeta: [
-  {
-    type: 'segmented',
-    key: 'mode',
-    label: <KatexFormula formula="\text{反应类型}" />,
-    options: [
-      { label: <KatexFormula formula="\text{可逆}" />, value: 0 },
-      { label: <KatexFormula formula="\text{不可逆}" />, value: 1 },
-    ],
-  },
 ]
 ```
 
@@ -128,7 +114,7 @@ controlMeta: [
 | 进阶只是叠加显示额外控件 | ToggleSwitch |
 | 进阶模式会触发中心区域布局变化 | SegmentedControl + resetAnimation() |
 
-### 2.5 样式 token 规则
+### 2.7 样式 token 规则
 
 #### 控件状态色（必须走 UI token）
 
@@ -149,10 +135,11 @@ controlMeta: [
 ### 3.1 三段式结构（不可变骨架）
 
 ```text
-右侧面板
-  +- QuantitySection      <- 化学量（名称 + 符号 + 当前值 + 单位）
-  +- FormulaSection       <- 公式（KaTeX + 适用条件 + 易错提醒）
-  +- ExamPointSection     <- 高考要点（5级重要性标签）
+右侧面板（ChemistryPanel）
+  +- 化学量区（quantities） <- 名称 + 符号 + 当前值 + 单位
+  +- FormulaSection         <- 公式（KaTeX + 适用条件 + 易错提醒）
+  +- GaokaoSection          <- 高考要点（5级重要性标签）
+  +- WarningSection         <- 易错警示（可选）
 ```
 
 ### 3.2 Formula 数据结构
@@ -213,7 +200,9 @@ SidebarExtraProps
 
 ---
 
-## 5. CenterExtra 职责规范
+## 5. 中屏图表扩展规范（原 CenterExtra 说明）
+
+> 注：`AnimationConfig.CenterExtra` 为历史预留字段，`AnimationPage.tsx` 当前不挂载该字段。中屏需要展示附加图表或数据表时，直接在 `<Topic>Animation.tsx` 中用 HTML DOM `flex` 分区与 `AnimationSvgCanvas` 平级组合。
 
 ### 5.1 允许内容
 
@@ -221,9 +210,9 @@ SidebarExtraProps
 
 ### 5.2 禁止内容
 
-- 完整公式体系和推导过程 -> 移到右侧屏 FormulaSection
+- 完整公式体系和推导过程 -> 移到右侧屏 `FormulaSection`
 - 知识讲解文本 -> 移到右侧屏
-- 高考考点总结 -> 移到右侧屏 ExamPointSection
+- 高考考点总结 -> 移到右侧屏 `GaokaoSection`
 
 ---
 
@@ -246,7 +235,7 @@ SidebarExtraProps
 controlsMode 的完整定义见 ARCHITECTURE_RULES.md 8.1.4。
 
 - 三种模式底部控制区的**高度应保持一致**
-- 控制区只能出现在 AnimationCenter 内部
+- 控制区只能出现在中屏容器（`AnimationPage` center 槽位）内部
 
 ---
 

@@ -18,64 +18,60 @@
 
 ```text
 src/
-├── app/                    # 应用壳、路由、全局布局
+├── app/                    # 应用壳、初始化与全局布局（Layout / AppInitializer）
+├── assets/                 # 静态资源
 ├── components/
-│   ├── Layout/             # 布局组件（ThreePanel 等）
-│   ├── Chemistry/          # 化学渲染公共组件（VectorArrow、ChemistryVectorArrow 等）
-│   └── UI/                 # UI 基础组件
+│   ├── Chart/              # 图表组件（BaseChart 及高阶化学图表）
+│   ├── Chemistry/          # 化学渲染公共组件（器材/设备/VectorArrow/ChemistryVectorArrow）
+│   ├── Chemistry3D/        # 3D 晶胞与分子 Mesh 组件 + WebGLFallback
+│   ├── Layout/             # 布局组件（ThreePanel、AnimationSvgCanvas 等）
+│   └── UI/                 # UI 基础组件与三屏面板（LeftPanel、ChemistryPanel 等）
+├── context/                # 全局上下文（AnimationLayoutContext 等）
 ├── hooks/                  # 跨页面复用 Hook
 │   └── useAnimationLifecycle.ts  # AnimationPage 生命周期封装
-├── pages/                  # 页面级容器（薄壳）
-├── scene/                  # 场景配置与坐标缩放（SceneConfig、SceneScale）
-├── features/               # 按学科/能力拆分的业务模块
-│   ├── inorganic/          # 无机化学（按化学主题分子目录）
-│   │   ├── redox/          #   氧化还原
-│   │   ├── ionic/          #   离子反应
-│   │   └── metals/         #   金属及其化合物
+├── pages/                  # 页面级容器（HomePage / AnimationPage / GaokaoToolPage）
+├── scene/                  # 场景配置与坐标缩放（SceneConfig、SceneScale、worldToDesign）
+├── features/               # 按学科/能力/高考母题拆分的业务模块
+│   ├── inorganic/          # 无机化学
 │   ├── organic/            # 有机化学
-│   │   ├── hydrocarbons/   #   烃
-│   │   └── functional/     #   烃的含氧衍生物
-│   ├── physical/           # 物理化学
-│   │   ├── rate/           #   化学反应速率
-│   │   ├── equilibrium/    #   化学平衡
-│   │   └── electrochem/    #   电化学
-│   ├── structure/          # 物质结构
-│   │   ├── atomic/         #   原子结构
-│   │   └── molecular/      #   分子结构
-│   ├── solution/           # 水溶液中的离子反应与平衡
-│   └── dev/                # 开发调试专用
+│   ├── reaction-principle/ # 化学反应原理（速率/平衡/电化学等）
+│   ├── structure/          # 物质结构（晶体/分子/轨道等）
+│   ├── experiment/         # 化学实验与定量分析
+│   └── <gaokao-models>/    # 高考解题母题与记忆矩阵（如 industrial-flow、ion-matrix 等）
 ├── chemistry/              # 纯化学计算（无副作用，不得依赖 React/DOM/window）
-├── math/                   # 数学工具
+├── test/                   # 测试全局配置与 setup
 ├── utils/                  # 坐标、动画、存储等共享工具
 │   ├── animation.ts        #   动画帧 Hook
 │   ├── coordinate.ts       #   坐标转换
 │   └── storage.ts          #   IndexedDB / LocalStorage 封装
 ├── data/
 │   ├── types.ts            # AnimationConfig 等核心类型定义
-│   ├── quantities/         # 化学量构建器（按化学主题拆分，懒加载）
-│   ├── knowledgeTree.ts    # 知识树索引
+│   ├── quantities/         # 化学量构建器（按化学主题拆分）
+│   ├── knowledge/          # 分学科知识树节点定义
+│   ├── knowledgeTree.ts    # 知识树索引与关联解析
+│   ├── gaokaoModels.ts     # 高考解题母题与记忆矩阵元数据表
+│   ├── quiz/               # 母题踩分步骤与变式演练题库
 │   ├── defineAnimations.ts # defineAnimations 工具函数
 │   ├── registries/         # 按模块拆分的动画子注册表
-│   ├── animationRegistry.ts # 薄合并入口
-│   └── chemistryQuantities.ts # 化学量懒注册入口
+│   ├── animationRegistry.ts # 薄合并与懒加载入口
+│   └── chemistryQuantities.ts # 化学量注册入口
 └── stores/
     ├── useAnimationStore.ts
     ├── useAppStore.ts
     ├── useKnowledgeStore.ts
     └── useProgressStore.ts
 
-theme/                      # 设计 token（统一入口 @/theme）
+src/theme/                  # 设计 token（统一入口 @/theme）
 ├── colors.ts               # UI 语义色
 ├── chemistry/              # 化学主题子模块
-│   ├── colors.ts / sceneColors.ts / vectorStyle.ts / canvasStyle.ts / arrowStyle.ts / index.ts
+│   ├── colors.ts / sceneColors.ts / vectorStyle.ts / canvasStyle.ts / arrowStyle.ts / chartColors.ts
 ├── spacing.ts              # 间距比例尺 + CANVAS_PRESETS
-├── radius.ts / shadow.ts / motion.ts / animationTokens.ts / index.ts
+├── radius.ts / shadow.ts / motion.ts / animationTokens.ts / fontScaler.ts / index.ts
 ```
 
 新增规则：
 - 新功能模块 -> `src/features/`
 - 纯化学计算 -> `src/chemistry/`
-- 数学工具 -> `src/math/`
 - 状态管理 -> `src/stores/`
 - 静态数据 -> `src/data/`
 - 禁止将页面逻辑直接塞进业务组件内部
@@ -101,7 +97,7 @@ theme/                      # 设计 token（统一入口 @/theme）
             chemistry/ & math/
 ```
 
-- `chemistry/` 与 `math/` **不得**依赖 React、DOM、window、document
+- `chemistry/` **不得**依赖 React、DOM、window、document
 - `viewModel` **不得**依赖 viewport 相关坐标
 - 页面层**不得**反向依赖底层计算实现细节
 
@@ -127,8 +123,8 @@ theme/                      # 设计 token（统一入口 @/theme）
 | 位置 | 职责 | 命名示例 |
 |------|------|---------|
 | `src/chemistry/` | 化学量计算与状态求解 | `calculateReactionRate` |
-| `src/math/` | 数学工具 | `interpolate` |
-| `src/utils/` | 坐标转换、动画控制、存储封装 | `worldToDesign` |
+| `src/scene/` | 坐标转换与场景比例尺 | `worldToDesign` |
+| `src/utils/` | 动画控制、图表辅助、存储封装 | `formatNumber` |
 
 - 化学计算函数：动宾结构，如 `calculateEquilibriumConcentration(c0, k, t)`
 - 不得把渲染逻辑、页面状态混入纯计算模块
@@ -200,8 +196,8 @@ theme/                      # 设计 token（统一入口 @/theme）
 
 新增动画的化学量构建逻辑必须：
 1. 在 `src/data/quantities/` 对应子模块中实现构建函数
-2. 在 `src/data/chemistryQuantities.ts` 的 quantityRegistry 中添加一条记录
-3. 动画页进入时通过 preloadQuantityBuilder() 预加载
+2. 在 `src/data/chemistryQuantities.ts` 中调用 `registerQuantityBuilder()` 注册
+3. 与 `use<Topic>Chemistry` 共享 `src/chemistry/` 纯函数，避免两处各写一套公式
 
 ### 8.1.2 参数类型安全规范
 
@@ -242,8 +238,9 @@ export const storage = {
 
 | 路由 | 页面 | 职责 |
 |------|------|------|
-| / | HomePage | 知识地图入口、学习概览与进度 |
-| /animation/:id | AnimationPage | 化学场景交互动画 |
+| / | HomePage | 知识地图与高考提分母题双视角入口 |
+| /animation/:id | AnimationPage | 教材知识树化学场景交互动画 |
+| /gaokao-tool/:id | GaokaoToolPage | 高考解题母题与记忆矩阵专题 |
 
 ---
 

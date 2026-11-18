@@ -70,7 +70,7 @@ description: 重构动画页面 / 重构已有组件 / 迁移旧动画 / 修复�
 // 常见颜色违规
 fill="#3B82F6"             -> fill={CHEMISTRY_COLORS.concentration}
 stroke="red"               -> stroke={CHEMISTRY_COLORS.reactionRate}
-fill="#22C55E"             -> fill={CHEMISTRY_COLORS.energy}
+fill="#22C55E"             -> fill={CHEMISTRY_COLORS.enthalpy}
 fill="rgba(0,0,0,0.3)"    -> fill={withAlpha(CHEMISTRY_COLORS.xxx, 0.3)}
 stroke={colors.neutral[200]}  // Canvas 基础设施 -> stroke={CANVAS_COLORS.grid}
 fill="#8B4513"             -> fill={SCENE_COLORS.materials.wood}
@@ -96,7 +96,7 @@ fontSize={11}              -> fontSize={font(11)}
 | `equilibriumReached` / 提示状态未随 reset 清空 | `handleReset`、`setParams`、`updateParam` 每个分支均需 `setState(false)` |
 | 画布组件或其包裹 `div` 手写任意背景色类名（包括深色 `bg-slate-900`、`bg-gray-800`，也包括浅灰色 `bg-gray-50`、`bg-slate-100`、`bg-neutral-100`、`bg-white` 等） | 全部删除；`AnimationSvgCanvas` 自身无背景，背景由 `ThreePanel` 中屏的 Light Theme 容器统一提供，**画布区及图表区任何包裹 `div` 都不得自写背景色** |
 | `\text{}` 中文超过 6 字 / 单条公式包含完整判断逻辑 | 拆分为多条独立短公式；中文描述迁移至 `controlMeta tip` |
-| `build<Topic>Quantities(animId, params, time)` 函数签名有 animId 参数，返回 `ChemistryPanelData` 对象 | 删除 animId 参数，返回叆改为 `ChemistryQuantity[]`，formulas/examPoints 移到 registry 的 `formulas`/`gaokaoPoints` 字段 |
+| `build<Topic>Quantities(animId, params, time)` 函数签名有 animId 参数，返回 `ChemistryPanelData` 对象 | 删除 animId 参数，返回值改为 `ChemistryQuantity[]`，formulas/gaokaoPoints 移到 registry 的 `formulas`/`gaokaoPoints` 字段 |
 | `formulas: [...]` 写成静态数组（多模型页面） | 改为 `formulas: (params) => getTopicFormulas(params)` 动态函数形式 |
 | `knowledgeId` 与 `knowledge/<domain>.ts` 中节点 `id` 不匹配 | 静默失败无报错，必须对照 knowledge 文件确认 id 存在 |
 
@@ -190,7 +190,7 @@ import { MiniChart } from '@/components/UI'
 
 ---
 
-## Step 5：重构 Checklist
+## Step 4：重构 Checklist
 
 ### 三屏完整接线（正确写法参考）
 
