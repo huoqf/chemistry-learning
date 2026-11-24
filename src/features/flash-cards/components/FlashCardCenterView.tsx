@@ -1,6 +1,6 @@
 import { RefObject } from 'react'
 import { AnimationSvgCanvas } from '@/components/Layout'
-import { ScoringCardSection, GaokaoVariantQuiz } from '@/components/UI'
+import { ScoringCardSection, GaokaoVariantQuiz, KatexText } from '@/components/UI'
 import { FlashCardSvgScene } from './FlashCardSvgScene'
 import type { FlashCard, FlashCardParams } from '../types'
 import type { ModelQuizData } from '@/data/quiz'
@@ -30,7 +30,7 @@ export function FlashCardCenterView({
   onNextCard,
 }: FlashCardCenterViewProps) {
   return (
-    <div ref={containerRef} className="w-full h-full flex flex-col p-4 overflow-y-auto">
+    <div className="w-full h-full flex flex-col p-4 overflow-y-auto">
       {/* 视角 0：盲盒问答与现象对比场景 */}
       {params.viewMode === 0 && (
         <div className="w-full flex-1 flex flex-col gap-4">
@@ -51,7 +51,9 @@ export function FlashCardCenterView({
 
             <div className="flex items-start gap-2.5">
               <HelpCircle className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
-              <h4 className="font-bold text-slate-800 text-sm leading-relaxed">{card.question}</h4>
+              <h4 className="font-bold text-slate-800 text-sm leading-relaxed">
+                <KatexText text={card.question} />
+              </h4>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1">
@@ -66,7 +68,7 @@ export function FlashCardCenterView({
                 }`}
               >
                 <span className="font-bold text-indigo-600 mr-1.5">选项 A:</span>
-                {card.optionA}
+                <KatexText text={card.optionA} />
               </button>
               <button
                 onClick={() => onSelectOption('B')}
@@ -79,7 +81,7 @@ export function FlashCardCenterView({
                 }`}
               >
                 <span className="font-bold text-indigo-600 mr-1.5">选项 B:</span>
-                {card.optionB}
+                <KatexText text={card.optionB} />
               </button>
             </div>
 
@@ -98,7 +100,9 @@ export function FlashCardCenterView({
                     切换下一卡片 ➔
                   </button>
                 </div>
-                <p className="text-xs text-slate-700 leading-relaxed font-medium">{card.explanation}</p>
+                <p className="text-xs text-slate-700 leading-relaxed font-medium">
+                  <KatexText text={card.explanation} />
+                </p>
               </div>
             )}
           </div>
@@ -110,6 +114,7 @@ export function FlashCardCenterView({
                 card={card}
                 isHeating={params.isHeating}
                 isCompressing={params.isCompressing}
+                isRevealed={params.isRevealed}
                 font={font}
               />
             </AnimationSvgCanvas>

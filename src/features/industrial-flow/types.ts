@@ -34,6 +34,7 @@ export interface IndustrialFlowParams {
     | 'CaCO3'
     | 'NaOH'
     | 'CO2' // 通入过量 CO2 酸化沉淀
+    | 'NH3·H2O'
   crystallizeMethod: 'cooling' | 'evaporation' | 'heating' // 结晶方式 (降温结晶 vs 蒸发浓缩 vs 加热析晶)
   washSolvent: 'water' | 'ethanol' | 'hot-water' // 洗涤试剂 (水洗 vs 乙醇洗 vs 热水洗涤)
 }

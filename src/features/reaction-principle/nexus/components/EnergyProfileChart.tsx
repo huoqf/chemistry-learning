@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { CHEMISTRY_COLORS, colors } from '@/theme'
+import { useAnimationFrame } from '@/utils/animation'
 import type { EnergyProfilePoint, CatalystType, StepBarrierInfo } from '../types'
 
 interface EnergyProfileChartProps {
@@ -10,6 +11,8 @@ interface EnergyProfileChartProps {
   catalyst: CatalystType
   stepBarriers?: StepBarrierInfo[]
   rdsIndex?: number
+  animPhase?: number
+  animate?: boolean
   font?: (v: number) => number
 }
 
@@ -21,8 +24,20 @@ export const EnergyProfileChart: React.FC<EnergyProfileChartProps> = ({
   catalyst,
   stepBarriers = [],
   rdsIndex = 1,
+  animPhase,
+  animate = false,
   font = (v) => v,
 }) => {
+  const [internalPhase, setInternalPhase] = useState(0)
+
+  useAnimationFrame(
+    (deltaTime) => {
+      setInternalPhase((prev) => (prev + deltaTime / 4200) % 1)
+    },
+    { playing: Boolean(animate) && animPhase === undefined },
+  )
+
+  const effectivePhase = animPhase !== undefined ? animPhase : animate ? internalPhase : undefined
   const width = 560
   const height = 340
   const padding = { top: 48, right: 60, bottom: 45, left: 65 }
@@ -58,6 +73,30 @@ export const EnergyProfileChart: React.FC<EnergyProfileChartProps> = ({
   const reactY = tsPoints[0]?.y || 100
   const prodY = tsPoints[tsPoints.length - 1]?.y || 100 + deltaH
   const isMulti = catalyst === 'catalyst-b' && stepBarriers.length > 1
+
+  const sampleEnergyCurve = (uPhase: number): { sx: number; sy: number; onRds: boolean } | null => {
+    if (tsPoints.length < 2) return null
+    const segCount = tsPoints.length - 1
+    const clamped = Math.max(0, Math.min(0.9999, uPhase))
+    const raw = clamped * segCount
+    const idx = Math.floor(raw)
+    const t = raw - idx
+    const u = 1 - t
+    const curr = tsPoints[idx]
+    const next = tsPoints[idx + 1]
+    const x0 = toSvgX(curr.x)
+    const y0 = toSvgY(curr.y)
+    const cx1 = toSvgX(curr.x + (next.x - curr.x) * 0.5)
+    const cy1 = y0
+    const x3 = toSvgX(next.x)
+    const y3 = toSvgY(next.y)
+    const cx2 = cx1
+    const cy2 = y3
+    const sx = u * u * u * x0 + 3 * u * u * t * cx1 + 3 * u * t * t * cx2 + t * t * t * x3
+    const sy = u * u * u * y0 + 3 * u * u * t * cy1 + 3 * u * t * t * cy2 + t * t * t * y3
+    const onRds = Boolean(isMulti && next.isRDS)
+    return { sx, sy, onRds }
+  }
 
   return (
     <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full select-none">
@@ -151,6 +190,36 @@ export const EnergyProfileChart: React.FC<EnergyProfileChartProps> = ({
         strokeWidth={3}
         strokeLinecap="round"
       />
+
+      {/* 势能面反应微粒越垒动效（决速步高能垒段外圈高亮） */}
+      {typeof effectivePhase === 'number' &&
+        [0, 0.5].map((offset, pIdx) => {
+          const sample = sampleEnergyCurve((effectivePhase + offset) % 1)
+          if (!sample) return null
+          return (
+            <g key={`energy-particle-${pIdx}`}>
+              {sample.onRds && (
+                <circle
+                  cx={sample.sx}
+                  cy={sample.sy}
+                  r={10}
+                  fill="none"
+                  stroke={colors.danger[500]}
+                  strokeWidth={1.5}
+                  opacity={0.75}
+                />
+              )}
+              <circle
+                cx={sample.sx}
+                cy={sample.sy}
+                r={5.5}
+                fill={sample.onRds ? colors.danger[500] : catalyst === 'none' ? colors.primary[500] : colors.secondary[500]}
+                stroke={colors.neutral.white}
+                strokeWidth={1.5}
+              />
+            </g>
+          )
+        })}
 
       {/* 过渡态点与物质点 */}
       {tsPoints.map((p, idx) => {

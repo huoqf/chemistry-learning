@@ -14,12 +14,14 @@ interface OrganicMatrixSceneProps {
   selectedGroup?: FunctionalGroupItem
   groupCounts: Record<string, number>
   consumption: TotalConsumptionResult
+  activePresetId?: string
   font: (size: number) => number
 }
 
 export const OrganicMatrixScene: React.FC<OrganicMatrixSceneProps> = ({
   groupCounts,
   consumption,
+  activePresetId,
   font,
 }) => {
   const reagents = [
@@ -33,20 +35,11 @@ export const OrganicMatrixScene: React.FC<OrganicMatrixSceneProps> = ({
 
   const maxVal = Math.max(...reagents.map((r) => r.value), 4)
 
-  // 识别当前匹配的母题预设
+  // 识别当前匹配的母题预设（由父组件根据 panelMode 传入，custom 模式为 undefined）
   const activePreset = useMemo(() => {
-    for (const preset of PRESET_MOLECULES) {
-      const presetEntries = Object.entries(preset.counts)
-      const currentNonZero = Object.entries(groupCounts).filter(([, count]) => count > 0)
-      if (presetEntries.length !== currentNonZero.length) continue
-
-      const isMatch = presetEntries.every(
-        ([id, count]) => (groupCounts[id] || 0) === count
-      )
-      if (isMatch) return preset
-    }
-    return null
-  }, [groupCounts])
+    if (!activePresetId) return null
+    return PRESET_MOLECULES.find((preset) => preset.id === activePresetId) ?? null
+  }, [activePresetId])
 
   // 当前分子包含的非零官能团列表
   const activeGroups = useMemo(() => {
@@ -103,26 +96,28 @@ export const OrganicMatrixScene: React.FC<OrganicMatrixSceneProps> = ({
           <g transform="translate(0, 32)">
             {activeGroups.length > 0 ? (
               <g>
-                <text x={0} y={15} fontSize={font(FONT.small)} fill={CANVAS_COLORS.labelTextLight} fontWeight="medium">
+                <text x={0} y={14} fontSize={font(FONT.small)} fill={CANVAS_COLORS.labelTextLight} fontWeight="medium">
                   分子内官能团构成：
                 </text>
-                {activeGroups.map((item, idx) => {
-                  const posX = 120 + idx * 140
-                  if (posX > 660) return null
+                {(activeGroups.length > 8 ? activeGroups.slice(0, 7) : activeGroups).map((item, idx) => {
+                  const col = idx % 4
+                  const row = Math.floor(idx / 4)
+                  const posX = 120 + col * 144
+                  const posY = row * 24
                   return (
-                    <g key={item.group.id} transform={`translate(${posX}, 0)`}>
+                    <g key={item.group.id} transform={`translate(${posX}, ${posY})`}>
                       <rect
                         x={0}
                         y={0}
-                        width={130}
-                        height={24}
-                        rx={6}
+                        width={136}
+                        height={21}
+                        rx={5}
                         fill={CANVAS_COLORS.objectFill}
                         stroke={CANVAS_COLORS.axis}
                       />
                       <text
                         x={8}
-                        y={16}
+                        y={14}
                         fontSize={font(FONT.annotation)}
                         fontWeight="bold"
                         fill={CANVAS_COLORS.objectStroke}
@@ -133,6 +128,29 @@ export const OrganicMatrixScene: React.FC<OrganicMatrixSceneProps> = ({
                     </g>
                   )
                 })}
+                {activeGroups.length > 8 && (
+                  <g transform="translate(552, 24)">
+                    <rect
+                      x={0}
+                      y={0}
+                      width={136}
+                      height={21}
+                      rx={5}
+                      fill={CANVAS_COLORS.objectFillNeutral}
+                      stroke={CANVAS_COLORS.axis}
+                    />
+                    <text
+                      x={68}
+                      y={14}
+                      textAnchor="middle"
+                      fontSize={font(FONT.annotation)}
+                      fontWeight="bold"
+                      fill={CANVAS_COLORS.labelText}
+                    >
+                      +{activeGroups.length - 7} 项官能团
+                    </text>
+                  </g>
+                )}
               </g>
             ) : (
               <text x={0} y={15} fontSize={font(FONT.small)} fill={CANVAS_COLORS.textMuted}>

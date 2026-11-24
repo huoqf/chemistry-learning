@@ -45,6 +45,7 @@ export function useIonCoexistence(selectedIonIds: string[]): IonCoexistenceResul
 
     // 2. 检查多离子隐蔽酸性催化氧化还原三元陷阱
     const hasH = selectedIonIds.includes('H+')
+    const hasOH = selectedIonIds.includes('OH-')
     const hasNO3 = selectedIonIds.includes('NO3-')
     const hasClO = selectedIonIds.includes('ClO-')
     const hasCl = selectedIonIds.includes('Cl-')
@@ -139,7 +140,9 @@ export function useIonCoexistence(selectedIonIds: string[]): IonCoexistenceResul
       'MnO4-:S2-': {
         oxLabel: 'MnO₄⁻',
         redLabel: 'S²⁻',
-        equation: '2MnO_4^- + 3S^{2-} + 4H_2O = 2MnO_2\\downarrow + 3S\\downarrow + 8OH^-',
+        equation: hasH
+          ? '2MnO_4^- + 5S^{2-} + 16H^+ = 2Mn^{2+} + 5S\\downarrow + 8H_2O'
+          : '2MnO_4^- + 3S^{2-} + 4H_2O = 2MnO_2\\downarrow + 3S\\downarrow + 8OH^-',
       },
       'MnO4-:SO32-': {
         oxLabel: 'MnO₄⁻',
@@ -151,17 +154,23 @@ export function useIonCoexistence(selectedIonIds: string[]): IonCoexistenceResul
       'MnO4-:S2O32-': {
         oxLabel: 'MnO₄⁻',
         redLabel: 'S₂O₃²⁻',
-        equation: '8MnO_4^- + 3S_2O_3^{2-} + H_2O = 8MnO_2\\downarrow + 6SO_4^{2-} + 2OH^-',
+        equation: hasH
+          ? '8MnO_4^- + 5S_2O_3^{2-} + 14H^+ = 8Mn^{2+} + 10SO_4^{2-} + 7H_2O'
+          : '8MnO_4^- + 3S_2O_3^{2-} + H_2O = 8MnO_2\\downarrow + 6SO_4^{2-} + 2OH^-',
       },
       'ClO-:I-': {
         oxLabel: 'ClO⁻',
         redLabel: 'I⁻',
-        equation: 'ClO^- + 2I^- + H_2O = Cl^- + I_2 + 2OH^-',
+        equation: hasH
+          ? 'ClO^- + 2I^- + 2H^+ = Cl^- + I_2 + H_2O'
+          : 'ClO^- + 2I^- + H_2O = Cl^- + I_2 + 2OH^-',
       },
       'ClO-:S2-': {
         oxLabel: 'ClO⁻',
         redLabel: 'S²⁻',
-        equation: 'ClO^- + S^{2-} + H_2O = Cl^- + S\\downarrow + 2OH^-',
+        equation: hasH
+          ? 'ClO^- + S^{2-} + 2H^+ = Cl^- + S\\downarrow + H_2O'
+          : 'ClO^- + S^{2-} + H_2O = Cl^- + S\\downarrow + 2OH^-',
       },
       'ClO-:SO32-': {
         oxLabel: 'ClO⁻',
@@ -171,7 +180,9 @@ export function useIonCoexistence(selectedIonIds: string[]): IonCoexistenceResul
       'ClO-:S2O32-': {
         oxLabel: 'ClO⁻',
         redLabel: 'S₂O₃²⁻',
-        equation: '4ClO^- + S_2O_3^{2-} + H_2O = 4Cl^- + 2SO_4^{2-} + 2H^+',
+        equation: hasOH
+          ? '4ClO^- + S_2O_3^{2-} + 2OH^- = 4Cl^- + 2SO_4^{2-} + H_2O'
+          : '4ClO^- + S_2O_3^{2-} + H_2O = 4Cl^- + 2SO_4^{2-} + 2H^+',
       },
     }
     const strongOxidantAnions = ['MnO4-', 'ClO-']

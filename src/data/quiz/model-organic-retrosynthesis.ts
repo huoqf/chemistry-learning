@@ -10,6 +10,7 @@ export const modelOrganicRetrosynthesis: ModelQuizData = {
       questionText:
         '在解热镇痛药贝诺酯 (Benorilate) 的逆合成分析中，首选切断的键是哪种化学键？写出切断点两侧生成的官能团前体名称。',
       correctAnswer: ['酯键', '碳氧酯键', '酚羟基', '羧基'],
+      requiredKeywordGroups: [['酯键', '碳氧酯键', 'C-O'], ['酚羟基'], ['羧基']],
       explanation:
         '【踩分点】：切断点为碳-氧酯键 (C-O 键)。逆推前体为水杨酸 (含酚羟基与羧基) 和对乙酰氨基酚 (含酚羟基与酰胺基)。',
     },
@@ -30,6 +31,10 @@ export const modelOrganicRetrosynthesis: ModelQuizData = {
       questionText:
         '利用乙二醇将醛基转化为环状缩醛保护后，在完成强还原剂 LiAlH₄ 反应后，应用什么试剂与条件脱去缩醛复原醛基？',
       correctAnswer: ['稀盐酸', '稀硫酸', 'H3O+', '加热', '水解'],
+      requiredKeywordGroups: [
+        ['稀盐酸', '稀硫酸', 'H3O+', 'H₃O⁺', '稀酸'],
+        ['加热', '水解'],
+      ],
       explanation:
         '【踩分点】：环状缩醛在强碱与还原剂中稳定，但在稀酸 (H₃O⁺) 加热条件下发生逆反应水解，复原醛基并释放乙二醇。',
     },
@@ -68,7 +73,7 @@ export const modelOrganicRetrosynthesis: ModelQuizData = {
       modelAlignmentAnalysis:
         '【母题模型对齐】：考查高考有机大题高频考点「碳碳双键加溴 Protection 与 Zn 粉还原脱溴 Deprotection 策略」。',
       detailedExplanation:
-        '4-烯丙基酚中 C=C 双键极为活泼，加 Br₂ 转化为饱和邻二溴化物 (Protection) 后，能在强碱下安全地将酚 -OH 甲基化成醚。随后用 Zn 粉发生 β-消去脱溴 (Deprotection) 重新建立 C=C 双键。',
+        '4-烯丙基酚中 C=C 双键极为活泼，加 Br₂ 转化为饱和邻二溴化物 (Protection) 后，能在无水 K₂CO₃ 弱碱条件下安全地将酚 -OH 甲基化成醚（避免强碱引发邻二溴代烷发生消去反应）。随后用 Zn 粉发生 β-消去脱溴 (Deprotection) 重新建立 C=C 双键。',
     },
     {
       id: 'var-retro-2',

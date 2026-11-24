@@ -399,7 +399,7 @@ export const IonRightPanel: React.FC<IonRightPanelProps> = ({
         </>
       )}
 
-      {/* ────────────────── 模式 4：14×18 全景互斥大表 ────────────────── */}
+      {/* ────────────────── 模式 4：14×19 全景互斥大表 ────────────────── */}
       {inquiryMode === 'coexistence-matrix' && (
         <>
           {(() => {

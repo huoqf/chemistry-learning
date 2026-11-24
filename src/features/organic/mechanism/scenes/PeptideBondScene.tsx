@@ -126,7 +126,7 @@ export function PeptideBondScene({ reactionStage, font }: MechanismSceneProps) {
           strokeWidth={3}
           strokeDasharray={reactionStage === 1 ? '4,4' : undefined}
         />
-        <g transform={reactionStage === 2 ? 'translate(80, 160)' : ''}>
+        <g>
           <circle cx={310} cy={60} r={22} fill={ATOM_COLORS.oxygen} />
           <text
             x={310}
@@ -168,7 +168,7 @@ export function PeptideBondScene({ reactionStage, font }: MechanismSceneProps) {
         </text>
 
         {/* 氨基 H */}
-        <g transform={reactionStage === 2 ? 'translate(-200, 160)' : ''}>
+        <g>
           <circle cx={10} cy={60} r={18} fill={ATOM_COLORS.hydrogen} />
           <text
             x={10}
@@ -227,6 +227,27 @@ export function PeptideBondScene({ reactionStage, font }: MechanismSceneProps) {
           CH
         </text>
 
+        {/* 丙氨酸 α-C 侧链甲基 -CH₃ (补全四价碳结构) */}
+        <line
+          x1={170}
+          y1={84}
+          x2={170}
+          y2={112}
+          stroke={colors.neutral[400]}
+          strokeWidth={3}
+        />
+        <circle cx={170} cy={134} r={22} fill={ATOM_COLORS.carbon} />
+        <text
+          x={170}
+          y={140}
+          textAnchor="middle"
+          fill="#FFF"
+          fontSize={font(FONT.small)}
+          fontWeight="bold"
+        >
+          CH₃
+        </text>
+
         <line
           x1={194}
           y1={60}
@@ -278,11 +299,12 @@ export function PeptideBondScene({ reactionStage, font }: MechanismSceneProps) {
 
           <line x1={164} y1={120} x2={216} y2={120} stroke={colors.neutral[400]} strokeWidth={3.5} />
 
-          {/* 肽键羰基碳 C=O */}
+          {/* 肽键羰基碳 C=O (双平行线绘制双键) */}
           <circle cx={240} cy={120} r={26} fill={ATOM_COLORS.carbon} />
           <text x={240} y={126} textAnchor="middle" fill="#FFF" fontSize={font(FONT.label)} fontWeight="bold">C</text>
 
-          <line x1={240} y1={94} x2={240} y2={38} stroke="#EF4444" strokeWidth={4} />
+          <line x1={235} y1={94} x2={235} y2={38} stroke="#EF4444" strokeWidth={3.5} />
+          <line x1={245} y1={94} x2={245} y2={38} stroke="#EF4444" strokeWidth={3.5} />
           <circle cx={240} cy={16} r={22} fill={ATOM_COLORS.oxygen} />
           <text x={240} y={22} textAnchor="middle" fill="#FFF" fontSize={font(FONT.axis)} fontWeight="bold">O</text>
 

@@ -84,7 +84,38 @@ export const ElectrochemicalTwinRightPanel: React.FC<Props> = ({ params, cellDet
     }
 
     if (mode === 2) {
-      // 模式 2：工业离子膜氯碱，无电极增重，重点监控两极气体与生成 NaOH
+      if (membraneType === 3) {
+        // 模式 2（双极膜 BPM 三室制酸碱）
+        return [
+          ...baseQuantities,
+          {
+            label: '阳极析出 O₂ 体积 V',
+            value: quantResult.gasVolumeLeft ?? 0,
+            unit: 'L (标况)',
+          },
+          {
+            label: '阴极析出 H₂ 体积 V',
+            value: quantResult.gasVolumeRight,
+            unit: 'L (标况)',
+          },
+          {
+            label: '中间酸室制得 HCl 量',
+            value: quantResult.molesElectron,
+            unit: 'mol',
+          },
+          {
+            label: '阴极室制得 NaOH 量',
+            value: quantResult.molesElectron,
+            unit: 'mol',
+          },
+          {
+            label: 'BPM 解离 H⁺/OH⁻',
+            value: quantResult.molesMembraneIon ?? 0,
+            unit: 'mol',
+          },
+        ]
+      }
+      // 模式 2（氯碱两室）：无电极增重，重点监控两极气体与生成 NaOH
       return [
         ...baseQuantities,
         {
@@ -110,7 +141,7 @@ export const ElectrochemicalTwinRightPanel: React.FC<Props> = ({ params, cellDet
       ]
     }
 
-    // 模式 3：法拉第定量计算，全量监控电极增重与气体标况体积
+    // 模式 3：法拉第定量计算，全量监控电极增重与气体标况体积（含 Cu²⁺ 耗尽后析 H₂）
     return [
       ...baseQuantities,
       {
@@ -123,9 +154,18 @@ export const ElectrochemicalTwinRightPanel: React.FC<Props> = ({ params, cellDet
         value: quantResult.massChangeRight,
         unit: 'g',
       },
+      ...(quantResult.gasVolumeRight > 0
+        ? [
+            {
+              label: '阴极析出 H₂ 体积 V (Cu²⁺耗尽后)',
+              value: quantResult.gasVolumeRight,
+              unit: 'L (标况)',
+            },
+          ]
+        : []),
       {
-        label: '电解产生酸量 n(H⁺)',
-        value: quantResult.molesElectron,
+        label: '电解产生净酸量 n(H⁺)',
+        value: quantResult.netAcidMoles ?? quantResult.molesElectron,
         unit: 'mol',
       },
       {
@@ -134,7 +174,7 @@ export const ElectrochemicalTwinRightPanel: React.FC<Props> = ({ params, cellDet
         unit: 'pH 单位 (按 1 L)',
       },
     ]
-  }, [mode, params.currentAmp, params.timeSec, quantResult])
+  }, [mode, membraneType, params.currentAmp, params.timeSec, quantResult])
 
   // 2. 动态公式定义：依模式展示核心电极反应与机理方程
   const formulas = useMemo(() => {
@@ -168,19 +208,20 @@ export const ElectrochemicalTwinRightPanel: React.FC<Props> = ({ params, cellDet
     }
 
     if (mode === 1) {
+      const dischargeCard = {
+        name: `全钒液流电池放电总反应 (${params.batteryState === 0 ? '当前激活 · 原电池' : '原电池对照'})`,
+        latex: '\\text{V}^{2+} + \\text{VO}_2^+ + 2\\text{H}^+ = \\text{V}^{3+} + \\text{VO}^{2+} + \\text{H}_2\\text{O}',
+        note: '负极: V²⁺ - e⁻ = V³⁺ | 正极: VO₂⁺ + 2H⁺ + e⁻ = VO²⁺ + H₂O',
+        level: (params.batteryState === 0 ? 'core' : 'derived') as 'core' | 'derived',
+      }
+      const chargeCard = {
+        name: `全钒液流电池充电总反应 (${params.batteryState === 1 ? '当前激活 · 电解池' : '电解池对照'})`,
+        latex: '\\text{V}^{3+} + \\text{VO}^{2+} + \\text{H}_2\\text{O} \\xrightarrow{\\text{充电}} \\text{V}^{2+} + \\text{VO}_2^+ + 2\\text{H}^+',
+        note: '阴极: V³⁺ + e⁻ = V²⁺ | 阳极: VO²⁺ + H₂O - e⁻ = VO₂⁺ + 2H⁺',
+        level: (params.batteryState === 1 ? 'core' : 'derived') as 'core' | 'derived',
+      }
       return [
-        {
-          name: '全钒液流电池放电总反应 (原电池)',
-          latex: '\\text{V}^{2+} + \\text{VO}_2^+ + 2\\text{H}^+ = \\text{V}^{3+} + \\text{VO}^{2+} + \\text{H}_2\\text{O}',
-          note: '负极: V²⁺ - e⁻ = V³⁺ | 正极: VO₂⁺ + 2H⁺ + e⁻ = VO²⁺ + H₂O',
-          level: 'core' as const,
-        },
-        {
-          name: '全钒液流电池充电总反应 (电解池)',
-          latex: '\\text{V}^{3+} + \\text{VO}^{2+} + \\text{H}_2\\text{O} \\xrightarrow{\\text{充电}} \\text{V}^{2+} + \\text{VO}_2^+ + 2\\text{H}^+',
-          note: '阴极: V³⁺ + e⁻ = V²⁺ | 阳极: VO²⁺ + H₂O - e⁻ = VO₂⁺ + 2H⁺',
-          level: 'core' as const,
-        },
+        ...(params.batteryState === 1 ? [chargeCard, dischargeCard] : [dischargeCard, chargeCard]),
         {
           name: '二次电池充放电对应极性铁律',
           latex: '\\text{放电负极} \\Longleftrightarrow \\text{充电阴极}; \\quad \\text{放电正极} \\Longleftrightarrow \\text{充电阳极}',
@@ -197,7 +238,30 @@ export const ElectrochemicalTwinRightPanel: React.FC<Props> = ({ params, cellDet
     }
 
     if (mode === 2) {
-      // 模式 2 依据 membraneType 动态提供膜方程
+      if (membraneType === 3) {
+        return [
+          {
+            name: '四室双极膜 (BPM) 制酸碱总反应',
+            latex: '4\\text{NaCl} + 6\\text{H}_2\\text{O} \\xrightarrow{\\text{BPM+AEM+CEM}} 4\\text{HCl} + 4\\text{NaOH} + 2\\text{H}_2\\uparrow + \\text{O}_2\\uparrow',
+            note: '左阳极放 O₂ 并消耗 BPM 解离的 OH⁻；中间酸室由 H⁺ + 穿 AEM 的 Cl⁻ 制得高纯 HCl；右侧原料室 Na⁺ 穿 CEM 入阴极碱室得高纯 NaOH 并放 H₂。',
+            level: 'core' as const,
+          },
+          {
+            name: '双极膜 (BPM) 催化水分子解离',
+            latex: '\\text{H}_2\\text{O} \\xrightarrow{\\text{BPM催化层}} \\text{H}^+(\\text{入酸室}) + \\text{OH}^-(\\text{入阳极室})',
+            note: '双极膜将水裂解为 H⁺ 与 OH⁻；原料室两侧由 AEM 与 CEM 隔离，既防 NaCl 混入 NaOH，又阻隔阴极 OH⁻ 经 AEM 回迁中和 HCl。',
+            level: 'core' as const,
+          },
+          {
+            name: '微粒定向迁移铁律',
+            latex: '\\text{阳离子(H}^+\\text{、Na}^+\\text{) 往阴极，阴离子(Cl}^-\\text{、OH}^-\\text{) 往阳极}',
+            note: cellDetails.membraneFunction,
+            level: 'important' as const,
+          },
+        ]
+      }
+
+      // 模式 2（非 BPM）：氯碱两室依据 membraneType 动态提供膜方程
       let membraneFormula: {
         name: string
         latex: string
@@ -215,13 +279,6 @@ export const ElectrochemicalTwinRightPanel: React.FC<Props> = ({ params, cellDet
           latex: '\\text{OH}^-/\\text{Cl}^-(\\text{阴极室}) \\xrightarrow{\\text{AEM}} \\text{阳极室（导致 Cl}_2 \\text{ 歧化生成 NaClO）}',
           note: '若误用阴膜，阴极生成的 OH⁻ 会迁入阳极室与 Cl₂ 发生 Cl₂+2OH⁻=Cl⁻+ClO⁻+H₂O 副反应，故工业氯碱制碱只采用阳离子交换膜。',
           level: 'derived' as const,
-        }
-      } else if (membraneType === 3) {
-        membraneFormula = {
-          name: '双极膜 (BPM) 催化水分子解离',
-          latex: '\\text{H}_2\\text{O} \\xrightarrow{\\text{BPM催化层}} \\text{H}^+(\\text{移向阴极}) + \\text{OH}^-(\\text{移向阳极})',
-          note: '在电场作用下阳离子 H⁺ 移向阴极，阴离子 OH⁻ 移向阳极，可分别在两侧室制备高纯度酸与碱。',
-          level: 'core' as const,
         }
       }
 
@@ -252,8 +309,8 @@ export const ElectrochemicalTwinRightPanel: React.FC<Props> = ({ params, cellDet
       },
       {
         name: '串联回路电子得失守恒链',
-        latex: 'n(e^-) = 2n(\\text{Cu}) = 4n(\\text{O}_2) = \\frac{I \\cdot t}{F}',
-        note: '阴极沉积 1 mol Cu 消耗 2 mol 电子，阳极释放 1 mol O₂ 失去 4 mol 电子。',
+        latex: 'n(e^-) = 2n(\\text{Cu}) + 2n(\\text{H}_2) = 4n(\\text{O}_2) = \\frac{I \\cdot t}{F}',
+        note: 'Cu²⁺ 未耗尽前阴极析出 Cu；耗尽后转为电解水析出 H₂，此时溶液净酸量不再增加。',
         level: 'core' as const,
       },
       {
@@ -263,7 +320,7 @@ export const ElectrochemicalTwinRightPanel: React.FC<Props> = ({ params, cellDet
         level: 'important' as const,
       },
     ]
-  }, [mode, membraneType, cellDetails.membraneFunction])
+  }, [mode, membraneType, params.batteryState, cellDetails.membraneFunction])
 
   // 3. 动态高考要点：依模式提供精准考点
   const gaokaoPoints = useMemo(() => {
@@ -308,7 +365,7 @@ export const ElectrochemicalTwinRightPanel: React.FC<Props> = ({ params, cellDet
           importance: 'gaokao' as const,
         },
         {
-          text: '双极膜 (BPM) 高考新热点：在反向电压下膜中间水催化层快速裂解为 H⁺ 和 OH⁻，无需外加试剂直接富集强酸强碱。',
+          text: '双极膜 (BPM) 四室分盐制酸碱：中间设独立 NaCl 原料室，左侧以 AEM 挡 Na⁺ 引 Cl⁻ 入酸室，右侧以 CEM 引 Na⁺ 入阴极室并阻隔 OH⁻ 反迁，兼得高纯 HCl 与 NaOH。',
           importance: 'hard' as const,
         },
         {

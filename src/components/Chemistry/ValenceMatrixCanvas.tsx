@@ -126,17 +126,28 @@ export function ValenceMatrixCanvas({
     }
   }
 
-  // 计算选中的两者之间的直接转化关系
-  const activePairTransformation = useMemo(() => {
+  // 计算选中的两者之间的直接转化关系（区分正向与反向匹配）
+  const activePairMatch = useMemo(() => {
     if (!selectedSubstance || !targetSubstance) return null
-    return currentConfig.transformations.find(
+    const forward = currentConfig.transformations.find(
       t =>
-        (matchesSubstance(t.fromSubstance, selectedSubstance.substance) &&
-          matchesSubstance(t.toSubstance, targetSubstance.substance)) ||
-        (matchesSubstance(t.fromSubstance, targetSubstance.substance) &&
-          matchesSubstance(t.toSubstance, selectedSubstance.substance))
+        matchesSubstance(t.fromSubstance, selectedSubstance.substance) &&
+        matchesSubstance(t.toSubstance, targetSubstance.substance)
     )
+    if (forward) {
+      return { transformation: forward, isReversed: false }
+    }
+    const backward = currentConfig.transformations.find(
+      t =>
+        matchesSubstance(t.fromSubstance, targetSubstance.substance) &&
+        matchesSubstance(t.toSubstance, selectedSubstance.substance)
+    )
+    if (backward) {
+      return { transformation: backward, isReversed: true }
+    }
+    return null
   }, [selectedSubstance, targetSubstance, currentConfig])
+  const activePairTransformation = activePairMatch?.transformation ?? null
 
   // 元素分类列表
   const nonMetalElements = useMemo(
@@ -336,9 +347,18 @@ export function ValenceMatrixCanvas({
                     <span className="text-xs font-bold text-amber-900 flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-amber-600" />
                       高考转化推演：
-                      <span className="text-indigo-700 font-bold ml-1">{selectedSubstance?.substance}</span>
+                      <span className="text-indigo-700 font-bold ml-1">
+                        {activePairTransformation.fromSubstance}
+                      </span>
                       <span className="text-slate-400 mx-1">➔</span>
-                      <span className="text-amber-800 font-bold">{targetSubstance?.substance}</span>
+                      <span className="text-amber-800 font-bold">
+                        {activePairTransformation.toSubstance}
+                      </span>
+                      {activePairMatch?.isReversed && (
+                        <span className="ml-1.5 text-[10px] font-medium px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200">
+                          反向匹配已存在路径
+                        </span>
+                      )}
                     </span>
                     <span className="text-[11px] px-2.5 py-0.5 rounded-full font-bold bg-amber-100 text-amber-900 border border-amber-300">
                       所需试剂：{activePairTransformation.reagent}
@@ -398,9 +418,11 @@ export function ValenceMatrixCanvas({
                             : cat.includes('氢化物')
                             ? '负氢/气态氢'
                             : cat.includes('氧化物')
-                            ? '成盐氧化物'
+                            ? '金属/非金属氧化物'
                             : cat.includes('氢氧化物')
-                            ? '最高价水化物'
+                            ? '碱/两性氢氧化物'
+                            : cat.includes('含氧酸')
+                            ? '含氧酸'
                             : '含氧酸盐/无氧酸盐'}
                         </span>
                       </div>
@@ -410,8 +432,8 @@ export function ValenceMatrixCanvas({
               </thead>
               <tbody>
                 {sortedValences.map(v => {
-                  const isMax = v === maxValence && maxValence > 0
-                  const isMin = v === minValence && minValence < 0
+                  const isMax = v === maxValence && (maxValence > 0 || selectedSymbol === 'F')
+                  const isMin = v === minValence
                   const isZero = v === 0
 
                   return (

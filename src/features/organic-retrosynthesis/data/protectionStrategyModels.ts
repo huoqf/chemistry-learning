@@ -657,11 +657,11 @@ export const MODEL_DOUBLE_BOND_PROTECTION: RetrosynthesisModelData = {
       description: '在无水 K₂CO₃ 弱碱作用下，酚羟基选择性脱质子进攻碘甲烷 (CH₃I) 生成酚甲基醚，避免强碱引起二溴烷烃消去。',
       reactants: [
         { name: '二溴中间体', formula: 'C₉H₁₀Br₂O' },
-        { name: '碘甲烷 (CH₃I)', formula: 'CH₃I' },
+        { name: '碘甲烷 / 碳酸钾', formula: 'CH₃I + K₂CO₃' },
       ],
       products: [
         { name: '二溴代甲基醚', formula: 'C₁₀H₁₂Br₂O' },
-        { name: '碘化物副产物', formula: 'KI' },
+        { name: '副产物 (KI + KHCO₃)', formula: 'KI + KHCO₃' },
       ],
       reagents: 'K₂CO₃ / 丙酮 / 50℃ 回流',
       protectionStatus: {

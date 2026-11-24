@@ -15,39 +15,48 @@ export function calculateStateVolumeTrap(
   switch (item) {
     case 'SO3': {
       const isGas = false
-      const physState = '固态' // 标况 0℃ 下 SO3 熔点 16.8℃，完全为固态/晶体
-      const molesGiven = unit === 'L' ? val / 22.4 : unit === 'mol' ? val : val / 80
-      // 密度 1.92 的单位是 g/cm³ = 1920 g/L，val 单位为 L，必须 ×1000 换算
+      // 标况 0℃ 下 SO3 熔点 16.8℃，为固态晶体；常温 25℃ 下（沸点 44.8℃）为无色液态
+      const physState = isStd ? '固态' : '液态'
+      const molesGiven = unit === 'L' ? val / vm : unit === 'mol' ? val : val / 80
+      // 密度约 1.92 g/cm³ = 1920 g/L，val 单位为 L，必须 ×1000 换算
       const actualMoles = unit === 'L' ? (val * 1920) / 80 : molesGiven
 
       return {
-        title: 'SO₃ (三氧化硫) 标况状态陷阱',
-        subtitle: '标准状况 (0℃, 101 kPa) 下 SO₃ 为固态晶体 (熔点 16.8℃)',
+        title: `SO₃ (三氧化硫) ${isStd ? '标况' : '常温'}非气态陷阱`,
+        subtitle: isStd
+          ? '标准状况 (0℃, 101 kPa) 下 SO₃ 为固态晶体 (熔点 16.8℃)'
+          : '常温 (25℃, 101 kPa) 下 SO₃ 为液态 (沸点 44.8℃)，同样不可用气体摩尔体积',
         isStateGas: isGas,
         physicalState: physState,
         vmValue: vm,
         particleStats: [
           {
             label: 'SO₃ 分子数',
-            theoreticalMoles: unit === 'L' ? val / 22.4 : molesGiven,
+            theoreticalMoles: unit === 'L' ? val / vm : molesGiven,
             actualMoles: unit === 'L' ? actualMoles : molesGiven,
             unit: '$N_{\\text{A}}$',
             isTrap: unit === 'L',
-            trapExplanation: unit === 'L' ? '错按气体摩尔体积 V_m = 22.4 L/mol 计算！实际 22.4 L 固态 SO₃ 摩尔数远大于 1 mol (约 537 N_A)' : undefined,
+            trapExplanation: unit === 'L'
+              ? `错按气体摩尔体积 V_m = ${vm} L/mol 计算！${isStd ? '0℃ 固态' : '25℃ 液态'} SO₃ 的 ${val} L 体积下物质的量约 ${actualMoles.toFixed(0)} N_A，远大于 ${(val / vm).toFixed(2)} N_A`
+              : undefined,
           },
         ],
-        trapType: '标况非气体陷阱',
-        trapBadge: '高频致命陷阱',
+        trapType: '非气态物质状态陷阱',
+        trapBadge: isStd ? '标况固态晶体' : '常温液态非气体',
         trapLevel: 'high',
         keyPointAnalysis: [
-          '标况下 (0℃, 101 kPa) SO₃ 熔点 16.8℃，故标况下 100% 为固态/晶体。',
-          '若题目给出“标况下 22.4 L SO₃”，分子数远大于 1 N_A，不可套用 22.4 L/mol！',
+          '标况下 (0℃, 101 kPa) SO₃ 熔点 16.8℃，完全为固态晶体；常温 25℃ 时沸点 44.8℃，仍呈液态。',
+          `若题目给出“${isStd ? '标况' : '常温'}下 22.4 L SO₃”，分子数远大于 1 N_A，不可套用 ${vm} L/mol！`,
         ],
-        formulaLatex: '\\text{标况 (0}^\\circ\\text{C}) \\implies \\text{SO}_3 \\text{ 为固态晶体，} V_m = 22.4 \\text{ L/mol 不适用}',
-        correctAnswerSummary: unit === 'L' ? `标况下 ${val} L SO₃ 为固态非气体，分子数远大于 ${(val/22.4).toFixed(2)} N_A` : `${val} ${unit} SO₃ 含有 ${molesGiven.toFixed(2)} N_A 个分子`,
+        formulaLatex: isStd
+          ? '\\text{标况 (0}^\\circ\\text{C)} \\implies \\text{SO}_3 \\text{ 为固态晶体，} V_m = 22.4 \\text{ L/mol 不适用}'
+          : '\\text{常温 (25}^\\circ\\text{C)} \\implies \\text{SO}_3 \\text{ 为液态 (沸点 44.8}^\\circ\\text{C)，} V_m \\text{ 不适用}',
+        correctAnswerSummary: unit === 'L'
+          ? `${isStd ? '标况' : '常温'}下 ${val} L SO₃ 为${physState}非气体，分子数远大于 ${(val / vm).toFixed(2)} N_A`
+          : `${val} ${unit} SO₃ 含有 ${molesGiven.toFixed(2)} N_A 个分子`,
         stepByStepMatrix: [
           { stepName: '一审环境', checkTarget: '温度与压强', pass: true, finding: isStd ? '标准状况 (0℃, 101 kPa)' : '常温常压 (25℃)' },
-          { stepName: '二审状态', checkTarget: 'SO₃ 状态判定', pass: false, finding: '0℃ 时为固态！非气体！' },
+          { stepName: '二审状态', checkTarget: 'SO₃ 状态判定', pass: false, finding: isStd ? '0℃ 时为固态！非气体！' : '25℃ 时为液态！非气体！' },
           { stepName: '三审结构', checkTarget: '分子构成', pass: true, finding: '1 个 SO₃ 含有 4 个原子' },
           { stepName: '四审过程', checkTarget: '物理/化学过程', pass: true, finding: '纯净物' },
           { stepName: '五审电子', checkTarget: '氧化还原', pass: true, finding: '最高价 +6' },
@@ -135,43 +144,75 @@ export function calculateStateVolumeTrap(
     }
 
     case 'HF': {
-      // 氟化氢沸点 19.5℃，在 0℃ 标况下为液体（密度约 1.00 g/cm³ = 1000 g/L），且分子间形成 (HF)n 缔合分子
-      const molesGiven = unit === 'L' ? val / 22.4 : unit === 'mol' ? val : val / 20
-      const actualMoles = unit === 'L' ? (val * 1000) / 20 : molesGiven
+      // 氟化氢沸点 19.5℃：0℃ 标况下为液态（ρ ≈ 1.00 g/cm³ = 1000 g/L）；25℃ 常温下为气态但分子间存在 F-H…F 强氢键缔合 (HF)n
+      const molesGiven = unit === 'L' ? val / vm : unit === 'mol' ? val : val / 20
+      const isUnitVolume = unit === 'L'
+      const theoreticalMoles = isUnitVolume ? val / vm : molesGiven
+      const actualMoles = isStd
+        ? isUnitVolume
+          ? (val * 1000) / 20
+          : molesGiven * 0.65
+        : isUnitVolume
+        ? (val / vm) * 1.35
+        : molesGiven * 0.65
+
+      const statLabel = isStd
+        ? isUnitVolume
+          ? 'HF 化学式单元数 (标况液态)'
+          : '独立缔合分子数 (示意)'
+        : isUnitVolume
+        ? 'HF 化学式单元数 (示意)'
+        : '独立缔合分子数 (示意)'
+
+      const trapExplanation = isStd
+        ? isUnitVolume
+          ? `HF 沸点 19.5℃，标况 (0℃) 下为无色发烟液体（ρ≈1.0 g/cm³，${val} L 约含 ${actualMoles.toFixed(0)} mol HF，远大于 ${(val / vm).toFixed(2)} mol）；且分子间形成 (HF)ₙ 缔合！`
+          : `HF 分子间存在 F-H…F 强氢键缔合为 (HF)ₙ，${molesGiven.toFixed(2)} mol HF 化学式单元聚合后的实际独立分子数显著小于 ${molesGiven.toFixed(2)} N_A（按缔合度作数量级示意）！`
+        : isUnitVolume
+        ? `25℃ 常温下 HF 呈气态，由阿伏加德罗定律 ${val} L 中独立气态微粒总数约为 ${(val / vm).toFixed(2)} N_A；但因存在 (HF)ₙ 氢键缔合，其中含有的 HF 化学式单元（及 H/F 原子数）显著大于 ${(val / vm).toFixed(2)} N_A（按缔合度作数量级示意）！`
+        : `25℃ 常温下 HF 仍存在强氢键缔合 (HF)ₙ，${molesGiven.toFixed(2)} mol HF 分子聚集后，实际独立分子总数显著小于 ${molesGiven.toFixed(2)} N_A（按缔合度作数量级示意）！`
+
       return {
-        title: 'HF (氟化氢) 标况状态与分子缔合陷阱',
-        subtitle: 'HF 在标况下为液体 (沸点 19.5℃)，且分子间形成 (HF)n 氢键缔合',
-        isStateGas: false,
-        physicalState: '液态',
+        title: `HF (氟化氢) ${isStd ? '标况液态' : '常温气态'}与分子缔合陷阱`,
+        subtitle: isStd
+          ? 'HF 在标况 (0℃) 下为液体 (沸点 19.5℃)，且分子间形成 (HF)ₙ 氢键缔合'
+          : 'HF 在常温 (25℃) 下为气态，因存在 (HF)ₙ 缔合：定体积气态含 HF 单元 > V/Vₘ；定质量/mol 独立分子 < n',
+        isStateGas: !isStd,
+        physicalState: isStd ? '液态' : '气态',
         vmValue: vm,
         particleStats: [
           {
-            label: 'HF 化学式单元数 (未计缔合)',
-            theoreticalMoles: unit === 'L' ? val / 22.4 : molesGiven,
+            label: statLabel,
+            theoreticalMoles,
             actualMoles,
             unit: '$N_{\\text{A}}$',
-            isTrap: unit === 'L',
-            trapExplanation: unit === 'L'
-              ? `HF 沸点 19.5℃，标况 (0℃) 下为无色发烟液体（ρ≈1.0 g/cm³，${val} L 约含 ${actualMoles.toFixed(0)} mol HF，远大于 ${(val / 22.4).toFixed(2)} mol）；且因 F-H…F 强氢键，独立缔合分子数少于化学式单元数！`
-              : 'HF 分子间存在 F-H…F 强氢键形成 (HF)ₙ 缔合分子，实际独立分子数少于 HF 化学式单元数！',
+            isTrap: true,
+            isIndicative: !isStd || !isUnitVolume,
+            trapExplanation,
           },
         ],
-        trapType: '标况液体与氢键缔合陷阱',
-        trapBadge: 'HF 标况液态',
+        trapType: isStd ? '标况液体与氢键缔合陷阱' : '气态氢键缔合双向陷阱',
+        trapBadge: isStd ? 'HF 标况液态' : 'HF 氢键缔合',
         trapLevel: 'high',
         keyPointAnalysis: [
-          'HF 沸点 19.5℃，标况下 (0℃) 呈无色发烟液体，不可用 Vm = 22.4 L/mol 计算。',
-          'HF 分子间存在强 F-H...F 氢键，常形成 (HF)₂、(HF)₄ 等缔合分子。',
+          'HF 沸点 19.5℃：标况 (0℃) 下呈无色发烟液体，不可用 V_m = 22.4 L/mol 计算。',
+          '常温 (25℃) 下 HF 虽为气态但强氢键缔合为 (HF)ₙ：给定体积 V 时独立分子数 ≈ V/V_m，但所含 HF 化学式单元数大于 V/V_m；给定质量或物质的量时，独立分子数小于理论摩尔数。',
         ],
-        formulaLatex: '\\text{HF (沸点 19.5}^\\circ\\text{C)} \\implies \\text{标况下为液体及 (HF)}_n \\text{ 缔合分子}',
-        correctAnswerSummary: unit === 'L'
-          ? `标况下 ${val} L HF 为液体（约含 ${actualMoles.toFixed(0)} mol HF 单元），远大于按气体算出的 ${(val / 22.4).toFixed(2)} N_A，不可套用 22.4 L/mol`
-          : 'HF 分子间存在强氢键缔合为 (HF)n，不可套用标况气体摩尔体积计算',
+        formulaLatex: isStd
+          ? '\\text{HF (沸点 19.5}^\\circ\\text{C)} \\implies \\text{标况下为液体及 (HF)}_n \\text{ 缔合分子}'
+          : isUnitVolume
+          ? '\\text{常温定体积 HF(g)} \\implies n_{\\text{独立微粒}} \\approx \\frac{V}{V_m},\\ n(\\text{HF}) > \\frac{V}{V_m}'
+          : '\\text{常温定量 HF(g)} \\implies n_{\\text{独立分子}} < n(\\text{HF})',
+        correctAnswerSummary: isUnitVolume
+          ? isStd
+            ? `标况下 ${val} L HF 为液体（约含 ${actualMoles.toFixed(0)} mol HF 单元），远大于按气体算出的 ${(val / vm).toFixed(2)} N_A，不可套用 22.4 L/mol`
+            : `常温下 ${val} L 缔合 HF(g) 的独立微粒数约 ${(val / vm).toFixed(2)} N_A，因形成 (HF)ₙ 缔合，所含 HF 单元数显著大于 ${(val / vm).toFixed(2)} N_A`
+          : `由于 (HF)ₙ 强氢键缔合，${molesGiven.toFixed(2)} mol HF 对应的实际独立分子数显著小于 ${molesGiven.toFixed(2)} N_A`,
         stepByStepMatrix: [
-          { stepName: '一审环境', checkTarget: '标况 0℃', pass: true, finding: '0℃, 101 kPa' },
-          { stepName: '二审状态', checkTarget: 'HF 状态判定', pass: false, finding: '沸点 19.5℃ ➔ 标况下为液体！' },
-          { stepName: '三审结构', checkTarget: '氢键缔合', pass: false, finding: '分子间形成强氢键缔合！' },
-          { stepName: '四审过程', checkTarget: '变化', pass: true, finding: '无' },
+          { stepName: '一审环境', checkTarget: '温度与压强', pass: isStd, finding: isStd ? '标况 0℃, 101 kPa' : '常温 25℃, 101 kPa' },
+          { stepName: '二审状态', checkTarget: 'HF 状态判定', pass: !isStd, finding: isStd ? '沸点 19.5℃ ➔ 标况下为液体！' : '沸点 19.5℃ ➔ 25℃ 呈气态，但发生缔合！' },
+          { stepName: '三审结构', checkTarget: '氢键缔合', pass: false, finding: '分子间形成 F-H…F 强氢键缔合！' },
+          { stepName: '四审过程', checkTarget: '变化', pass: true, finding: '缔合可逆过程' },
           { stepName: '五审电子', checkTarget: '电子', pass: true, finding: '1 mol HF 含 10 mol 电子' },
         ],
       }
@@ -216,7 +257,8 @@ export function calculateStateVolumeTrap(
     }
 
     default: {
-      const moles = unit === 'L' ? val / vm : unit === 'mol' ? val : val / 71
+      const molarMass = item === 'O2' ? 32 : 71
+      const moles = unit === 'L' ? val / vm : unit === 'mol' ? val : val / molarMass
       return {
         title: `${item} 标况气体计算`,
         subtitle: `${item} 在标况 (0℃, 101 kPa) 下为气体，满足 V_m = 22.4 L/mol`,
@@ -296,7 +338,7 @@ export function calculateStructureBondsTrap(
           '1 mol P₄ 含有 6 mol P-P 键。31 g 白磷为 0.25 mol P₄，含 1.5 mol P-P 键！',
         ],
         formulaLatex: '1 \\text{ mol P}_4 \\implies 6 \\text{ mol P-P 键 (正四面体 6 条棱)}',
-        correctAnswerSummary: `${val} ${unit} 白磷 P₄ 含有 ${bondsMoles.toFixed(2)} N_A 个 P-P 共价键`,
+        correctAnswerSummary: `${val} ${effectiveUnit} 白磷 P₄ 含有 ${bondsMoles.toFixed(2)} N_A 个 P-P 共价键`,
         stepByStepMatrix: [
           { stepName: '一审环境', checkTarget: '环境', pass: true, finding: '固态纯净物' },
           { stepName: '二审状态', checkTarget: '状态', pass: true, finding: '分子晶体' },
@@ -519,67 +561,111 @@ export function calculateStructureBondsTrap(
     }
 
     case 'NH4Cl': {
-      // 1 mol NH4Cl 含 1 mol NH4+ 和 1 mol Cl- (离子键 1 mol)
-      // NH4+ 内含 3 mol N-H 极性共价键，1 mol N->H 配位键 (共价键共 4 mol)
+      // 1 mol NH4Cl 由 1 mol NH4+ 和 1 mol Cl- 构成（离子晶体，含 2 mol 阴阳离子，以离子键结合，不称“1 mol 离子键条数”）
+      // NH4+ 内部含 3 mol N-H 极性共价键和 1 mol N->H 配位键（共价键总计 4 mol）
       // 与其余 case 统一使用 effectiveUnit（unit === 'L' 时兜底按 mol 计），避免口径不一
       const molesNH4Cl = effectiveUnit === 'g' ? val / 53.5 : val
       return {
-        title: 'NH₄Cl (氯化铵) 化学键类型拆解',
-        subtitle: '1 mol NH₄Cl 含有 4 mol 共价键 (含 1 mol 配位键) 和 1 mol 离子键',
+        title: 'NH₄Cl (氯化铵) 化学键类型与离子数拆解',
+        subtitle: '1 mol NH₄Cl 含有 4 mol 共价键 (含 1 mol 配位键)，并由 1 mol NH₄⁺ 与 1 mol Cl⁻ 构成',
         isStateGas: false,
         physicalState: '固态',
         vmValue: 22.4,
         particleStats: [
           { label: 'N-H 共价键总数', theoreticalMoles: molesNH4Cl * 4, actualMoles: molesNH4Cl * 4, unit: 'N_A', isTrap: false },
           { label: '配位键数', theoreticalMoles: molesNH4Cl, actualMoles: molesNH4Cl, unit: 'N_A', isTrap: false },
-          { label: '离子键数', theoreticalMoles: molesNH4Cl, actualMoles: molesNH4Cl, unit: 'N_A', isTrap: false },
+          { label: 'NH₄⁺ 与 Cl⁻ 离子总数', theoreticalMoles: molesNH4Cl * 2, actualMoles: molesNH4Cl * 2, unit: 'N_A', isTrap: false },
         ],
         trapType: '配合物/铵盐键型分类',
         trapBadge: '含 1 mol 配位键',
         trapLevel: 'medium',
         keyPointAnalysis: [
-          'NH₄Cl 是离子晶体，由 NH₄⁺ 和 Cl⁻ 构成，含 1 mol 离子键。',
-          'NH₄⁺ 内部含有 3 个 N-H 极性共价键和 1 个 N➔H 配位键（共价键总数为 4 N_A）。',
+          'NH₄Cl 是离子晶体，由 NH₄⁺ 和 Cl⁻ 通过离子键结合（共含 2 mol 阴阳离子），既有离子键又有共价键。',
+          'NH₄⁺ 内部含有 3 个 N-H 普通极性共价键和 1 个 N➔H 配位键（4 个 N-H 键键长与性质完全等效，共价键总数为 4 N_A）。',
         ],
-        formulaLatex: '1 \\text{ mol NH}_4\\text{Cl} \\implies 4 \\text{ mol 共价键 (含 1 mol 配位键)} + 1 \\text{ mol 离子键}',
-        correctAnswerSummary: `${val} ${effectiveUnit} NH₄Cl 含有 ${(molesNH4Cl * 4).toFixed(2)} N_A 个共价键 (含 ${molesNH4Cl.toFixed(2)} N_A 配位键) 和 ${molesNH4Cl.toFixed(2)} N_A 离子键`,
+        formulaLatex: '1 \\text{ mol NH}_4\\text{Cl} \\implies 4 \\text{ mol 共价键 (含 1 mol 配位键)} + \\text{NH}_4^+/\\text{Cl}^- \\text{离子晶体}',
+        correctAnswerSummary: `${val} ${effectiveUnit} NH₄Cl 含有 ${(molesNH4Cl * 4).toFixed(2)} N_A 个共价键 (含 ${molesNH4Cl.toFixed(2)} N_A 配位键)，共 ${(molesNH4Cl * 2).toFixed(2)} N_A 个阴阳离子`,
         stepByStepMatrix: [
           { stepName: '一审环境', checkTarget: '环境', pass: true, finding: '固态' },
           { stepName: '二审状态', checkTarget: '晶体', pass: true, finding: '离子晶体' },
-          { stepName: '三审结构', checkTarget: '配位键识别', pass: true, finding: 'NH₄⁺ 含有 1 个配位键' },
+          { stepName: '三审结构', checkTarget: '配位键识别', pass: true, finding: 'NH₄⁺ 含有 1 个配位键（四键完全等效）' },
           { stepName: '四审过程', checkTarget: '变化', pass: true, finding: '无' },
           { stepName: '五审电子', checkTarget: '电子', pass: true, finding: '28 mol 电子' },
         ],
       }
     }
 
-    default: {
-      const moles = unit === 'g' ? val / 12 : val
+    case 'diamond': {
+      const moles = effectiveUnit === 'g' ? val / 12 : val
       return {
-        title: `${item} 晶体结构与微粒统计`,
-        subtitle: `1 mol C 形成 2 mol C-C 键 (金刚石) / 1.5 mol C-C 键 (石墨)`,
+        title: '金刚石 (C) 晶体均摊键数统计',
+        subtitle: '1 mol C (12 g 金刚石) 形成 2 mol C-C 单键（sp³ 正四面体网状）',
         isStateGas: false,
         physicalState: '固态',
         vmValue: 22.4,
         particleStats: [
-          { label: 'C-C 共价键数 (金刚石)', theoreticalMoles: moles * 4, actualMoles: moles * 2, unit: 'N_A', isTrap: true, trapExplanation: '每个 C 原子与 4 个 C 相连，但每条 C-C 键由 2 个 C 共用 ➔ 4 * 1/2 = 2 mol 键！' },
-          { label: 'C-C 共价键数 (石墨)', theoreticalMoles: moles * 3, actualMoles: moles * 1.5, unit: 'N_A', isTrap: true, trapExplanation: '石墨中每个 C 与 3 个 C 相连，每条键 2 个 C 共用 ➔ 3 * 1/2 = 1.5 mol 键！' },
+          {
+            label: 'C-C 共价键数 (金刚石)',
+            theoreticalMoles: moles * 4,
+            actualMoles: moles * 2,
+            unit: 'N_A',
+            isTrap: true,
+            trapExplanation: '每个 C 原子与 4 个 C 相连，每条 C-C 键由 2 个 C 共用 ➔ 4 × 1/2 = 2 mol 键！',
+          },
         ],
-        trapType: '碳晶体均摊键数陷阱',
-        trapBadge: '均摊法键数',
+        trapType: '共价晶体均摊键数陷阱',
+        trapBadge: '1 mol C = 2 mol 键',
         trapLevel: 'high',
         keyPointAnalysis: [
-          '金刚石：每个 C 形成 4 个 C-C 单键，均摊后 1 mol C 对应 2 mol C-C 键 (12 g 金刚石含 2 mol C-C 键)。',
-          '石墨：六边形网状，每个 C 形成 3 个 C-C 键，均摊后 1 mol C 对应 1.5 mol C-C 键 (12 g 石墨含 1.5 mol C-C 键)。',
+          '金刚石为三维正四面体共价晶体，碳原子采用 sp³ 杂化，每个 C 形成 4 个 C-C 单键。',
+          '均摊法：1 mol C (12 g 金刚石) 含 4 × 1/2 = 2 mol C-C 键。',
         ],
-        formulaLatex: '\\text{金刚石: } 1 \\text{ mol C } \\implies 2 \\text{ mol C-C 键} \\quad | \\quad \\text{石墨: } 1 \\text{ mol C } \\implies 1.5 \\text{ mol C-C 键}',
-        correctAnswerSummary: `12 g 金刚石含 2 N_A 个 C-C 键，12 g 石墨含 1.5 N_A 个 C-C 键`,
+        formulaLatex: '\\text{金刚石: } 1 \\text{ mol C } (12 \\text{ g}) \\implies 4 \\times \\frac{1}{2} = 2 \\text{ mol C-C 键}',
+        correctAnswerSummary: `${val} ${effectiveUnit} 金刚石含有 ${(moles * 2).toFixed(2)} N_A 个 C-C 键`,
         stepByStepMatrix: [
           { stepName: '一审环境', checkTarget: '环境', pass: true, finding: '固态' },
-          { stepName: '二审状态', checkTarget: '晶体', pass: true, finding: '共价晶体/混合晶体' },
-          { stepName: '三审结构', checkTarget: '均摊计算', pass: false, finding: '注意 1/2 共享系数！' },
+          { stepName: '二审状态', checkTarget: '晶体', pass: true, finding: '共价晶体' },
+          { stepName: '三审结构', checkTarget: '均摊计算', pass: false, finding: '每个 C 连 4 键，均摊系数 1/2 ➔ 2 mol 键！' },
           { stepName: '四审过程', checkTarget: '变化', pass: true, finding: '无' },
-          { stepName: '五审电子', checkTarget: '价电子', pass: true, finding: '无自由电子' },
+          { stepName: '五审电子', checkTarget: '价电子', pass: true, finding: 'sp³ 杂化无自由移动电子' },
+        ],
+      }
+    }
+
+    case 'graphite':
+    default: {
+      const moles = effectiveUnit === 'g' ? val / 12 : val
+      return {
+        title: '石墨 (C) 层状晶体均摊键数统计',
+        subtitle: '1 mol C (12 g 石墨) 层内形成 1.5 mol C-C 键（sp² 层状混合晶体）',
+        isStateGas: false,
+        physicalState: '固态',
+        vmValue: 22.4,
+        particleStats: [
+          {
+            label: 'C-C 共价键数 (石墨)',
+            theoreticalMoles: moles * 3,
+            actualMoles: moles * 1.5,
+            unit: 'N_A',
+            isTrap: true,
+            trapExplanation: '石墨层内每个 C 与 3 个 C 相连，每条键由 2 个 C 共用 ➔ 3 × 1/2 = 1.5 mol 键！',
+          },
+        ],
+        trapType: '混合晶体均摊键数陷阱',
+        trapBadge: '1 mol C = 1.5 mol 键',
+        trapLevel: 'high',
+        keyPointAnalysis: [
+          '石墨呈平面六元环网状，碳原子采用 sp² 杂化，每个 C 与 3 个相邻 C 成键。',
+          '均摊法：1 mol C (12 g 石墨) 含 3 × 1/2 = 1.5 mol C-C 键（同时每个六元环平均占 2 个 C 原子、3 条 C-C 键）。',
+        ],
+        formulaLatex: '\\text{石墨: } 1 \\text{ mol C } (12 \\text{ g}) \\implies 3 \\times \\frac{1}{2} = 1.5 \\text{ mol C-C 键}',
+        correctAnswerSummary: `${val} ${effectiveUnit} 石墨含有 ${(moles * 1.5).toFixed(2)} N_A 个 C-C 键`,
+        stepByStepMatrix: [
+          { stepName: '一审环境', checkTarget: '环境', pass: true, finding: '固态' },
+          { stepName: '二审状态', checkTarget: '晶体', pass: true, finding: '混合晶体（层状晶体）' },
+          { stepName: '三审结构', checkTarget: '均摊计算', pass: false, finding: '每个 C 连 3 键，均摊系数 1/2 ➔ 1.5 mol 键！' },
+          { stepName: '四审过程', checkTarget: '变化', pass: true, finding: '无' },
+          { stepName: '五审电子', checkTarget: '价电子', pass: true, finding: 'sp² 杂化含层内离域大 π 键自由电子（可导电）' },
         ],
       }
     }

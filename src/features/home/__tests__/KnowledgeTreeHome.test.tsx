@@ -3,6 +3,15 @@ import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import '@testing-library/jest-dom'
 
+const mockNavigate = vi.fn()
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom')
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  }
+})
+
 vi.mock('@/data/knowledgeTree', () => ({
   knowledgeTree: [
     {
@@ -44,6 +53,7 @@ vi.mock('@/data/knowledgeTree', () => ({
       module: '化学实验',
       importance: 'gaokao',
       animationIds: [],
+      relatedModelIds: ['model-titration-error-purity'],
     },
   ],
   resolveAnimationIds: vi.fn(),
@@ -118,14 +128,24 @@ describe('KnowledgeTreeHome 高考化学主页知识地图组件测试', () => {
     const { fireEvent, act } = await import('@testing-library/react')
     renderWithRouter(<KnowledgeTreeHome />)
     await waitFor(() => {
-      expect(screen.getByText('🎯 视角 B：高考高频解题母题与记忆矩阵')).toBeInTheDocument()
+      expect(screen.getByText('视角 B：高考高频解题母题与记忆矩阵')).toBeInTheDocument()
     })
-    const gaokaoTab = screen.getByText('🎯 视角 B：高考高频解题母题与记忆矩阵')
+    const gaokaoTab = screen.getByText('视角 B：高考高频解题母题与记忆矩阵')
     act(() => {
       fireEvent.click(gaokaoTab)
     })
     await waitFor(() => {
       expect(screen.getByText('高考高频解题母题与记忆强化矩阵')).toBeInTheDocument()
     })
+  })
+
+  it('无 animationIds 但有关联高考母题的规划中节点也展示可直达母题徽章', async () => {
+    const { fireEvent } = await import('@testing-library/react')
+    mockNavigate.mockClear()
+    renderWithRouter(<KnowledgeTreeHome />)
+    const badge = await screen.findByText('高考母题 (1)')
+    expect(badge).toBeInTheDocument()
+    fireEvent.click(badge)
+    expect(mockNavigate).toHaveBeenCalledWith('/gaokao-tool/model-titration-error-purity')
   })
 })

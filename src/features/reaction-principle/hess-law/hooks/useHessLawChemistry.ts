@@ -63,7 +63,7 @@ export const HESS_PRESETS: HessGroupPreset[] = [
     title: '水蒸气凝结与液态水生成热',
     targetFormula: 'H₂(g) + ½O₂(g) = H₂O(l)',
     targetDeltaH: -285.8,
-    explanation: '结合气态水生成热与水蒸气液化潜热，推导燃烧热中生成 stable 状态 H₂O(l) 的焓变。',
+    explanation: '结合气态水生成热与水蒸气液化潜热，推导燃烧热中生成稳定态 H₂O(l) 的焓变。',
     equations: [
       {
         id: 'eq-1',
@@ -80,6 +80,31 @@ export const HESS_PRESETS: HessGroupPreset[] = [
         productsText: 'H₂O(l)',
         deltaH: -44.0,
         defaultK: 1,
+      },
+    ],
+  },
+  {
+    id: 'methane-combustion',
+    title: '甲烷燃烧热推导 (产物水态差异陷阱)',
+    targetFormula: 'CH₄(g) + 2O₂(g) = CO₂(g) + 2H₂O(l)',
+    targetDeltaH: -890.3,
+    explanation: '燃烧热要求 1 mol 可燃物完全燃烧生成稳定氧化物 H₂O(l)；由气态水反应热叠加 2 倍液化潜热并消去 2H₂O(g) 即可精准求解。',
+    equations: [
+      {
+        id: 'eq-1',
+        label: '① CH₄(g) + 2O₂(g) = CO₂(g) + 2H₂O(g)',
+        reactantsText: 'CH₄(g) + 2O₂(g)',
+        productsText: 'CO₂(g) + 2H₂O(g)',
+        deltaH: -802.3,
+        defaultK: 1,
+      },
+      {
+        id: 'eq-2',
+        label: '② H₂O(g) = H₂O(l)',
+        reactantsText: 'H₂O(g)',
+        productsText: 'H₂O(l)',
+        deltaH: -44.0,
+        defaultK: 2,
       },
     ],
   },
@@ -138,6 +163,21 @@ export const BOND_PRESETS: MoleculeBondPreset[] = [
     calculatedDeltaH: -2982,
     trapWarning: '【高考顶级陷阱！】1 mol P₄ (正四面体) 中含有 6 mol P-P 键！1 mol P₄O₁₀ 中含有 12 mol P-O 单键和 4 mol P=O 双键！',
   },
+  {
+    id: 'ch4-combustion',
+    name: '甲烷完全燃烧 (双键与键数统计)',
+    formula: 'CH₄(g) + 2O₂(g) = CO₂(g) + 2H₂O(g)',
+    reactantBonds: [
+      { name: 'C-H 键 (1mol CH₄)', bondEnergy: 413, count: 4 },
+      { name: 'O=O 双键', bondEnergy: 498, count: 2 },
+    ],
+    productBonds: [
+      { name: 'C=O 双键 (1mol CO₂)', bondEnergy: 799, count: 2 },
+      { name: 'O-H 键 (2mol H₂O)', bondEnergy: 463, count: 4 },
+    ],
+    calculatedDeltaH: -802,
+    trapWarning: '留意键级与计量数：1 mol CO₂ 含 2 mol C=O 双键；2 mol H₂O(g) 共含 4 mol O-H 键，且此处产物为气态水非液态水。',
+  },
 ]
 
 /** 默认反应高程数据 (严格自洽：决速步为活化能最大步，且为催化路径最高峰) */
@@ -160,6 +200,28 @@ export function useHessLawChemistry(params: HessLawParams) {
   const hessCalculated = useMemo(() => {
     let totalDeltaH = 0
     const coeffs = [params.k1, params.k2]
+    const parseCoeff = (token: string): { coeff: number; species: string } => {
+      const trimmed = token.trim()
+      if (trimmed.startsWith('½')) {
+        return { coeff: 0.5, species: trimmed.slice(1).trim() }
+      }
+      const fracMatch = trimmed.match(/^(\d+)\s*\/\s*(\d+)\s*(.+)$/)
+      if (fracMatch) {
+        return { coeff: Number(fracMatch[1]) / Number(fracMatch[2]), species: fracMatch[3].trim() }
+      }
+      const numMatch = trimmed.match(/^(\d+(?:\.\d+)?)\s+(.+)$/)
+      if (numMatch) {
+        return { coeff: Number(numMatch[1]), species: numMatch[2].trim() }
+      }
+      const attachedNumMatch = trimmed.match(/^(\d+(?:\.\d+)?)([A-Z(].*)$/)
+      if (attachedNumMatch) {
+        return { coeff: Number(attachedNumMatch[1]), species: attachedNumMatch[2].trim() }
+      }
+      return { coeff: 1, species: trimmed }
+    }
+
+    const netSpeciesBalance = new Map<string, number>()
+    const seenSpecies = new Set<string>()
     const stepsInfo = currentHessGroup.equations.map((eq, idx) => {
       const k = coeffs[idx] ?? eq.defaultK
       const stepH = k * eq.deltaH
@@ -173,6 +235,22 @@ export function useHessLawChemistry(params: HessLawParams) {
           : k < 0
           ? `反向 ${factorPrefix}${eq.productsText} = ${eq.reactantsText}${factorSuffix}`
           : `${factorPrefix}${eq.reactantsText} = ${eq.productsText}${factorSuffix}`
+
+      if (k !== 0) {
+        for (const item of eq.reactantsText.split('+')) {
+          const { coeff, species } = parseCoeff(item)
+          if (!species) continue
+          seenSpecies.add(species)
+          netSpeciesBalance.set(species, (netSpeciesBalance.get(species) ?? 0) - k * coeff)
+        }
+        for (const item of eq.productsText.split('+')) {
+          const { coeff, species } = parseCoeff(item)
+          if (!species) continue
+          seenSpecies.add(species)
+          netSpeciesBalance.set(species, (netSpeciesBalance.get(species) ?? 0) + k * coeff)
+        }
+      }
+
       return {
         equation: eq,
         k,
@@ -181,12 +259,19 @@ export function useHessLawChemistry(params: HessLawParams) {
       }
     })
 
-    const isMatchTarget = Math.abs(totalDeltaH - currentHessGroup.targetDeltaH) < 0.1
+    const eliminatedIntermediates = Array.from(seenSpecies).filter(
+      (sp) => Math.abs(netSpeciesBalance.get(sp) ?? 0) < 1e-6
+    )
+    const isCoeffsMatched = stepsInfo.every((s) => Math.abs(s.k - s.equation.defaultK) < 1e-6)
+    const isMatchTarget =
+      Math.abs(totalDeltaH - currentHessGroup.targetDeltaH) < 0.1 && isCoeffsMatched
 
     return {
       totalDeltaH,
       stepsInfo,
       isMatchTarget,
+      isCoeffsMatched,
+      eliminatedIntermediates,
     }
   }, [currentHessGroup, params.k1, params.k2])
 

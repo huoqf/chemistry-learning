@@ -39,7 +39,7 @@ export function KnowledgeTreeHome() {
   }, [setSearchParams])
 
   const { masteredKnowledge, setTotalCounts } = useProgressStore()
-  const [, setRegistryReady] = useState(false)
+  const [registryReady, setRegistryReady] = useState(false)
 
   // 视角切换：互斥单选，注入 radiogroup 语义（保留 Banner 视觉与不同选中色）
   const viewKeys = ['tree', 'gaokao'] as const
@@ -70,6 +70,7 @@ export function KnowledgeTreeHome() {
 
   // 统计节点
   const stats = useMemo(() => {
+    void registryReady
     let activeCount = 0
     knowledgeTree.forEach((node) => {
       if (getNodeRoute(node)) {
@@ -81,7 +82,19 @@ export function KnowledgeTreeHome() {
       active: activeCount,
       modules: 5,
     }
-  }, [])
+  }, [registryReady])
+
+  const handleGaokaoBadgeClick = useCallback(
+    (e: React.MouseEvent, relatedModelIds: string[]) => {
+      e.stopPropagation()
+      if (relatedModelIds.length === 1) {
+        navigate(`/gaokao-tool/${relatedModelIds[0]}`)
+      } else {
+        setViewMode('gaokao')
+      }
+    },
+    [navigate, setViewMode],
+  )
 
   // 按 5 大高考化学 module -> chapter 两级聚类
   const groupedData = useMemo(() => {
@@ -136,7 +149,7 @@ export function KnowledgeTreeHome() {
               }`}
             >
               <BookOpen className="w-4 h-4" />
-              📖 视角 A：按教材章节浏览 (传统树)
+              视角 A：按教材章节浏览 (传统树)
             </button>
             <button
               ref={setViewRef('gaokao')}
@@ -149,7 +162,7 @@ export function KnowledgeTreeHome() {
               }`}
             >
               <Target className="w-4 h-4" />
-              🎯 视角 B：高考高频解题母题与记忆矩阵
+              视角 B：高考高频解题母题与记忆矩阵
             </button>
           </div>
 
@@ -368,15 +381,12 @@ export function KnowledgeTreeHome() {
                                       )}
                                       {node.relatedModelIds && node.relatedModelIds.length > 0 && (
                                         <span
-                                          onClick={(e) => {
-                                            e.stopPropagation()
-                                            setViewMode('gaokao')
-                                          }}
+                                          onClick={(e) => handleGaokaoBadgeClick(e, node.relatedModelIds!)}
                                           className="text-[10px] px-1.5 py-0.5 rounded font-bold border border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100 transition-colors flex items-center gap-0.5 cursor-pointer"
                                           title="点击前往高考提分母题专题"
                                         >
                                           <Target size={10} className="text-amber-600" />
-                                          🎯 高考母题 ({node.relatedModelIds.length})
+                                          高考母题 ({node.relatedModelIds.length})
                                         </span>
                                       )}
                                       {node.interactionTags?.map((tag) => {
@@ -422,6 +432,16 @@ export function KnowledgeTreeHome() {
                                       <span className="text-[10px] px-1.5 py-0.5 rounded font-medium border border-neutral-200 bg-neutral-100 text-neutral-500">
                                         规划中
                                       </span>
+                                      {node.relatedModelIds && node.relatedModelIds.length > 0 && (
+                                        <span
+                                          onClick={(e) => handleGaokaoBadgeClick(e, node.relatedModelIds!)}
+                                          className="text-[10px] px-1.5 py-0.5 rounded font-bold border border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100 transition-colors flex items-center gap-0.5 cursor-pointer"
+                                          title="点击前往对应高考提分母题专题"
+                                        >
+                                          <Target size={10} className="text-amber-600" />
+                                          高考母题 ({node.relatedModelIds.length})
+                                        </span>
+                                      )}
                                       {node.interactionTags?.map((tag) => {
                                         const cfg = INTERACTION_MAP[tag]
                                         if (!cfg) return null

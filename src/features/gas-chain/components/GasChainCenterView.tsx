@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { AnimationSvgCanvas } from '@/components/Layout'
 import {
   ScoringCardSection,
@@ -17,6 +17,7 @@ import {
   WaterDisplacementCollectionApparatus,
 } from '@/components/Chemistry'
 import { useAnimationViewport, useSceneScale } from '@/hooks'
+import { useAnimationFrame } from '@/utils/animation'
 import {
   CANVAS_PRESETS,
   SCENE_COLORS,
@@ -100,6 +101,16 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
   const genLayout = getLayout('generator')
   const collLayout = getLayout('collection')
   const tailLayout = getLayout('tailgas')
+
+  const DRYING_NAME_MAP: Record<string, string> = {
+    'soda-lime': '碱石灰',
+    cacl2: '无水CaCl₂',
+    p2o5: 'P₂O₅',
+    'naoh-solid': '固体NaOH',
+  }
+  const toCircleNum = (n: number) => ['①', '②', '③', '④', '⑤', '⑥'][n - 1] ?? String(n)
+  const collStepNum = 2 + washingSteps.length
+  const tailStepNum = collStepNum + (collLayout ? 1 : 0)
 
   let gasColor = withAlpha(SCENE_COLORS.reagent.solution, 0.1)
   if (targetGas === 'Cl₂') gasColor = withAlpha(PHENOMENON_COLORS.cl2Gas, 0.6)
@@ -284,7 +295,7 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                         width={stepLayout.width}
                         height={stepLayout.height}
                         variant={step.reagent === 'cacl2' ? 'U-shape' : 'spherical'}
-                        desiccantName={step.reagent === 'soda-lime' ? '碱石灰' : 'CaCl₂'}
+                        desiccantName={DRYING_NAME_MAP[step.reagent] ?? step.reagent}
                         desiccantColor={
                           step.reagent === 'soda-lime'
                             ? SCENE_COLORS.reagent.precipitate
@@ -443,7 +454,7 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       fontSize={canvasSize.font(FONT.label)}
                       fontWeight="bold"
                     >
-                      ④ 气体收集
+                      {toCircleNum(collStepNum)} 气体收集
                     </text>
                     <text
                       x={0}
@@ -572,7 +583,7 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                             fontSize={canvasSize.font(FONT.annotation)}
                             fontWeight="bold"
                           >
-                            💥 深深深浸没: 脱离机制失效倒吸!
+                            💥 深深浸没: 脱离机制失效倒吸!
                           </text>
                         </g>
                       )}
@@ -650,7 +661,7 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
                       fontSize={canvasSize.font(FONT.label)}
                       fontWeight="bold"
                     >
-                      ⑤ 尾气处理
+                      {toCircleNum(tailStepNum)} 尾气处理
                     </text>
                     <text
                       x={0}
@@ -678,28 +689,16 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
               )}
 
               {/* ─── 导管路由：纯绝对坐标 SVG path，零 transform 外包裹 ─── */}
-              {routes.map((rt) => (
-                <g key={rt.id}>
-                  {/* 外壁玻璃轮廓 */}
-                  <path
-                    d={rt.pathD}
-                    fill="none"
-                    stroke={SCENE_COLORS.materials.glassBorder}
-                    strokeWidth={6}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  {/* 内部高光空腔 */}
-                  <path
-                    d={rt.pathD}
-                    fill="none"
-                    stroke={withAlpha(SCENE_COLORS.materials.glass, 0.85)}
-                    strokeWidth={3}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </g>
-              ))}
+              <AnimatedGasRoutes
+                routes={routes}
+                hasDangerAlert={hasDangerAlert}
+                dangerType={dangerType}
+                hasTailLayout={Boolean(tailLayout)}
+                targetGas={targetGas}
+                collection={collection}
+                flowRate={flowRate}
+                playing={viewMode === 0 && panelMode === 'chain'}
+              />
             </AnimationSvgCanvas>
           </div>
         </div>
@@ -724,5 +723,95 @@ export const GasChainCenterView: React.FC<GasChainCenterViewProps> = ({
         </div>
       )}
     </div>
+  )
+}
+
+interface AnimatedGasRouteItem {
+  id: string
+  pathD: string
+}
+
+interface AnimatedGasRoutesProps {
+  routes: AnimatedGasRouteItem[]
+  hasDangerAlert: boolean
+  dangerType: string | undefined
+  hasTailLayout: boolean
+  targetGas: string
+  collection: string
+  flowRate: number
+  playing: boolean
+}
+
+function AnimatedGasRoutes({
+  routes,
+  hasDangerAlert,
+  dangerType,
+  hasTailLayout,
+  targetGas,
+  collection,
+  flowRate,
+  playing,
+}: AnimatedGasRoutesProps) {
+  const [flowOffset, setFlowOffset] = useState(0)
+  const hasSiphon = Boolean(hasDangerAlert && dangerType === 'siphon' && hasTailLayout)
+  const activeFlow = flowRate > 0 ? flowRate : hasSiphon ? 30 : 0
+
+  useAnimationFrame(
+    (deltaTime) => {
+      const speedFactor = Math.max(0.25, activeFlow / 50)
+      setFlowOffset((prev) => (prev + deltaTime * 0.025 * speedFactor) % 32)
+    },
+    { playing: playing && (flowRate > 0 || hasSiphon) },
+  )
+
+  return (
+    <>
+      {routes.map((rt, routeIdx) => {
+        const isSiphonRoute = Boolean(hasSiphon && routeIdx === routes.length - 1)
+        const shouldAnimate = flowRate > 0 || isSiphonRoute
+        const activeStreamColor = isSiphonRoute
+          ? CANVAS_COLORS.alertRed
+          : targetGas === 'Cl₂'
+            ? withAlpha(PHENOMENON_COLORS.cl2Gas, 0.9)
+            : targetGas === 'NO₂' || (targetGas === 'NO' && collection !== 'water-displacement')
+              ? withAlpha(PHENOMENON_COLORS.no2Gas, 0.9)
+              : withAlpha(CHEMISTRY_COLORS.concentration, 0.8)
+        return (
+          <g key={rt.id}>
+            {/* 外壁玻璃轮廓 */}
+            <path
+              d={rt.pathD}
+              fill="none"
+              stroke={SCENE_COLORS.materials.glassBorder}
+              strokeWidth={6}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            {/* 内部高光空腔 */}
+            <path
+              d={rt.pathD}
+              fill="none"
+              stroke={withAlpha(SCENE_COLORS.materials.glass, 0.85)}
+              strokeWidth={3}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            {/* 动态气流脉冲虚线（负压倒吸时末段呈红色反向流） */}
+            {shouldAnimate && (
+              <path
+                d={rt.pathD}
+                fill="none"
+                stroke={activeStreamColor}
+                strokeWidth={isSiphonRoute ? 2.8 : 2.2}
+                strokeDasharray="6 10"
+                strokeDashoffset={isSiphonRoute ? flowOffset : -flowOffset}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            )}
+          </g>
+        )
+      })}
+    </>
   )
 }

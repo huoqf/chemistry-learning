@@ -29,7 +29,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Grid',
     badgeText: '记忆矩阵',
     badgeColor: 'bg-rose-100 text-rose-800 border-rose-200',
-    relatedKnowledgeIds: ['iron', 'copper', 'sulfur', 'nitrogen', 'chlorine', 'aluminum', 'sodium'],
+    relatedKnowledgeIds: ['iron', 'copper', 'sulfur', 'nitrogen', 'chlorine', 'aluminum', 'sodium', 'silicon', 'manganese-chromium', 'redox-equation'],
     examPointSummary: [
       '元素周期表前四周期全主族+重金属工业流程元素 (40 种) 价类网格全覆盖',
       '主族非金属 (H/B/C/Si/N/P/As/O/S/Se/F/Cl/Br/I) 与金属 (Li~Bi, Ti~W) 转化',
@@ -41,12 +41,12 @@ export const gaokaoModels: GaokaoModelNode[] = [
     category: 'memory-matrix',
     title: '专题二：离子特征检验与共存互斥矩阵',
     subtitle: '无机定性分析·特征鉴别与隐蔽条件',
-    description: '收录高考 16 大核心阴阳离子特征检验特效试剂、现象与干扰排除，支持多离子共存智能冲突检测引擎。',
+    description: '收录高考 33 大核心阴阳离子特征检验特效试剂、现象与干扰排除，支持多离子共存智能冲突检测引擎。',
     toolRoute: '/gaokao-tool/model-ion-matrix',
     iconName: 'FlaskConical',
     badgeText: '离子检验',
     badgeColor: 'bg-blue-100 text-blue-800 border-blue-200',
-    relatedKnowledgeIds: ['iron', 'aluminum', 'copper', 'sulfur'],
+    relatedKnowledgeIds: ['iron', 'aluminum', 'copper', 'sulfur', 'ion-identification', 'ion-coexistence', 'ionic-equation'],
     examPointSummary: [
       'Fe³⁺/Fe²⁺/Al³⁺/Cu²⁺/NH₄⁺/SO₄²⁻/Cl⁻/I⁻ 特征检验与标准答题句式',
       '沉淀、气体、弱电解质、氧化还原、剧烈双水解共存互斥规则排查',
@@ -63,7 +63,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Dna',
     badgeText: '官能团定量',
     badgeColor: 'bg-pink-100 text-pink-800 border-pink-200',
-    relatedKnowledgeIds: ['carboxylic-acid-ester', 'ethylene', 'organic-synthesis'],
+    relatedKnowledgeIds: ['carboxylic-acid-ester', 'ethylene', 'organic-synthesis', 'alcohol-phenol', 'aldehyde', 'organic-spectroscopy', 'halogenated-hydrocarbon'],
     examPointSummary: [
       '酚羟基 vs 羧基与 Na/NaOH/NaHCO₃ 反应的定性与定量差异 (阿司匹林母题)',
       '1 mol 酚酯水解消耗 2 mol NaOH 极值陷阱',
@@ -82,7 +82,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'TestTube',
     badgeText: '试剂滴加',
     badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
-    relatedKnowledgeIds: ['iron', 'aluminum', 'copper', 'precipitation-equilibrium'],
+    relatedKnowledgeIds: ['iron', 'aluminum', 'copper', 'precipitation-equilibrium', 'ionic-equation', 'salt-hydrolysis'],
     examPointSummary: [
       'Fe(OH)₂ 被空气中氧气氧化为 Fe(OH)₃ 的现象演变与防氧化三要素',
       'Al³⁺ 滴加强碱先沉淀后溶解的 3:1 定量关系与强弱碱图像比对',
@@ -100,7 +100,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'GitCompare',
     badgeText: '易错辨析',
     badgeColor: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-    relatedKnowledgeIds: ['sulfur', 'nitrogen', 'separation-purification', 'titration'],
+    relatedKnowledgeIds: ['sulfur', 'nitrogen', 'separation-purification', 'titration', 'experiment-design', 'lab-safety', 'ion-identification'],
     examPointSummary: [
       '沉淀洗涤、洗净检验、气密性检验、滴定终点判定 6 大标准答题规范',
       'SO₂ (化合结合)、Cl₂ (强氧化性)、活性炭 (物理吸附) 漂白机制对比',
@@ -119,7 +119,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Zap',
     badgeText: '水溶液平衡',
     badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
-    relatedKnowledgeIds: ['titration', 'chemical-conservation', 'ph-calculation'],
+    relatedKnowledgeIds: ['titration', 'chemical-conservation', 'ph-calculation', 'salt-hydrolysis', 'ionization-equilibrium', 'water-ionization', 'weak-electrolyte'],
     examPointSummary: [
       '滴定突跃点与指示剂变色范围 (酚酞/甲基橙) 的选择逻辑',
       '水溶液中电荷守恒、物料守恒与质子守恒推导',
@@ -136,7 +136,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Split',
     badgeText: '双池对比',
     badgeColor: 'bg-blue-100 text-blue-800 border-blue-200',
-    relatedKnowledgeIds: ['primary-cell', 'electrolysis'],
+    relatedKnowledgeIds: ['primary-cell', 'electrolysis', 'electrochemical-application', 'metal-corrosion'],
     examPointSummary: [
       '正负极 / 阴阳极电极反应式书写与电子得失',
       '交换膜 (阳离子膜/阴离子膜) 下微粒定向迁移方向',
@@ -153,7 +153,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Atom',
     badgeText: '晶胞均摊',
     badgeColor: 'bg-purple-100 text-purple-800 border-purple-200',
-    relatedKnowledgeIds: ['unit-cell-calculation', 'crystal-structure'],
+    relatedKnowledgeIds: ['unit-cell-calculation', 'crystal-structure', 'ionic-crystal', 'atomic-crystal', 'molecular-crystal', 'metallic-crystal'],
     examPointSummary: [
       '均摊法计算单个晶胞内各类原子/离子净个数 N',
       '晶胞边长 a 与原子半径 r 的几何关系 (面心立方 / 体心立方)',
@@ -170,7 +170,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'FlaskConical',
     badgeText: '反应机理',
     badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-    relatedKnowledgeIds: ['le-chatelier', 'rate-theory'],
+    relatedKnowledgeIds: ['le-chatelier', 'rate-theory', 'chemical-equilibrium', 'equilibrium-constant', 'kp-calculation', 'rate-factors'],
     examPointSummary: [
       '活化能 E_a 与催化剂对正逆反应速率的同等影响',
       '勒夏特列原理在 V/P/T 改变时的平衡移动方向判定',
@@ -187,7 +187,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Atom',
     badgeText: '立体构型',
     badgeColor: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-    relatedKnowledgeIds: ['vsepr', 'hybridization'],
+    relatedKnowledgeIds: ['vsepr', 'hybridization', 'molecular-polarity', 'chemical-bond-theory', 'coordination-bond'],
     examPointSummary: [
       '价层电子对互斥模型 (VSEPR) 推导分子空间构型',
       '中心原子杂化类型 (sp, sp², sp³) 的快速计算判别',
@@ -204,7 +204,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Dna',
     badgeText: '断键重组',
     badgeColor: 'bg-pink-100 text-pink-800 border-pink-200',
-    relatedKnowledgeIds: ['carboxylic-acid-ester', 'ethylene', 'isomerism'],
+    relatedKnowledgeIds: ['carboxylic-acid-ester', 'ethylene', 'isomerism', 'ethanol', 'acetic-acid', 'alcohol-phenol', 'aldehyde', 'polymerization', 'chirality'],
     examPointSummary: [
       '酯化反应 18O 同位素标记法实验结论与断键位置',
       '烯烃/炔烃亲电加成反应马氏规则与断键',
@@ -221,7 +221,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Zap',
     badgeText: '盖斯定律',
     badgeColor: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-    relatedKnowledgeIds: ['hess-law', 'enthalpy', 'thermochemical-equation'],
+    relatedKnowledgeIds: ['hess-law', 'enthalpy', 'thermochemical-equation', 'reaction-energy'],
     examPointSummary: [
       '盖斯定律方程式乘倍、反向变号与代数相加',
       '微观键能 ΔH = 反应物键能和 - 生成物键能和',
@@ -238,7 +238,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Atom',
     badgeText: '位构性推断',
     badgeColor: 'bg-violet-100 text-violet-800 border-violet-200',
-    relatedKnowledgeIds: ['electron-configuration', 'periodic-law', 'periodic-table'],
+    relatedKnowledgeIds: ['electron-configuration', 'periodic-law', 'periodic-table', 'atomic-structure'],
     examPointSummary: [
       '基态原子电子排布式、价层电子排布与轨道表示式',
       '同周期第一电离能洪特规则半充满 (如 N > O) 反常辨析',
@@ -255,7 +255,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Grid',
     badgeText: 'N_A 陷阱',
     badgeColor: 'bg-rose-100 text-rose-800 border-rose-200',
-    relatedKnowledgeIds: ['avogadro-constant', 'gas-molar-volume', 'ionization-equilibrium'],
+    relatedKnowledgeIds: ['avogadro-constant', 'gas-molar-volume', 'ionization-equilibrium', 'amount-of-substance', 'molar-mass', 'molar-concentration', 'redox-electron-transfer', 'salt-hydrolysis'],
     examPointSummary: [
       '标准状况 (0℃, 101 kPa) 下非气体物质聚集状态陷阱',
       '弱酸弱碱电离与盐类水解微粒数守恒计算',
@@ -272,7 +272,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Dna',
     badgeText: '逆合成推断',
     badgeColor: 'bg-pink-100 text-pink-800 border-pink-200',
-    relatedKnowledgeIds: ['organic-synthesis', 'carboxylic-acid-ester', 'halogenated-hydrocarbon'],
+    relatedKnowledgeIds: ['organic-synthesis', 'carboxylic-acid-ester', 'halogenated-hydrocarbon', 'aldehyde', 'alcohol-phenol', 'polymerization', 'synthetic-polymer'],
     examPointSummary: [
       '目标分子的逆合成切断 (Bond Disconnection) 策略',
       '活泼官能团 (-OH, -NH₂, C=C) 的保护与脱保护反应',
@@ -291,7 +291,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Layers',
     badgeText: '气路全流程',
     badgeColor: 'bg-orange-100 text-orange-800 border-orange-200',
-    relatedKnowledgeIds: ['gas-preparation', 'separation-purification'],
+    relatedKnowledgeIds: ['gas-preparation', 'separation-purification', 'lab-instruments', 'experiment-design'],
     examPointSummary: [
       '气体制备完整顺序: 发生 → 净化除杂 → 干燥 → 收集 → 尾气处理',
       '洗气瓶长进短出与干燥管大进小出操作原则',
@@ -308,7 +308,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'Grid',
     badgeText: '工艺流程',
     badgeColor: 'bg-teal-100 text-teal-800 border-teal-200',
-    relatedKnowledgeIds: ['iron', 'aluminum', 'precipitation-equilibrium'],
+    relatedKnowledgeIds: ['iron', 'aluminum', 'precipitation-equilibrium', 'manganese-chromium', 'copper', 'recrystallization', 'separation-purification', 'hydrolysis-application'],
     examPointSummary: [
       '调 pH 沉淀分离金属离子的 Ksp 计算与沉淀控制范围',
       '浸出率影响因素 (温度/浓度/粉碎粒度/搅拌)',
@@ -325,7 +325,7 @@ export const gaokaoModels: GaokaoModelNode[] = [
     iconName: 'FlaskConical',
     badgeText: '滴定误差',
     badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
-    relatedKnowledgeIds: ['titration', 'quantitative-analysis', 'solution-preparation'],
+    relatedKnowledgeIds: ['titration', 'quantitative-analysis', 'solution-preparation', 'redox-equation'],
     examPointSummary: [
       '滴定管装液前润洗与读数视角仰视俯视误差几何推导',
       '样品纯度 w% 与质量分数规范计算步骤模版',

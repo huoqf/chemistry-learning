@@ -207,10 +207,10 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
     // 3. 离子浓度大小排序（由同源解动态生成，杜绝「文案与数值互斥」）
     const concOrderingLatex = buildOrdering(current.values, orderingKeys)
 
-    // 4. 区域判定（收窄特例窗口至 ±0.01，避免缓冲过渡区误判为严格半中和/计量点）
-    const inHalf = Math.abs(vRatio - 0.5) <= 0.015
-    const atEquiv = Math.abs(vRatio - 1.0) <= 0.015
-    const over = vRatio > 1.015
+    // 4. 区域判定（严格特例窗口 ±0.002，防止半中和与缓冲过渡物料比例与质子式口径冲突）
+    const inHalf = Math.abs(vRatio - 0.5) < 0.002
+    const atEquiv = Math.abs(vRatio - 1.0) < 0.002
+    const over = vRatio > 1.002
     const k = vRatio
 
     let orderingExplanation = ''
@@ -233,7 +233,7 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
         explanation: 'A 元素全部来源于初始弱酸 HA；Na 元素全部来源于滴加的 NaOH。',
       }
 
-      if (vRatio < 0.005) {
+      if (vRatio < 0.002) {
         orderingExplanation =
           '滴定起点：溶液中只有弱酸 HA，仅少量电离出 H⁺ 与 A⁻，故分子浓度远大于离子浓度。'
         protonEq = {
@@ -243,7 +243,9 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
         }
       } else if (inHalf) {
         orderingExplanation =
-          '半中和点：HA 与 NaA 按 1:1 混合成缓冲溶液。弱酸 HA 的电离程度大于 A⁻ 的水解程度，故 c(A⁻) 略大于 c(Na⁺)，且溶液显弱酸性（pH ≈ pKa）。'
+          pH < 6.95
+            ? '半中和点：HA 与 NaA 按 1:1 混合成缓冲溶液。弱酸 HA 的电离程度大于 A⁻ 的水解程度，故 c(A⁻) 略大于 c(Na⁺)，且溶液显弱酸性（pH ≈ pKa）。'
+            : '半中和点：HA 与 NaA 按 1:1 混合成缓冲溶液（pH ≈ pKa）。'
         protonEq = {
           title: '质子守恒 (半中和点 1:1 混合液)',
           equationLatex:
@@ -261,8 +263,12 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
             '以 A⁻ 与 H₂O 为零水准：水电离出的 OH⁻ 一部分游离，一部分结合 H⁺ 生成 HA。',
         }
       } else if (over) {
+        const cOHCur = current.values.OH ?? 0
+        const cACur = current.values.A ?? 0
         orderingExplanation =
-          '化学计量点之后：NaOH 过量，c(OH⁻) 由过量强碱主导，但主电解质 A⁻ 的浓度仍高于 OH⁻。'
+          cOHCur > cACur
+            ? '化学计量点之后：过量强碱占主导，溶液中 c(OH⁻) 已超过弱酸根 c(A⁻)，显强碱性。'
+            : '化学计量点之后：过量强碱抑制弱酸根水解，当前主电解质 c(A⁻) 仍高于 c(OH⁻)。'
         protonEq = {
           title: '质子守恒 (NaA + 过量 NaOH，已消去 c(Na⁺))',
           equationLatex: `c(\\text{OH}^-) = c(\\text{H}^+) + ${kFixed}c(\\text{HA}) + ${(k - 1).toFixed(2)}c(\\text{A}^-)`,
@@ -270,13 +276,19 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
             '由电荷守恒减去物料守恒（消去 c(Na⁺)）化简得到，过量 NaOH 的贡献已并入 c(OH⁻)。',
         }
       } else {
+        const acidBasePhrase =
+          pH < 6.95
+            ? '溶液显弱酸性'
+            : pH <= 7.05
+            ? '溶液已接近中性'
+            : '随碱量增加已呈弱碱性'
         orderingExplanation =
-          '缓冲过渡区：HA 与 NaA 共存，溶液由弱酸电离与酸根水解共同控制，仍显酸性。'
+          `缓冲过渡区：HA 与 NaA 共存，溶液由弱酸电离与酸根水解共同控制，${acidBasePhrase}。`
         protonEq = {
           title: '质子守恒 (HA–NaA 混合液，已消去 c(Na⁺))',
           equationLatex: `c(\\text{H}^+) + ${kFixed}c(\\text{HA}) = ${oneMinusK}c(\\text{A}^-) + c(\\text{OH}^-)`,
           explanation:
-            '由电荷守恒减去物料守恒（消去 c(Na⁺)）化简得到；半中和点时即化为 2c(H⁺) + c(HA) = c(A⁻) + 2c(OH⁻)。',
+            '由电荷守恒减去物料守恒（消去 c(Na⁺)）化简得到；严格半中和点时即化为 2c(H⁺) + c(HA) = c(A⁻) + 2c(OH⁻)。',
         }
       }
     } else if (systemType === 'strongAcidWeakBase') {
@@ -291,7 +303,7 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
         explanation: 'Cl 元素全部来源于滴加的 HCl；B 元素全部来源于初始弱碱。',
       }
 
-      if (vRatio < 0.005) {
+      if (vRatio < 0.002) {
         orderingExplanation =
           '滴定起点：溶液中只有弱碱 B，仅少量电离出 BH⁺ 与 OH⁻，故分子浓度远大于离子浓度。'
         protonEq = {
@@ -301,7 +313,9 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
         }
       } else if (inHalf) {
         orderingExplanation =
-          '半中和点：B 与 BHCl 按 1:1 混合成缓冲溶液。弱碱 B 的电离程度大于 BH⁺ 的水解程度，故 c(BH⁺) 略大于 c(Cl⁻)，且溶液显弱碱性（pH ≈ 14 − pKb）。'
+          pH > 7.05
+            ? '半中和点：B 与 BHCl 按 1:1 混合成缓冲溶液。弱碱 B 的电离程度大于 BH⁺ 的水解程度，故 c(BH⁺) 略大于 c(Cl⁻)，且溶液显弱碱性（pH ≈ 14 − pKb）。'
+            : '半中和点：B 与 BHCl 按 1:1 混合成缓冲溶液（pH ≈ 14 − pKb）。'
         protonEq = {
           title: '质子守恒 (半中和点 1:1 混合液)',
           equationLatex: 'c(\\text{BH}^+) + 2c(\\text{H}^+) = c(\\text{B}) + 2c(\\text{OH}^-)',
@@ -327,13 +341,19 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
             '由电荷守恒减去物料守恒（消去 c(Cl⁻)）化简得到，过量 HCl 的贡献已并入 c(H⁺)。',
         }
       } else {
+        const acidBasePhrase =
+          pH > 7.05
+            ? '溶液仍显弱碱性'
+            : pH >= 6.95
+            ? '溶液已接近中性'
+            : '随酸量增加已呈弱酸性'
         orderingExplanation =
-          '缓冲过渡区：B 与 BHCl 共存，溶液由弱碱电离与阳离子水解共同控制，仍显碱性。'
+          `缓冲过渡区：B 与 BHCl 共存，溶液由弱碱电离与阳离子水解共同控制，${acidBasePhrase}。`
         protonEq = {
           title: '质子守恒 (B–BHCl 混合液，已消去 c(Cl⁻))',
           equationLatex: `c(\\text{H}^+) + ${oneMinusK}c(\\text{BH}^+) = ${kFixed}c(\\text{B}) + c(\\text{OH}^-)`,
           explanation:
-            '由电荷守恒减去物料守恒（消去 c(Cl⁻)）化简得到；半中和点时即化为 c(BH⁺) + 2c(H⁺) = c(B) + 2c(OH⁻)。',
+            '由电荷守恒减去物料守恒（消去 c(Cl⁻)）化简得到；严格半中和点时即化为 c(BH⁺) + 2c(H⁺) = c(B) + 2c(OH⁻)。',
         }
       }
     } else {
@@ -357,7 +377,7 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
         }
         orderingExplanation =
           '恰好完全中和生成 NaCl 中性溶液：c(Na⁺) = c(Cl⁻)，且 c(H⁺) = c(OH⁻)。'
-      } else if (vRatio < 0.985) {
+      } else if (vRatio < 1.0) {
         protonEq = {
           title: '质子分布与余酸关系 (HCl 过量区)',
           equationLatex: 'c(\\text{H}^+) = [c(\\text{Cl}^-) - c(\\text{Na}^+)] + c(\\text{OH}^-)',
@@ -438,12 +458,22 @@ export function useTitrationChemistry(params: TitrationParams): TitrationChemist
       }
     }
 
-    // 指示剂选择逻辑：变色范围须落在突跃范围内，否则终点误差过大
+    // 指示剂选择逻辑：全区间落入突跃内最优；若变色起点(弱酸)/终点(弱碱)落入突跃范围且能精准指示计量点，也判定可选用
     if (indicatorLow > 0) {
-      const fits = indicatorLow >= jumpStartPH && indicatorHigh <= jumpEndPH
-      indicatorTip += fits
-        ? ` ✔ 该指示剂变色范围 (${indicatorLow} - ${indicatorHigh}) 完全落在突跃范围 (${jumpStartPH} - ${jumpEndPH}) 内，终点误差小，可选用。`
-        : ` ⚠ 该指示剂变色范围 (${indicatorLow} - ${indicatorHigh}) 未完全落在突跃范围 (${jumpStartPH} - ${jumpEndPH}) 内，本体系应更换指示剂。`
+      const fullFit = indicatorLow >= jumpStartPH && indicatorHigh <= jumpEndPH
+      const endpointInJump =
+        systemType === 'strongBaseWeakAcid'
+          ? indicatorLow >= jumpStartPH && indicatorLow <= jumpEndPH
+          : systemType === 'strongAcidWeakBase'
+          ? indicatorHigh >= jumpStartPH && indicatorHigh <= jumpEndPH
+          : indicatorLow <= jumpEndPH && indicatorHigh >= jumpStartPH
+      if (fullFit) {
+        indicatorTip += ` ✔ 该指示剂变色范围 (${indicatorLow} - ${indicatorHigh}) 完全落在突跃范围 (${jumpStartPH} - ${jumpEndPH}) 内，终点误差极小，可选用。`
+      } else if (endpointInJump) {
+        indicatorTip += ` ✔ 该指示剂变色终点区间部分落入突跃范围 (${jumpStartPH} - ${jumpEndPH}) 内，终点误差小，可选用。`
+      } else {
+        indicatorTip += ` ⚠ 该指示剂变色范围 (${indicatorLow} - ${indicatorHigh}) 未落入突跃范围 (${jumpStartPH} - ${jumpEndPH}) 内，本体系应更换指示剂。`
+      }
     }
 
     // 7. 全量采样（0 → 2 V_eq，101 点）：pH 曲线与 c-V 曲线共用同一批精确解

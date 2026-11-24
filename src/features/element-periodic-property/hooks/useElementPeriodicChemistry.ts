@@ -72,6 +72,8 @@ export function useElementPeriodicChemistry(params: ElementPeriodicParams) {
     // 该值同时驱动壳层图（AtomShellScene）高亮对应电子层，确保中屏两图共用同一跃迁定义，
     // 不会再出现"壳层图高亮一层、方框图从另一层移除"的模型打架。
     let excitationShell: number | null = null
+    let excitationTargetShell: number | null = null
+    let excitationTransitionLabel: string | null = null
     if (isExcited) {
       // ① 确定价电子激发源：
       //    - 若最外层存在已满占的 np⁶（稀有气体 Ne / Ar），最高占据轨道为 np（能量高于 ns），应从 np 激发；
@@ -111,6 +113,8 @@ export function useElementPeriodicChemistry(params: ElementPeriodicParams) {
         counts[src] -= 1
         counts[tgt] += 1
         excitationShell = bestN
+        excitationTargetShell = orbitals[tgt].n
+        excitationTransitionLabel = `${orbitals[src].label}→${orbitals[tgt].label}`
       }
     }
 
@@ -121,7 +125,17 @@ export function useElementPeriodicChemistry(params: ElementPeriodicParams) {
         `[orbital-boxes] 电子总数不守恒：Σ=${total} ≠ Z=${z}（${currentElement.symbol}），已回退为基态`
       )
       fillGround()
+      excitationShell = null
+      excitationTargetShell = null
+      excitationTransitionLabel = null
     }
+
+    // ③-b 按主量子数 n 实时汇总壳层电子数（基态与激发态均与轨道分布严格一致）
+    const maxN = orbitals.reduce((acc, o, i) => (counts[i] > 0 ? Math.max(acc, o.n) : acc), 1)
+    const shellLayers = Array.from({ length: maxN }, (_, idx) => {
+      const nVal = idx + 1
+      return orbitals.reduce((sum, o, i) => (o.n === nVal ? sum + counts[i] : sum), 0)
+    })
 
     // ④ 仅展示到最后一个已占据轨道所在子层为止（补齐该子层，如 2p 的 px/py/pz），避免大量空白轨道框
     let endIdx = -1
@@ -145,13 +159,16 @@ export function useElementPeriodicChemistry(params: ElementPeriodicParams) {
       })
       .slice(0, endIdx + 1)
 
-    return { boxes, excitationShell }
+    return { boxes, excitationShell, excitationTargetShell, excitationTransitionLabel, shellLayers }
   }, [currentElement, params.stateType])
 
   const orbitalBoxes = orbitalData.boxes
   // 激发态跃迁电子所在电子层主量子数 n（null = 基态或未发生跃迁）；
   // 由中屏壳层图与轨道方框图共用，保证两图"同一跃迁、同一层"。
   const excitationShell = orbitalData.excitationShell
+  const excitationTargetShell = orbitalData.excitationTargetShell
+  const excitationTransitionLabel = orbitalData.excitationTransitionLabel
+  const shellLayers = orbitalData.shellLayers
 
   // 同周期第一电离能对比列表 (周期 2 或 3)
   const periodIonizationData = useMemo(() => {
@@ -217,7 +234,7 @@ export function useElementPeriodicChemistry(params: ElementPeriodicParams) {
     } else {
       jumpDescription = `在 I₁~I₄ 数据窗口内相邻最大倍率仅 ${maxJumpRatio.toFixed(
         1
-      )} 倍（均 < ${JUMP_THRESHOLD} 倍），未见跨层突跃：${currentElement.symbol} 的最外层价电子数多于 4，真正的突跃出现在 I₄→I₅ 及以后，超出本题给定数据窗口，故不能仅凭本图判定价电子数。`
+      )} 倍（均 < ${JUMP_THRESHOLD} 倍），未见跨层突跃：${currentElement.symbol} 的最外层价电子数 ≥ 4，真正的突跃出现在 I₄→I₅ 及以后，超出本题给定数据窗口，故不能仅凭本图判定价电子数。`
     }
 
     return {
@@ -244,6 +261,9 @@ export function useElementPeriodicChemistry(params: ElementPeriodicParams) {
     currentElement,
     orbitalBoxes,
     excitationShell,
+    excitationTargetShell,
+    excitationTransitionLabel,
+    shellLayers,
     periodIonizationData,
     stepIonizationAnalysis,
     isoParticles: ISO_ELECTRON_SERIES[params.isoGroupFilter],

@@ -36,6 +36,18 @@ export const IonMatrixScene: React.FC<IonMatrixSceneProps> = ({
 
     const currentReagent = selectedReagent || selectedIon.reagentOptions?.[0]
     const reagentName = currentReagent ? currentReagent.name : selectedIon.testReagent.split(' ')[0]
+    const showNh4Lamp = selectedIon.id === 'NH4+' && dropCount > 0 && currentReagent?.id === 'nh4-naoh-heat'
+    const showNh4Litmus =
+      selectedIon.id === 'NH4+' &&
+      (currentReagent?.id === 'nh4-naoh-heat' || currentReagent?.id === 'nh4-cold-naoh')
+    const showNo3Copper =
+      selectedIon.id === 'NO3-' &&
+      (currentReagent?.id === 'no3-cu-h2so4' || (currentReagent?.id === 'no3-cu-only' && dropCount > 0))
+    const showNo3BrownGas = selectedIon.id === 'NO3-' && dropCount > 0 && currentReagent?.id === 'no3-cu-h2so4'
+    const tubeOffsetY = showNh4Lamp ? 236 : 265
+    const dropperY = 240 + (tubeOffsetY - 265)
+    const bannerOffsetY = showNh4Lamp ? 560 : 526
+    const resetOffsetY = showNh4Lamp ? 606 : 575
 
     // 严谨计算当前滴加阶段的物理相变
     const state = computeStepChemistry(
@@ -280,7 +292,7 @@ export const IonMatrixScene: React.FC<IonMatrixSceneProps> = ({
             <g className="dropper-interactive-apparatus" onClick={onDropReagent} style={{ cursor: 'pointer' }}>
               <DropperApparatus
                 x={420}
-                y={240}
+                y={dropperY}
                 bodyHeight={65}
                 bodyWidth={11}
                 liquidLevel={dropCount === 0 ? 0.78 : dropCount === 1 ? 0.42 : 0.15}
@@ -293,7 +305,7 @@ export const IonMatrixScene: React.FC<IonMatrixSceneProps> = ({
             </g>
 
             {/* 滴管尖端悬空标尺微标注 (学术严谨度提升) */}
-            <g transform="translate(438, 240)">
+            <g transform={`translate(438, ${dropperY})`}>
               <line x1={0} y1={0} x2={8} y2={0} stroke="#94a3b8" strokeWidth={1} />
               <line x1={4} y1={0} x2={4} y2={25} stroke="#94a3b8" strokeWidth={1} strokeDasharray="2 2" />
               <line x1={0} y1={25} x2={8} y2={25} stroke="#94a3b8" strokeWidth={1} />
@@ -303,8 +315,8 @@ export const IonMatrixScene: React.FC<IonMatrixSceneProps> = ({
             </g>
 
             {/* ── 5. NH4+ 特有：酒精灯微热 ── */}
-            {selectedIon.id === 'NH4+' && dropCount > 0 && (
-              <g transform="translate(420, 520)">
+            {showNh4Lamp && (
+              <g transform="translate(420, 495)">
                 <path
                   d="M -24 35 L 24 35 L 16 10 L -16 10 Z"
                   fill={withAlpha(SCENE_COLORS.materials.glass, 0.75)}
@@ -325,7 +337,7 @@ export const IonMatrixScene: React.FC<IonMatrixSceneProps> = ({
             )}
 
             {/* ── 6. 主实验试管（居中规范定标） ── */}
-            <g className="chem-test-tube-container" transform="translate(388, 265)">
+            <g className="chem-test-tube-container" transform={`translate(388, ${tubeOffsetY})`}>
               {/* 试管背部环境浅淡柔光 */}
               <rect
                 x={-4}
@@ -348,8 +360,8 @@ export const IonMatrixScene: React.FC<IonMatrixSceneProps> = ({
                 font={font}
               />
 
-              {/* 铜片 (NO3- 专属反应) */}
-              {selectedIon.id === 'NO3-' && (
+              {/* 铜片 (NO3- 含铜试剂专属反应) */}
+              {showNo3Copper && (
                 <rect
                   x={24}
                   y={210}
@@ -372,13 +384,13 @@ export const IonMatrixScene: React.FC<IonMatrixSceneProps> = ({
                 </g>
               )}
 
-              {/* 红棕色气体 (NO3- 专属) */}
-              {selectedIon.id === 'NO3-' && dropCount > 0 && (
+              {/* 红棕色气体 (NO3- 铜+稀硫酸专属) */}
+              {showNo3BrownGas && (
                 <ellipse cx={32} cy={-12} rx={26} ry={14} fill="rgba(180, 83, 9, 0.6)" />
               )}
 
-              {/* 试管口湿润红色石蕊试纸 (NH4+ 专属规范) */}
-              {selectedIon.id === 'NH4+' && (
+              {/* 试管口湿润红色石蕊试纸 (NH4+ 碱液检验专属) */}
+              {showNh4Litmus && (
                 <g transform="translate(70, -20)">
                   <line x1={45} y1={-15} x2={0} y2={10} stroke="#94a3b8" strokeWidth={2.5} />
                   <rect
@@ -447,7 +459,7 @@ export const IonMatrixScene: React.FC<IonMatrixSceneProps> = ({
         )}
 
         {/* ── 8. 试管底部现象说明展示标牌 ── */}
-        <g transform="translate(420, 526)">
+        <g transform={`translate(420, ${bannerOffsetY})`}>
           <rect
             x={-240}
             y={-15}
@@ -468,7 +480,7 @@ export const IonMatrixScene: React.FC<IonMatrixSceneProps> = ({
             fontWeight="bold"
           >
             {dropCount > 0
-              ? `【实验现象】：${selectedIon.testPhenomenon}`
+              ? `【实验现象】：${currentReagent?.phenomenon || selectedIon.testPhenomenon}`
               : `【待测原液】：${selectedIon.name} · 溶液呈${selectedIon.colorInSolution}`}
           </text>
         </g>
@@ -476,7 +488,7 @@ export const IonMatrixScene: React.FC<IonMatrixSceneProps> = ({
         {/* ── 9. 底部快捷重置实验按钮 ── */}
         {dropCount > 0 && (
           <g
-            transform="translate(420, 575)"
+            transform={`translate(420, ${resetOffsetY})`}
             onClick={onResetReaction}
             style={{ cursor: 'pointer' }}
             role="button"
@@ -511,10 +523,18 @@ export const IonMatrixScene: React.FC<IonMatrixSceneProps> = ({
   }
 
   // ── 共存排斥大容器场景 (采用标准 BeakerApparatus 烧杯组件) ──
-  const cols = 4
   const hasPrecipitateConflict = conflicts.some(
     (c) => c.type === 'precipitate' || c.type === 'double-hydrolysis'
   )
+  const totalIons = coexistenceIons.length
+  const cols = totalIons > 12 ? 5 : 4
+  const totalRows = Math.max(1, Math.ceil(totalIons / cols))
+  const availHeight = hasPrecipitateConflict ? 185 : 210
+  const rowStep = totalRows > 3 ? Math.min(54, Math.floor(availHeight / totalRows)) : 65
+  const colStep = cols === 5 ? 68 : 85
+  const startX = cols === 5 ? 64 : 75
+  const startY = totalRows > 3 ? 132 : 155
+  const ionRadius = totalIons > 15 ? 17 : 22
 
   return (
     <g className="ion-coexistence-virtual-scene select-none">
@@ -580,13 +600,13 @@ export const IonMatrixScene: React.FC<IonMatrixSceneProps> = ({
           coexistenceIons.map((ion, idx) => {
             const row = Math.floor(idx / cols)
             const col = idx % cols
-            const posX = 75 + col * 85
-            const posY = 155 + row * 65
+            const posX = startX + col * colStep
+            const posY = Math.min(326, startY + row * rowStep)
 
             return (
               <g key={ion.id} transform={`translate(${posX}, ${posY})`}>
                 <circle
-                  r={22}
+                  r={ionRadius}
                   fill={ion.type === 'cation' ? '#dbeafe' : '#fef3c7'}
                   stroke={ion.type === 'cation' ? '#3b82f6' : '#f59e0b'}
                   strokeWidth={2}
@@ -594,9 +614,9 @@ export const IonMatrixScene: React.FC<IonMatrixSceneProps> = ({
                 />
                 <text
                   x={0}
-                  y={5}
+                  y={4}
                   textAnchor="middle"
-                  fontSize={font(FONT.annotation)}
+                  fontSize={font(totalIons > 15 ? 10 : FONT.annotation)}
                   fontWeight="bold"
                   fill="#0f172a"
                 >

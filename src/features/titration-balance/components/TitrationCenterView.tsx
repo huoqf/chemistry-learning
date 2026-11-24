@@ -132,7 +132,7 @@ export function TitrationCenterView({
                 <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#E2E8F0" strokeWidth="0.5" />
               </pattern>
             </defs>
-            <rect x="-140" y="0" width="280" height="650" fill="url(#titration-grid)" opacity={0.5} />
+            <rect x="0" y="0" width="280" height="650" fill="url(#titration-grid)" opacity={0.5} />
 
             {/* 铁架台与固定连杆 */}
             <rect x={110} y={430} width={120} height={10} fill="#64748B" rx={2} />
@@ -279,7 +279,7 @@ export function TitrationCenterView({
         <TitrationControls
           volume={chemistry.vAdd}
           maxVolume={chemistry.vEq * 2.0}
-          reagentName={isAcidTitrant ? '0.1 mol/L HCl 滴加试剂' : '0.1 mol/L NaOH 滴加试剂'}
+          reagentName={`${params.c0.toFixed(2)} mol/L ${isAcidTitrant ? 'HCl' : 'NaOH'} 滴加试剂`}
           isPlaying={isAutoPlaying}
           onPlayPause={() => setIsAutoPlaying(!isAutoPlaying)}
           onSingleDrop={onSingleDrop}

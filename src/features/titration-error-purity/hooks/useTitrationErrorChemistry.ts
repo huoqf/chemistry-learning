@@ -27,6 +27,7 @@ export function useTitrationErrorChemistry(
   return useMemo(() => {
     // 1. 滴定误差分析计算
     const {
+      titrationType,
       errorOp,
       viewAngle,
       cStandardTrue,
@@ -47,14 +48,21 @@ export function useTitrationErrorChemistry(
       rawToProductRatio,
     } = params
 
+    // 滴定化学计量比 n(待测物) / n(标准液)：
+    // KMnO₄ 氧化还原滴定 Fe²⁺ 为 MnO₄⁻ + 5Fe²⁺ + 8H⁺ = Mn²⁺ + 5Fe³⁺ + 4H₂O（5:1）；酸碱/莫尔法 Ag⁺+Cl⁻ 为 1:1
+    const stoichRatio = titrationType === 'redox' ? 5 : 1
+
     // 理论所需标准体积 mL
-    const vTrue = (cSampleTrue * vSampleTrue) / cStandardTrue
+    const vTrue = (cSampleTrue * vSampleTrue) / (stoichRatio * cStandardTrue)
 
     let opFactor = 1.0
     let constantOffset = 0.0
     let effectDirection: 'high' | 'low' | 'none' = 'none'
     let description = '标准规范操作，无误差。'
-    let equationExplanation = 'c_{\\text{待}} = \\frac{c_{\\text{标}} \\times V_{\\text{标}}}{V_{\\text{待}}} = \\text{准确真值}'
+    let equationExplanation =
+      stoichRatio === 5
+        ? 'c(\\text{Fe}^{2+}) = \\frac{5 \\cdot c(\\text{MnO}_4^-) \\times V_{\\text{标}}}{V_{\\text{待}}} = \\text{准确真值}'
+        : 'c_{\\text{待}} = \\frac{c_{\\text{标}} \\times V_{\\text{标}}}{V_{\\text{待}}} = \\text{准确真值}'
 
     switch (errorOp) {
       case 'unrinsed-burette':
@@ -153,8 +161,8 @@ export function useTitrationErrorChemistry(
     // viewAngle > 0 (仰视): 读数比实际大 ; viewAngle < 0 (俯视): 读数比实际小
     const angleOffset = (viewAngle / 15.0) * 0.4
 
-    const vRead = vTrue * opFactor + constantOffset + angleOffset
-    const cCalculated = (cStandardTrue * vRead) / vSampleTrue
+    const vRead = Math.max(0, vTrue * opFactor + constantOffset + angleOffset)
+    const cCalculated = (stoichRatio * cStandardTrue * vRead) / vSampleTrue
     const relativeErrorPct = ((cCalculated - cSampleTrue) / cSampleTrue) * 100
 
     if ((errorOp === 'none' || errorOp === 'wet-flask') && Math.abs(viewAngle) > 1.0) {
@@ -167,6 +175,18 @@ export function useTitrationErrorChemistry(
         effectDirection = 'low'
         description = `${wetNote}读数俯视：眼睛高于凹液面，视线向下斜穿刻度线，读取的刻度值偏小。`
         equationExplanation = 'V_{\\text{终}}\\text{ 俯视偏小} \\implies \\Delta V_{\\text{标}}\\downarrow \\implies c_{\\text{待}}\\text{ 偏低}'
+      }
+    } else if (errorOp !== 'none' && errorOp !== 'wet-flask' && Math.abs(viewAngle) > 1.0) {
+      // 操作失误与反向视线偏置叠加时，按净体积偏差 vRead - vTrue 同步方向
+      const netDelta = vRead - vTrue
+      const prevDir = effectDirection
+      const netDir: 'high' | 'low' | 'none' =
+        Math.abs(netDelta) < 1e-4 ? 'none' : netDelta > 0 ? 'high' : 'low'
+      if (netDir !== prevDir) {
+        effectDirection = netDir
+        const netLabel = netDir === 'high' ? '偏高' : netDir === 'low' ? '偏低' : '无影响'
+        description += `（叠加读数视差后净读数偏差翻转，最终综合结果${netLabel}）`
+        equationExplanation += ` \\;\\xrightarrow{\\text{叠加视差}}\\text{ 综合}${netLabel}`
       }
     }
 

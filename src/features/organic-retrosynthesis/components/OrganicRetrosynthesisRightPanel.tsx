@@ -78,10 +78,10 @@ export function OrganicRetrosynthesisRightPanel({
       case 'diels-alder-acetal': {
         const stepFormula =
           currentStep.stepIndex === 1
-            ? '\\begin{aligned} &\\mathrm{CH_2=CH\\text{-}CH=CH_2 + CH_2=CH\\text{-}CHO} \\\\[2pt] &\\quad \\xrightarrow{\\Delta\\;[4+2]} \\mathrm{3\\text{-}环己烯甲酸甲酯衍生物} \\end{aligned}'
+            ? '\\begin{aligned} &\\mathrm{CH_2=CH\\text{-}CH=CH_2 + OHC\\text{-}CH=CH\\text{-}COOCH_3} \\\\[2pt] &\\quad \\xrightarrow{\\Delta\\;[4+2]} \\mathrm{6\\text{-}甲酰基\\text{-}3\\text{-}环己烯羧酸甲酯} \\end{aligned}'
             : currentStep.stepIndex === 2
             ? '\\begin{aligned} &\\mathrm{R\\text{-}CHO + HOCH_2CH_2OH} \\\\[2pt] &\\quad \\xrightleftharpoons{\\text{TsOH/分水}} \\mathrm{环状缩醛 + H_2O} \\end{aligned}'
-            : '\\begin{aligned} &\\mathrm{缩醛\\text{-}环己烯酯} \\xrightarrow{\\text{1. LiAlH}_4} \\mathrm{缩醛醇} \\\\[2pt] &\\quad \\xrightarrow{\\text{2. H}_3\\mathrm{O}^+,\\,\\Delta} \\mathrm{TM + HO(CH_2)_2OH} \\end{aligned}'
+            : '\\begin{aligned} &\\mathrm{缩醛\\text{-}环己烯羧酸甲酯} \\xrightarrow{\\text{1. LiAlH}_4} \\mathrm{缩醛醇} \\\\[2pt] &\\quad \\xrightarrow{\\text{2. H}_3\\mathrm{O}^+,\\,\\Delta} \\mathrm{TM + HO(CH_2)_2OH} \\end{aligned}'
         return [
           {
             name: stepName,
@@ -108,7 +108,7 @@ export function OrganicRetrosynthesisRightPanel({
           currentStep.stepIndex === 1
             ? '\\begin{aligned} &\\mathrm{Ar\\text{-}CH_2CH=CH_2 + Br_2} \\\\[2pt] &\\quad \\xrightarrow{\\mathrm{CCl_4}} \\mathrm{Ar\\text{-}CH_2CHBr\\text{-}CH_2Br} \\end{aligned}'
             : currentStep.stepIndex === 2
-            ? '\\begin{aligned} &\\mathrm{HO\\text{-}C_6H_4\\text{-}C_3H_5Br_2 + CH_3I} \\\\[2pt] &\\quad \\xrightarrow{\\mathrm{K_2CO_3,\\,\\text{丙酮}}} \\mathrm{CH_3O\\text{-}C_6H_4\\text{-}C_3H_5Br_2 + KI} \\end{aligned}'
+            ? '\\begin{aligned} &\\mathrm{HO\\text{-}C_6H_4\\text{-}C_3H_5Br_2 + CH_3I + K_2CO_3} \\\\[2pt] &\\quad \\xrightarrow{\\text{丙酮}} \\mathrm{CH_3O\\text{-}C_6H_4\\text{-}C_3H_5Br_2 + KI + KHCO_3} \\end{aligned}'
             : '\\begin{aligned} &\\mathrm{CH_3O\\text{-}C_6H_4\\text{-}CH_2CHBrCH_2Br + Zn} \\\\[2pt] &\\quad \\xrightarrow{\\mathrm{EtOH,\\,\\Delta}} \\mathrm{4\\text{-}烯丙基苯甲醚 + ZnBr_2} \\end{aligned}'
         return [
           {
@@ -137,15 +137,15 @@ export function OrganicRetrosynthesisRightPanel({
             name: stepName,
             latex: currentStep.stepIndex === 1
               ? '\\begin{aligned} &\\mathrm{Ph\\text{-}CH=CH\\text{-}COPh} \\\\[2pt] &\\quad \\xRightarrow{\\text{✂ 切断 C=C}} \\mathrm{Ph\\text{-}CHO + CH_3COPh} \\end{aligned}'
-              : '\\begin{aligned} &\\mathrm{Ph\\text{-}CHO + MeCOPh} \\\\[2pt] &\\quad \\xrightarrow{\\mathrm{OH^-}} \\mathrm{Ph\\text{-}CH=CH\\text{-}COPh + H_2O} \\end{aligned}',
+              : '\\begin{aligned} &\\mathrm{Ph\\text{-}CHO + CH_3COPh} \\\\[2pt] &\\quad \\xrightarrow{\\mathrm{OH^-}} \\mathrm{Ph\\text{-}CH=CH\\text{-}COPh + H_2O} \\end{aligned}',
             condition: currentStep.reagents,
             note: currentStep.description,
           },
           {
             name: 'α,β-不饱和烯酮 C=C 双键切断',
-            latex: '\\begin{aligned} &\\mathrm{共轭 \\alpha,\\beta\\text{-}不饱和烯酮} \\\\[2pt] &\\quad \\Downarrow \\text{ ✂ 双键逆向切断} \\\\[2pt] &\\mathrm{[Ph\\text{-}CH]^+ + [CH_2COPh]^-} \\end{aligned}',
+            latex: '\\begin{aligned} &\\mathrm{共轭 \\alpha,\\beta\\text{-}不饱和烯酮} \\\\[2pt] &\\quad \\Downarrow \\text{ ✂ 双键逆向切断} \\\\[2pt] &\\mathrm{[Ph\\text{-}CH(OH)]^+ + [CH_2\\text{-}CO\\text{-}Ph]^-} \\end{aligned}',
             condition: '逆向双键断裂',
-            note: '亲电前体为苯甲醛，亲核前体为苯乙酮 (含活泼 α-H)。',
+            note: '先水合逆推为 β-羟基酮再切断 C-C 键，亲电等价物为苯甲醛，亲核等价物为苯乙酮 (含活泼 α-H)。',
           },
           {
             name: '高考合成路线标准答题范式',

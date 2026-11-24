@@ -74,5 +74,6 @@ export interface QuantResult {
   gasVolumeLeft?: number // 左极(如阳极Cl₂/O₂)气体标准状况体积 L
   gasVolumeRight: number // 右极气体标准状况体积 L
   molesMembraneIon?: number // 穿膜微粒物质的量 mol
+  netAcidMoles?: number // 电解产生的净酸量 n(H⁺) (mol)
   deltaPH: number // pH 变化推算
 }

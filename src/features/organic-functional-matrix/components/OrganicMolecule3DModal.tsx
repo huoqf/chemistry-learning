@@ -205,7 +205,6 @@ export const OrganicMolecule3DModal: React.FC<OrganicMolecule3DModalProps> = ({
               />
             ) : isReady ? (
               <Canvas
-                key={activeMolecule.id}
                 camera={{ position: [0, 0, 6.5], fov: 42 }}
                 style={{ width: '100%', height: '100%' }}
               >
@@ -213,32 +212,38 @@ export const OrganicMolecule3DModal: React.FC<OrganicMolecule3DModalProps> = ({
                 <directionalLight position={[5, 8, 5]} intensity={DIRECTIONAL_INTENSITY} />
                 <directionalLight position={[-5, -4, -3]} intensity={0.4} />
 
-                {/* 3D 化学键 */}
-                {activeMolecule.bonds.map((bond) => (
-                  <BondMesh
-                    key={bond.id}
-                    start={bond.start}
-                    end={bond.end}
-                    color={bond.color}
-                    radius={bond.order === 3 ? 0.05 : bond.order === 2 ? 0.055 : 0.065}
-                  />
-                ))}
+                <group key={activeMolecule.id}>
+                  {/* 3D 化学键（createMultiBonds 已按键级拆分平行圆柱，按 order 区分半径即可） */}
+                  {activeMolecule.bonds.map((bond) => {
+                    const order = bond.order ?? 1
+                    const radius = order === 3 ? 0.032 : order === 2 ? 0.042 : 0.065
+                    return (
+                      <BondMesh
+                        key={bond.id}
+                        start={bond.start}
+                        end={bond.end}
+                        color={bond.color}
+                        radius={radius}
+                      />
+                    )
+                  })}
 
-                {/* 3D 原子 */}
-                {activeMolecule.atoms.map((atom) => {
-                  const isHovered = selectedAtom?.id === atom.id
-                  return (
-                    <AtomMesh
-                      key={atom.id}
-                      element={atom.symbol}
-                      position={atom.position}
-                      color={atom.color}
-                      radius={atom.radius * (isHovered ? 1.18 : 1.0)}
-                      isSelected={isHovered}
-                      onSelect={() => setSelectedAtom(atom)}
-                    />
-                  )
-                })}
+                  {/* 3D 原子 */}
+                  {activeMolecule.atoms.map((atom) => {
+                    const isHovered = selectedAtom?.id === atom.id
+                    return (
+                      <AtomMesh
+                        key={atom.id}
+                        element={atom.symbol}
+                        position={atom.position}
+                        color={atom.color}
+                        radius={atom.radius * (isHovered ? 1.18 : 1.0)}
+                        isSelected={isHovered}
+                        onSelect={() => setSelectedAtom(atom)}
+                      />
+                    )
+                  })}
+                </group>
 
                 <OrbitControls
                   enableRotate={true}

@@ -11,6 +11,7 @@ interface FlashCardLeftPanelProps {
   isHeating: boolean
   isCompressing: boolean
   sceneType: string
+  cardId?: string
   onChangeCategory: (cat: FlashCardCategory) => void
   onNextCard: () => void
   onPrevCard: () => void
@@ -28,6 +29,7 @@ export function FlashCardLeftPanel({
   isHeating,
   isCompressing,
   sceneType,
+  cardId,
   onChangeCategory,
   onNextCard,
   onPrevCard,
@@ -36,6 +38,8 @@ export function FlashCardLeftPanel({
   onToggleHeating,
   onToggleCompressing,
 }: FlashCardLeftPanelProps) {
+  const supportsHeating = cardId ? (cardId === 'card-1' || cardId === 'card-4') : (sceneType === 'bleach-heating' || sceneType === 'passivation-heat')
+  const supportsCompressing = cardId ? cardId === 'card-6' : sceneType === 'gas-compress'
   return (
     <LeftPanel>
       <LeftPanelSection title="易错事实盲盒分类筛选">
@@ -94,7 +98,7 @@ export function FlashCardLeftPanel({
             </div>
           </LeftPanelSection>
 
-          {(sceneType === 'bleach-heating' || sceneType === 'passivation-heat') && (
+          {supportsHeating && (
             <LeftPanelSection title="实验场景交互控制">
               <Button
                 variant={isHeating ? 'danger' : 'secondary'}
@@ -108,7 +112,7 @@ export function FlashCardLeftPanel({
             </LeftPanelSection>
           )}
 
-          {sceneType === 'gas-compress' && (
+          {supportsCompressing && (
             <LeftPanelSection title="实验场景交互控制">
               <Button
                 variant={isCompressing ? 'primary' : 'secondary'}

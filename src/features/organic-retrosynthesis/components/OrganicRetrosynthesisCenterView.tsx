@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Play, Pause, RotateCcw, ChevronLeft, ChevronRight, Zap, AlertTriangle, ShieldCheck, X } from 'lucide-react'
 import { useAnimationViewport, useSceneScale } from '@/hooks'
-import { useSimulationFrame } from '@/utils/animation'
+import { useAnimationFrame } from '@/utils/animation'
 import { AnimationSvgCanvas } from '@/components/Layout'
 import { ScoringCardSection, GaokaoVariantQuiz } from '@/components/UI'
 import { CANVAS_PRESETS } from '@/theme'
@@ -17,6 +17,8 @@ interface OrganicRetrosynthesisCenterViewProps {
   totalSteps: number
   quizData: ModelQuizData | null
   isPlaying: boolean
+  speed?: number
+  onSpeedChange?: (speed: number) => void
   onTogglePlay: () => void
   onResetStep: () => void
   onStepChange: (stepIndex: number) => void
@@ -33,13 +35,14 @@ export function OrganicRetrosynthesisCenterView({
   totalSteps,
   quizData,
   isPlaying,
+  speed = 1,
+  onSpeedChange,
   onTogglePlay,
   onResetStep,
   onStepChange,
   showCrashContrast,
   onToggleCrashContrast,
 }: OrganicRetrosynthesisCenterViewProps) {
-  const [speed, setSpeed] = useState<number>(1)
   const [animProgress, setAnimProgress] = useState<number>(0)
 
   // 1. 标准动画 Viewport 与 SceneScale 绑定 (CANVAS_PRESETS.full 840x650)
@@ -50,10 +53,13 @@ export function OrganicRetrosynthesisCenterView({
   const designWidth = CANVAS_PRESETS.full.width
   const designHeight = CANVAS_PRESETS.full.height
 
-  // 动态光效与流动 Timer
-  useSimulationFrame((_deltaTime) => {
-    setAnimProgress((prev) => (prev + 0.02 * speed) % 1)
-  })
+  // 动态光效与流动 Timer（仅在实验台视角推进，并按 deltaTime 与倍速同比缩放）
+  useAnimationFrame(
+    (deltaTime) => {
+      setAnimProgress((prev) => (prev + deltaTime * 0.0005 * speed) % 1)
+    },
+    { playing: viewMode === 0 }
+  )
 
   // 矢量苯环结构绘制 (精美化学双键与圆环)
   const renderBenzeneRing = (cx: number, cy: number, r: number = 18) => (
@@ -103,7 +109,7 @@ export function OrganicRetrosynthesisCenterView({
   return (
     <div className="w-full h-full flex flex-col relative overflow-hidden select-none">
       {/* 画布核心区域 */}
-      <div ref={containerRef} className="flex-1 w-full relative overflow-hidden">
+      <div className="flex-1 w-full relative overflow-hidden">
         <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
           {/* 背景网格与滤镜定义 */}
           <defs>
@@ -472,7 +478,7 @@ export function OrganicRetrosynthesisCenterView({
             <div className="flex items-center justify-between font-bold text-red-900 border-b border-red-200 pb-1">
               <span className="flex items-center gap-1.5">
                 <AlertTriangle className="w-4 h-4 text-red-600 shrink-0" />
-                {currentModel.unprotectedCrashDemo.warningTitle}
+                {currentModel.unprotectedCrashDemo.warningTitle.replace(/^🚨\s*/, '')}
               </span>
               <button
                 onClick={onToggleCrashContrast}
@@ -498,7 +504,7 @@ export function OrganicRetrosynthesisCenterView({
 
       {/* 底部：控制栏 (响应式分层排版，彻底杜绝按钮挤压) */}
       <div className="p-2.5 bg-white border-t border-slate-200 shrink-0 font-sans shadow-md flex flex-col gap-2">
-        {/* 上行：试剂条件与副反应对比开关 + 历程快跳 */}
+        {/* 上行：试剂条件 + 历程快跳 */}
         <div className="flex flex-wrap items-center justify-between gap-2 text-xs border-b border-slate-100 pb-2">
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-bold text-slate-800 flex items-center gap-1.5">
@@ -508,19 +514,6 @@ export function OrganicRetrosynthesisCenterView({
                 {currentStep.reagents}
               </span>
             </span>
-
-            {/* 未保护副反应对比开关 */}
-            <button
-              onClick={onToggleCrashContrast}
-              className={`px-2 py-0.5 rounded-md text-[11px] font-bold flex items-center gap-1 border transition-all cursor-pointer ${
-                showCrashContrast
-                  ? 'bg-red-600 text-white border-red-700 shadow-xs'
-                  : 'bg-red-50 text-red-700 hover:bg-red-100 border-red-200'
-              }`}
-            >
-              <AlertTriangle className="w-3.5 h-3.5" />
-              {showCrashContrast ? '隐藏副反应' : '🚨 未保护副反应对比'}
-            </button>
           </div>
 
           {/* 特征步骤快速跳转 */}
@@ -590,7 +583,7 @@ export function OrganicRetrosynthesisCenterView({
             {[0.5, 1, 2].map((s) => (
               <button
                 key={s}
-                onClick={() => setSpeed(s)}
+                onClick={() => onSpeedChange?.(s)}
                 className={`px-2 py-0.5 rounded text-[10.5px] font-bold cursor-pointer ${
                   speed === s ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}

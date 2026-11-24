@@ -16,7 +16,7 @@ export const vseprHybridQuizData: ModelQuizData = {
       id: 'step-2',
       title: '步骤 2：计算价层电子对数与孤电子对数',
       type: 'calculation',
-      questionText: '运用课标 VSEPR 公式，SO₂ 中中心 S 原子价电子数 a=6，配位 O 原子需求 b=2，配位原子数 x=2。则 SO₂ 的价层电子对数与孤电子对数分别为（用 comma 分隔）：',
+      questionText: '运用课标 VSEPR 公式，SO₂ 中中心 S 原子价电子数 a=6，配位 O 原子需求 b=2，配位原子数 x=2。则 SO₂ 的价层电子对数与孤电子对数分别为（用逗号分隔）：',
       formulaLatex: '\\text{价层对数 } = x + \\frac{a - xb}{2} = 2 + \\frac{6 - 2 \\times 2}{2} = 3',
       placeholder: '3,1 或 3, 1',
       correctAnswer: ['3,1', '3, 1'],

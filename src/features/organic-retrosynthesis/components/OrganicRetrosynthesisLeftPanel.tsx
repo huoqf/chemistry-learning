@@ -230,7 +230,7 @@ export function OrganicRetrosynthesisLeftPanel({
             </div>
           </div>
 
-          {/* 🚨 未保护副反应风险对比开关 */}
+          {/* 未保护副反应风险对比开关 */}
           <button
             onClick={onToggleCrashContrast}
             className={`w-full py-2 px-2.5 rounded-lg text-[11px] font-bold flex items-center justify-between border transition-all cursor-pointer ${
@@ -241,7 +241,7 @@ export function OrganicRetrosynthesisLeftPanel({
           >
             <span className="flex items-center gap-1.5 truncate">
               <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-              {showCrashContrast ? '已开启副反应风险对比' : '🚨 未保护副反应风险对比'}
+              {showCrashContrast ? '已开启副反应风险对比' : '未保护副反应风险对比'}
             </span>
             <span className="text-[10px] underline shrink-0">
               {showCrashContrast ? '收起' : '展开'}

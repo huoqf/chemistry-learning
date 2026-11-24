@@ -316,5 +316,35 @@ describe('useTitrationErrorChemistry — 滴定误差与纯度产率测试', () 
       expect(yieldResult.overLimit).toBe(false)
       expect(yieldResult.calcFormulaLatex).toContain('\\times 0.5')
     })
+
+    it('回归：操作误差叠加反向视差翻转 vRead - vTrue 符号时，effectDirection 与 cCalculated/cSampleTrue 严格自洽', () => {
+      // bubble-end (constantOffset = -0.3) + 仰视 viewAngle = 15 (angleOffset = +0.4) -> 净偏差 +0.1 mL > 0
+      const { result } = renderHook(() =>
+        useTitrationErrorChemistry({
+          ...baseParams,
+          errorOp: 'bubble-end',
+          viewAngle: 15,
+        })
+      )
+      expect(result.current.errorResult.vRead).toBeGreaterThan(result.current.errorResult.vTrue)
+      expect(result.current.errorResult.cCalculated).toBeGreaterThan(baseParams.cSampleTrue)
+      expect(result.current.errorResult.effectDirection).toBe('high')
+    })
+
+    it('回归：KMnO₄ 滴定 Fe²⁺ (redox) 严格遵守 1:5 化学计量比，等当点与测定浓度均计入系数 5', () => {
+      // 0.1 mol/L KMnO4 滴定 20 mL 0.1 mol/L Fe2+：n(MnO4-) = 1/5 n(Fe2+) -> vTrue = 4.00 mL
+      const { result } = renderHook(() =>
+        useTitrationErrorChemistry({
+          ...baseParams,
+          titrationType: 'redox',
+          cStandardTrue: 0.1,
+          vSampleTrue: 20.0,
+          cSampleTrue: 0.1,
+        })
+      )
+      expect(result.current.errorResult.vTrue).toBeCloseTo(4.0, 4)
+      expect(result.current.errorResult.cCalculated).toBeCloseTo(0.1, 4)
+      expect(result.current.errorResult.equationExplanation).toContain('5')
+    })
   })
 })

@@ -149,7 +149,7 @@ export function ReagentStepCenterView({
                 <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#E2E8F0" strokeWidth="0.5" />
               </pattern>
             </defs>
-            <rect x="-140" y="0" width="280" height="650" fill="url(#reagent-grid-mini)" opacity={0.6} />
+            <rect x="0" y="0" width="280" height="650" fill="url(#reagent-grid-mini)" opacity={0.6} />
 
             {/* 试管主体 */}
             <g>
@@ -193,10 +193,10 @@ export function ReagentStepCenterView({
               isDeep={isDropperDeep}
             />
 
-            {/* 沉淀标注 */}
-            <g transform={`translate(${tubeX + tubeWidth + 12}, ${tubeY + 110})`}>
-              <rect x="0" y="-14" width="115" height="24" rx="4" fill="#FFFFFF" stroke="#CBD5E1" />
-              <text x="6" y="2" fill="#1E293B" fontSize={canvasSize.font(11)} fontWeight="bold">
+            {/* 沉淀标注（置于试管下方居中，避免越出 280px 画布右边界） */}
+            <g transform={`translate(140, ${tubeY + tubeHeight + 36})`}>
+              <rect x="-118" y="-14" width="236" height="28" rx="6" fill="#FFFFFF" stroke="#CBD5E1" />
+              <text x="0" y="4" textAnchor="middle" fill="#1E293B" fontSize={canvasSize.font(11)} fontWeight="bold">
                 {currentStep.precipitateText}
               </text>
             </g>

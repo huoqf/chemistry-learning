@@ -74,14 +74,22 @@ export function EsterificationScene({ reactionStage, font, show18OTracing }: Est
         >
           δ⁺
         </text>
-        {/* C=O 双键 */}
+        {/* C=O 双键 (双平行线绘制) */}
         <line
-          x1={130}
+          x1={125}
           y1={36}
-          x2={130}
-          y2={4}
+          x2={125}
+          y2={8}
           stroke={ATOM_COLORS.oxygen}
-          strokeWidth={4}
+          strokeWidth={3.5}
+        />
+        <line
+          x1={135}
+          y1={36}
+          x2={135}
+          y2={8}
+          stroke={ATOM_COLORS.oxygen}
+          strokeWidth={3.5}
         />
         <circle cx={130} cy={-8} r={20} fill={ATOM_COLORS.oxygen} />
         <text
@@ -118,7 +126,7 @@ export function EsterificationScene({ reactionStage, font, show18OTracing }: Est
           strokeWidth={3}
           strokeDasharray={reactionStage === 1 ? '4,4' : undefined}
         />
-        <g transform={reactionStage === 2 ? 'translate(80, 150)' : ''}>
+        <g>
           <circle cx={220} cy={60} r={22} fill={ATOM_COLORS.oxygen} />
           <text
             x={220}
@@ -163,7 +171,7 @@ export function EsterificationScene({ reactionStage, font, show18OTracing }: Est
       {/* 反应物 2: 乙醇 (H-¹⁸O-CH2CH3) */}
       <g transform="translate(500, 130)">
         {/* H */}
-        <g transform={reactionStage === 2 ? 'translate(-200, 150)' : ''}>
+        <g>
           <circle cx={20} cy={60} r={18} fill={ATOM_COLORS.hydrogen} />
           <text
             x={20}

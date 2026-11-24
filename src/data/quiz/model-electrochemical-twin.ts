@@ -58,14 +58,15 @@ export const modelElectrochemicalTwin: ModelQuizData = {
       options: [
         { label: 'A', text: '放电时，负极反应式为：VO²⁺ + H₂O - e⁻ = VO₂⁺ + 2H⁺', isCorrect: false },
         { label: 'B', text: '放电过程中，溶液中的 H⁺ 经质子交换膜由正极区向负极区迁移', isCorrect: false },
-        { label: 'C', text: '充电时，每转移 1 mol e⁻，阴极区溶液的质量增加 1 mol', isCorrect: false },
+        { label: 'C', text: '充电时，每转移 1 mol e⁻，阴极区溶液的质量减少 1 g', isCorrect: false },
         { label: 'D', text: '充电时，阳极接直流电源的正极，发生氧化反应：VO²⁺ + H₂O - e⁻ = VO₂⁺ + 2H⁺', isCorrect: true },
       ],
       modelAlignmentAnalysis: '本题考查二次电池放电（原电池）与充电（电解池）工作原理转换及质子交换膜透膜方向判定。',
       detailedExplanation:
-        '1. 放电时（原电池）：V²⁺ 化合价由 +2 升至 +3，失电子作负极，反应式为 V²⁺ - e⁻ = V³⁺；\n' +
-        '2. 放电时（原电池），阳离子 H⁺ 向正极区迁移（原电池中“阳往正”）；\n' +
-        '3. 充电时（电解池），阳极与电源正极相连，发生氧化反应：VO²⁺ + H₂O - e⁻ = VO₂⁺ + 2H⁺，D 项完全正确。',
+        '1. 放电时（原电池）：V²⁺ 化合价由 +2 升至 +3，失电子作负极，反应式为 V²⁺ - e⁻ = V³⁺（A 错）；\n' +
+        '2. 放电时（原电池），阳离子 H⁺ 向正极区迁移（B 错，原电池中“阳往正”）；\n' +
+        '3. 充电时（电解池），阴极反应为 V³⁺ + e⁻ = V²⁺，无沉淀或气体析出，每转移 1 mol e⁻ 有 1 mol H⁺ 由阳极区经质子膜迁入阴极区，阴极区溶液质量增加 1 g（而非减少 1 g，C 错）；\n' +
+        '4. 充电时阳极接电源正极发生氧化反应：VO²⁺ + H₂O - e⁻ = VO₂⁺ + 2H⁺，D 项完全正确。',
     },
     {
       id: 'quiz-twin-2',

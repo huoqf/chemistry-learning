@@ -6,6 +6,8 @@ interface AlphaTpChartProps {
   alphaTpData: {
     points: AlphaTpPoint[]
     currentAlpha: number
+    currentAlphaLowP?: number
+    currentAlphaHighP?: number
     lowPressureLabel: string
     highPressureLabel: string
   }
@@ -66,13 +68,24 @@ export const AlphaTpChart: React.FC<AlphaTpChartProps> = ({
   // 当前状态游标
   const curX = toSvgX(temperature)
   const curY = toSvgY(alphaTpData.currentAlpha)
+  const flipRight = curX > width - padding.right - 155
 
-  // 定一议二：在当前 T 处在两条线上的交点
-  const curPt = points.reduce((prev, curr) =>
-    Math.abs(curr.temperature - temperature) < Math.abs(prev.temperature - temperature)
-      ? curr
-      : prev
-  )
+  // 定一议二：在当前 T 处在两条压强线上的精确交点（优先消费 hook 同源连续解，缺失时线性插值）
+  const interpAlpha = (key: 'alphaLowP' | 'alphaHighP') => {
+    const exact = points.find((p) => p.temperature === temperature)
+    if (exact) return exact[key]
+    for (let i = 0; i < points.length - 1; i++) {
+      const a = points[i]
+      const b = points[i + 1]
+      if (temperature >= a.temperature && temperature <= b.temperature) {
+        const ratio = (temperature - a.temperature) / (b.temperature - a.temperature)
+        return Math.round((a[key] + (b[key] - a[key]) * ratio) * 10) / 10
+      }
+    }
+    return points[0][key]
+  }
+  const curAlphaHigh = alphaTpData.currentAlphaHighP ?? interpAlpha('alphaHighP')
+  const curAlphaLow = alphaTpData.currentAlphaLowP ?? interpAlpha('alphaLowP')
 
   // 严谨化学判据文案生成 (防护 Δng = 0 或 ΔH = 0 等边界考点)
   const gasMolesHint =
@@ -219,15 +232,16 @@ export const AlphaTpChart: React.FC<AlphaTpChartProps> = ({
       {/* 高压交点 */}
       <circle
         cx={curX}
-        cy={toSvgY(curPt.alphaHighP)}
+        cy={toSvgY(curAlphaHigh)}
         r={5}
         fill={colors.secondary[600]}
         stroke="#fff"
         strokeWidth={1.5}
       />
       <text
-        x={curX + 8}
-        y={toSvgY(curPt.alphaHighP) - 6}
+        x={flipRight ? curX - 8 : curX + 8}
+        y={toSvgY(curAlphaHigh) - 6}
+        textAnchor={flipRight ? 'end' : 'start'}
         fontSize={font(11)}
         fontWeight="bold"
         fill={colors.secondary[700]}
@@ -235,21 +249,22 @@ export const AlphaTpChart: React.FC<AlphaTpChartProps> = ({
         stroke="#fff"
         strokeWidth={3}
       >
-        P₂: α={curPt.alphaHighP}%
+        P₂: α={curAlphaHigh}%
       </text>
 
       {/* 低压交点 */}
       <circle
         cx={curX}
-        cy={toSvgY(curPt.alphaLowP)}
+        cy={toSvgY(curAlphaLow)}
         r={5}
         fill={colors.primary[600]}
         stroke="#fff"
         strokeWidth={1.5}
       />
       <text
-        x={curX + 8}
-        y={toSvgY(curPt.alphaLowP) + 14}
+        x={flipRight ? curX - 8 : curX + 8}
+        y={toSvgY(curAlphaLow) + 14}
+        textAnchor={flipRight ? 'end' : 'start'}
         fontSize={font(11)}
         fontWeight="bold"
         fill={colors.primary[700]}
@@ -257,7 +272,7 @@ export const AlphaTpChart: React.FC<AlphaTpChartProps> = ({
         stroke="#fff"
         strokeWidth={3}
       >
-        P₁: α={curPt.alphaLowP}%
+        P₁: α={curAlphaLow}%
       </text>
 
       {/* 高压曲线 P2 */}
@@ -288,8 +303,9 @@ export const AlphaTpChart: React.FC<AlphaTpChartProps> = ({
         strokeWidth={2}
       />
       <text
-        x={curX + 10}
+        x={flipRight ? curX - 10 : curX + 10}
         y={curY - 10}
+        textAnchor={flipRight ? 'end' : 'start'}
         fontSize={font(12)}
         fontWeight="bold"
         fill={colors.danger[600]}

@@ -193,5 +193,37 @@ describe('useReactionPrincipleChemistry 化学逻辑核查与测试', () => {
     const d = result.current.alphaTpData
     expect(d.lowPressureLabel).toContain('1.0')
     expect(d.highPressureLabel).toContain('3.5')
+    expect(d.currentAlphaLowP).toBeDefined()
+    expect(d.currentAlphaHighP).toBeDefined()
+  })
+
+  it('13. 多扰动叠加不再互斥屏蔽，且 van t Hoff 支持 250K 全域与高温小 K 防零截断', () => {
+    const { result: combined } = renderHook(() =>
+      useReactionPrincipleChemistry({
+        ...defaultParams,
+        catalyst: 'catalyst-a',
+        temperature: 398,
+        pressure: 2.0,
+      })
+    )
+    const { result: tempOnly } = renderHook(() =>
+      useReactionPrincipleChemistry({
+        ...defaultParams,
+        temperature: 398,
+      })
+    )
+    const ptCombined = combined.current.history.find((p) => p.time === 4.0)
+    const ptTempOnly = tempOnly.current.history.find((p) => p.time === 4.0)
+    expect(ptCombined!.vForward).toBeGreaterThan(ptTempOnly!.vForward)
+
+    const { result: nh3Hot } = renderHook(() =>
+      useReactionPrincipleChemistry({
+        ...defaultParams,
+        reactionId: 'nh3-synthesis',
+        temperature: 600,
+      })
+    )
+    expect(nh3Hot.current.vantHoffData.points[0].temp).toBe(250)
+    expect(nh3Hot.current.vantHoffData.currentK).toBeGreaterThan(0)
   })
 })

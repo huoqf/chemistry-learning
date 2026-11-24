@@ -6,6 +6,7 @@ interface LnkInvTChartProps {
     points: { invT: number; lnK: number; temp: number }[]
     currentLnK: number
     currentK: number
+    currentKDisplay?: string
   }
   temperature: number
   deltaH: number
@@ -29,7 +30,7 @@ export const LnkInvTChart: React.FC<LnkInvTChartProps> = ({
   if (points.length === 0) return null
 
   const minInvT = 0.0016
-  const maxInvT = 0.0037
+  const maxInvT = 0.0041
   const minLnK = Math.min(...points.map((p) => p.lnK), -20)
   const maxLnK = Math.max(...points.map((p) => p.lnK), 20)
 
@@ -49,6 +50,7 @@ export const LnkInvTChart: React.FC<LnkInvTChartProps> = ({
   const curInvT = 1 / temperature
   const curX = toSvgX(curInvT)
   const curY = toSvgY(vantHoffData.currentLnK)
+  const flipLabelLeft = curX > width - padding.right - 165
 
   return (
     <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full select-none">
@@ -149,8 +151,9 @@ export const LnkInvTChart: React.FC<LnkInvTChartProps> = ({
       />
 
       <text
-        x={curX + 10}
+        x={flipLabelLeft ? curX - 10 : curX + 10}
         y={curY - 10}
+        textAnchor={flipLabelLeft ? 'end' : 'start'}
         fontSize={font(12)}
         fontWeight="bold"
         fill={CHEMISTRY_COLORS.temperature}
@@ -158,7 +161,7 @@ export const LnkInvTChart: React.FC<LnkInvTChartProps> = ({
         stroke="#fff"
         strokeWidth={3}
       >
-        T = {temperature} K (ln K^\ominus = {vantHoffData.currentLnK}, K^\ominus(Kp) ≈ {vantHoffData.currentK})
+        T = {temperature} K (ln K⊖ = {vantHoffData.currentLnK}, K⊖(Kp) ≈ {vantHoffData.currentKDisplay ?? vantHoffData.currentK})
       </text>
 
       {/* 斜率与吸放热直观判定 */}

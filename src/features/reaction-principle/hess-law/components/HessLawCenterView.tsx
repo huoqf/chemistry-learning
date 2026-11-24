@@ -1,12 +1,45 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Eye, FileCheck, HelpCircle } from 'lucide-react'
 import { AnimationSvgCanvas } from '@/components/Layout'
 import { ScoringCardSection, GaokaoVariantQuiz } from '@/components/UI'
 import { useAnimationViewport } from '@/hooks/useAnimationViewport'
-import { CANVAS_PRESETS } from '@/theme'
+import { useAnimationFrame } from '@/utils/animation'
+import { CANVAS_PRESETS, CHEMISTRY_COLORS, CHART_COLORS, colors } from '@/theme'
 import type { ModelQuizData } from '@/data/quiz/types'
 import type { HessLawParams } from '../types'
 import type { UseHessLawChemistryReturn } from '../hooks/useHessLawChemistry'
+
+type CubicSeg = {
+  p0: [number, number]
+  p1: [number, number]
+  p2: [number, number]
+  p3: [number, number]
+}
+
+function evalCubicSeg(seg: CubicSeg, t: number): [number, number] {
+  const u = 1 - t
+  const u2 = u * u
+  const t2 = t * t
+  const x =
+    u2 * u * seg.p0[0] +
+    3 * u2 * t * seg.p1[0] +
+    3 * u * t2 * seg.p2[0] +
+    t2 * t * seg.p3[0]
+  const y =
+    u2 * u * seg.p0[1] +
+    3 * u2 * t * seg.p1[1] +
+    3 * u * t2 * seg.p2[1] +
+    t2 * t * seg.p3[1]
+  return [x, y]
+}
+
+function sampleSegs(segs: CubicSeg[], progress: number): [number, number] {
+  const clamped = Math.max(0, Math.min(0.9999, progress))
+  const scaled = clamped * segs.length
+  const idx = Math.floor(scaled)
+  const localT = scaled - idx
+  return evalCubicSeg(segs[idx], localT)
+}
 
 interface HessLawCenterViewProps {
   params: HessLawParams
@@ -26,6 +59,14 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
   })
 
   const font = canvasSize?.font || ((n: number) => n)
+  const [animPhase, setAnimPhase] = useState(0)
+
+  useAnimationFrame(
+    (deltaTime) => {
+      setAnimPhase((prev) => (prev + deltaTime / 6000) % 1)
+    },
+    { playing: viewMode === 0 },
+  )
 
   const { currentHessGroup, hessCalculated, currentBondPreset, bondCalculated, energyProfile } =
     chemistry
@@ -95,7 +136,7 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
                 <text x={12} y={24} fontSize={font(11)} fontWeight="bold" fill="#64748B">
                   乘倍变换后 ΔH_{idx + 1}:
                 </text>
-                <text x={12} y={50} fontSize={font(16)} fontWeight="bold" fill={step.stepH < 0 ? '#22C55E' : '#EAB308'} className="font-mono">
+                <text x={12} y={50} fontSize={font(16)} fontWeight="bold" fill={step.stepH < 0 ? '#22C55E' : step.stepH === 0 ? '#64748B' : '#EAB308'} className="font-mono">
                   {step.stepH > 0 ? `+${step.stepH.toFixed(1)}` : step.stepH.toFixed(1)} kJ/mol
                 </text>
               </g>
@@ -110,6 +151,20 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
 
         {/* 最终代数求和结论卡片 */}
         <g transform="translate(30, 420)">
+          {/* 分步叠加流向总方程脉冲点：限制在步骤卡片与总方程卡片之间的留白走廊内 [340, 408] */}
+          {[0, 1].map((idx) => {
+            const dotY = -80 + ((animPhase + idx * 0.5) % 1) * 68
+            return (
+              <circle
+                key={idx}
+                cx={210 + idx * 140}
+                cy={dotY}
+                r={3.5}
+                fill={hessCalculated.isMatchTarget ? CHART_COLORS.primary : CHEMISTRY_COLORS.enthalpy}
+                opacity={0.75}
+              />
+            )
+          })}
           <rect
             x={0}
             y={0}
@@ -121,12 +176,18 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
             strokeWidth={2}
           />
 
-          <text x={25} y={35} fontSize={font(15)} fontWeight="bold" fill={hessCalculated.isMatchTarget ? '#166534' : '#991B1B'}>
+          <text x={25} y={32} fontSize={font(14)} fontWeight="bold" fill={hessCalculated.isMatchTarget ? '#166534' : '#991B1B'}>
             ∑ (k_i × ΔH_i) 叠加推导结果:
           </text>
 
-          <text x={25} y={75} fontSize={font(22)} fontWeight="extrabold" fill={hessCalculated.isMatchTarget ? '#15803D' : '#DC2626'} className="font-mono">
+          <text x={25} y={68} fontSize={font(21)} fontWeight="extrabold" fill={hessCalculated.isMatchTarget ? '#15803D' : '#DC2626'} className="font-mono">
             ΔH_target = {hessCalculated.totalDeltaH > 0 ? `+${hessCalculated.totalDeltaH.toFixed(1)}` : hessCalculated.totalDeltaH.toFixed(1)} kJ/mol
+          </text>
+
+          <text x={25} y={94} fontSize={font(11)} fontWeight="medium" fill="#475569">
+            {hessCalculated.eliminatedIntermediates.length > 0
+              ? `已代数消去中间物种：${hessCalculated.eliminatedIntermediates.join('、')}`
+              : '提示：调整系数 k₁、k₂ 使中间物种在叠加两侧完全消去'}
           </text>
 
           <g transform="translate(480, 25)">
@@ -139,7 +200,7 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
               fill={hessCalculated.isMatchTarget ? '#DCFCE7' : '#FEE2E2'}
             />
             <text x={100} y={35} fontSize={font(13)} fontWeight="bold" fill={hessCalculated.isMatchTarget ? '#15803D' : '#B91C1C'} textAnchor="middle">
-              {hessCalculated.isMatchTarget ? '✅ 完美对齐目标反应' : '⚠️ 系数未配平至目标'}
+              {hessCalculated.isMatchTarget ? '已对齐目标反应' : '系数未配平至目标'}
             </text>
           </g>
         </g>
@@ -152,8 +213,8 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
     const { reactantEnergySum, productEnergySum } = bondCalculated
     const maxVal = Math.max(reactantEnergySum, productEnergySum, 1000)
 
-    const barHeightReactant = (reactantEnergySum / maxVal) * 260
-    const barHeightProduct = (productEnergySum / maxVal) * 260
+    const barHeightReactant = (reactantEnergySum / maxVal) * 180
+    const barHeightProduct = (productEnergySum / maxVal) * 180
 
     return (
       <g transform="translate(40, 40)">
@@ -168,17 +229,17 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
 
         {/* 左侧：断键吸热能量柱 */}
         <g transform="translate(100, 110)">
-          <text x={60} y={20} fontSize={font(13)} fontWeight="bold" fill="#DC2626" textAnchor="middle">
+          <text x={60} y={14} fontSize={font(13)} fontWeight="bold" fill="#DC2626" textAnchor="middle">
             断键吸收总能量 (Q_吸)
           </text>
-          <rect x={20} y={260 - barHeightReactant + 30} width={80} height={barHeightReactant} rx={8} fill="#FCA5A5" stroke="#EF4444" strokeWidth={2} />
-          <text x={60} y={260 - barHeightReactant + 20} fontSize={font(14)} fontWeight="bold" fill="#991B1B" textAnchor="middle" className="font-mono">
+          <rect x={20} y={240 - barHeightReactant} width={80} height={barHeightReactant} rx={8} fill="#FCA5A5" stroke="#EF4444" strokeWidth={2} />
+          <text x={60} y={240 - barHeightReactant - 10} fontSize={font(14)} fontWeight="bold" fill="#991B1B" textAnchor="middle" className="font-mono">
             +{reactantEnergySum} kJ/mol
           </text>
 
           {/* 键列表明细 */}
-          <g transform="translate(-10, 310)">
-            <rect x={0} y={0} width={140} height={80} rx={8} fill="#FEF2F2" stroke="#FECACA" />
+          <g transform="translate(-35, 310)">
+            <rect x={0} y={0} width={215} height={80} rx={8} fill="#FEF2F2" stroke="#FECACA" />
             {currentBondPreset.reactantBonds.map((b, i) => (
               <text key={i} x={10} y={22 + i * 22} fontSize={font(11)} fill="#7F1D1D">
                 {b.name}: {b.count} × {b.bondEnergy}
@@ -187,27 +248,61 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
           </g>
         </g>
 
-        {/* 中央：符号与减号 */}
-        <g transform="translate(300, 240)">
-          <circle cx={40} cy={40} r={30} fill="#F1F5F9" stroke="#CBD5E1" strokeWidth={2} />
-          <text x={40} y={48} fontSize={font(24)} fontWeight="bold" fill="#475569" textAnchor="middle">
+        {/* 中央：断键→原子化→成键过程动态示意与减号 */}
+        <g transform="translate(275, 195)">
+          <rect x={0} y={0} width={130} height={150} rx={12} fill={colors.neutral[50]} stroke={colors.neutral[200]} />
+          <text x={65} y={20} fontSize={font(10)} fontWeight="bold" fill={colors.neutral[600]} textAnchor="middle">
+            {animPhase < 0.45 ? '吸热断键裂解' : animPhase < 0.6 ? '气态游离原子态' : '成键释放能量'}
+          </text>
+          {/* 原子对间距：先拉断增大，后重新成键 */}
+          {(() => {
+            const sep =
+              animPhase < 0.45
+                ? 10 + (animPhase / 0.45) * 24
+                : animPhase < 0.6
+                ? 34
+                : 34 - ((animPhase - 0.6) / 0.4) * 22
+            const stateColor =
+              animPhase < 0.45
+                ? CHEMISTRY_COLORS.enthalpy
+                : animPhase < 0.6
+                ? colors.warning[500]
+                : CHART_COLORS.primary
+            return (
+              <g transform="translate(65, 62)">
+                <line
+                  x1={-sep}
+                  y1={0}
+                  x2={sep}
+                  y2={0}
+                  stroke={stateColor}
+                  strokeWidth={animPhase >= 0.45 && animPhase < 0.6 ? 1.5 : 3}
+                  strokeDasharray={animPhase >= 0.45 && animPhase < 0.6 ? '3 3' : undefined}
+                />
+                <circle cx={-sep} cy={0} r={9} fill={stateColor} stroke={colors.neutral.white} strokeWidth={1.5} />
+                <circle cx={sep} cy={0} r={9} fill={stateColor} stroke={colors.neutral.white} strokeWidth={1.5} />
+              </g>
+            )
+          })()}
+          <circle cx={65} cy={112} r={20} fill={colors.neutral.white} stroke={colors.neutral[300]} strokeWidth={1.5} />
+          <text x={65} y={118} fontSize={font(20)} fontWeight="bold" fill={colors.neutral[700]} textAnchor="middle">
             -
           </text>
         </g>
 
         {/* 右侧：成键放热能量柱 */}
         <g transform="translate(420, 110)">
-          <text x={60} y={20} fontSize={font(13)} fontWeight="bold" fill="#166534" textAnchor="middle">
+          <text x={60} y={14} fontSize={font(13)} fontWeight="bold" fill="#166534" textAnchor="middle">
             成键释放总能量 (Q_放)
           </text>
-          <rect x={20} y={260 - barHeightProduct + 30} width={80} height={barHeightProduct} rx={8} fill="#86EFAC" stroke="#22C55E" strokeWidth={2} />
-          <text x={60} y={260 - barHeightProduct + 20} fontSize={font(14)} fontWeight="bold" fill="#14532D" textAnchor="middle" className="font-mono">
-            -{productEnergySum} kJ/mol
+          <rect x={20} y={240 - barHeightProduct} width={80} height={barHeightProduct} rx={8} fill="#86EFAC" stroke="#22C55E" strokeWidth={2} />
+          <text x={60} y={240 - barHeightProduct - 10} fontSize={font(14)} fontWeight="bold" fill="#14532D" textAnchor="middle" className="font-mono">
+            {productEnergySum} kJ/mol (放热)
           </text>
 
           {/* 键列表明细 */}
-          <g transform="translate(-10, 310)">
-            <rect x={0} y={0} width={140} height={80} rx={8} fill="#F0FDF4" stroke="#BBF7D0" />
+          <g transform="translate(-35, 310)">
+            <rect x={0} y={0} width={215} height={80} rx={8} fill="#F0FDF4" stroke="#BBF7D0" />
             {currentBondPreset.productBonds.map((b, i) => (
               <text key={i} x={10} y={22 + i * 22} fontSize={font(11)} fill="#14532D">
                 {b.name}: {b.count} × {b.bondEnergy}
@@ -220,7 +315,7 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
         <g transform="translate(30, 480)">
           <rect x={0} y={0} width={700} height={65} rx={10} fill="#FFFBEB" stroke="#FDE68A" strokeWidth={1.5} />
           <text x={20} y={25} fontSize={font(12)} fontWeight="bold" fill="#92400E">
-            ⚡ 避坑要点提示：
+            避坑要点提示（ΔH = Q_吸 - Q_放 = {reactantEnergySum - productEnergySum > 0 ? `+${reactantEnergySum - productEnergySum}` : reactantEnergySum - productEnergySum} kJ/mol）：
           </text>
 
           <text x={20} y={48} fontSize={font(11)} fill="#B45309" className="font-medium">
@@ -263,12 +358,31 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
     // 有催化剂双峰贝塞尔曲线
     const catPath = `M 80,${yReactant} L 180,${yReactant} C 230,${yReactant} 260,${yCatPeak1} 300,${yCatPeak1} C 340,${yCatPeak1} 360,${yInter} 400,${yInter} C 440,${yInter} 470,${yCatPeak2} 510,${yCatPeak2} C 550,${yCatPeak2} 580,${yProduct} 680,${yProduct}`
 
+    const uncatSegs: CubicSeg[] = [
+      { p0: [80, yReactant], p1: [113, yReactant], p2: [147, yReactant], p3: [180, yReactant] },
+      { p0: [180, yReactant], p1: [260, yReactant], p2: [300, yUncatPeak], p3: [380, yUncatPeak] },
+      { p0: [380, yUncatPeak], p1: [460, yUncatPeak], p2: [500, yProduct], p3: [580, yProduct] },
+      { p0: [580, yProduct], p1: [613, yProduct], p2: [647, yProduct], p3: [680, yProduct] },
+    ]
+    const catSegs: CubicSeg[] = [
+      { p0: [80, yReactant], p1: [113, yReactant], p2: [147, yReactant], p3: [180, yReactant] },
+      { p0: [180, yReactant], p1: [230, yReactant], p2: [260, yCatPeak1], p3: [300, yCatPeak1] },
+      { p0: [300, yCatPeak1], p1: [340, yCatPeak1], p2: [360, yInter], p3: [400, yInter] },
+      { p0: [400, yInter], p1: [440, yInter], p2: [470, yCatPeak2], p3: [510, yCatPeak2] },
+      { p0: [510, yCatPeak2], p1: [550, yCatPeak2], p2: [580, yProduct], p3: [680, yProduct] },
+    ]
+    // 催化剂显著降低活化能，同等条件下更快翻越能垒抵达生成物
+    const uncatProgress = animPhase
+    const catProgress = (animPhase * 2) % 1
+    const [ux, uy] = sampleSegs(uncatSegs, uncatProgress)
+    const [cx, cy] = sampleSegs(catSegs, catProgress)
+
     return (
       <g transform="translate(40, 40)">
         <rect x={0} y={0} width={760} height={570} rx={16} fill="#FFFFFF" stroke="#E2E8F0" strokeWidth={2} />
 
         <text x={30} y={40} fontSize={font(18)} fontWeight="bold" fill="#1E293B">
-          反应历程与活化能高程图 (E-t 反应坐标)
+          反应历程与活化能高程图 (能量-反应坐标)
         </text>
         <text x={30} y={65} fontSize={font(12)} fill="#64748B">
           无催化剂 vs 催化剂双峰路径对比 | 探究活化能 Ea 与 ΔH 的本质联系
@@ -278,7 +392,7 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
         <line x1={60} y1={480} x2={720} y2={480} stroke="#94A3B8" strokeWidth={2} />
         <line x1={60} y1={480} x2={60} y2={80} stroke="#94A3B8" strokeWidth={2} />
         <text x={720} y={500} fontSize={font(12)} fontWeight="bold" fill="#64748B" textAnchor="end">
-          反应进程 (t)
+          反应坐标
         </text>
         <text x={50} y={75} fontSize={font(12)} fontWeight="bold" fill="#64748B" textAnchor="end">
           能量 E (kJ/mol)
@@ -302,6 +416,22 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
         {params.hasCatalyst === 1 && (
           <path d={catPath} fill="none" stroke="#F59E0B" strokeWidth={3} strokeDasharray="6,4" />
         )}
+
+        {/* 动态反应微粒：对比无催化与催化越垒进度 */}
+        <g>
+          <circle cx={ux} cy={uy} r={7} fill={colors.primary[500]} stroke={colors.neutral.white} strokeWidth={2} />
+          <text x={ux} y={uy - 12} fontSize={font(9.5)} fontWeight="bold" fill={colors.primary[700]} textAnchor="middle">
+            无催化分子
+          </text>
+          {params.hasCatalyst === 1 && (
+            <g>
+              <circle cx={cx} cy={cy} r={7} fill={colors.warning[500]} stroke={colors.neutral.white} strokeWidth={2} />
+              <text x={cx} y={cy - 12} fontSize={font(9.5)} fontWeight="bold" fill={colors.warning[700]} textAnchor="middle">
+                催化路径分子
+              </text>
+            </g>
+          )}
+        </g>
 
         {/* 正反应活化能 Ea(正) 垂直线 */}
         <line x1={380} y1={yReactant} x2={380} y2={yUncatPeak} stroke="#EF4444" strokeWidth={2} />
@@ -370,9 +500,8 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
   }
 
   return (
-    <div ref={containerRef} className="w-full h-full flex flex-col p-4 overflow-hidden">
-      {viewMode === 0 && (
-        <div key="view-scene" className="w-full flex-1 flex flex-col min-h-[520px]">
+    <div className="w-full h-full flex flex-col p-4 overflow-hidden">
+      <div key="view-scene" className={viewMode === 0 ? 'w-full flex-1 flex flex-col min-h-[520px]' : 'hidden'}>
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
               <Eye className="w-4 h-4 text-indigo-600" />
@@ -383,7 +512,7 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
                 ? '盖斯定律方程式代数消去'
                 : params.mode === 'bond-energy'
                 ? '微观键能 Q_吸 - Q_放'
-                : '反应坐标 E-t 活化能高程'}
+                : '反应坐标 活化能高程'}
             </span>
           </div>
 
@@ -395,7 +524,6 @@ export const HessLawCenterView: React.FC<HessLawCenterViewProps> = ({
             </AnimationSvgCanvas>
           </div>
         </div>
-      )}
 
       {viewMode === 1 && quizData && (
         <div key="view-scoring" className="w-full h-full flex flex-col gap-3 overflow-y-auto">

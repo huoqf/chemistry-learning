@@ -100,18 +100,35 @@ export const IndustrialFlowRightPanel: React.FC<IndustrialFlowRightPanelProps> =
           },
           {
             label: '结晶工艺路径',
-            value: params.crystallizeMethod === 'cooling' ? '降温结晶' : '蒸发浓缩结晶',
+            value:
+              params.crystallizeMethod === 'heating'
+                ? '高温加热沉锂 (90℃)'
+                : params.crystallizeMethod === 'cooling'
+                ? '降温结晶'
+                : '蒸发浓缩结晶',
             unit: '',
             color: 'blue',
-            description: '依据主产品溶解度随温度陡增特性，优选降温结晶',
+            description:
+              params.crystallizeMethod === 'heating'
+                ? 'Li₂CO₃ 溶解度随温度升高而减小，高温沉锂析出率最高'
+                : params.crystallizeMethod === 'cooling'
+                ? '依据主产品溶解度随温度陡增特性，优选降温结晶'
+                : '蒸发浓缩结晶并配合趁热过滤分离高溶杂质',
           },
           {
             label: '洗涤纯化介质',
-            value: params.washSolvent === 'ethanol' ? '无水乙醇' : '冰水/冷水',
+            value:
+              params.washSolvent === 'hot-water'
+                ? '热水洗涤'
+                : params.washSolvent === 'ethanol'
+                ? '无水乙醇'
+                : '冰水/冷水',
             unit: '',
             color: 'emerald',
             description:
-              params.washSolvent === 'ethanol'
+              params.washSolvent === 'hot-water'
+                ? '洗去表面 Na₂SO₄ 杂质，并降低 Li₂CO₃ 高温溶解损耗'
+                : params.washSolvent === 'ethanol'
                 ? '减少晶体在水中的溶解损耗，且易挥发速干'
                 : '洗涤去除晶体表面附着的可溶性杂质离子',
           },
@@ -169,7 +186,7 @@ export const IndustrialFlowRightPanel: React.FC<IndustrialFlowRightPanelProps> =
             : params.systemId === 'al-fe-si'
             ? {
                 name: '赤泥粗脱硅反应式',
-                latex: 'SiO_3^{2-} + 2[Al(OH)_4]^- = 难溶铝硅酸钠\\downarrow + 2OH^-',
+                latex: 'Na^+ + [Al(OH)_4]^- + SiO_3^{2-} + H_2O = NaAlSiO_4\\cdot 2H_2O\\downarrow + 2OH^-',
                 note: '硅酸钠与铝酸钠反应生成难溶的水合铝硅酸钠沉淀，固液分离随赤泥去除。',
               }
             : params.systemId === 'li-fe-p'
@@ -177,6 +194,12 @@ export const IndustrialFlowRightPanel: React.FC<IndustrialFlowRightPanelProps> =
                 name: '铁磷结合沉淀反应方程式',
                 latex: 'Fe^{3+} + PO_4^{3-} = FePO_4\\downarrow',
                 note: '在微酸性环境 (pH 2.0~2.5) 形成高纯 FePO₄ 沉淀，实现铁磷与锂的彻底固液分离。',
+              }
+            : params.systemId === 'ni-co-li'
+            ? {
+                name: 'H₂O₂ 还原高价钴 (Co³⁺ → Co²⁺) 反应式',
+                latex: '2LiCoO_2 + H_2O_2 + 3H_2SO_4 = 2CoSO_4 + Li_2SO_4 + O_2\\uparrow + 4H_2O',
+                note: '此处 H₂O₂ 充当还原剂将难溶 Co(III) 还原为可溶 Co²⁺ 提高浸出率（O 元素被氧化为 O₂ 逸出）。',
               }
             : {
                 name: 'H₂O₂ 氧化 Fe²⁺ 离子方程式',
@@ -197,11 +220,15 @@ export const IndustrialFlowRightPanel: React.FC<IndustrialFlowRightPanelProps> =
                 latex: 'c(OH^-) = \\sqrt[n]{\\frac{K_{sp}}{10^{-5}}}, \\quad pH = 14 - pOH',
                 note: '高考规定离子残余浓度 c ≤ 10⁻⁵ mol/L 即认为沉淀完全，由 Ksp 算出所需最小 pH。',
               },
-          {
-            name: '高考答题规范：Fe³⁺ 完全沉淀 pH 演算步骤',
-            latex: 'c(OH^-) = \\sqrt[3]{\\frac{4.0 \\times 10^{-38}}{10^{-5}}} \\approx 1.59 \\times 10^{-11} \\implies pH = 14 - 10.80 = 3.20',
-            note: '标准采分规范：必须先写 c(OH⁻) 开方表达式，再求负对数 pOH，最后由 14 - pOH 得出 pH=3.20。',
-          },
+          ...(params.systemId !== 'al-fe-si' && params.systemId !== 'li-fe-p'
+            ? [
+                {
+                  name: '高考答题规范：Fe³⁺ 完全沉淀 pH 演算步骤',
+                  latex: 'c(OH^-) = \\sqrt[3]{\\frac{4.0 \\times 10^{-38}}{10^{-5}}} \\approx 1.59 \\times 10^{-11} \\implies pH = 14 - 10.80 = 3.20',
+                  note: '标准采分规范：必须先写 c(OH⁻) 开方表达式，再求负对数 pOH，最后由 14 - pOH 得出 pH=3.20。',
+                },
+              ]
+            : []),
           {
             name: reagent === 'CO2' ? 'CO₂ 通入酸化沉淀反应' : `调 pH 试剂反应 (${reagent} 消耗 H⁺)`,
             latex:
@@ -225,6 +252,8 @@ export const IndustrialFlowRightPanel: React.FC<IndustrialFlowRightPanelProps> =
                 ? 'Cu_2(OH)_2CO_3 + 4H^+ = 2Cu^{2+} + CO_2\\uparrow + 3H_2O'
                 : reagent === 'Na2CO3'
                 ? 'CO_3^{2-} + 2H^+ = CO_2\\uparrow + H_2O'
+                : reagent === 'NH3·H2O'
+                ? 'NH_3\\cdot H_2O + H^+ = NH_4^+ + H_2O'
                 : reagent === 'NaOH'
                 ? 'OH^- + H^+ = H_2O'
                 : reagent === 'CO2'
@@ -260,6 +289,12 @@ export const IndustrialFlowRightPanel: React.FC<IndustrialFlowRightPanelProps> =
                 name: '加热稀释水解制备偏钛酸反应式',
                 latex: 'TiOSO_4 + 2H_2O \\xlongequal{\\Delta} H_2TiO_3\\downarrow + H_2SO_4',
                 note: '水解吸热，加热与稀释均促进水解平衡正向移动，生成偏钛酸沉淀经煅烧得钛白粉。',
+              }
+            : params.systemId === 'fe-al-mn'
+            ? {
+                name: '一水硫酸锰高温蒸发结晶方程式',
+                latex: 'Mn^{2+} + SO_4^{2-} + H_2O \\xlongequal{>80^\\circ C} MnSO_4\\cdot H_2O\\downarrow',
+                note: 'MnSO₄·H₂O 在高温 (>40℃) 溶解度随温升高减小，蒸发浓缩结晶并趁热过滤防止析出多水合物或回溶。',
               }
             : {
                 name: '硫酸盐晶体结晶析出通式',

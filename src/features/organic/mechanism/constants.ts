@@ -81,28 +81,46 @@ export const MECHANISM_DETAILS: Record<
 
 export const CONTRAST_MATRICES = [
   {
+    mechanism: 1,
     title: '溶剂竞争：消去反应 vs 水解取代',
     reactionA: '消去：2-溴丁烷 + NaOH 醇溶液加热 → 2-丁烯 (主产物) + NaBr + H₂O',
     reactionB: '取代：2-溴丁烷 + NaOH 水溶液加热 → 2-丁醇 + NaBr',
     memoryTip: '口诀：“醇出双键水出醇”。醇溶液强碱促消去，扎伊采夫少氢脱氢。',
   },
   {
+    mechanism: 3,
     title: '断键位点：酯化脱水 vs 酯基水解',
     reactionA: '酯化：酸脱羟基 (-OH) 醇脱氢 (-H)，切断羧基 C-O 键生成酯与水',
     reactionB: '水解：酸性或碱性切断酯基 C-O 单键 (非 C=O)，加水还原为酸与醇',
     memoryTip: '口诀：“酸脱羟基醇脱氢，水断单键定去向”。¹⁸O 示踪进入酯基醚氧位。',
   },
   {
+    mechanism: 2,
     title: '氧化前提：伯醇/仲醇 vs 叔醇',
     reactionA: '能氧化：伯醇 (-CH₂OH) 氧化为醛；仲醇 (-CH(OH)-) 氧化为酮',
     reactionB: '不氧化：叔醇 (—C(OH)R₂ / 连羟基碳上无 H)，催化加热不被氧化',
     memoryTip: '口诀：“相连碳上找氢原子，双氢成醛单氢酮，无氢不反应”。',
   },
   {
+    mechanism: 0,
     title: '新高考拓展：马氏加成 vs 反马氏信息题',
     reactionA: '经典亲电加成：H 加在含 H 多的双键碳上 (仲碳正离子中间体稳定)',
     reactionB: '过氧化物存在（仅 HBr）：自由基机理，Br 加在含 H 多的双键碳上 (反马氏)',
     memoryTip: '口诀：“无氧马氏 H 多多，有氧反马 Br 换位”。高考高频信息转化题。',
+  },
+  {
+    mechanism: 4,
+    title: '羟基性质分化：酚羟基 vs 醇羟基',
+    reactionA: '酚羟基 (-OH 连苯环)：p-π 共轭使苯环邻对位活化、酚羟基具弱酸性 (能与 NaOH 反应，不与 NaHCO₃ 反应)',
+    reactionB: '醇羟基 (-OH 连饱和碳)：呈中性不与 NaOH 反应，但可与 Na 置换放 H₂ 并可催化氧化',
+    memoryTip: '口诀：“苯环拉电子，酚弱酸可中和；邻对易溴代，沉淀一眼辨”。',
+  },
+  {
+    mechanism: 5,
+    title: '条件区分：脱水缩合 vs 酸/碱催化水解',
+    reactionA: '酸性水解：稀酸加热切断肽键 C-N 键，氨基以 -NH₃⁺ 盐形式存在',
+    reactionB: '碱性水解：NaOH 溶液加热切断肽键 C-N 键，羧基转化为 -COO⁻ 钠盐',
+    memoryTip: '口诀：“缩合断 O-H/C-OH 拼成肽，酸水解氨基成盐碱水解羧成盐”。',
   },
 ]
 

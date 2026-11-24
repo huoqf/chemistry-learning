@@ -28,7 +28,7 @@ export function IndustrialFlowCanvas() {
     crushSize: 'fine',
     oxidantAmount: 'sufficient',
     reagent: 'MnO',
-    crystallizeMethod: 'cooling',
+    crystallizeMethod: 'evaporation',
     washSolvent: 'ethanol',
   })
 
@@ -46,7 +46,7 @@ export function IndustrialFlowCanvas() {
       crushSize: 'fine',
       oxidantAmount: 'sufficient',
       reagent: 'MnO',
-      crystallizeMethod: 'cooling',
+      crystallizeMethod: 'evaporation',
       washSolvent: 'ethanol',
     })
   }, [])

@@ -169,7 +169,7 @@ export const FE_CONFIG: ElementValenceConfig = {
       colorStyle: 'bg-purple-100 text-purple-900 border-purple-300',
       rgbColor: PHENOMENON_COLORS.mno4Minus,
       testReaction: '高铁酸钾紫色水溶液，兼具强氧化杀菌消毒与 Fe(OH)₃ 胶体吸附絮凝净水双重功能',
-      equation: '4FeO₄²⁻ + 10H₂O = 4Fe(OH)₃(胶体)↓ + 3O₂↑ + 8OH⁻',
+      equation: '4FeO₄²⁻ + 10H₂O = 4Fe(OH)₃(胶体) + 3O₂↑ + 8OH⁻',
       roleDescription: '新型绿色高效水处理剂，强氧化剂',
       isOxidant: true,
       startingMaterial: '紫色 K₂FeO₄ 水溶液',

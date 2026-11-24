@@ -19,6 +19,7 @@ export const modelOrganicMechanism: ModelQuizData = {
       type: 'keywords',
       questionText: '2-溴丁烷与 NaOH 醇溶液共热主要发生消去反应，生成的烯烃主产物名称及遵循的规则是什么？',
       correctAnswer: ['2-丁烯', '扎伊采夫规则', '扎伊采夫'],
+      requiredKeywordGroups: [['2-丁烯'], ['扎伊采夫', '扎伊采夫规则']],
       explanation: '踩分点：消去 C-Br 键与 β-C 上的 C-H 键，遵循"扎伊采夫规则"，氢优先从含氢较少的 β-碳上脱去，主产物为 2-丁烯。水溶液中则发生水解取代。',
     },
     {
@@ -27,6 +28,10 @@ export const modelOrganicMechanism: ModelQuizData = {
       type: 'keywords',
       questionText: '2-甲基-2-丙醇 (叔丁醇) 在 Cu 催化并加热条件下能否被空气中的氧气催化氧化？说明高考规范原因。',
       correctAnswer: ['不能', '无α-氢', '没有α-氢', '没有α氢', '无α-H'],
+      requiredKeywordGroups: [
+        ['不能', '不可', '否'],
+        ['无α-氢', '没有α-氢', '没有α氢', '无α-H', '没有氢原子'],
+      ],
       explanation: '踩分点：与 -OH 相连的碳原子 (α-C) 上"没有氢原子" (无 α-H)，无法发生脱氢氧化反应。伯醇氧化为醛，仲醇氧化为酮。',
     },
     {
@@ -45,6 +50,7 @@ export const modelOrganicMechanism: ModelQuizData = {
       type: 'keywords',
       questionText: '苯酚与浓溴水反应生成白色沉淀，酚羟基活化了苯环上哪些位置的 C-H 键？',
       correctAnswer: ['邻位和对位', '邻对位', '邻、对位'],
+      requiredKeywordGroups: [['邻位和对位', '邻对位', '邻、对位']],
       explanation: '踩分点：酚羟基 (-OH) 具有强推电子效应，极化并活化苯环的"邻位和对位" C-H 键，易被 Br 元素取代生成 2,4,6-三溴苯酚白色沉淀。',
     },
     {
@@ -62,6 +68,7 @@ export const modelOrganicMechanism: ModelQuizData = {
       type: 'keywords',
       questionText: '在过渡金属 Pd 催化偶联反应机理图中，判断历程决速步 (RDS) 的决定性依据是什么？',
       correctAnswer: ['活化能最大', '能垒最高', '过渡态能量最高', '活化能最高'],
+      requiredKeywordGroups: [['活化能最大', '能垒最高', '过渡态能量最高', '活化能最高', '势能最高']],
       explanation: '踩分点：决速步 (Rate-Determining Step) 对应全反应历程中势能最高过渡态，即"活化能 (Ea) 最大"的基元反应，其反应速率最慢，决定整体反应快慢。',
     },
     {
@@ -70,6 +77,10 @@ export const modelOrganicMechanism: ModelQuizData = {
       type: 'keywords',
       questionText: '利用 1,3-丁二烯与乙烯发生 Diels-Alder 双烯加成反应，断开几个 π 键、新形成几个 σ 键成环？',
       correctAnswer: ['断开3个π键新形成2个σ键', '断3个π键', '形成2个σ键', '断开3个π键', '形成2个碳碳单键'],
+      requiredKeywordGroups: [
+        ['断3个π键', '断开3个π键', '3个π键'],
+        ['形成2个σ键', '新形成2个σ键', '形成2个碳碳单键', '2个σ键'],
+      ],
       explanation: '踩分点：Diels-Alder [4+2] 环加成反应中，断裂 3 个 π 键 (丁二烯 2 个 + 亲双烯体 1 个)，同时新生成 2 个 C-C σ 键和 1 个新 π 键，合成六元环。',
     },
   ],

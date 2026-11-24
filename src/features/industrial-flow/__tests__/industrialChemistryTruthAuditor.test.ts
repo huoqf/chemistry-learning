@@ -262,8 +262,28 @@ describe('实验二：无机工艺流程与沉淀调 pH 高考化学学科真理
       expect(step4.scoringAnswer).toContain('热水洗涤')
     })
 
-    it('常规硫酸盐体系：主产物溶解度随温度上升陡增，结晶分离必须优选降温结晶', () => {
-      const { result } = renderHook(() =>
+    it('常规硫酸盐体系 (如 ZnSO₄·7H₂O)：溶解度随温度上升陡增；MnSO₄·H₂O 高温 (>40℃) 随温度升高下降且需蒸发趁热过滤', () => {
+      const { result: znRes } = renderHook(() =>
+        useIndustrialFlowChemistry({
+          viewMode: 0,
+          systemId: 'fe-cu-zn',
+          activeStep: 4,
+          pH: 5.2,
+          leachTemp: 60,
+          crushSize: 'fine',
+          oxidantAmount: 'sufficient',
+          reagent: 'ZnO',
+          crystallizeMethod: 'cooling',
+          washSolvent: 'water',
+        })
+      )
+
+      const znCurve = znRes.current.solubilityCurveData
+      const znLow = znCurve.find((c) => c.temp === 0)?.main ?? 0
+      const znHigh = znCurve.find((c) => c.temp === 100)?.main ?? 0
+      expect(znHigh, 'ZnSO4·7H2O 高温溶解度大于低温溶解度').toBeGreaterThan(znLow)
+
+      const { result: mnRes } = renderHook(() =>
         useIndustrialFlowChemistry({
           viewMode: 0,
           systemId: 'fe-al-mn',
@@ -273,15 +293,16 @@ describe('实验二：无机工艺流程与沉淀调 pH 高考化学学科真理
           crushSize: 'fine',
           oxidantAmount: 'sufficient',
           reagent: 'MnO',
-          crystallizeMethod: 'cooling',
+          crystallizeMethod: 'evaporation',
           washSolvent: 'ethanol',
         })
       )
-
-      const curve = result.current.solubilityCurveData
-      const lowTemp = curve.find((c) => c.temp === 0)?.main ?? 0
-      const highTemp = curve.find((c) => c.temp === 100)?.main ?? 0
-      expect(highTemp, '常规盐类高温溶解度大于低温溶解度').toBeGreaterThan(lowTemp)
+      const mnCurve = mnRes.current.solubilityCurveData
+      const mnMid = mnCurve.find((c) => c.temp === 40)?.main ?? 0
+      const mnHigh = mnCurve.find((c) => c.temp === 100)?.main ?? 0
+      expect(mnHigh, 'MnSO4·H2O 在 >40℃ 溶解度随温升高下降').toBeLessThan(mnMid)
+      expect(mnRes.current.activeStepInfo.coreReaction).toContain('蒸发浓缩')
+      expect(mnRes.current.activeStepInfo.scoringAnswer).toContain('趁热过滤')
     })
   })
 
@@ -331,6 +352,30 @@ describe('实验二：无机工艺流程与沉淀调 pH 高考化学学科真理
         const target = fates.find((f) => f.isTarget)
         expect(target, `体系 [${sys}] 必须明确标记主产物元素`).toBeDefined()
         expect(target?.finalState, `体系 [${sys}] 主产物必须有明确结晶或煅烧最终归宿`).toBeTruthy()
+      }
+    })
+
+    it('回归：非 cu-fe 体系的工序四 coreReaction 不得回退为 CuSO₄ 结晶方程', () => {
+      const nonCuSystems: IndustrialFlowSystemId[] = ['fe-al-mn', 'fe-cu-zn', 'ti-fe', 'ni-co-li', 'mg-ca']
+      for (const sys of nonCuSystems) {
+        const { result } = renderHook(() =>
+          useIndustrialFlowChemistry({
+            viewMode: 0,
+            systemId: sys,
+            activeStep: 4,
+            pH: 5.0,
+            leachTemp: 60,
+            crushSize: 'fine',
+            oxidantAmount: 'sufficient',
+            reagent: 'MnO',
+            crystallizeMethod: 'cooling',
+            washSolvent: 'ethanol',
+          })
+        )
+        expect(
+          result.current.activeStepInfo.coreReaction,
+          `体系 [${sys}] 工序四不得回退为 CuSO₄`
+        ).not.toContain('CuSO₄')
       }
     })
   })

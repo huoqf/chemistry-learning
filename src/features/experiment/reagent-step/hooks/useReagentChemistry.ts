@@ -102,11 +102,9 @@ export function useReagentChemistry(options?: UseReagentChemistryOptions) {
 
   // 隔绝空气操作切换联动（切换时自动重置进度并暂停播放）
   const handleToggleAirIsolated = useCallback(() => {
-    setIsAirIsolated((prev) => {
-      setProgress(0)
-      setIsAutoPlaying(false)
-      return !prev
-    })
+    setIsAirIsolated((prev) => !prev)
+    setProgress(0)
+    setIsAutoPlaying(false)
   }, [])
 
   const currentScene: ReagentSceneConfig = useMemo(() => {
@@ -124,23 +122,23 @@ export function useReagentChemistry(options?: UseReagentChemistryOptions) {
     setAlModeState('forward-strong')
   }, [])
 
-  // 自动滴加定时逻辑
+  // 自动滴加定时逻辑（到达 1.0 时在独立 effect 中暂停播放，避免 updater 内部副作用）
   useEffect(() => {
     if (!isAutoPlaying) return
 
     const intervalMs = Math.max(20, 100 / speed)
     const timer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 1) {
-          setIsAutoPlaying(false)
-          return 1
-        }
-        return Math.min(1, prev + 0.02)
-      })
+      setProgress((prev) => Math.min(1, parseFloat((prev + 0.02).toFixed(4))))
     }, intervalMs)
 
     return () => clearInterval(timer)
   }, [isAutoPlaying, speed])
+
+  useEffect(() => {
+    if (isAutoPlaying && progress >= 1) {
+      setIsAutoPlaying(false)
+    }
+  }, [isAutoPlaying, progress])
 
   // 单滴微量 (+0.05 mL / +0.005 progress)
   const handleSingleDrop = useCallback(() => {

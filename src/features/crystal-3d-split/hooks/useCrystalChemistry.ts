@@ -6,7 +6,7 @@ import type {
   CalculationMode,
 } from '../types'
 
-const NA = 6.022e23 // 阿伏加德罗常数
+const NA = 6.02e23 // 阿伏加德罗常数 (高中化学计算标准取值 6.02×10²³ mol⁻¹，与 KaTeX 数值展示同源)
 
 export function useCrystalChemistry(
   crystalData: CrystalTypeData,

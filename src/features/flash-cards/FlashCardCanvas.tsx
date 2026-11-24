@@ -42,6 +42,7 @@ export function FlashCardCanvas() {
       isHeating={params.isHeating}
       isCompressing={params.isCompressing}
       sceneType={currentCard.sceneType}
+      cardId={currentCard.id}
       onChangeCategory={changeCategory}
       onNextCard={nextCard}
       onPrevCard={prevCard}

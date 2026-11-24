@@ -124,6 +124,7 @@ export const OrganicFunctionalMatrixCanvas: React.FC = () => {
                       selectedGroup={selectedGroup}
                       groupCounts={groupCounts}
                       consumption={consumption}
+                      activePresetId={activePresetId}
                       font={canvasSize.font}
                     />
                   </AnimationSvgCanvas>
@@ -146,6 +147,7 @@ export const OrganicFunctionalMatrixCanvas: React.FC = () => {
           right={
             <OrganicRightPanel
               panelMode={panelMode}
+              activePresetId={activePresetId}
               groupCounts={groupCounts}
               selectedGroup={selectedGroup}
               consumption={consumption}

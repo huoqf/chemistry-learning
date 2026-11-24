@@ -79,7 +79,7 @@ export const IonMatrixCanvas: React.FC = () => {
   }, [])
 
   const handleDropReagent = useCallback(() => {
-    setDropCount((prev) => (prev < 2 ? prev + 1 : 2))
+    setDropCount((prev) => (prev < 2 ? prev + 1 : 0))
   }, [])
 
   const handleResetReaction = useCallback(() => {

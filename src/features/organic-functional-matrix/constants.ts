@@ -563,7 +563,7 @@ export const POLYMERIZATION_MODELS: PolymerizationMatrixItem[] = [
     monomers: [
       { name: '乙烯 / 单取代烯烃', formula: 'CH₂=CH-R', groups: ['碳碳双键 (C=C)'] },
     ],
-    reactionEquation: 'n CH_2=CH-R \\xrightarrow{引发剂} -[CH_2-CH(R)]-_n-',
+    reactionEquation: 'n CH_2=CH-R \\xrightarrow{引发剂} -[CH_2-CH(R)]_n-',
     smallMoleculeOutput: '0 (无小分子脱除)',
     examPoints: '加聚反应原子利用率 100%，生成物摩尔质量等于单体摩尔质量 × n。',
   },
@@ -600,11 +600,11 @@ export const PRESET_MOLECULES: PresetMoleculeDetail[] = [
     examAnalysis:
       '新高考超高频双重特性母题：分子中所含官能团为【酯基】（甲酸酯基），因含有甲酰基 (H-C=O) 结构而兼具【醛基的还原性】。水解生成 1 mol 甲酸钠与 1 mol 苯酚钠，共消耗 2 mol NaOH；产物甲酸钠依然能发生银镜反应！高考答题注意：问官能团名称必须答“酯基”（或甲酸酯基），写“醛基”会判错。',
     keyEquations: [
-      'HCOO-C_6H_5 + 2[Ag(NH_3)_2]OH \\xrightarrow{\\Delta} (NH_4)_2CO_3 + C_6H_5OH + 2Ag\\downarrow + 2NH_3\\uparrow',
+      'HCOO-C_6H_5 + 2[Ag(NH_3)_2]OH \\xrightarrow{\\Delta} (NH_4)_2CO_3 + C_6H_5OH + 2Ag\\downarrow + 2NH_3',
       'HCOO-C_6H_5 + 2NaOH \\xrightarrow{\\Delta} HCOONa + C_6H_5ONa + H_2O',
     ],
     examTraps:
-      '高考特级推断题眼：“1 mol 酯水解消耗 2 mol NaOH，且水解产物均能发生银镜反应” ➔ 必为甲酸酚酯类异构体！切记：其官能团严格名称为“酯基”，不可单独列出醛基。',
+      '高考特级推断题眼：“1 mol 酯水解消耗 2 mol NaOH，且水解生成的甲酸钠（含醛基结构）能发生银镜反应，而苯酚钠不能” ➔ 必为甲酸酚酯类异构体！切记：其官能团严格名称为“酯基”，不可单独列出醛基。',
   },
   {
     id: 'ester-vs-phenol-ester',
@@ -698,7 +698,7 @@ export const PRESET_MOLECULES: PresetMoleculeDetail[] = [
   {
     id: 'alcohol-vs-ether',
     title: '醇 vs 醚 官能团异构',
-    chemicalName: '乙醇与二甲醚对映对比体系',
+    chemicalName: '乙醇与二甲醚官能团异构对比体系',
     subtitle: '1 醇-OH vs 1 醚键 ➔ 耗 1 Na vs 0 惰性',
     structureFormula: 'CH₃CH₂OH 与 CH₃-O-CH₃',
     counts: { 'alcohol-oh': 1, 'ether-bond': 1 },

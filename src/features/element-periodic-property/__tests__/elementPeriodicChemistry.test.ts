@@ -140,4 +140,19 @@ describe('母题八：元素位-构-性 电子排布化学正确性守门', () =
       }
     }
   })
+
+  it('9. 回归：C (Z=6) 在 I₁~I₄ 数据窗口内的突跃说明写 ≥ 4，激发态实时汇总 shellLayers 与跃迁标签', () => {
+    const { stepIonizationAnalysis } = hookAt(6, 'ground')
+    expect(stepIonizationAnalysis.jumpDescription).toContain('≥ 4')
+    expect(stepIonizationAnalysis.jumpDescription).not.toContain('多于 4')
+
+    const cExcited = hookAt(6, 'excited')
+    expect(cExcited.excitationTransitionLabel).toMatch(/^2s→2p/)
+    expect(cExcited.shellLayers.reduce((a, b) => a + b, 0)).toBe(6)
+
+    // Ne (Z=10) 激发态 2p→3s 应体现在 shellLayers = [2, 7, 1]
+    const neExcited = hookAt(10, 'excited')
+    expect(neExcited.excitationTransitionLabel).toMatch(/^2p.*→3s$/)
+    expect(neExcited.shellLayers).toEqual([2, 7, 1])
+  })
 })

@@ -116,7 +116,7 @@ export const HessLawLeftPanel: React.FC<HessLawLeftPanelProps> = ({
     {
       type: 'tip',
       variant: 'warning',
-      title: '💡 高考考点提醒',
+      title: '高考考点提醒',
       group: '催化剂调控',
       showIf: 'modeVal',
       showIfValue: 2,

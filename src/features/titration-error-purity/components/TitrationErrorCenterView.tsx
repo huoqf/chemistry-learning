@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react'
 import { AnimationSvgCanvas } from '@/components/Layout'
 import { ScoringCardSection, GaokaoVariantQuiz, TitrationControls } from '@/components/UI'
-import { TitrationCurveChart } from '@/components/Chart'
+import { TitrationCurveChart, RelationChart } from '@/components/Chart'
 import { BuretteApparatus, ErlenmeyerFlaskApparatus, IronSupportApparatus } from '@/components/Chemistry'
 import { useAnimationViewport } from '@/hooks/useAnimationViewport'
-import { CANVAS_PRESETS, SCENE_COLORS, CHART_COLORS, CANVAS_COLORS, withAlpha } from '@/theme'
+import { CANVAS_PRESETS, SCENE_COLORS, CHART_COLORS, PH_CHART_COLORS, CANVAS_COLORS, withAlpha } from '@/theme'
 import type { ModelQuizData } from '@/data/quiz/types'
 import type { ViewMode, TitrationErrorParams, TitrationChemistryResult } from '../types'
 
@@ -49,14 +49,13 @@ export const TitrationErrorCenterView: React.FC<TitrationErrorCenterViewProps> =
   // 计量量程：至少覆盖 2 倍等当点（下限 40 mL），保证突跃段始终完整落在图内
   const vMax = useMemo(() => Math.max(40, Math.ceil((vEq * 2) / 5) * 5), [vEq])
 
-  // 2. 真实酸碱滴定突跃曲线计算 (强酸-强碱体系：0.1000 mol/L NaOH 滴定 20.00 mL 0.1000 mol/L HCl)
+  // 2. 真实滴定突跃曲线计算 (随 params.titrationType 自动切换酸碱 pH / 氧化还原电位 / 沉淀 pCl 曲线)
   const titrationCurvePoints = useMemo(() => {
     const points: { x: number; y: number }[] = []
-    const c0 = params.cStandardTrue || 0.1 // 标液浓度 0.1000 mol/L
+    const c0 = params.cStandardTrue || 0.1
     const kw = 1e-14
 
-    // 采样体积序列：量程等分 80 段（vMax = 40 时即 0.5 mL 间隔），
-    // 再在等当点前后插入密集特征点以精确刻画突跃（不再把 0~40 mL 写死）
+    // 采样体积序列：量程等分 80 段，并在等当点前后插入密集特征点刻画突跃
     const vList: number[] = []
     const SEGMENTS = 80
     for (let i = 0; i <= SEGMENTS; i++) {
@@ -72,77 +71,101 @@ export const TitrationErrorCenterView: React.FC<TitrationErrorCenterViewProps> =
     vList.sort((a, b) => a - b)
 
     for (const v of vList) {
-      let ph = 7.0
       const totalV = (params.vSampleTrue || 20) + v
-      if (v < vEq) {
-        // 酸过量：c_excess = (vEq - v) * c0 / totalV
-        const cAcid = ((vEq - v) * c0) / totalV
-        // 精确解一元二次方程 [H+]^2 - cAcid*[H+] - kw = 0
-        const hConc = (cAcid + Math.sqrt(cAcid * cAcid + 4 * kw)) / 2
-        ph = -Math.log10(hConc)
-      } else if (v > vEq) {
-        // 碱过量：c_excess = (v - vEq) * c0 / totalV
-        const cBase = ((v - vEq) * c0) / totalV
-        // 精确解一元二次方程 [OH-]^2 - cBase*[OH-] - kw = 0
-        const ohConc = (cBase + Math.sqrt(cBase * cBase + 4 * kw)) / 2
-        ph = 14.0 + Math.log10(ohConc)
+      let yVal = 7.0
+      if (params.titrationType === 'redox') {
+        if (v <= 0.001) {
+          yVal = 0.62
+        } else if (v < vEq) {
+          const ratio = v / Math.max(1e-4, vEq - v)
+          yVal = Math.max(0.60, Math.min(1.05, 0.77 + 0.059 * Math.log10(ratio)))
+        } else if (v > vEq) {
+          const excess = Math.max(1e-4, (v - vEq) / Math.max(1e-4, vEq))
+          yVal = Math.max(1.42, Math.min(1.56, 1.51 + (0.059 / 5) * Math.log10(excess)))
+        } else {
+          yVal = 1.39
+        }
+      } else if (params.titrationType === 'precipitation') {
+        const kspAgCl = 1.8e-10
+        if (v < vEq) {
+          const cCl = Math.max(1e-12, ((vEq - v) * c0) / totalV)
+          yVal = -Math.log10(cCl)
+        } else if (v > vEq) {
+          const cAg = Math.max(1e-12, ((v - vEq) * c0) / totalV)
+          yVal = -Math.log10(kspAgCl / cAg)
+        } else {
+          yVal = -Math.log10(Math.sqrt(kspAgCl))
+        }
       } else {
-        ph = 7.0
+        if (v < vEq) {
+          const cAcid = ((vEq - v) * c0) / totalV
+          const hConc = (cAcid + Math.sqrt(cAcid * cAcid + 4 * kw)) / 2
+          yVal = -Math.log10(hConc)
+        } else if (v > vEq) {
+          const cBase = ((v - vEq) * c0) / totalV
+          const ohConc = (cBase + Math.sqrt(cBase * cBase + 4 * kw)) / 2
+          yVal = 14.0 + Math.log10(ohConc)
+        } else {
+          yVal = 7.0
+        }
       }
-      points.push({ x: v, y: Number(ph.toFixed(2)) })
+      points.push({ x: v, y: Number(yVal.toFixed(2)) })
     }
     return points
-  }, [vEq, vMax, params.cStandardTrue, params.vSampleTrue])
+  }, [vEq, vMax, params.cStandardTrue, params.vSampleTrue, params.titrationType])
 
-  // 动态视线偏角计算 (如始仰终俯 view-start-up-end-down 或始俯终仰 view-start-down-end-up 随滴定进度平滑过渡)
+  // 动态视线偏角计算 (如始仰终俯 view-start-up-end-down 或始俯终仰 view-start-down-end-up 随 0 -> vEq 滴定进程平滑过渡)
   const effectiveViewAngle = useMemo(() => {
+    const progress = Math.min(1, Math.max(0, currentVolume / Math.max(0.01, vEq)))
     if (params.errorOp === 'view-start-up-end-down') {
-      // 0mL 时仰视 +10°，40mL 时俯视 -10°
-      const progress = Math.min(1, currentVolume / 40.0)
       return 10.0 - progress * 20.0
     }
     if (params.errorOp === 'view-start-down-end-up') {
-      // 0mL 时俯视 -10°，40mL 时仰视 +10°
-      const progress = Math.min(1, currentVolume / 40.0)
       return -10.0 + progress * 20.0
     }
     return params.viewAngle
-  }, [params.errorOp, params.viewAngle, currentVolume])
+  }, [params.errorOp, params.viewAngle, currentVolume, vEq])
 
   // 放大镜刻度与光学视线计算
   //
   // 凹液面最低点：meniscus 路径 `M 35 110 Q 52 120 67 110` 的最低点在 t=0.5 处，
   // 即 0.25×(35,110) + 0.5×(52,120) + 0.25×(67,110) = (51.5, 115)。
-  // 刻度 20.0 / 21.0 / 22.0 分别对应 y = 75 / 115 / 155，即 1 mL = 40 px，真值凹液面恰在 21.00 mL。
+  // 放大镜标尺比例设为 1 mL = 10 px（使 +15° 仰视对应的视差位移 ~4.0 px 精确等于 +0.40 mL，与右屏推导值同源对齐）。
   const MENISCUS_LOWEST_X = 51.5
   const MENISCUS_LOWEST_Y = 115
   // 读数基准线取刻度线靠眼一侧端点 x=60（刻度线 span x∈[30,60]），对应"近壁刻度"视差模型，
   // 这样"仰视读数偏大 / 俯视读数偏小"才与滴定管刻度自上而下增大的事实一致。
   const SCALE_READ_X = 60
 
+  const scaleCenter = Math.max(1, Math.min(vMax - 1, Math.round(currentVolume)))
+  const scaleTicks = [scaleCenter - 1, scaleCenter, scaleCenter + 1]
+
   // 眼睛位置：仰视 (effectiveViewAngle > 0) 眼睛低于凹液面 (y 增大)，俯视则高于凹液面
   const eyeY = MENISCUS_LOWEST_Y + (effectiveViewAngle / 15.0) * 30.0
   // 视线由「眼睛 → 凹液面最低点」唯一确定，再延伸至刻度线。
   // 关键：sightLineEndY / readCrossY 都由同一斜率导出，保证视线严格穿过凹液面最低点；
-  // 此前两处 y 用互不相干的公式各算一次，导致视线并不经过凹液面最低点（几何自相矛盾）。
   const sightSlope = (MENISCUS_LOWEST_Y - eyeY) / (MENISCUS_LOWEST_X - 115)
   const sightLineEndY = MENISCUS_LOWEST_Y + sightSlope * (30 - MENISCUS_LOWEST_X)
   const readCrossY = MENISCUS_LOWEST_Y + sightSlope * (SCALE_READ_X - MENISCUS_LOWEST_X)
-  const displayReadValue = Number((21.0 + (readCrossY - MENISCUS_LOWEST_Y) / 40).toFixed(2))
+  const displayReadValue = Math.max(
+    0,
+    Number((currentVolume + (readCrossY - MENISCUS_LOWEST_Y) / 10).toFixed(2)),
+  )
   const readDirectionLabel =
-    displayReadValue > 21.005 ? '偏大' : displayReadValue < 20.995 ? '偏小' : '平视'
+    displayReadValue > currentVolume + 0.005 ? '偏大' : displayReadValue < currentVolume - 0.005 ? '偏小' : '平视'
 
   // 滴定控制条特征节点快跳（全部随等当点 vEq 联动，不再写死 10 / 20 / 25 mL）
   const titrationSteps = useMemo(() => {
     const half = Number((vEq / 2).toFixed(2))
     const excess = Number((vEq * 1.25).toFixed(2))
+    const halfLabel = params.titrationType === 'acid-base' ? '半中和' : '半等当点'
     return [
       { title: `起点 (0 mL)`, volume: 0 },
-      { title: `半中和 (${half} mL)`, volume: half },
+      { title: `${halfLabel} (${half} mL)`, volume: half },
       { title: `等当点 (${vEq.toFixed(2)} mL)`, volume: vEq },
       { title: `过量 (${excess} mL)`, volume: excess },
     ]
-  }, [vEq])
+  }, [vEq, params.titrationType])
 
   // 如果处于 规范踩分 ('scoring') 视角，在 DOM 层条件渲染
   if (viewMode === 'scoring') {
@@ -173,6 +196,8 @@ export const TitrationErrorCenterView: React.FC<TitrationErrorCenterViewProps> =
   const flaskColor = isEndpointReached
     ? params.titrationType === 'redox'
       ? withAlpha('#C084FC', 0.75)
+      : params.titrationType === 'precipitation'
+      ? withAlpha('#B91C1C', 0.7) // 莫尔法 K₂CrO₄ 指示剂生成砖红色 Ag₂CrO₄ 沉淀
       : withAlpha('#F472B6', 0.75)
     : withAlpha(SCENE_COLORS.container.flask, 0.25)
 
@@ -253,22 +278,26 @@ export const TitrationErrorCenterView: React.FC<TitrationErrorCenterViewProps> =
                 strokeWidth="1.5"
               />
               <text x="10" y="22" fill={CANVAS_COLORS.labelText} fontSize={canvasSize.font(11)} fontWeight="bold">
-                🔍 视线放大镜
+                视线放大镜
               </text>
 
               <circle cx="67" cy="115" r="55" fill={CANVAS_COLORS.objectFillNeutral} stroke={SCENE_COLORS.industrialEquipment.absorptionTower} strokeWidth="2" />
 
-              {/* 刻度线 */}
-              <line x1="30" y1="75" x2="60" y2="75" stroke={SCENE_COLORS.materials.iron} strokeWidth="1.5" />
-              <text x="25" y="78" fill={CANVAS_COLORS.labelTextLight} fontSize={canvasSize.font(9)} textAnchor="end">20.0</text>
+              {/* 动态刻度线（围绕当前滴定管真实体积 currentVolume 实时平移，1 mL = 10 px） */}
+              {scaleTicks.map((tickVal) => {
+                const tickY = 115 + (tickVal - currentVolume) * 10
+                if (tickY < 70 || tickY > 160) return null
+                return (
+                  <g key={tickVal}>
+                    <line x1="30" y1={tickY} x2="60" y2={tickY} stroke={SCENE_COLORS.materials.iron} strokeWidth="1.5" />
+                    <text x="25" y={tickY + 3} fill={CANVAS_COLORS.labelTextLight} fontSize={canvasSize.font(9)} textAnchor="end">
+                      {tickVal.toFixed(1)}
+                    </text>
+                  </g>
+                )
+              })}
 
-              <line x1="30" y1="115" x2="60" y2="115" stroke={SCENE_COLORS.materials.iron} strokeWidth="1.5" />
-              <text x="25" y="118" fill={CANVAS_COLORS.labelTextLight} fontSize={canvasSize.font(9)} textAnchor="end">21.0</text>
-
-              <line x1="30" y1="155" x2="60" y2="155" stroke={SCENE_COLORS.materials.iron} strokeWidth="1.5" />
-              <text x="25" y="158" fill={CANVAS_COLORS.labelTextLight} fontSize={canvasSize.font(9)} textAnchor="end">22.0</text>
-
-              {/* 真实凹液面 (21.00 mL 对应 y=115) */}
+              {/* 真实凹液面 (最低点固定在 MENISCUS_LOWEST_Y=115，对应真值体积 currentVolume) */}
               <path d="M 35 110 Q 52 120 67 110" fill="none" stroke={SCENE_COLORS.industrialEquipment.absorptionTower} strokeWidth="2.5" />
               <rect x="35" y="110" width="32" height="30" fill={withAlpha(SCENE_COLORS.industrialEquipment.absorptionTower, 0.2)} />
 
@@ -292,7 +321,7 @@ export const TitrationErrorCenterView: React.FC<TitrationErrorCenterViewProps> =
               <circle cx={SCALE_READ_X} cy={readCrossY} r="2.5" fill={CHART_COLORS.highlight} />
 
               <text x="10" y="195" fill={CANVAS_COLORS.labelTextLight} fontSize={canvasSize.font(10)}>
-                真值: <tspan fill={SCENE_COLORS.industrialEquipment.absorptionTower} fontWeight="bold">21.00 mL</tspan>
+                真值: <tspan fill={SCENE_COLORS.industrialEquipment.absorptionTower} fontWeight="bold">{currentVolume.toFixed(2)} mL</tspan>
               </text>
               <text x="10" y="210" fill={CANVAS_COLORS.labelTextLight} fontSize={canvasSize.font(10)}>
                 读数:{' '}
@@ -304,16 +333,44 @@ export const TitrationErrorCenterView: React.FC<TitrationErrorCenterViewProps> =
           </AnimationSvgCanvas>
         </div>
 
-        {/* ── 右侧 560px 图表与定量拆解区 (复用 TitrationCurveChart 图表组件) ── */}
+        {/* ── 右侧 560px 图表与定量拆解区 (按滴定体系动态渲染对应曲线) ── */}
         <div className="flex-1 h-full relative p-4 flex flex-col gap-3 overflow-y-auto">
-          {/* 1. 复用 TitrationCurveChart 规范图表组件 */}
+          {/* 1. 动态匹配滴定类型曲线组件 */}
           <div className="w-full h-[240px] rounded-xl p-2 border border-slate-200/80 shrink-0">
-            <TitrationCurveChart
-              points={titrationCurvePoints}
-              equivalencePointV={errorResult.vTrue}
-              currentV={currentVolume}
-              title="滴定突跃曲线与极值误差偏移分析"
-            />
+            {params.titrationType === 'acid-base' ? (
+              <TitrationCurveChart
+                points={titrationCurvePoints}
+                equivalencePointV={errorResult.vTrue}
+                currentV={currentVolume}
+                title="酸碱中和滴定 pH 突跃曲线与误差分析"
+              />
+            ) : params.titrationType === 'redox' ? (
+              <RelationChart
+                points={titrationCurvePoints}
+                xLabel="V(KMnO₄ 滴加试剂) / mL"
+                yLabel="电极电势 E (V)"
+                title="氧化还原滴定电势突跃曲线 (KMnO₄ 滴定 Fe²⁺)"
+                xDomain={[0, vMax]}
+                yDomain={[0, 1.8]}
+                cursorX={currentVolume}
+                cursorLabel={(x, y) => `V=${x.toFixed(1)}mL, E=${y.toFixed(2)}V`}
+                color={CHART_COLORS.compareB}
+                markers={[{ x: errorResult.vTrue, axis: 'vertical', label: '化学计量点', color: PH_CHART_COLORS.neutral }]}
+              />
+            ) : (
+              <RelationChart
+                points={titrationCurvePoints}
+                xLabel="V(AgNO₃ 滴加试剂) / mL"
+                yLabel="pCl (-lg c(Cl⁻))"
+                title="沉淀滴定突跃曲线 (莫尔法 AgNO₃ 滴定 Cl⁻)"
+                xDomain={[0, vMax]}
+                yDomain={[0, 11]}
+                cursorX={currentVolume}
+                cursorLabel={(x, y) => `V=${x.toFixed(1)}mL, pCl=${y.toFixed(2)}`}
+                color={CHART_COLORS.primary}
+                markers={[{ x: errorResult.vTrue, axis: 'vertical', label: '化学计量点', color: PH_CHART_COLORS.neutral }]}
+              />
+            )}
           </div>
 
           {/* 2. 下方定量计算拆解卡片 */}
@@ -322,7 +379,7 @@ export const TitrationErrorCenterView: React.FC<TitrationErrorCenterViewProps> =
               <>
                 <div className="flex items-center justify-between">
                   <h4 className="text-xs font-bold text-slate-800 flex items-center gap-1">
-                    📊 滴定测定结果极值评估
+                    滴定测定结果极值评估
                   </h4>
                   {isEndpointReached && (
                     <span className="text-[10px] px-2 py-0.5 rounded font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 animate-pulse">
@@ -362,7 +419,7 @@ export const TitrationErrorCenterView: React.FC<TitrationErrorCenterViewProps> =
             {params.mode === 'purity-calc' && (
               <>
                 <h4 className="text-xs font-bold text-slate-800 flex items-center gap-1">
-                  🧪 样品纯度 w% 与返滴定物质的量拆解
+                  样品纯度 w% 与返滴定物质的量拆解
                 </h4>
                 <div className="w-full bg-slate-200 h-6 rounded-full overflow-hidden flex">
                   <div
@@ -389,7 +446,7 @@ export const TitrationErrorCenterView: React.FC<TitrationErrorCenterViewProps> =
             {params.mode === 'yield-calc' && (
               <>
                 <h4 className="text-xs font-bold text-slate-800 flex items-center gap-1">
-                  ⚖️ 反应提纯产率 Yield% 计算
+                  反应提纯产率 Yield% 计算
                 </h4>
                 <div className="w-full bg-slate-200 h-6 rounded-full overflow-hidden flex">
                   <div
@@ -412,56 +469,60 @@ export const TitrationErrorCenterView: React.FC<TitrationErrorCenterViewProps> =
               </>
             )}
 
-            {/* 快速视角控制条 */}
-            <div className="flex items-center justify-between pt-2 border-t border-slate-200/80">
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-500 font-medium">快速视线微调：</span>
-                <button
-                  onClick={() => onUpdateParams({ errorOp: 'none', viewAngle: 0 })}
-                  className="px-2 py-0.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded text-xs font-semibold transition-colors"
-                >
-                  归位平视 (0°)
-                </button>
-                <button
-                  onClick={() => onUpdateParams({ viewAngle: 10 })}
-                  className="px-2 py-0.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded text-xs font-semibold transition-colors"
-                >
-                  仰视 (+10°)
-                </button>
-                <button
-                  onClick={() => onUpdateParams({ viewAngle: -10 })}
-                  className="px-2 py-0.5 bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 rounded text-xs font-semibold transition-colors"
-                >
-                  俯视 (-10°)
-                </button>
+            {/* 快速视角控制条（仅滴定误差分析模式下展示） */}
+            {params.mode === 'error-analysis' && (
+              <div className="flex items-center justify-between pt-2 border-t border-slate-200/80">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-slate-500 font-medium">快速视线微调：</span>
+                  <button
+                    onClick={() => onUpdateParams({ errorOp: 'none', viewAngle: 0 })}
+                    className="px-2 py-0.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded text-xs font-semibold transition-colors"
+                  >
+                    归位平视 (0°)
+                  </button>
+                  <button
+                    onClick={() => onUpdateParams({ viewAngle: 10 })}
+                    className="px-2 py-0.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded text-xs font-semibold transition-colors"
+                  >
+                    仰视 (+10°)
+                  </button>
+                  <button
+                    onClick={() => onUpdateParams({ viewAngle: -10 })}
+                    className="px-2 py-0.5 bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 rounded text-xs font-semibold transition-colors"
+                  >
+                    俯视 (-10°)
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* ── 下半区：化学专属滴定演练控制组件 TitrationControls (挂载于底部，零外层滚动条) ── */}
-      <div className="shrink-0 p-2 border-t border-slate-200">
-        <TitrationControls
-          volume={currentVolume}
-          maxVolume={vMax}
-          reagentName={
-            params.titrationType === 'redox'
-              ? `${(params.cStandardTrue || 0.02).toFixed(4)} mol/L KMnO₄ 滴定试剂`
-              : params.titrationType === 'precipitation'
-              ? `${(params.cStandardTrue || 0.1).toFixed(4)} mol/L AgNO₃ 滴定试剂`
-              : `${(params.cStandardTrue || 0.1).toFixed(4)} mol/L NaOH 滴加试剂`
-          }
-          isPlaying={isAutoPlaying}
-          onPlayPause={onPlayPause}
-          onSingleDrop={onSingleDrop}
-          onBulkAdd={onBulkAdd}
-          onReset={onReset}
-          onVolumeChange={onVolumeChange}
-          steps={titrationSteps}
-          onJumpToStep={onVolumeChange}
-        />
-      </div>
+      {/* ── 下半区：化学专属滴定演练控制组件 TitrationControls（仅在滴定误差分析模式挂载） ── */}
+      {params.mode === 'error-analysis' && (
+        <div className="shrink-0 p-2 border-t border-slate-200">
+          <TitrationControls
+            volume={currentVolume}
+            maxVolume={vMax}
+            reagentName={
+              params.titrationType === 'redox'
+                ? `${(params.cStandardTrue || 0.02).toFixed(4)} mol/L KMnO₄ 滴定试剂`
+                : params.titrationType === 'precipitation'
+                ? `${(params.cStandardTrue || 0.1).toFixed(4)} mol/L AgNO₃ 滴定试剂`
+                : `${(params.cStandardTrue || 0.1).toFixed(4)} mol/L NaOH 滴加试剂`
+            }
+            isPlaying={isAutoPlaying}
+            onPlayPause={onPlayPause}
+            onSingleDrop={onSingleDrop}
+            onBulkAdd={onBulkAdd}
+            onReset={onReset}
+            onVolumeChange={onVolumeChange}
+            steps={titrationSteps}
+            onJumpToStep={onVolumeChange}
+          />
+        </div>
+      )}
     </div>
   )
 }

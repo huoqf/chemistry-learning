@@ -31,7 +31,7 @@ export const modelTitrationErrorPurity: ModelQuizData = {
         '称取 2.00 g 粗 CaCO₃ 样品，加入 50.00 mL 1.00 mol/L 过量 HCl 溶液充分反应。反应后残余的过量 HCl 需消耗 20.00 mL 1.00 mol/L NaOH 溶液滴定至终点。计算样品中 CaCO₃ 的质量分数为多少 %？(M = 100 g/mol)',
       formulaLatex:
         'w\\% = \\frac{[c_{\\text{HCl}} V_{\\text{HCl}} - c_{\\text{NaOH}} V_{\\text{NaOH}}] \\times 0.5 \\times M_{\\text{CaCO}_3}}{m_{\\text{sample}}} \\times 100\\%',
-      placeholder: '75',
+      placeholder: '请输入百分数数值（不含%）',
       correctAnswer: ['75', '75%'],
       explanation:
         'n(HCl总) = 0.0500 L × 1.00 mol/L = 0.0500 mol。与过量 HCl 反应的 n(NaOH) = 0.0200 L × 1.00 mol/L = 0.0200 mol，故残余 n(HCl) = 0.0200 mol。被 CaCO₃ 消耗的 n(HCl) = 0.0500 - 0.0200 = 0.0300 mol。根据 CaCO₃ + 2HCl → CaCl₂ + CO₂↑ + H₂O，n(CaCO₃) = 0.5 × 0.0300 = 0.0150 mol，m(CaCO₃) = 0.0150 × 100 = 1.50 g。纯度 w% = (1.50 / 2.00) × 100% = 75.0%（粗样品含杂质，w% < 100% 符合实际）。',
@@ -41,13 +41,13 @@ export const modelTitrationErrorPurity: ModelQuizData = {
       title: '步骤 4：多步氧化还原滴定与产品产率计算',
       type: 'calculation',
       questionText:
-        '以 2.80 g 还原铁粉为原料制备摩尔盐 (NH₄)₂Fe(SO₄)₂·6H₂O (M = 392 g/mol)。最终所得纯品用 0.1000 mol/L KMnO₄ 标准溶液滴定，消耗 KMnO₄ 溶液 100.00 mL。计算该制备实验中铁元素的产率 (Yield%) 为多少 %？(M_Fe = 56 g/mol)',
+        '以 2.80 g 还原铁粉为原料制备摩尔盐 (NH₄)₂Fe(SO₄)₂·6H₂O (M = 392 g/mol)。最终所得纯品溶解后用 0.1000 mol/L KMnO₄ 标准溶液滴定，消耗 KMnO₄ 溶液 85.00 mL。计算该制备实验中铁元素的产率 (Yield%) 为多少 %？(M_Fe = 56 g/mol)',
       formulaLatex:
         '\\text{Yield}\\% = \\frac{5 \\times c_{\\text{KMnO}_4} V_{\\text{KMnO}_4} \\times M_{\\text{Fe}}}{m_{\\text{Fe,原料}}} \\times 100\\%',
-      placeholder: '100',
-      correctAnswer: ['100', '100%'],
+      placeholder: '请输入产率数值（不含%）',
+      correctAnswer: ['85', '85%'],
       explanation:
-        '根据离子方程式 5Fe²⁺ + MnO₄⁻ + 8H⁺ → 5Fe³⁺ + Mn²⁺ + 4H₂O，定量关系为 n(Fe²⁺) = 5 n(MnO₄⁻) = 5 × (0.1000 mol/L × 0.1000 L) = 0.0500 mol。原料中铁元素的物质的量 n(Fe) = 2.80 g / 56 g/mol = 0.0500 mol。因此铁元素转化产率 Yield% = (0.0500 mol / 0.0500 mol) × 100% = 100%。',
+        '根据离子方程式 5Fe²⁺ + MnO₄⁻ + 8H⁺ → 5Fe³⁺ + Mn²⁺ + 4H₂O，定量关系为 n(Fe²⁺) = 5 n(MnO₄⁻) = 5 × (0.1000 mol/L × 0.0850 L) = 0.0425 mol。原料中铁元素的物质的量 n(Fe) = 2.80 g / 56 g/mol = 0.0500 mol。因此铁元素转化产率 Yield% = (0.0425 mol / 0.0500 mol) × 100% = 85%。',
     },
   ],
   variantQuizzes: [

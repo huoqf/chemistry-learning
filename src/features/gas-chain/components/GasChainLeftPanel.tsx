@@ -305,7 +305,7 @@ export const GasChainLeftPanel: React.FC<GasChainLeftPanelProps> = ({
                       {params.funnelDepth !== 'deep' ? (
                         <span className="text-emerald-700 font-bold">✓ 相切/微浸 (规范防倒吸)</span>
                       ) : (
-                        <span className="text-rose-700 font-bold">❌ 深深深浸没 (探底失灵)</span>
+                        <span className="text-rose-700 font-bold">❌ 深深浸没 (探底失灵)</span>
                       )}
                     </div>
                   </div>

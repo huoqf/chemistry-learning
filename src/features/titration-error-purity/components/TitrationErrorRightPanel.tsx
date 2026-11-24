@@ -8,139 +8,218 @@ interface TitrationErrorRightPanelProps {
 }
 
 export const TitrationErrorRightPanel: React.FC<TitrationErrorRightPanelProps> = ({
+  params,
   chemistry,
 }) => {
   const { errorResult, purityResult, yieldResult, indicatorGuide } = chemistry
 
   // 1. 动态化学量构建 (满足 ChemistryQuantity 类型)
-  const quantities = [
-    {
-      label: '标准液理论用量 V(真实)',
-      value: errorResult.vTrue,
-      unit: 'mL',
-    },
-    {
-      label: '滴定管实际读数 V(读数)',
-      value: errorResult.vRead,
-      unit: 'mL (示意)',
-      highlight: errorResult.effectDirection === 'high' ? ('negative' as const) : errorResult.effectDirection === 'low' ? ('extreme' as const) : undefined,
-    },
-    {
-      label: '待测液真实浓度 c(真实)',
-      value: errorResult.cTrue,
-      unit: 'mol/L',
-    },
-    {
-      label: '计算测得浓度 c(计算)',
-      value: errorResult.cCalculated,
-      unit: 'mol/L (示意)',
-      highlight: errorResult.effectDirection === 'high' ? ('negative' as const) : errorResult.effectDirection === 'low' ? ('extreme' as const) : undefined,
-    },
-    {
-      label: '样品纯度质量分数 w%',
-      value: purityResult.purityPct,
-      unit: '%',
-      highlight: purityResult.overLimit ? ('negative' as const) : undefined,
-    },
-    {
-      label: '实验提纯产率 Yield%',
-      value: yieldResult.yieldPct,
-      unit: '%',
-      highlight: yieldResult.overLimit ? ('negative' as const) : undefined,
-    },
-  ]
-
-  // 2. 动态公式推导 (满足 Formula 类型)
-  const formulas = [
-    {
-      name: '滴定测定浓度基本关系式',
-      latex: 'c_{\\text{待测}} = \\frac{c_{\\text{标准}} \\times V_{\\text{标准}}}{V_{\\text{待测}}}',
-      note: '式中 c(标准) 与 V(待测) 通常为已知常量，测定结果完全取决于 V(标准) 的测量读取值',
-      level: 'core' as const,
-    },
-    {
-      name: '误差机理代数表达式分析',
-      latex: errorResult.equationExplanation,
-      note: errorResult.description,
-      level: 'important' as const,
-    },
-    {
-      name: '样品纯度 w% 规范模版',
-      latex: purityResult.calcStepsLatex,
-      note: purityResult.stoichiometryRatio,
-      level: 'derived' as const,
-    },
-    {
-      name: '提纯产率 Yield% 计算公式',
-      latex: yieldResult.calcFormulaLatex,
-      note: 'Yield% = (实际获得质量 / 理论计算最大产量) × 100%',
-      level: 'important' as const,
-    },
-  ]
-
-  // 3. 高考压轴考点剖析 (满足 GaokaoPoint 类型)
-  const gaokaoPoints = [
-    {
-      text: '高考视线读数口诀：“自上而下刻度增，仰视读大俯视小”。',
-      importance: 'gaokao' as const,
-    },
-    {
-      text: '【指示剂与终点判定】' + indicatorGuide,
-      importance: 'core' as const,
-    },
-    {
-      text: '【只判方向、不读数值】误操作造成的误差幅度取决于残留水量、悬滴体积等无法由操作名唯一确定的因素，故本工具给出的 c(计算) 与 Error% 仅示意量级；高考定量分析只在“偏高 / 偏低 / 无影响”这一方向判定上赋分。',
-      importance: 'gaokao' as const,
-    },
-    {
-      text: '“始仰终俯，ΔV 严重偏小” → 计算 c(待测) 偏低；“始俯终仰，ΔV 严重偏大” → 计算 c(待测) 偏高。',
-      importance: 'hard' as const,
-    },
-    {
-      text: '润洗原则：“滴定管要润洗，锥形瓶绝不润洗”；未润洗滴定管导致标准液被水稀释，消耗体积偏大，结果偏高。',
-      importance: 'core' as const,
-    },
-    {
-      text: '返滴定法（Back Titration）要领：n(被测物) = n(加入总标准液) - n(返滴定耗液)；代数推导时必须准确匹配化学计量数！',
-      importance: 'gaokao' as const,
-    },
-    {
-      text: '氧化还原滴定终点判定：无需额外指示剂（如 KMnO₄ 自指示剂），最后半滴标准液滴入时溶液变色且 30s 内不恢复。',
-      importance: 'basic' as const,
-    },
-  ]
-
-  // 4. 易错警示 (满足 WarningItem 类型)
-  const warnings = [
-    {
-      text: '【易错点 1】：锥形瓶内留有洗涤蒸馏水对滴定结果无影响，因为这不改变瓶内待测溶质的总摩尔数 n(待)。',
-      level: 'info' as const,
-    },
-    {
-      text: '【易错点 2】：滴定管尖嘴有气泡，滴定后气泡消失，气泡占据的体积会被误计入标准液消耗量，导致结果偏高！',
-      level: 'warning' as const,
-    },
-    {
-      text: '【易错点 3】：返滴定法中，若滴定过量试剂的滴定管未润洗导致 V(返滴) 偏大，算出的剩余量偏大，导致被测物计算纯度反向偏低！',
-      level: 'danger' as const,
-    },
-    ...(purityResult.overLimit
+  const quantities =
+    params.mode === 'error-analysis'
       ? [
           {
-            text: `【数据自洽性检查】当前计算得 w% = ${purityResult.purityPct}%，已超过 100%。粗样品不可能含超过 100% 的有效成分，务必回头核对「移取量/定容总体积」这一换算倍数是否漏乘、返滴定中过量酸的物质的量是否远大于样品可消耗量、以及 m(粗样品) 是否给错。`,
-            level: 'danger' as const,
+            label: '标准液理论用量 V(真实)',
+            value: errorResult.vTrue,
+            unit: 'mL',
+          },
+          {
+            label: '滴定管实际读数 V(读数)',
+            value: errorResult.vRead,
+            unit: 'mL (示意)',
+            highlight: errorResult.effectDirection === 'high' ? ('negative' as const) : errorResult.effectDirection === 'low' ? ('extreme' as const) : undefined,
+          },
+          {
+            label: '待测液真实浓度 c(真实)',
+            value: errorResult.cTrue,
+            unit: 'mol/L',
+          },
+          {
+            label: '计算测得浓度 c(计算)',
+            value: errorResult.cCalculated,
+            unit: 'mol/L (示意)',
+            highlight: errorResult.effectDirection === 'high' ? ('negative' as const) : errorResult.effectDirection === 'low' ? ('extreme' as const) : undefined,
           },
         ]
-      : []),
-    ...(yieldResult.overLimit
+      : params.mode === 'purity-calc'
       ? [
           {
-            text: `【数据自洽性检查】当前计算得 Yield% = ${yieldResult.yieldPct}%，已超过 100%。产率不可能大于 100%，请核对化学方程式的计量系数比（rawToProductRatio）以及投料原料质量与实际产品纯度质量的取值。`,
-            level: 'danger' as const,
+            label: '全样有效成分物质的量 n(总)',
+            value: purityResult.nTotalSample,
+            unit: 'mol',
+          },
+          {
+            label: '有效成分纯品质量 m(纯)',
+            value: purityResult.mPureProduct,
+            unit: 'g',
+          },
+          {
+            label: '样品纯度质量分数 w%',
+            value: purityResult.purityPct,
+            unit: '%',
+            highlight: purityResult.overLimit ? ('negative' as const) : ('positive' as const),
           },
         ]
-      : []),
-  ]
+      : [
+          {
+            label: '原料理论最大产量 m(理论)',
+            value: yieldResult.mTheoretical,
+            unit: 'g',
+          },
+          {
+            label: '实际获得纯品质量 m(实际)',
+            value: yieldResult.actualMass,
+            unit: 'g',
+          },
+          {
+            label: '实验提纯产率 Yield%',
+            value: yieldResult.yieldPct,
+            unit: '%',
+            highlight: yieldResult.overLimit ? ('negative' as const) : ('positive' as const),
+          },
+        ]
+
+  // 2. 动态公式推导 (按当前模式筛选，满足 Formula 类型)
+  const formulas =
+    params.mode === 'error-analysis'
+      ? [
+          {
+            name: '滴定测定浓度基本关系式',
+            latex:
+              params.titrationType === 'redox'
+                ? 'c(\\text{Fe}^{2+}) = \\frac{5 \\cdot c(\\text{KMnO}_4) \\times V_{\\text{标}}}{V_{\\text{待测}}}'
+                : 'c_{\\text{待测}} = \\frac{c_{\\text{标准}} \\times V_{\\text{标准}}}{V_{\\text{待测}}}',
+            note:
+              params.titrationType === 'redox'
+                ? '依反应 MnO₄⁻ + 5Fe²⁺ + 8H⁺ = Mn²⁺ + 5Fe³⁺ + 4H₂O 计量比 1:5，必须乘以系数 5'
+                : '式中 c(标准) 与 V(待测) 通常为已知常量，测定结果完全取决于 V(标准) 的测量读取值',
+            level: 'core' as const,
+          },
+          {
+            name: '误差机理代数表达式分析',
+            latex: errorResult.equationExplanation,
+            note: errorResult.description,
+            level: 'important' as const,
+          },
+        ]
+      : params.mode === 'purity-calc'
+      ? [
+          {
+            name: '样品纯度 w% 规范模版',
+            latex: purityResult.calcStepsLatex,
+            note: purityResult.stoichiometryRatio,
+            level: 'core' as const,
+          },
+        ]
+      : [
+          {
+            name: '提纯产率 Yield% 计算公式',
+            latex: yieldResult.calcFormulaLatex,
+            note: 'Yield% = (实际获得质量 / 理论计算最大产量) × 100%',
+            level: 'core' as const,
+          },
+        ]
+
+  // 3. 高考压轴考点剖析 (按当前模式筛选，满足 GaokaoPoint 类型)
+  const gaokaoPoints =
+    params.mode === 'error-analysis'
+      ? [
+          {
+            text: '高考视线读数口诀：“自上而下刻度增，仰视读大俯视小”。',
+            importance: 'gaokao' as const,
+          },
+          {
+            text: '【指示剂与终点判定】' + indicatorGuide,
+            importance: 'core' as const,
+          },
+          {
+            text: '【只判方向、不读数值】误操作造成的误差幅度取决于残留水量、悬滴体积等无法由操作名唯一确定的因素，故本工具给出的 c(计算) 与 Error% 仅示意量级；高考定量分析只在“偏高 / 偏低 / 无影响”这一方向判定上赋分。',
+            importance: 'gaokao' as const,
+          },
+          {
+            text: '“始仰终俯，ΔV 严重偏小” → 计算 c(待测) 偏低；“始俯终仰，ΔV 严重偏大” → 计算 c(待测) 偏高。',
+            importance: 'hard' as const,
+          },
+          {
+            text: '润洗原则：“滴定管要润洗，锥形瓶绝不润洗”；未润洗滴定管导致标准液被水稀释，消耗体积偏大，结果偏高。',
+            importance: 'core' as const,
+          },
+          ...(params.titrationType === 'redox'
+            ? [
+                {
+                  text: '氧化还原滴定终点判定：无需额外指示剂（如 KMnO₄ 自指示剂），最后半滴标准液滴入时溶液变色且 30s 内不恢复。',
+                  importance: 'basic' as const,
+                },
+              ]
+            : []),
+        ]
+      : params.mode === 'purity-calc'
+      ? [
+          {
+            text: '返滴定法（Back Titration）要领：n(被测物) = n(加入总标准液) - n(返滴定耗液)；代数推导时必须准确匹配化学计量数！',
+            importance: 'gaokao' as const,
+          },
+          {
+            text: '【移取与定容换算规范】从 V(总) 定容液中用移液管移取 V(移取) 份进行滴定时，全样物质总量为单份的 V(总)/V(移取) 倍，切忌漏乘换算因子！',
+            importance: 'hard' as const,
+          },
+          {
+            text: '【指示剂与终点判定】' + indicatorGuide,
+            importance: 'core' as const,
+          },
+        ]
+      : [
+          {
+            text: '【产率核心关系】Yield% = (实际纯品质量 / 理论最大产量) × 100%，需通过化学方程式计量系数比将原料摩尔数准确折算至产物摩尔数。',
+            importance: 'gaokao' as const,
+          },
+          {
+            text: '【反应物料极限判定】多种原料投料时，必须先判断过量反应物，严格以完全反应的限量反应物计算理论产量。',
+            importance: 'core' as const,
+          },
+        ]
+
+  // 4. 易错警示 (按当前模式筛选，满足 WarningItem 类型)
+  const warnings =
+    params.mode === 'error-analysis'
+      ? [
+          {
+            text: '【易错点 1】：锥形瓶内留有洗涤蒸馏水对滴定结果无影响，因为这不改变瓶内待测溶质的总摩尔数 n(待)。',
+            level: 'info' as const,
+          },
+          {
+            text: '【易错点 2】：滴定管尖嘴有气泡，滴定后气泡消失，气泡占据的体积会被误计入标准液消耗量，导致结果偏高！',
+            level: 'warning' as const,
+          },
+        ]
+      : params.mode === 'purity-calc'
+      ? [
+          {
+            text: '【易错点】：返滴定法中，若滴定过量试剂的滴定管未润洗导致 V(返滴) 偏大，算出的剩余量偏大，导致被测物计算纯度反向偏低！',
+            level: 'danger' as const,
+          },
+          ...(purityResult.overLimit
+            ? [
+                {
+                  text: `【数据自洽性检查】当前计算得 w% = ${purityResult.purityPct}%，已超过 100%。粗样品不可能含超过 100% 的有效成分，务必回头核对「移取量/定容总体积」这一换算倍数是否漏乘、返滴定中过量酸的物质的量是否远大于样品可消耗量、以及 m(粗样品) 是否给错。`,
+                  level: 'danger' as const,
+                },
+              ]
+            : []),
+        ]
+      : [
+          {
+            text: '【易错点】：实际产品未充分烘干残留溶剂水、或混入杂质时，实测产率可能出现表观偏大甚至超过 100% 的反常假象。',
+            level: 'warning' as const,
+          },
+          ...(yieldResult.overLimit
+            ? [
+                {
+                  text: `【数据自洽性检查】当前计算得 Yield% = ${yieldResult.yieldPct}%，已超过 100%。产率不可能大于 100%，请核对化学方程式的计量系数比（rawToProductRatio）以及投料原料质量与实际产品纯度质量的取值。`,
+                  level: 'danger' as const,
+                },
+              ]
+            : []),
+        ]
 
   return (
     <div className="w-full p-2">

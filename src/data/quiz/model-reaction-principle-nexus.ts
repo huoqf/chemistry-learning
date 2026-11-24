@@ -12,6 +12,7 @@ export const modelReactionPrincipleNexus: ModelQuizData = {
       formulaLatex: '\\Delta H = E_{a(\\text{正})} - E_{a(\\text{逆})}',
       placeholder: '输入公式与吸/放热结论...',
       correctAnswer: ['ΔH = Ea(正) - Ea(逆)', '放热', '放热反应'],
+      requiredKeywordGroups: [['ΔH = Ea(正) - Ea(逆)', 'Ea(正) - Ea(逆)'], ['放热', '放热反应']],
       explanation:
         '根据能量守恒，反应热等于正反应活化能减去逆反应活化能。当 Ea(正) < Ea(逆) 时，ΔH < 0，反应为放热反应。',
     },
@@ -51,6 +52,7 @@ export const modelReactionPrincipleNexus: ModelQuizData = {
         '对于反应 2NO₂(g) ⇌ N₂O₄(g)，充入惰性气体 (He) 时：① 恒温恒容条件下，平衡__移动；② 恒温恒压条件下，平衡__移动。',
       placeholder: '不 / 逆向...',
       correctAnswer: ['不移动', '逆向', '逆向移动'],
+      requiredKeywordGroups: [['不移动', '不', '无影响'], ['逆向', '逆向移动']],
       explanation:
         '① 恒温恒容：充入 He 气，反应物和生成物的分压/浓度均未改变，v(正) = v(逆)，平衡不移动；② 恒温恒压：充入 He 气导致容器体积膨胀，各组分分压减小（相当于减压），平衡向气体分子数增大的逆反应方向移动。',
     },
@@ -75,7 +77,7 @@ export const modelReactionPrincipleNexus: ModelQuizData = {
       modelId: 'model-reaction-principle-nexus',
       title: 'CO₂ 加氢合成甲醇反应历程与活化能图谱',
       contextDescription:
-        'CO₂ 催化加氢制甲醇的主要反应历程如图所示。中间体为 *HCOO 和 *H₂CO。无催化剂与在 Cu/ZnO 催化剂作用下的势能变化曲线包含多步过渡态 TS1、TS2。',
+        'CO₂ 催化加氢制甲醇的关键加氢历程中，表面中间体依次为 *HCOO 与 *H₂CO（总反应 CO₂(g)+3H₂(g) ⇌ CH₃OH(g)+H₂O(g)，ΔH = -49.5 kJ/mol）：步 1（*CO₂ + *H → *HCOO）过渡态 TS1 活化能 Ea₁ = 45 kJ/mol；步 2（*HCOO + 2*H → *H₂CO + *OH）过渡态 TS2 活化能 Ea₂ = 82 kJ/mol（势能垒最高，后续继续加氢生成 CH₃OH 与 H₂O）。实验同时对比了无催化剂与 Cu/ZnO 催化剂下的势能变化特征。',
       questionText: '下列关于该反应历程与催化机理的说法正确的是（ ）',
       options: [
         {
@@ -85,7 +87,7 @@ export const modelReactionPrincipleNexus: ModelQuizData = {
         },
         {
           label: 'B',
-          text: '决速步为活化能最大的步骤：*HCOO + *H → *H₂CO',
+          text: '决速步为活化能最大的步骤：*HCOO + 2*H → *H₂CO + *OH',
           isCorrect: true,
         },
         {
@@ -102,7 +104,7 @@ export const modelReactionPrincipleNexus: ModelQuizData = {
       modelAlignmentAnalysis:
         '【母题模型对齐】：本题考查活化能量山峰与多步过渡态(TS)。催化剂只改变反应途径、降低正逆反应活化能，但不改变反应始态和终态的能量差 ΔH。活化能 Ea 最高的步骤为决速步。',
       detailedExplanation:
-        '解析：A项，催化剂不能改变反应热 ΔH，错误；B项，由历程势能图可知 *HCOO + *H → *H₂CO 对应的势能垒 (Ea) 最高，为决速步，正确；C项，该反应为放热反应，升温平衡逆向移动，错误；D项，加入催化剂同等降低正、逆反应活化能，逆反应活化能变小，错误。',
+        '解析：A项，催化剂不能改变反应热 ΔH，错误；B项，由题干分步活化能数据可知 *HCOO + 2*H → *H₂CO + *OH 对应的势能垒 (Ea₂ = 82 kJ/mol) 最高，为决速步，正确；C项，该反应为放热反应，升温平衡逆向移动，错误；D项，加入催化剂同等降低正、逆反应活化能，逆反应活化能变小，错误。',
     },
     {
       id: 'nexus-var-2',
@@ -179,7 +181,7 @@ export const modelReactionPrincipleNexus: ModelQuizData = {
       yearProvince: '核心考点 · 情境变式',
       modelId: 'model-reaction-principle-nexus',
       title: '压强与温度双因素对平衡转化率 α-T-P 交叉图像解析',
-      contextDescription: '对于可逆气体反应 A(g) + 2B(g) ⇌ 2C(g) ΔH < 0，不同压强 P₁ 与 P₂ 下 A 的平衡转化率 α 随温度 T 的变化关系如图所示。',
+      contextDescription: '对于可逆气体反应 A(g) + 2B(g) ⇌ 2C(g) ΔH < 0，实验测得在压强 P₁ 与 P₂ 条件下 A 的平衡转化率 α 随温度 T 的变化规律为：相同温度下 P₁ 对应的 α 曲线始终位于 P₂ 上方，且随温度升高两条曲线均单调下降。',
       questionText: '下列关于 P₁ 与 P₂ 大小关系及曲线走向的说法正确的是（ ）',
       options: [
         { label: 'A', text: 'P₁ < P₂，升高温度平衡正向移动', isCorrect: false },
@@ -188,7 +190,7 @@ export const modelReactionPrincipleNexus: ModelQuizData = {
         { label: 'D', text: '该反应为吸热反应', isCorrect: false },
       ],
       modelAlignmentAnalysis: '【母题模型对齐】：考查“定一议二”读图原则：作垂直于 T 轴的线（同温下），由于正反应气体分子数减小（3➔2），增压平衡右移，α(A) 增大，故 P₁ > P₂。放热反应升温 α(A) 降低。',
-      detailedExplanation: '根据正反应气体分子数减少，同温下增大压强平衡正向移动，A 的转化率升高，由图知同温下 P₁ 对应 α 更高，故 P₁ > P₂。放热反应升温平衡逆移，α 减小，B 项正确。',
+      detailedExplanation: '根据正反应气体分子数减少，同温下增大压强平衡正向移动，A 的转化率升高，由已知同温下 P₁ 对应 α 更高，故 P₁ > P₂。放热反应升温平衡逆移，α 减小，B 项正确。',
     },
     {
       id: 'nexus-var-5',

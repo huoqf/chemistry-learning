@@ -46,6 +46,7 @@ export function useFlashCardChemistry() {
   }
 
   const nextCard = () => {
+    if (filteredCards.length === 0) return
     setParamsState((prev) => ({
       ...prev,
       cardIndex: (safeIndex + 1) % filteredCards.length,
@@ -57,6 +58,7 @@ export function useFlashCardChemistry() {
   }
 
   const prevCard = () => {
+    if (filteredCards.length === 0) return
     setParamsState((prev) => ({
       ...prev,
       cardIndex: (safeIndex - 1 + filteredCards.length) % filteredCards.length,
@@ -68,7 +70,14 @@ export function useFlashCardChemistry() {
   }
 
   const randomCard = () => {
-    const randomIndex = Math.floor(Math.random() * filteredCards.length)
+    if (filteredCards.length === 0) return
+    let randomIndex = 0
+    if (filteredCards.length > 1) {
+      const candidates = filteredCards
+        .map((_, idx) => idx)
+        .filter((idx) => idx !== safeIndex)
+      randomIndex = candidates[Math.floor(Math.random() * candidates.length)]
+    }
     setParamsState((prev) => ({
       ...prev,
       cardIndex: randomIndex,

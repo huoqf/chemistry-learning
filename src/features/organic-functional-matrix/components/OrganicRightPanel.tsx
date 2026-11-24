@@ -9,6 +9,7 @@ import { Sparkles, Layers, BookOpen, ArrowRight, ShieldCheck, Flame } from 'luci
 
 interface OrganicRightPanelProps {
   panelMode?: 'preset' | 'custom' | 'matrix'
+  activePresetId?: string
   groupCounts: Record<string, number>
   selectedGroup?: FunctionalGroupItem
   consumption: TotalConsumptionResult
@@ -17,25 +18,17 @@ interface OrganicRightPanelProps {
 
 export const OrganicRightPanel: React.FC<OrganicRightPanelProps> = ({
   panelMode = 'preset',
+  activePresetId,
   groupCounts,
   selectedGroup,
   consumption,
   onSelectGroup,
 }) => {
-  // 1. 识别当前匹配的母题预设
+  // 1. 识别当前匹配的母题预设（仅经典母题模式生效，禁止在自由组装或全景大表模式误匹配）
   const activePreset = useMemo(() => {
-    for (const preset of PRESET_MOLECULES) {
-      const presetEntries = Object.entries(preset.counts)
-      const currentNonZero = Object.entries(groupCounts).filter(([, count]) => count > 0)
-      if (presetEntries.length !== currentNonZero.length) continue
-
-      const isMatch = presetEntries.every(
-        ([id, count]) => (groupCounts[id] || 0) === count
-      )
-      if (isMatch) return preset
-    }
-    return null
-  }, [groupCounts])
+    if (panelMode !== 'preset' || !activePresetId) return null
+    return PRESET_MOLECULES.find((preset) => preset.id === activePresetId) ?? null
+  }, [panelMode, activePresetId])
 
   // 2. 当前分子中实际存在的官能团 ID 列表 (例如阿司匹林为 ['phenol-ester', 'carboxyl-cooh'])
   const presentGroupIds = useMemo(() => {
@@ -64,15 +57,17 @@ export const OrganicRightPanel: React.FC<OrganicRightPanelProps> = ({
     return []
   }, [presentGroupIds, selectedGroup])
 
-  // 4. 聚焦官能团：如果在有分子的模式下，优先显示分子内选中的基团；大表模式直接显示选中的基团
+  // 4. 聚焦官能团：全景大表模式始终展示用户点击的基团；其他模式下若当前选中不在分子内才回退
   const activeSelectedGroup = useMemo(() => {
     if (!selectedGroup) return null
+    if (panelMode === 'matrix') {
+      return selectedGroup
+    }
     if (presentGroupIds.length > 0 && !presentGroupIds.includes(selectedGroup.id)) {
-      // 若当前选中的不在当前分子中，默认选中该分子的第一个官能团
       return presentGroupItems[0] || selectedGroup
     }
     return selectedGroup
-  }, [selectedGroup, presentGroupIds, presentGroupItems])
+  }, [panelMode, selectedGroup, presentGroupIds, presentGroupItems])
 
   // 构造母题对应的易错警示
   const presetWarnings = useMemo(() => {

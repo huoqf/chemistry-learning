@@ -388,7 +388,7 @@ export const IonLeftPanel: React.FC<IonLeftPanelProps> = ({
                 <Layers className="w-3.5 h-3.5 text-indigo-600" />
                 命题机理归类法：
               </div>
-              <p>• <strong>去表格化</strong>：抛弃 14×18 交叉繁表，单屏直击高频命题陷阱。</p>
+              <p>• <strong>去表格化</strong>：抛弃 14×19 交叉繁表，单屏直击高频命题陷阱。</p>
               <p>• <strong>一票否决</strong>：按双水解、氧化还原、微溶沉淀、逸气分步排查。</p>
               <p>• <strong>芯片联动</strong>：点击任意芯片，右侧展开完整方程式与避坑指南。</p>
             </div>

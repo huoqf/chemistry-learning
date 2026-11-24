@@ -3,6 +3,15 @@ import { gaokaoModels, type GaokaoModelCategory } from '../gaokaoModels'
 import { getModelQuizData, modelQuizMap } from '../quiz'
 import { getKnowledgeNode } from '../knowledgeTree'
 
+const GAOKAO_TOOL_PAGE_SRC =
+  Object.values(
+    import.meta.glob<string>('../../pages/GaokaoToolPage.tsx', {
+      query: '?raw',
+      import: 'default',
+      eager: true,
+    })
+  )[0] ?? ''
+
 describe('Gaokao Models & Quiz Data 整合审计测试', () => {
   it('全部已声明的高考专属交互工具覆盖 3 类模块并与题库注册表 100% 对齐', () => {
     expect(gaokaoModels.length).toBeGreaterThanOrEqual(18)
@@ -66,5 +75,50 @@ describe('Gaokao Models & Quiz Data 整合审计测试', () => {
     // 解耦：仅验证盖斯定律步骤存在内容，不绑定位置索引
     const hessTitles = hessQuiz?.scoringSteps.map(s => s.title) ?? []
     expect(hessTitles.some(t => t.includes('盖斯定律'))).toBe(true)
+  })
+
+  it('母题 relatedKnowledgeIds 无重复且核心高频教材节点全量完成双向绑定', () => {
+    gaokaoModels.forEach(model => {
+      expect(
+        new Set(model.relatedKnowledgeIds).size,
+        `母题 ${model.id} 的 relatedKnowledgeIds 存在重复节点`
+      ).toBe(model.relatedKnowledgeIds.length)
+    })
+
+    const coreKnowledgeIds = [
+      'ion-identification',
+      'ion-coexistence',
+      'salt-hydrolysis',
+      'chemical-equilibrium',
+      'organic-synthesis',
+      'titration',
+      'primary-cell',
+      'electrolysis',
+      'hess-law',
+      'vsepr',
+      'unit-cell-calculation',
+      'avogadro-constant',
+      'gas-preparation',
+      'precipitation-equilibrium',
+    ]
+
+    coreKnowledgeIds.forEach(kid => {
+      const node = getKnowledgeNode(kid)
+      expect(node, `核心教材节点 ${kid} 缺失`).toBeDefined()
+      expect(
+        node?.relatedModelIds?.length ?? 0,
+        `核心教材节点 ${kid} 未反向关联任何高考母题`
+      ).toBeGreaterThan(0)
+    })
+  })
+
+  it('GaokaoToolPage 必须对 18 大高考母题逐一显式注册路由分发分支', () => {
+    expect(GAOKAO_TOOL_PAGE_SRC.length).toBeGreaterThan(200)
+    gaokaoModels.forEach(model => {
+      expect(
+        GAOKAO_TOOL_PAGE_SRC,
+        `GaokaoToolPage.tsx 缺少母题 ${model.id} 的 case 路由分支`
+      ).toContain(`case '${model.id}':`)
+    })
   })
 })

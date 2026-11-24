@@ -1,6 +1,8 @@
+import { createElement } from 'react'
 import { describe, it, expect } from 'vitest'
-import { renderHook } from '@testing-library/react'
+import { render, renderHook } from '@testing-library/react'
 import { useAvogadroChemistry } from '../useAvogadroChemistry'
+import { AvogadroStructureScene } from '../../components/AvogadroStructureScene'
 import type { AvogadroParams } from '../../types'
 
 describe('useAvogadroChemistry — 阿伏加德罗常数全维度陷阱测试', () => {
@@ -269,6 +271,138 @@ describe('useAvogadroChemistry — 阿伏加德罗常数全维度陷阱测试', 
       ].join('\n')
       expect(text).not.toContain('≜')
       expect(text).not.toMatch(/1\.5\s*Cl/)
+    })
+
+    it('回归：O₂ 按 32 g 换算、SO₃/HF 常温物态严谨区分、金刚石与石墨独立统计、可逆/水解析出物均标 isIndicative', () => {
+      // 1. O2 32 g = 1.00 mol（不能误除 Cl2 的 71）
+      const { result: o2Res } = renderHook(() =>
+        useAvogadroChemistry({
+          ...baseParams,
+          trapCategory: 'state-volume',
+          stateItem: 'O2',
+          temperatureCondition: 'standard',
+          amountValue: 32,
+          amountUnit: 'g',
+        })
+      )
+      expect(o2Res.current.particleStats[0].actualMoles).toBeCloseTo(1.0, 4)
+
+      // 2. SO3 常温 (25℃) 为液态非气体；HF 常温 (25℃) 呈气态但因缔合标示 isIndicative
+      const { result: so3Amb } = renderHook(() =>
+        useAvogadroChemistry({
+          ...baseParams,
+          trapCategory: 'state-volume',
+          stateItem: 'SO3',
+          temperatureCondition: 'ambient',
+          amountValue: 22.4,
+          amountUnit: 'L',
+        })
+      )
+      expect(so3Amb.current.isStateGas).toBe(false)
+      expect(so3Amb.current.physicalState).toBe('液态')
+
+      const { result: hfAmb } = renderHook(() =>
+        useAvogadroChemistry({
+          ...baseParams,
+          trapCategory: 'state-volume',
+          stateItem: 'HF',
+          temperatureCondition: 'ambient',
+          amountValue: 24.5,
+          amountUnit: 'L',
+        })
+      )
+      expect(hfAmb.current.isStateGas).toBe(true)
+      expect(hfAmb.current.particleStats[0].isIndicative).toBe(true)
+      // 定温定压定体积气体，独立微粒数约 V/Vm，但因 (HF)ₙ 缔合使 HF 单元数 > V/Vm
+      expect(hfAmb.current.particleStats[0].actualMoles).toBeGreaterThan(hfAmb.current.particleStats[0].theoreticalMoles)
+
+      const { result: hfAmbMol } = renderHook(() =>
+        useAvogadroChemistry({
+          ...baseParams,
+          trapCategory: 'state-volume',
+          stateItem: 'HF',
+          temperatureCondition: 'ambient',
+          amountValue: 1,
+          amountUnit: 'mol',
+        })
+      )
+      // 给定 1 mol HF 化学式单元，缔合后独立分子数显著 < 1 NA
+      expect(hfAmbMol.current.particleStats[0].actualMoles).toBeLessThan(hfAmbMol.current.particleStats[0].theoreticalMoles)
+
+      // 3. 金刚石与石墨分别计算各自均摊键数，石墨提及导电离域电子
+      const { result: diaRes } = renderHook(() =>
+        useAvogadroChemistry({
+          ...baseParams,
+          trapCategory: 'structure-bonds',
+          structureItem: 'diamond',
+          amountValue: 12,
+          amountUnit: 'g',
+        })
+      )
+      expect(diaRes.current.particleStats.length).toBe(1)
+      expect(diaRes.current.particleStats[0].actualMoles).toBeCloseTo(2.0, 4)
+
+      const { result: graRes } = renderHook(() =>
+        useAvogadroChemistry({
+          ...baseParams,
+          trapCategory: 'structure-bonds',
+          structureItem: 'graphite',
+          amountValue: 12,
+          amountUnit: 'g',
+        })
+      )
+      expect(graRes.current.particleStats.length).toBe(1)
+      expect(graRes.current.particleStats[0].actualMoles).toBeCloseTo(1.5, 4)
+      expect(graRes.current.stepByStepMatrix[4].finding).toContain('导电')
+
+      // 4. Na2CO3 水解与 NO2-N2O4 / SO2-O2 可逆平衡近似数值全部带 isIndicative: true
+      const { result: na2co3 } = renderHook(() =>
+        useAvogadroChemistry({
+          ...baseParams,
+          trapCategory: 'electrolyte-hydrolysis',
+          electrolyteItem: 'Na2CO3',
+        })
+      )
+      expect(na2co3.current.particleStats.every((s) => s.isIndicative)).toBe(true)
+
+      const { result: no2Rev } = renderHook(() =>
+        useAvogadroChemistry({
+          ...baseParams,
+          trapCategory: 'redox-electron',
+          redoxItem: 'NO2-N2O4-reversible',
+        })
+      )
+      expect(no2Rev.current.particleStats[0].isIndicative).toBe(true)
+
+      const { result: so2Rev } = renderHook(() =>
+        useAvogadroChemistry({
+          ...baseParams,
+          trapCategory: 'redox-electron',
+          redoxItem: 'SO2-O2-reversible',
+        })
+      )
+      expect(so2Rev.current.particleStats.every((s) => s.isIndicative)).toBe(true)
+    })
+
+    it('AvogadroStructureScene 在 diamond 与 NH4Cl 下渲染专属拓扑而非回退 Na2O2', () => {
+      const { container: diaSvg } = render(
+        createElement('svg', null, createElement(AvogadroStructureScene, {
+          structureItem: 'diamond',
+          animTime: 0,
+          font: (n) => n,
+        }))
+      )
+      expect(diaSvg.textContent).toContain('1 mol C 含 2 mol C-C 键')
+      expect(diaSvg.textContent).not.toContain('阳:阴 = 2:1')
+
+      const { container: nh4Svg } = render(
+        createElement('svg', null, createElement(AvogadroStructureScene, {
+          structureItem: 'NH4Cl',
+          animTime: 0,
+          font: (n) => n,
+        }))
+      )
+      expect(nh4Svg.textContent).toContain('1 mol NH₄Cl 含 4 mol 共价键')
     })
   })
 })

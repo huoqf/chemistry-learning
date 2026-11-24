@@ -28,6 +28,18 @@ export function TitrationBalanceCanvas() {
   const [isAutoPlaying, setIsAutoPlaying] = useState(false)
 
   const updateParam = useCallback((key: keyof TitrationParams, value: any) => {
+    if (key === 'systemType') {
+      setIsAutoPlaying(false)
+      setParams((prev) => ({
+        ...prev,
+        systemType: value,
+        indicator:
+          value === 'strongAcidWeakBase'
+            ? 'methylOrange'
+            : 'phenolphthalein',
+      }))
+      return
+    }
     setParams((prev) => ({ ...prev, [key]: value }))
   }, [])
 
@@ -59,16 +71,13 @@ export function TitrationBalanceCanvas() {
     }))
   }, [])
 
-  // 自动滴定播放定时器
+  // 自动滴定播放定时器（纯 updater，到达终点后在 effect 中停播）
   useEffect(() => {
     if (!isAutoPlaying) return
 
     const timer = setInterval(() => {
       setParams((prev) => {
-        if (prev.vRatio >= 2.0) {
-          setIsAutoPlaying(false)
-          return prev
-        }
+        if (prev.vRatio >= 2.0) return prev
         return {
           ...prev,
           vRatio: Math.min(2.0, prev.vRatio + 0.01),
@@ -78,6 +87,12 @@ export function TitrationBalanceCanvas() {
 
     return () => clearInterval(timer)
   }, [isAutoPlaying])
+
+  useEffect(() => {
+    if (isAutoPlaying && params.vRatio >= 2.0) {
+      setIsAutoPlaying(false)
+    }
+  }, [isAutoPlaying, params.vRatio])
 
   const chemistry = useTitrationChemistry(params)
   const model = getGaokaoModel('model-titration-balance')

@@ -74,6 +74,8 @@ export function GasChainCanvas() {
       setParams((prev) => ({
         ...prev,
         ...preset,
+        funnelDepth: 'tangent',
+        collectTubeMode: 'correct-short-in',
       }))
     }
   }, [])
@@ -87,12 +89,16 @@ export function GasChainCanvas() {
         ...config,
         targetGas,
         panelMode: 'chain',
+        funnelDepth: 'tangent',
+        collectTubeMode: 'correct-short-in',
       }))
     } else {
       setParams((prev) => ({
         ...prev,
         targetGas,
         panelMode: 'chain',
+        funnelDepth: 'tangent',
+        collectTubeMode: 'correct-short-in',
       }))
     }
   }, [])

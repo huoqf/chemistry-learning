@@ -48,7 +48,9 @@ export function calculateElectrolyteHydrolysisTrap(
     }
 
     case 'CH3COOH': {
-      const alpha = 0.013
+      // 25℃ 下 CH3COOH 电离平衡常数 Ka = 1.75×10^-5，由 Ka = c·α²/(1-α) 求解电离度
+      const ka = 1.75e-5
+      const alpha = conc > 0 ? (-ka + Math.sqrt(ka * ka + 4 * ka * conc)) / (2 * conc) : 0
       const ch3cooMoles = totalMoles * alpha
       const hMoles = ch3cooMoles
 
@@ -59,7 +61,15 @@ export function calculateElectrolyteHydrolysisTrap(
         physicalState: '溶液',
         vmValue: 22.4,
         particleStats: [
-          { label: 'H⁺ 离子数', theoreticalMoles: totalMoles, actualMoles: hMoles, unit: 'N_A', isTrap: true, trapExplanation: `醋酸为弱酸仅微弱电离，H⁺ 粒子数远小于 ${totalMoles.toFixed(2)} N_A！` },
+          {
+            label: 'H⁺ 离子数',
+            theoreticalMoles: totalMoles,
+            actualMoles: hMoles,
+            unit: 'N_A',
+            isTrap: true,
+            isIndicative: true,
+            trapExplanation: `25℃ 下 Kₐ ≈ 1.75×10⁻⁵（当前电离度 α ≈ ${(alpha * 100).toFixed(2)}%），CH₃COOH 为弱酸仅微弱电离，H⁺ 粒子数远小于 ${totalMoles.toFixed(2)} N_A！`,
+          },
           { label: 'n(CH₃COOH) + n(CH₃COO⁻)', theoreticalMoles: totalMoles, actualMoles: totalMoles, unit: 'N_A', isTrap: false, trapExplanation: `根据物料守恒，C 元素总数保持不变，刚好为 ${totalMoles.toFixed(2)} N_A！` },
         ],
         trapType: '弱电解质电离陷阱',
@@ -174,8 +184,8 @@ export function calculateElectrolyteHydrolysisTrap(
         physicalState: '溶液',
         vmValue: 22.4,
         particleStats: [
-          { label: 'CO₃²⁻ 离子数', theoreticalMoles: totalMoles, actualMoles: totalMoles * 0.9, unit: 'N_A', isTrap: true, trapExplanation: `CO₃²⁻ 部分水解为 HCO₃⁻ 和 H₂CO₃，CO₃²⁻ 数小于 ${totalMoles.toFixed(2)} N_A。` },
-          { label: '阴离子总数', theoreticalMoles: totalMoles, actualMoles: totalMoles * 1.1, unit: 'N_A', isTrap: true, trapExplanation: `水解反应 CO₃²⁻ + H₂O ⇌ HCO₃⁻ + OH⁻，1 个阴离子水解变成 2 个阴离子，阴离子总数大于 ${totalMoles.toFixed(2)} N_A！` },
+          { label: 'CO₃²⁻ 离子数', theoreticalMoles: totalMoles, actualMoles: totalMoles * 0.9, unit: 'N_A', isTrap: true, isIndicative: true, trapExplanation: `CO₃²⁻ 部分水解为 HCO₃⁻ 和 H₂CO₃，CO₃²⁻ 数小于 ${totalMoles.toFixed(2)} N_A（按水解程度作数量级示意）。` },
+          { label: '阴离子总数', theoreticalMoles: totalMoles, actualMoles: totalMoles * 1.1, unit: 'N_A', isTrap: true, isIndicative: true, trapExplanation: `水解反应 CO₃²⁻ + H₂O ⇌ HCO₃⁻ + OH⁻，1 个阴离子水解变成 2 个阴离子，阴离子总数大于 ${totalMoles.toFixed(2)} N_A（图中按约 10% 水解作示意）！` },
         ],
         trapType: '盐类水解阴阳离子总数陷阱',
         trapBadge: '阴离子数增加',
@@ -247,7 +257,7 @@ export function calculateRedoxElectronTrap(
           '2Cu + S =Δ= Cu₂S（Cu 为 +1 价，1 mol Cu 转移 1 N_A 电子）；',
           'Fe + S =Δ= FeS（Fe 为 +2 价，1 mol Fe 转移 2 N_A 电子）。对比：2Fe + 3Cl₂ =Δ= 2FeCl₃（Fe 为 +3 价，1 mol Fe 转移 3 N_A 电子）！',
         ],
-        formulaLatex: '2\\overset{0}{\\text{Cu}} + \\text{S} \\triangleq \\overset{+1}{\\text{Cu}}_2\\text{S} \\implies 1 \\text{ mol Cu } \\text{转移 1 mol } e^-',
+        formulaLatex: '2\\overset{0}{\\text{Cu}} + \\text{S} \\xrightarrow{\\Delta} \\overset{+1}{\\text{Cu}}_2\\text{S} \\implies 1 \\text{ mol Cu } \\text{转移 1 mol } e^-',
         correctAnswerSummary: `1 mol Cu 与足量 S 反应转移 1 N_A 电子 (生成 Cu₂S)`,
         stepByStepMatrix: [
           { stepName: '一审环境', checkTarget: '加热反应环境', pass: true, finding: '加热反应' },
@@ -270,7 +280,7 @@ export function calculateRedoxElectronTrap(
         physicalState: '气态',
         vmValue: 22.4,
         particleStats: [
-          { label: '气体分子总数', theoreticalMoles: maxMoles, actualMoles: maxMoles * 0.7, unit: 'N_A', isTrap: true, trapExplanation: 'NO₂ 与 N₂O₄ 存在二聚平衡 2NO₂ ⇌ N₂O₄！2 个 NO₂ 分子合为 1 个 N₂O₄，使气体分子总数变少，小于 N_A！' },
+          { label: '气体分子总数', theoreticalMoles: maxMoles, actualMoles: maxMoles * 0.7, unit: 'N_A', isTrap: true, isIndicative: true, trapExplanation: 'NO₂ 与 N₂O₄ 存在二聚平衡 2NO₂ ⇌ N₂O₄！2 个 NO₂ 分子合为 1 个 N₂O₄，使气体分子总数变少，小于 N_A（按常见二聚平衡程度作数量级示意）！' },
           { label: 'N 原子总数', theoreticalMoles: maxMoles, actualMoles: maxMoles, unit: 'N_A', isTrap: false, trapExplanation: '根据原子守恒，N 原子总数保持 1 N_A 恒定不变！' },
         ],
         trapType: '气体二聚平衡分子数陷阱',
@@ -369,8 +379,8 @@ export function calculateRedoxElectronTrap(
         physicalState: '气态',
         vmValue: 22.4,
         particleStats: [
-          { label: '实际转移电子数 n_e', theoreticalMoles: theoreticalNe, actualMoles: theoreticalNe * 0.85, unit: 'N_A', isTrap: true, trapExplanation: '可逆反应不能进行彻底！实际转化率小于 100%，转移电子数小于理论上限！' },
-          { label: 'SO₃ 生成分子数', theoreticalMoles: molesSO2, actualMoles: molesSO2 * 0.85, unit: 'N_A', isTrap: true, trapExplanation: '可逆反应有反应限度，生成 SO₃ 分子数小于理论完全转化量！' },
+          { label: '实际转移电子数 n_e', theoreticalMoles: theoreticalNe, actualMoles: theoreticalNe * 0.85, unit: 'N_A', isTrap: true, isIndicative: true, trapExplanation: '可逆反应不能进行彻底！实际转化率小于 100%，转移电子数小于理论上限（按转化限度作数量级示意）！' },
+          { label: 'SO₃ 生成分子数', theoreticalMoles: molesSO2, actualMoles: molesSO2 * 0.85, unit: 'N_A', isTrap: true, isIndicative: true, trapExplanation: '可逆反应有反应限度，生成 SO₃ 分子数小于理论完全转化量（按转化限度作数量级示意）！' },
         ],
         trapType: '可逆反应限度电子与微粒数陷阱',
         trapBadge: '可逆反应不可到底',

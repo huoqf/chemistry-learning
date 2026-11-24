@@ -172,8 +172,8 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
     }
 
     const current = calcDistribution(params.temperature, eaForward)
-    // 基准态：T=298K, 无催化剂下的 baseEaForward
-    const baseline = calcDistribution(298, system.baseEaForward)
+    // 基准态：取各体系自身默认温度下、无催化剂时的 baseEaForward
+    const baseline = calcDistribution(system.defaultTemp, system.baseEaForward)
 
     return {
       ...current,
@@ -181,18 +181,18 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
       baselineActivatedFraction: baseline.activatedFraction,
       baselineEa: system.baseEaForward,
     }
-  }, [params.temperature, eaForward, system.baseEaForward])
+  }, [params.temperature, eaForward, system.baseEaForward, system.defaultTemp])
 
   // 范特霍夫方程数据（lnK = -ΔH/(RT) + ΔS/R）
   const vantHoffData = useMemo(() => {
     const R = 8.314
     const deltaH_J = system.deltaH * 1000
     // 截距 C = ΔS°/R：由 ΔG° = ΔH° - TΔS° 与 ΔG° = -RT·lnK 联立消去 ΔG° 得到，
-    // 故 lnK = -ΔH°/(RT) + ΔS°/R。此前硬编码 -12 与三体系真实 ΔS° 均不符，使 Kc 量级失真。
+    // 故 lnK = -ΔH°/(RT) + ΔS°/R。
     const intercept = system.deltaS / R
     const points: { invT: number; lnK: number; temp: number }[] = []
 
-    for (let t = 273; t <= 600; t += 20) {
+    for (let t = 250; t <= 600; t += 10) {
       const invT = 1 / t
       const lnK = -deltaH_J / (R * t) + intercept
       points.push({
@@ -203,11 +203,21 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
     }
     const currentLnK = -deltaH_J / (R * params.temperature) + intercept
     const currentK = Math.exp(currentLnK)
+    const currentKNum = Number.isFinite(currentK) ? Number(currentK.toPrecision(4)) : currentK
+    const currentKDisplay =
+      !Number.isFinite(currentK)
+        ? '∞'
+        : currentK >= 1e4 || (currentK > 0 && currentK < 1e-3)
+        ? currentK.toExponential(2)
+        : currentK >= 100
+        ? currentK.toFixed(1)
+        : currentK.toPrecision(3)
 
     return {
       points,
       currentLnK: Math.round(currentLnK * 100) / 100,
-      currentK: Math.round(currentK * 1000) / 1000,
+      currentK: currentKNum,
+      currentKDisplay,
       intercept: Math.round(intercept * 100) / 100,
     }
   }, [system, params.temperature])
@@ -226,36 +236,31 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
     const P_LOW = 1.0
     const P_HIGH = 3.5
 
-    for (let t = 250; t <= 600; t += 15) {
-      // 正反应是气体减少反应 (gasMolesDiff < 0)，因此压强越高，转化率越大
-      // 采用统一物理模型：α(T, P) = 100 / [1 + exp((T - T_mid) / width) · (P_ref / P)^β]，杜绝当前点悬空
+    const calcClamped = (t: number, p: number, minFloor: number, maxCeil: number) => {
       const termT = (t - tMid) / width
-      const alphaLow = 100 / (1 + Math.exp(termT) * Math.pow(P_REF / P_LOW, beta))
-      const alphaHigh = 100 / (1 + Math.exp(termT) * Math.pow(P_REF / P_HIGH, beta))
+      const raw = 100 / (1 + Math.exp(termT) * Math.pow(P_REF / Math.max(0.2, p), beta))
+      return Math.round(Math.min(maxCeil, Math.max(minFloor, raw)) * 10) / 10
+    }
 
-      // clamp 只用于把曲线限制在坐标轴可视区内，不参与物理计算；
-      // 两条曲线的下限刻意不同（低压线可低至 2%，高压线最低 5%），以保留"同温下高压线更高"的可读区分度。
+    for (let t = 250; t <= 600; t += 15) {
       points.push({
         temperature: t,
-        alphaLowP: Math.round(Math.min(98, Math.max(2, alphaLow)) * 10) / 10,
-        alphaHighP: Math.round(Math.min(99, Math.max(5, alphaHigh)) * 10) / 10,
+        alphaLowP: calcClamped(t, P_LOW, 2, 98),
+        alphaHighP: calcClamped(t, P_HIGH, 5, 99),
       })
     }
 
-    // 当前参数下的理论转化率（与上面两条曲线共用同一函数式，仅 P 取自滑块，故 P = P_LOW 时必与低压线重合）
-    const termCurT = (params.temperature - tMid) / width
-    const pRatio = P_REF / Math.max(0.2, params.pressure)
-    const curAlpha = 100 / (1 + Math.exp(termCurT) * Math.pow(pRatio, beta))
-
     return {
       points,
-      currentAlpha: Math.round(Math.min(99, Math.max(2, curAlpha)) * 10) / 10,
+      currentAlpha: calcClamped(params.temperature, params.pressure, 2, 99),
+      currentAlphaLowP: calcClamped(params.temperature, P_LOW, 2, 98),
+      currentAlphaHighP: calcClamped(params.temperature, P_HIGH, 5, 99),
       lowPressureLabel: `P₁ = ${P_LOW.toFixed(1)} atm (常压)`,
       highPressureLabel: `P₂ = ${P_HIGH.toFixed(1)} atm (加压)`,
     }
   }, [system, params.temperature, params.pressure])
 
-  // 勒夏特列移动与速率时间轴
+  // 勒夏特列移动与速率时间轴（支持多扰动并发叠加，且按反应计量差 δng 与 ΔH 自适应计算）
   const history = useMemo(() => {
     const points: HistoryPoint[] = []
     const MAX_TIME = 10
@@ -277,38 +282,53 @@ export function useReactionPrincipleChemistry(params: NexusParams) {
         vF = 1.0
         vR = 1.0
       } else if (timeRound === perturbTime) {
+        // 1. 催化剂（同等倍数提升正逆速率，不改变平衡）
         if (params.catalyst !== 'none') {
-          // 加入催化剂：正逆反应速率瞬间同等倍数突增，vF = vR，平衡不移动！
           const catBoost = params.catalyst === 'catalyst-b' ? 2.5 : 1.8
           vF *= catBoost
           vR *= catBoost
-        } else if (params.addedReactant > 0) {
-          // 突加反应物：cReactant 瞬增，vF 瞬增，vR 瞬间不变！新平衡浓度仍高于原平衡 (减弱而不抵消)
+        }
+        // 2. 突加反应物（cReactant 瞬增、vF 瞬增，vR 瞬间不变）
+        if (params.addedReactant > 0) {
           cReactant += params.addedReactant
-          minReactantAfterPerturb = c0Reactant + params.addedReactant * 0.25
+          minReactantAfterPerturb = Math.max(
+            minReactantAfterPerturb,
+            c0Reactant + params.addedReactant * 0.25
+          )
           vF *= 1 + params.addedReactant * 0.8
-        } else if (params.temperature !== system.defaultTemp) {
-          // 升降温：采用指数热响应因子避免低温双截断停滞；放热反应升温逆移 (vR > vF)，降温正移 (vF > vR)
+        }
+        // 3. 升降温（放热反应升温逆速率增长更大；吸热则正速率增长更大）
+        if (params.temperature !== system.defaultTemp) {
           const factor = (params.temperature - system.defaultTemp) / 100
-          vF *= Math.exp(0.6 * factor)
-          vR *= Math.exp(1.2 * factor)
-        } else if (params.pressure !== system.defaultPressure) {
-          // 增减压：体积与总压成反比，各气体组分浓度瞬间等比例跳变！
+          const isEndothermic = system.deltaH > 0
+          vF *= Math.exp((isEndothermic ? 1.2 : 0.6) * factor)
+          vR *= Math.exp((isEndothermic ? 0.6 : 1.2) * factor)
+        }
+        // 4. 增减压（依据 Δng 确定正逆反应气态分子数敏感度）
+        if (params.pressure !== system.defaultPressure) {
           const pFactor = params.pressure / system.defaultPressure
           cReactant *= pFactor
           cProduct *= pFactor
-          if (pFactor > 1) {
-            // 增压：新平衡浓度仍高于原平衡 (减弱但不抵消)
-            minReactantAfterPerturb = c0Reactant + (cReactant - c0Reactant) * 0.4
+          if (pFactor > 1 && system.gasMolesDiff < 0) {
+            minReactantAfterPerturb = Math.max(
+              minReactantAfterPerturb,
+              c0Reactant + (cReactant - c0Reactant) * 0.4
+            )
           }
-          vF *= pFactor * pFactor
-          vR *= pFactor
-        } else if (params.inertGasMode === 'constant-p') {
-          // 恒温恒压充惰性气体：体积膨胀，各组分分压与浓度同比例骤降
+          const forwardOrder = system.gasMolesDiff < 0 ? 1 - system.gasMolesDiff : 1
+          const reverseOrder = system.gasMolesDiff > 0 ? 1 + system.gasMolesDiff : 1
+          vF *= Math.pow(pFactor, Math.min(2.4, forwardOrder))
+          vR *= Math.pow(pFactor, Math.min(2.4, reverseOrder))
+        }
+        // 5. 恒温恒压充惰性气体（等效体系体积加倍、各气态组分分压降为 0.5 倍）
+        if (params.inertGasMode === 'constant-p') {
           cReactant *= 0.5
           cProduct *= 0.5
-          vF *= 0.5
-          vR *= 0.7
+          const dilute = 0.5
+          const forwardOrder = system.gasMolesDiff < 0 ? 1 - system.gasMolesDiff : 1
+          const reverseOrder = system.gasMolesDiff > 0 ? 1 + system.gasMolesDiff : 1
+          vF *= Math.pow(dilute, Math.min(2.4, forwardOrder) * 0.5)
+          vR *= Math.pow(dilute, Math.min(2.4, reverseOrder) * 0.5)
         }
       } else {
         // 趋向新平衡的弛豫阶段：正逆速率差指数衰减直至 v'正 = v'逆

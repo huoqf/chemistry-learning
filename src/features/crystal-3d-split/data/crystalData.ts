@@ -4,7 +4,7 @@ import type { CrystalTypeData, CrystalTypeId } from '../types'
 const CUBIC_CELL = { a: 1, b: 1, c: 1, alpha: 90, beta: 90, gamma: 90 }
 const HEX_CELL = { a: 1, b: 1, c: 1.633, alpha: 90, beta: 90, gamma: 120 }
 
-/** 8 大高考典型晶胞预设数据库 (颜色全量统一继承自 Theme ATOM_COLORS) */
+/** 9 大高考典型晶胞预设数据库 (颜色全量统一继承自 Theme ATOM_COLORS) */
 export const CRYSTAL_DATA_MAP: Record<CrystalTypeId, CrystalTypeData> = {
   nacl: {
     id: 'nacl',
@@ -56,9 +56,9 @@ export const CRYSTAL_DATA_MAP: Record<CrystalTypeId, CrystalTypeData> = {
       { id: 'na-b0', element: 'Na⁺', fracPos: [0.5, 0.5, 0.5], locationType: 'body', sharingRatio: 1, sharingLabel: '体心 (1)', color: ATOM_COLORS.Na, radius: 0.16, label: 'Na⁺ 体心' },
     ],
     bonds: [
-      { fromIndex: 24, toIndex: 8 }, { fromIndex: 24, toIndex: 9 },
-      { fromIndex: 24, toIndex: 10 }, { fromIndex: 24, toIndex: 11 },
-      { fromIndex: 24, toIndex: 12 }, { fromIndex: 24, toIndex: 13 },
+      { fromIndex: 26, toIndex: 8 }, { fromIndex: 26, toIndex: 9 },
+      { fromIndex: 26, toIndex: 10 }, { fromIndex: 26, toIndex: 11 },
+      { fromIndex: 26, toIndex: 12 }, { fromIndex: 26, toIndex: 13 },
     ],
   },
   cscl: {
@@ -362,7 +362,7 @@ export const CRYSTAL_DATA_MAP: Record<CrystalTypeId, CrystalTypeData> = {
     tangentFormulaLatex: 'r(\\text{Ti}^{4+}) + r(\\text{O}^{2-}) = \\frac{a}{2}',
     tangentDescription: 'Ti⁴⁺ 与 O²⁻ 沿晶胞棱长二分之一处相切。',
     coordNumberDescription: 'Ca²⁺ 的配位数为 12，Ti⁴⁺ 的配位数为 6；每个 O²⁻ 紧邻 2 个 Ti⁴⁺ 和 4 个 Ca²⁺ (配位数为 6)。',
-    tangentRadii: { 'Ca²⁺': 0.29, 'Ti⁴⁺': 0.2, 'O²⁻': 0.3 },
+    tangentRadii: { 'Ca²⁺': 0.387, 'Ti⁴⁺': 0.18, 'O²⁻': 0.32 },
     tangentLines: [
       { startFrac: [0, 0, 0], endFrac: [0.5, 0, 0], label: '棱边相切 r(Ti)+r(O)=a/2' },
       { startFrac: [0, 0, 0], endFrac: [0, 0.5, 0] },

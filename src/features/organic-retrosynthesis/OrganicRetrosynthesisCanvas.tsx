@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { ThreePanel } from '@/components/Layout'
 import { GaokaoToolHeader } from '@/components/UI'
-import { getModelQuizData } from '@/data/gaokaoQuizData'
+import { getModelQuizData } from '@/data/quiz'
 import { useOrganicRetrosynthesisChemistry } from './hooks/useOrganicRetrosynthesisChemistry'
 import { OrganicRetrosynthesisLeftPanel } from './components/OrganicRetrosynthesisLeftPanel'
 import { OrganicRetrosynthesisCenterView } from './components/OrganicRetrosynthesisCenterView'
@@ -20,6 +20,8 @@ export function OrganicRetrosynthesisCanvas() {
     totalSteps,
     isPlaying,
     setIsPlaying,
+    playbackSpeed,
+    setPlaybackSpeed,
     showCrashContrast,
     setShowCrashContrast,
     handleNextStep,
@@ -28,18 +30,18 @@ export function OrganicRetrosynthesisCanvas() {
 
   const [viewMode, setViewMode] = useState<number>(0)
 
-  // 自动播放 Timer
+  // 自动播放 Timer（与界面倍速联动）
   useEffect(() => {
     let timer: ReturnType<typeof setInterval> | null = null
-    if (isPlaying) {
+    if (isPlaying && viewMode === 0) {
       timer = setInterval(() => {
         handleNextStep()
-      }, 3000)
+      }, Math.max(800, Math.round(3000 / playbackSpeed)))
     }
     return () => {
       if (timer) clearInterval(timer)
     }
-  }, [isPlaying, handleNextStep])
+  }, [isPlaying, viewMode, playbackSpeed, handleNextStep])
 
   // 自动停止
   useEffect(() => {
@@ -74,6 +76,8 @@ export function OrganicRetrosynthesisCanvas() {
       totalSteps={totalSteps}
       quizData={quizData}
       isPlaying={isPlaying}
+      speed={playbackSpeed}
+      onSpeedChange={setPlaybackSpeed}
       onTogglePlay={() => setIsPlaying(!isPlaying)}
       onResetStep={handleResetStep}
       onStepChange={(s) => setCurrentStepIndex(s)}

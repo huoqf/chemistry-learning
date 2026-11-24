@@ -308,8 +308,8 @@ export const VSEPR_MOLECULE_LIST: VseprMoleculeData[] = [
       { id: 'b2', fromAtomId: 'o', toAtomId: 'h2', bondOrder: 1 },
     ],
     lonePairNodes: [
-      { id: 'lp1', direction: [-0.6, 0.9, 0.6], label: '孤对 1' },
-      { id: 'lp2', direction: [0.6, 0.9, -0.6], label: '孤对 2' },
+      { id: 'lp1', direction: [0, 0.65, 1.0], label: '孤对 1' },
+      { id: 'lp2', direction: [0, 0.65, -1.0], label: '孤对 2' },
     ],
     angles: [
       { id: 'a1', atom1Id: 'h1', centerAtomId: 'o', atom2Id: 'h2', angleDegree: 104.5, displayLabel: '104.5°' },

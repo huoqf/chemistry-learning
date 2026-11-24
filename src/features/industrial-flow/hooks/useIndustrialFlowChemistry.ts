@@ -251,18 +251,28 @@ export function useIndustrialFlowChemistry(
     } else if (systemId === 'mg-ca') {
       systemName = '盐湖卤水/白云石提纯高纯 MgO 工艺 (Mg-Ca 系统)'
       targetIon = 'Mg²⁺'
-      impurityIons = ['Fe³⁺', 'Al³⁺']
+      impurityIons = isOxidized ? ['Fe³⁺', 'Al³⁺'] : ['Fe²⁺', 'Al³⁺']
 
       rawIons = [
-        {
-          symbol: 'Fe³⁺',
-          name: '铁离子',
-          charge: 3,
-          ksp: 4.0e-38,
-          baseC0: 0.05,
-          color: CHART_COLORS.compareA,
-          precipitateFormula: 'Fe(OH)₃',
-        },
+        isOxidized
+          ? {
+              symbol: 'Fe³⁺',
+              name: '铁离子',
+              charge: 3,
+              ksp: 4.0e-38,
+              baseC0: 0.05,
+              color: CHART_COLORS.compareA,
+              precipitateFormula: 'Fe(OH)₃',
+            }
+          : {
+              symbol: 'Fe²⁺',
+              name: '亚铁离子',
+              charge: 2,
+              ksp: 8.0e-16,
+              baseC0: 0.05,
+              color: CHART_COLORS.compareD,
+              precipitateFormula: 'Fe(OH)₂',
+            },
         {
           symbol: 'Al³⁺',
           name: '铝离子',
@@ -569,7 +579,7 @@ export function useIndustrialFlowChemistry(
       })
     }
 
-    // 11. 生成结晶溶解度分离曲线数据 (磷酸铁锂展现特有的反常溶解度：随温度升高溶解度反而降低)
+    // 11. 生成结晶溶解度分离曲线数据 (Li₂CO₃ 全程逆溶解；MnSO₄·H₂O >40℃ 转晶溶解度显著下降；其余硫酸盐随温陡增)
     const solubilityCurveData: Array<{ temp: number; main: number; impurity: number }> = []
     for (let t = 0; t <= 100; t += 10) {
       if (systemId === 'li-fe-p') {
@@ -577,6 +587,14 @@ export function useIndustrialFlowChemistry(
         const mainSol = Math.round((1.54 - 0.0082 * t) * 100) / 100
         // Na2SO4 伴生杂质正常溶解度：高温极大
         const impSol = Math.round((4.5 + 0.42 * t) * 10) / 10
+        solubilityCurveData.push({ temp: t, main: mainSol, impurity: impSol })
+      } else if (systemId === 'fe-al-mn') {
+        // MnSO4·H2O (>40℃ 稳定)：0~40℃ 四水/五水盐升高至 ~64 g，>40℃ 转化为 MnSO4·H2O 后溶解度随温降低，80~100℃ 蒸发结晶趁热过滤
+        const mainSol =
+          t <= 40
+            ? Math.round((52 + 0.3 * t) * 10) / 10
+            : Math.round((64 - 0.45 * (t - 40)) * 10) / 10
+        const impSol = Math.round((34 + 0.08 * t) * 10) / 10
         solubilityCurveData.push({ temp: t, main: mainSol, impurity: impSol })
       } else {
         const mainSol = Math.round((22 + 0.75 * t + 0.006 * t * t) * 10) / 10
@@ -710,14 +728,28 @@ export function useIndustrialFlowChemistry(
             ? '2Al(OH)₃ =(高温煅烧)= Al₂O₃ + 3H₂O'
             : systemId === 'li-fe-p'
             ? '2Li⁺ + CO₃²⁻ =(加热90℃)= Li₂CO₃↓'
+            : systemId === 'fe-al-mn'
+            ? 'Mn²⁺ + SO₄²⁻ + H₂O =(蒸发浓缩·>80℃结晶)= MnSO₄·H₂O↓'
+            : systemId === 'fe-cu-zn'
+            ? 'Zn²⁺ + SO₄²⁻ + 7H₂O =(降温结晶)= ZnSO₄·7H₂O↓'
+            : systemId === 'ti-fe'
+            ? 'Fe²⁺ + SO₄²⁻ + 7H₂O =(冷冻结晶)= FeSO₄·7H₂O↓；TiO(OH)₂ =(煅烧)= TiO₂ + H₂O'
+            : systemId === 'ni-co-li'
+            ? 'Co²⁺ + SO₄²⁻ + 7H₂O =(蒸发浓缩·冷却结晶)= CoSO₄·7H₂O↓'
+            : systemId === 'mg-ca'
+            ? 'Mg(OH)₂ =(高温煅烧)= MgO + H₂O'
             : 'CuSO₄ + 5H₂O = CuSO₄·5H₂O↓',
         coreQuestion:
           systemId === 'li-fe-p'
             ? '【绝杀考点】：为什么沉淀 Li₂CO₃ 必须加热至 90℃ 并采用“趁热过滤”和“热水洗涤”？'
+            : systemId === 'fe-al-mn'
+            ? '【高考真题考点】：为什么制取 MnSO₄·H₂O 需蒸发结晶并“趁热过滤”？为什么用无水乙醇洗涤？'
             : '【高考答题规范】：在结晶操作中为什么采用趁热过滤？采用无水乙醇洗涤晶体的目的是什么？',
         scoringAnswer:
           systemId === 'li-fe-p'
             ? '① Li₂CO₃ 具有反常溶解度（温度越高溶解度越小），高温沉淀析出率最高；② 趁热过滤防止降温溶解损失；③ 热水洗涤既能洗去表面可溶性 Na₂SO₄，又最大程度减少 Li₂CO₃ 溶解损耗！'
+            : systemId === 'fe-al-mn'
+            ? '① MnSO₄·H₂O 在 >40℃（80~100℃）溶解度随温度升高降低且稳定存在，蒸发浓缩结晶后趁热过滤可防止温度降低转化为多水合物 MnSO₄·4H₂O/5H₂O 或回溶损失；② 无水乙醇洗涤可洗去表面杂质、降低溶解损耗并加速干燥。'
             : '① 趁热过滤：防止目标产物随温度降低结晶析出损失，或防止杂质结晶析出；② 无水乙醇洗涤：洗去表面杂质；降低晶体溶解损失；无水乙醇易挥发便于快速干燥。',
       }
     }

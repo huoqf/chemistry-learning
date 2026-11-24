@@ -58,7 +58,7 @@ export const MODEL_CARBON_CARBON_BUILDER: RetrosynthesisModelData = {
       cutBond: {
         bondType: 'C=C 碳碳双键切断',
         positionDesc: 'α,β-不饱和双键',
-        retroSynthon: '[Ph-CH]⁺ (亲电) + [CH-CO-Ph]⁻ (亲核)',
+        retroSynthon: '[Ph-CH(OH)]⁺ (亲电等价物 Ph-CHO) + [CH₂-CO-Ph]⁻ (亲核等价物 CH₃-CO-Ph)',
       },
       synthonPair: {
         electrophilicSynthon: '[Ph-CH=O] (亲电羰基碳 δ+)',
@@ -109,7 +109,7 @@ export const MODEL_CARBON_CARBON_BUILDER: RetrosynthesisModelData = {
         },
       ],
       connections: [
-        { from: 'tm', to: 'b1', label: '✂ 切断 C=C 双键 [Ph-CH]⁺', isDisconnection: true },
+        { from: 'tm', to: 'b1', label: '✂ 切断 C=C 双键 [Ph-CH(OH)]⁺', isDisconnection: true },
         { from: 'tm', to: 'b2', label: '✂ 释放亲核 α-碳 [CH₂-CO-Ph]⁻', isDisconnection: true },
       ],
     },

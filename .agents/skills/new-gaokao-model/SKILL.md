@@ -41,6 +41,7 @@ import {
 } from '@/components/UI'
 import { ChemistryVectorArrow } from '@/components/Chemistry'
 import { useAnimationViewport, useSceneScale } from '@/hooks'
+import { useAnimationFrame } from '@/utils/animation'
 import { CANVAS_PRESETS, CHEMISTRY_COLORS } from '@/theme'
 import { worldToDesign } from '@/scene'
 import { getGaokaoModel } from '@/data/gaokaoModels'
@@ -53,6 +54,15 @@ export const XxxCanvas: React.FC = () => {
 
   // 视角模式 (0: 图谱探究 | 1: 规范踩分 | 2: 变式演练)
   const [viewMode, setViewMode] = useState<number>(0)
+  const [animPhase, setAnimPhase] = useState<number>(0)
+
+  // 动画帧统一调度（切离图谱探究 viewMode !== 0 时必须自动停止 rAF，禁止直接调用 requestAnimationFrame）
+  useAnimationFrame(
+    (deltaTime) => {
+      setAnimPhase((prev) => (prev + deltaTime / 4000) % 1)
+    },
+    { playing: viewMode === 0 },
+  )
 
   // 1. 根据化学内容选择 Preset（非预先推荐，纯内容驱动）：
   // - 纯 3D/晶体/结构/全景: CANVAS_PRESETS.full (840x650)
@@ -144,6 +154,7 @@ export const XxxCanvas: React.FC = () => {
 | **页面顶栏** | `<GaokaoToolHeader>` | `@/components/UI` | 渲染统一 Header 与 `[图谱探究] [规范踩分] [变式演练]` 视角 Tabs。禁止手写 Header。 |
 | **页面三栏基座** | `<ThreePanel>` | `@/components/Layout` | 响应式三栏承载容器。 |
 | **画布自适应 Viewport** | `useAnimationViewport` | `@/hooks` | 传入内容决定的 Preset，自动计算 `containerRef`, `canvasSize.font`, `vp.transform`。 |
+| **动画帧统一调度** | `useAnimationFrame` | `@/utils/animation` | 统一驱动过程动画循环，切换至非探究视角时传入 `{ playing: viewMode === 0 }` 自动停帧，严禁直接调用 `requestAnimationFrame`。 |
 | **坐标转换与缩放** | `useSceneScale` + `worldToDesign` | `@/hooks` / `@/scene` | 将逻辑坐标转换为设计像素 `{ px, py }`，保证图形与标注在各 DPR 下零偏移。 |
 | **中屏 SVG 画布** | `<AnimationSvgCanvas>` | `@/components/Layout` | 中屏只放 SVG 场景与矢量图表，**外层绝对严禁包裹深色/杂色 `div`**。 |
 | **矢量箭头与标注** | `<ChemistryVectorArrow>` / `<VectorArrow>` | `@/components/Chemistry` | 绘制精准矢量箭头，结合 `font={canvasSize.font}` 进行字号自适应。 |
@@ -196,8 +207,17 @@ export const XxxCanvas: React.FC = () => {
 5. `components/XxxRightPanel.tsx`：右屏数据/公式/考点展示
 6. `XxxCanvas.tsx`：ThreePanel 入口组装
 
+### 5.3 工程与学科防退化铁律
+1. **单一 `containerRef` 绑定**：一个 `useAnimationViewport` 返回的 `containerRef` 只能绑定一个 `<AnimationSvgCanvas>`；若同屏存在多个独立 SVG 视口，必须各自独立调用 `useAnimationViewport` 或仅将主视口接入自适应容器，严禁双绑覆盖缩放矩阵。
+2. **动画帧统一治理 (`useAnimationFrame`)**：所有过程动画一律通过 `@/utils/animation` 的 `useAnimationFrame(cb, { playing })` 调度，且切至非图谱探究视角时必须传入 `{ playing: viewMode === 0 }` 自动停止后台循环；严禁原生 `requestAnimationFrame`。
+3. **教学示意数值显式标注**：经验拟合或定性近似估算数值（非标准实测常数）必须标记 `isIndicative: true` 并在 UI 注明“示意量级”。
+4. **化学方程式与图表组件合规**：
+   - 全量方程式严格整数配平并保持电荷守恒，严禁出现 `\triangleq` / `≜`（统一使用 `\xrightarrow{\Delta}` 或 `=Δ=`）；
+   - 非 pH 曲线（如氧化还原电位 $E(V)$、沉淀滴定 $\text{pCl}(V)$、电导率曲线等）必须使用 `RelationChart`，禁止复用硬编码 `0~14` 纵轴的 `TitrationCurveChart`。
+5. **单文件 800 行领域内聚准则**：任意业务文件逼近 800 行时，必须按化学领域边界（如纯数据预设、纯化学计算 Hook、独立交互场景子组件）拆分为高内聚子模块，严禁机械按行数切断。
+
 数据注册：
-- 在 `src/data/gaokaoModels.ts` 注册母题元数据。
+- 在 `src/data/gaokaoModels.ts` 注册母题元数据并补齐与 `knowledgeTree.ts` 对应的 `relatedKnowledgeIds` 双向联动。
 - 在 `src/data/quiz/<model-id>.ts` 新建题库数据并在 `src/data/quiz/index.ts` 中注册 `modelQuizMap`。
 - 在 `src/pages/GaokaoToolPage.tsx` 中注册路由分发。
 
@@ -205,7 +225,9 @@ export const XxxCanvas: React.FC = () => {
 
 ## 6. 验收标准
 - [ ] 运行 `npx tsc --noEmit` 0 错误；
+- [ ] 运行 `npm run lint` 全部脚本门禁（`check-font-size`、`check-no-raf`、`check-no-marker`、`check-large-files`、`check-code-style`、`check-chemistry-symbols`、`check-theme-import` 等）0 违规；
 - [ ] 运行 `npm run test:run` 全量单元测试 100% 通过；
-- [ ] 编写或通过专属 `<topic>TruthAuditor.test.ts` 学科真理守门测试（核验方程式配平、守恒计算与模式隔离）；
+- [ ] 通过 `gaokaoModels.test.ts` 验证与教材知识树 `relatedKnowledgeIds` / `relatedModelIds` 双向联动完备且路由已显式注册；
+- [ ] 新增方程式已接入 `equationsBalanceScan.coverage.test.ts` 全数据源扫描，并编写或通过专属 `<topic>TruthAuditor.test.ts` 学科真理守门测试（核验方程式配平、守恒计算与模式隔离）；
 - [ ] 检查左屏无晦涩子标题与多余 emoji，底部在需要时包含清晰的反应条件与核心设问；
 - [ ] 检查右屏四大区块 100% 与左屏当前选项动态同步，无任何上一模式的残留内容或无效 `0` 值。

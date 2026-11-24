@@ -6,6 +6,10 @@ export interface ScoringStep {
   formulaLatex?: string
   placeholder?: string
   correctAnswer: string | string[]
+  /** 单套方案下的必需踩分点分组（组间 AND、组内同义词 OR） */
+  requiredKeywordGroups?: string[][]
+  /** 多套并列可行方案（如微热法 OR 液封法；满足任意一套方案的全部组即得分） */
+  alternativeKeywordGroups?: string[][][]
   explanation: string
 }
 

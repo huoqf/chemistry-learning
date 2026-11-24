@@ -437,10 +437,8 @@ export const GAS_PRESET_CONFIGS: Record<string, Partial<GasChainParams>> = {
     targetGas: 'NO',
     generator: 'flask-noheat',
     washingSteps: [
-      // ① 蒸馏水洗气：将混入的少量 NO₂ 转化为 NO：3NO₂ + H₂O = 2HNO₃ + NO
+      // ① 蒸馏水洗气：将混入的少量 NO₂ 转化为 NO：3NO₂ + H₂O = 2HNO₃ + NO（排水法收集无需先干燥）
       { id: 's1', device: 'wash-bottle', reagent: 'water', role: 'purify' },
-      // ② 浓硫酸干燥：NO 为中性气体，与浓硫酸不反应
-      { id: 's2', device: 'acid-bottle', reagent: 'conc-h2so4', role: 'dry' },
     ],
     collection: 'water-displacement',
     // NO 为有毒气体，严禁直接排空；排水集气法末端通常连接气球收集外逸气体
@@ -466,11 +464,8 @@ export const GAS_PRESET_CONFIGS: Record<string, Partial<GasChainParams>> = {
     targetGas: 'C₂H₂',
     generator: 'flask-noheat',
     washingSteps: [
-      // ① 饱和 CuSO₄ 溶液除 H₂S/PH₃：CuSO₄ + H₂S = CuS↓ + H₂SO₄（PH₃ 生成难溶磷化铜沉淀）
-      // 选用 CuSO₄ 而非 NaOH：NaOH 只能吸收 H₂S，无法除去 PH₃（乙炔端基氢 pKa≈25，不与 NaOH 反应）
+      // ① 饱和 CuSO₄ 溶液除 H₂S/PH₃：CuSO₄ + H₂S = CuS↓ + H₂SO₄（排水法收集无需先干燥）
       { id: 's1', device: 'wash-bottle', reagent: 'cuso4', role: 'purify' },
-      // ② 无水 CaCl₂ 干燥（乙炔不与 CaCl₂ 络合，可安全使用）
-      { id: 's2', device: 'dry-tube', reagent: 'cacl2', role: 'dry' },
     ],
     collection: 'water-displacement',
     tailGas: 'combustion',
@@ -498,8 +493,8 @@ export const GAS_PRESET_CONFIGS: Record<string, Partial<GasChainParams>> = {
     targetGas: 'CO',
     generator: 'flask-heat',
     washingSteps: [
+      // 排水法收集前无需配置干燥步
       { id: 's1', device: 'wash-bottle', reagent: 'naoh', role: 'purify' },
-      { id: 's2', device: 'acid-bottle', reagent: 'conc-h2so4', role: 'dry' },
     ],
     collection: 'water-displacement',
     tailGas: 'combustion',
@@ -510,9 +505,8 @@ export const GAS_PRESET_CONFIGS: Record<string, Partial<GasChainParams>> = {
     systemId: 'custom',
     targetGas: 'O₂',
     generator: 'flask-noheat',
-    washingSteps: [
-      { id: 's1', device: 'acid-bottle', reagent: 'conc-h2so4', role: 'dry' },
-    ],
+    // 排水法收集无需先干燥
+    washingSteps: [],
     collection: 'water-displacement',
     tailGas: 'none',
     temp: 25,
@@ -522,11 +516,8 @@ export const GAS_PRESET_CONFIGS: Record<string, Partial<GasChainParams>> = {
     systemId: 'custom',
     targetGas: 'H₂',
     generator: 'kipp',
-    washingSteps: [
-      // 无水 CaCl₂ 干燥（H₂ 为中性气体，与 CaCl₂ 不络合，可安全使用）
-      // 注：用于还原实验时，需干燥后再通入加热装置；收集时也可不干燥直接排水
-      { id: 's1', device: 'dry-tube', reagent: 'cacl2', role: 'dry' },
-    ],
+    // 排水集气法直接收集，无需提前干燥
+    washingSteps: [],
     // 排水集气法：H₂ 难溶于水，收集到的气体更纯净（不混有空气），为高考推荐收集方式
     // 向下排空气法：收集的 H₂ 含空气，点燃前必须检验纯度，否则会爆炸
     collection: 'water-displacement',

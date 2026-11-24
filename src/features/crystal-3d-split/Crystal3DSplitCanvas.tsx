@@ -49,9 +49,9 @@ export const Crystal3DSplitCanvas: React.FC = () => {
         onViewModeChange={setViewMode}
       />
 
-      {/* 视角分发 */}
+      {/* 视角分发：采用 hidden 保留 WebGL 3D 画布挂载，避免 Tab 切换反复销毁重建上下文 */}
       <div className="flex-1 overflow-hidden">
-        {viewMode === 0 && (
+        <div className={viewMode === 0 ? 'w-full h-full' : 'hidden'}>
           <ThreePanel
             left={
               <Crystal3DLeftPanel
@@ -87,7 +87,7 @@ export const Crystal3DSplitCanvas: React.FC = () => {
               />
             }
           />
-        )}
+        </div>
 
         {viewMode === 1 && quizData && (
           <div className="w-full h-full bg-slate-50 overflow-y-auto py-6 px-4">

@@ -103,7 +103,7 @@ export const O_CONFIG: ElementValenceConfig = {
       toSubstance: 'O₂ (氧气)',
       reagent: 'H₂O / CO₂ (歧化反应)',
       equation: '2Na₂O₂ + 2H₂O = 4NaOH + O₂↑',
-      electronTransfer: '2mol -1价 O 歧化：1个降至 -2价(NaOH)，1个升至 0价(O₂)，转移 2e⁻',
+      electronTransfer: '4mol -1价 O 歧化：2mol 降至 -2价(NaOH)，2mol 升至 0价(O₂)，共转移 2mol e⁻',
       type: 'disproportionation',
     },
     {

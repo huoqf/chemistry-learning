@@ -94,6 +94,7 @@ export const VseprScene: React.FC<VseprSceneProps> = ({
             <RepulsionVectors
               atoms={molecule.atoms}
               lonePairs={molecule.lonePairNodes}
+              isAngleCompressed={molecule.actualAngle < molecule.theoreticalAngle}
             />
           </>
         )}

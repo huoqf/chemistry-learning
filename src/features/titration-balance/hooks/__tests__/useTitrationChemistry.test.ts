@@ -233,5 +233,52 @@ describe('useTitrationChemistry — 滴定平衡与离子排序测试', () => {
         expect(atEquiv!.y).toBeCloseTo(ion.conc, 6)
       }
     })
+
+    it('强碱滴定醋酸 (pKa=4.75) 默认选用酚酞时必须判定可选用，选用甲基橙提示应更换', () => {
+      const phenol = renderHook(() =>
+        useTitrationChemistry({
+          ...baseParams,
+          pKa: 4.75,
+          vRatio: 1.0,
+          indicator: 'phenolphthalein',
+        })
+      ).result.current
+      expect(phenol.indicatorTip).toContain('可选用')
+      expect(phenol.indicatorTip).not.toContain('应更换')
+
+      const methyl = renderHook(() =>
+        useTitrationChemistry({
+          ...baseParams,
+          pKa: 4.75,
+          vRatio: 1.0,
+          indicator: 'methylOrange',
+        })
+      ).result.current
+      expect(methyl.indicatorTip).toContain('应更换')
+    })
+
+    it('强酸滴定弱碱选用甲基橙必须判定可选用；极过量碱与跨中性过渡区文案与实际一致', () => {
+      const weakBase = renderHook(() =>
+        useTitrationChemistry({
+          ...baseParams,
+          systemType: 'strongAcidWeakBase',
+          pKa: 4.75,
+          vRatio: 1.0,
+          indicator: 'methylOrange',
+        })
+      ).result.current
+      expect(weakBase.indicatorTip).toContain('可选用')
+
+      const extremeOver = renderHook(() =>
+        useTitrationChemistry({ ...baseParams, vRatio: 2.0, pKa: 4.75 })
+      ).result.current
+      expect(extremeOver.orderingExplanation).toContain('c(OH⁻) 已超过弱酸根 c(A⁻)')
+
+      const neutralCross = renderHook(() =>
+        useTitrationChemistry({ ...baseParams, pKa: 5.5, vRatio: 0.97 })
+      ).result.current
+      expect(neutralCross.pH).toBeGreaterThan(7)
+      expect(neutralCross.orderingExplanation).not.toContain('仍显酸性')
+    })
   })
 })

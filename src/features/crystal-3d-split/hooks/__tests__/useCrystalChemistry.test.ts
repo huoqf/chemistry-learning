@@ -58,4 +58,21 @@ describe('母题三：3D晶胞均摊与密度计算严谨性测试', () => {
       expect(quiz.diagramConfig).toBeUndefined()
     }
   })
+
+  it('NaCl 晶胞配位键起点必须精准指向体心 Na⁺ (index=26) 且 CaTiO₃ 相切半径满足立体几何约束', () => {
+    const nacl = CRYSTAL_DATA_MAP['nacl']
+    expect(nacl.atoms[26]?.id).toBe('na-b0')
+    expect(nacl.bonds).toBeDefined()
+    for (const bond of nacl.bonds ?? []) {
+      expect(bond.fromIndex).toBe(26)
+      expect(nacl.atoms[bond.toIndex]?.locationType).toBe('face')
+    }
+
+    const catio3 = CRYSTAL_DATA_MAP['catio3']
+    const rTi = catio3.tangentRadii?.['Ti⁴⁺'] ?? 0
+    const rO = catio3.tangentRadii?.['O²⁻'] ?? 0
+    const rCa = catio3.tangentRadii?.['Ca²⁺'] ?? 0
+    expect(rTi + rO).toBeCloseTo(0.5, 3)
+    expect(rCa + rO).toBeCloseTo(Math.SQRT2 / 2, 3)
+  })
 })

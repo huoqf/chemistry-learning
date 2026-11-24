@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Layers,
@@ -59,6 +59,10 @@ export const ValenceRightPanel: React.FC<ValenceRightPanelProps> = ({
   const navigate = useNavigate()
   const modelNode = getGaokaoModel('model-valence-matrix')
   const [filterType, setFilterType] = useState<TransformationFilter>('all')
+
+  useEffect(() => {
+    setFilterType('all')
+  }, [currentConfig.symbol, selectedSubstance?.substance])
 
   // 1. 计算物理聚集状态
   const physicalState = useMemo(() => {
@@ -124,9 +128,9 @@ export const ValenceRightPanel: React.FC<ValenceRightPanelProps> = ({
           </div>
 
           <div className="flex flex-wrap items-center gap-1.5 text-sm font-black text-slate-900 bg-white/90 px-2.5 py-1.5 rounded-lg border border-amber-200">
-            <ChemicalFormula formula={selectedSubstance.substance} />
+            <ChemicalFormula formula={activePairTransformation.fromSubstance} />
             <span className="text-amber-600 font-bold px-1">➔</span>
-            <ChemicalFormula formula={targetSubstance.substance} />
+            <ChemicalFormula formula={activePairTransformation.toSubstance} />
           </div>
 
           <div className="text-xs text-slate-800 flex items-start gap-1.5 leading-relaxed break-words">

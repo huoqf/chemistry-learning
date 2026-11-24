@@ -40,7 +40,7 @@ export const GAOKAO_PROTECTION_CHEAT_SHEET: ProtectionCheatItem[] = [
     targetGroup: '碳碳双键 (-CH=CH-)',
     reagents: 'Br₂ / CCl₄ 溶液 (避光加成)',
     protectedForm: '邻二溴代烷 (-CHBr-CHBr-)',
-    tolerance: '消除不饱和性，耐酸性 KMnO₄ 强氧化、耐强碱性烷基化',
+    tolerance: '消除不饱和性，耐酸性 KMnO₄ 强氧化、耐弱碱性（无水 K₂CO₃）烷基化',
     deprotection: '金属 Zn 粉 / 无水乙醇加热 (β-消去)',
     examTip: '【失分重灾区】：路线设计中不能遗漏 Zn/EtOH 脱溴步骤！该试剂与条件由题目信息给出，教材未作要求。',
     syllabusTier: 'info-item',

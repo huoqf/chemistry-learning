@@ -40,9 +40,9 @@ export const VseprHybrid3DCanvas: React.FC = () => {
         onViewModeChange={setViewMode}
       />
 
-      {/* 2. 视角分发与 ThreePanel 组装 */}
+      {/* 2. 视角分发与 ThreePanel 组装（采用 hidden 保留 WebGL 上下文，避免 Tab 切换重建） */}
       <div className="flex-1 overflow-hidden">
-        {viewMode === 0 && (
+        <div className={viewMode === 0 ? 'w-full h-full' : 'hidden'}>
           <ThreePanel
             left={
               <VseprLeftPanel
@@ -66,7 +66,7 @@ export const VseprHybrid3DCanvas: React.FC = () => {
             }
             right={<VseprRightPanel calcResult={calcResult} displayMode={displayMode} />}
           />
-        )}
+        </div>
 
         {viewMode === 1 && quizData && (
           <div className="w-full h-full bg-slate-50 overflow-y-auto py-6 px-4">

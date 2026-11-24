@@ -137,6 +137,33 @@ export const AvogadroStructureScene: React.FC<AvogadroStructureSceneProps> = ({
             (4 个氢键方向 × 1/2 共享 = 2)
           </text>
         </g>
+      ) : structureItem === 'diamond' ? (
+        /* 金刚石正四面体三维共价网均摊拓扑 */
+        <g>
+          <line x1="0" y1="0" x2="0" y2="-56" stroke="#334155" strokeWidth={4} strokeLinecap="round" />
+          <line x1="0" y1="0" x2="-52" y2="28" stroke="#334155" strokeWidth={4} strokeLinecap="round" />
+          <line x1="0" y1="0" x2="52" y2="28" stroke="#334155" strokeWidth={4} strokeLinecap="round" />
+          <line x1="0" y1="0" x2="12" y2="48" stroke="#475569" strokeWidth={3} strokeDasharray="4 2" strokeLinecap="round" />
+          {[
+            [0, -56],
+            [-52, 28],
+            [52, 28],
+            [12, 48],
+          ].map(([cx, cy], idx) => (
+            <g key={idx}>
+              <circle cx={cx} cy={cy} r="13" fill="#334155" stroke="#0f172a" strokeWidth={1.5} />
+              <text x={cx} y={cy + 4} fill="#ffffff" fontSize={font(9)} textAnchor="middle" fontWeight="bold">C</text>
+            </g>
+          ))}
+          <circle cx="0" cy="0" r="18" fill="#0f172a" stroke="#475569" strokeWidth={2} />
+          <text x="0" y="5" fill="#ffffff" fontSize={font(12)} textAnchor="middle" fontWeight="bold">C</text>
+          <text x="0" y="95" fill="#1e293b" fontSize={font(12)} textAnchor="middle" fontWeight="bold">
+            金刚石 (共价晶体)：1 mol C 含 2 mol C-C 键
+          </text>
+          <text x="0" y="115" fill="#64748b" fontSize={font(10)} textAnchor="middle">
+            (每个 C 形成 4 个共价键，均摊 4 × 1/2 = 2)
+          </text>
+        </g>
       ) : structureItem === 'graphite' ? (
         /* 石墨平面六元环网状均摊拓扑 */
         <g>
@@ -213,7 +240,7 @@ export const AvogadroStructureScene: React.FC<AvogadroStructureSceneProps> = ({
           </text>
           <line x1="-14" y1="0" x2="28" y2="0" stroke="#64748b" strokeWidth={2} strokeDasharray="4 3" />
           <text x="0" y="70" fill="#1e293b" fontSize={font(12)} textAnchor="middle" fontWeight="bold">
-            1 mol NH₄Cl 含 4 mol N-H 共价键 + 1 mol 离子键
+            1 mol NH₄Cl 含 4 mol 共价键 (含 1 mol 配位键)，离子键不计条数
           </text>
         </g>
       ) : (

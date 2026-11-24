@@ -102,7 +102,7 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
         ...baseQuantities,
         {
           label: '标准平衡常数 K⊖ (Kp)',
-          value: vantHoffData.currentK,
+          value: vantHoffData.currentKDisplay ?? vantHoffData.currentK,
           unit: '',
           color: '#10B981',
         },
@@ -163,7 +163,7 @@ export const ReactionPrincipleRightPanel: React.FC<ReactionPrincipleRightPanelPr
         color: '#8B5CF6',
       },
     ]
-  }, [chartTab, system.deltaH, eaForward, eaReverse, boltzmannData.activatedFraction, vantHoffData.currentK, vantHoffData.currentLnK, vantHoffData.intercept, params.temperature, params.pressure, alphaTpData, isMultistep, stepBarriers, barrierCount])
+  }, [chartTab, system.deltaH, eaForward, eaReverse, boltzmannData.activatedFraction, vantHoffData.currentK, vantHoffData.currentKDisplay, vantHoffData.currentLnK, vantHoffData.intercept, params.temperature, params.pressure, alphaTpData, isMultistep, stepBarriers, barrierCount])
 
   // 2. 依当前 chartTab 动态提供核心公式
   const formulas = useMemo(() => {

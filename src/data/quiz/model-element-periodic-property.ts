@@ -8,7 +8,7 @@ export const modelElementPeriodicProperty: ModelQuizData = {
       title: '步骤 1：基态原子/离子电子排布式规范书写',
       type: 'fill-in',
       questionText: '24号元素 Cr 的基态原子价层电子排布式为：',
-      placeholder: '3d5 4s1',
+      placeholder: '如：3dⁿ 4sᵐ',
       correctAnswer: ['3d5 4s1', '3d⁵4s¹', '3d54s1', '3d^5 4s^1'],
       explanation: '踩分点：Cr 遵循洪特规则半充满特例，价层电子排布式为 3d⁵4s¹，而非 3d⁴4s²。',
     },
@@ -22,7 +22,7 @@ export const modelElementPeriodicProperty: ModelQuizData = {
     },
     {
       id: 'step-3',
-      title: '步骤 3：等电子体微粒半径比较法',
+      title: '步骤 3：核外电子排布相同微粒半径比较法',
       type: 'keywords',
       questionText: '比较 O²⁻、F⁻、Na⁺、Mg²⁺、Al³⁺ 简单离子半径由大到小的顺序。',
       correctAnswer: ['O2->F->Na+>Mg2+>Al3+', 'O²⁻>F⁻>Na⁺>Mg²⁺>Al³⁺'],
@@ -33,7 +33,7 @@ export const modelElementPeriodicProperty: ModelQuizData = {
       title: '步骤 4：逐级电离能突跃与最外层价电子数推断',
       type: 'fill-in',
       questionText: '某第三周期元素 X 的逐级电离能 (kJ/mol) 为 I₁=496, I₂=4562, I₃=6910，则 X 的最外层电子数为：',
-      placeholder: '1',
+      placeholder: '请输入整数',
       correctAnswer: ['1', '1个'],
       explanation: '踩分点：I₂ / I₁ 倍率高达 9.2 倍，出现剧烈突跃，表明从第 2 个电子起剥离内层电子，最外层价电子数为 1 (Na 元素)。',
     },
@@ -52,7 +52,7 @@ export const modelElementPeriodicProperty: ModelQuizData = {
         { label: 'C', text: '最高价氧化物对应水化物的酸性：X > Z', isCorrect: false },
         { label: 'D', text: '基态 Z 原子的未成对电子数为 0', isCorrect: false },
       ],
-      modelAlignmentAnalysis: '【母题模型对齐】：考查电子排布特征推断（p 轨道电子数 = s 轨道电子数的 O、3p³ 半充满的 P）、第一电离能 VA>VIA 反常（第二周期 N>O、第三周期 P>S）与等电子体（10 电子体 Al³⁺）离子半径比较规律。',
+      modelAlignmentAnalysis: '【母题模型对齐】：考查电子排布特征推断（p 轨道电子数 = s 轨道电子数的 O、3p³ 半充满的 P）、第一电离能 VA>VIA 反常（第二周期 N>O、第三周期 P>S）与核外电子排布相同（10 电子微粒 Al³⁺）离子半径比较规律。',
       detailedExplanation: '推断过程：X (p=s) ➔ O (1s²2s²2p⁴, 4=4)；Y (第二周期电负性最强) ➔ F (4.0)；Z (简单离子半径最小) ➔ Al (13号，Al³⁺ 为第三周期离子中半径最小者)；W (3p³ 半充满) ➔ P (15号)。原子序数 8 < 9 < 13 < 15，与题设“依次增大”一致。第一电离能：F(1681 kJ/mol) > O(1314 kJ/mol) > Al(578 kJ/mol)，因此 Y(F) > X(O) > Z(Al)，B 选项正确。注意：P 的 3p³ 半充满使 I₁(P) 反常高于 S，但仍低于 O；O 无最高价氧化物对应的水化物，故 C 项的比较前提不成立。',
     },
     {
@@ -91,7 +91,7 @@ export const modelElementPeriodicProperty: ModelQuizData = {
       id: 'var-elem-4',
       yearProvince: '核心考点 · 情境变式',
       modelId: 'model-element-periodic-property',
-      title: '等电子体微粒半径核电荷数反比律 (O²⁻, F⁻, Na⁺, Mg²⁺, Al³⁺)',
+      title: '核外电子排布相同微粒半径核电荷数反比律 (O²⁻, F⁻, Na⁺, Mg²⁺, Al³⁺)',
       contextDescription: '具有相同电子层结构的 10 电子微粒，其离子半径随核电荷数的改变而呈现规律性变化。',
       questionText: '关于 O²⁻、F⁻、Na⁺、Mg²⁺、Al³⁺ 五种微粒半径大小的比较，正确的是：',
       options: [
@@ -100,7 +100,7 @@ export const modelElementPeriodicProperty: ModelQuizData = {
         { label: 'C', text: 'Na⁺ > Mg²⁺ > Al³⁺ > O²⁻ > F⁻', isCorrect: false },
         { label: 'D', text: '五种微粒半径完全相等', isCorrect: false },
       ],
-      modelAlignmentAnalysis: '【母题模型对齐】：等电子体微粒“核大半径小”原则：核电荷数 Z(Al)=13 > Z(Mg)=12 > Z(Na)=11 > Z(F)=9 > Z(O)=8，故半径 O²⁻ > F⁻ > Na⁺ > Mg²⁺ > Al³⁺。',
+      modelAlignmentAnalysis: '【母题模型对齐】：核外电子排布相同微粒“核大半径小”原则：核电荷数 Z(Al)=13 > Z(Mg)=12 > Z(Na)=11 > Z(F)=9 > Z(O)=8，故半径 O²⁻ > F⁻ > Na⁺ > Mg²⁺ > Al³⁺。',
       detailedExplanation: '这五种离子核外均有 10 个电子（2, 8），核电荷数越大，原子核对核外电子的吸引力越强，离子半径越小。故 B 项正确。',
     },
     {

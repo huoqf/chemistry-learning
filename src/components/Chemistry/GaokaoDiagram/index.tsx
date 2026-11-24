@@ -116,7 +116,9 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
             <g>
               <circle cx="170" cy="60" r="35" fill="none" stroke="#3B82F6" strokeWidth="1.5" strokeDasharray="3,3" />
               <text x="170" y="55" fontSize="11" fill="#1E293B" fontWeight="bold" textAnchor="middle">Pd(0) 催化循环</text>
-              <text x="170" y="72" fontSize="9" fill="#2563EB" textAnchor="middle">氧化加成(RDS) → 还原消除</text>
+              <text x="170" y="72" fontSize="9" fill="#2563EB" textAnchor="middle">
+                {isAnalysisMode ? '氧化加成(RDS) → 还原消除' : '氧化加成 → 还原消除'}
+              </text>
               <text x="65" y="60" fontSize="10" fill="#475569" textAnchor="middle">Ar-X 进</text>
               <text x="275" y="60" fontSize="10" fill="#059669" textAnchor="middle">Ar-Ar 出</text>
             </g>
@@ -296,6 +298,26 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
     const isTi = title.includes('TiO²⁺') || title.includes('钛铁矿')
     const isBattery = title.includes('三元锂电池') || title.includes('Co/Ni')
     const isMgCa = title.includes('Mg²⁺') || title.includes('卤水')
+    const isOrderQuiz = title.includes('先后') || title.includes('竞争')
+    const analysisWindowLabel = isZn
+      ? '[4.7 ~ 6.2)'
+      : isTi
+        ? '先水解 TiO²⁺，调控防 Fe²⁺ 析出'
+        : isBattery
+          ? '[4.7 ~ 7.2)'
+          : isMgCa
+            ? '[5.0 ~ 8.5)'
+            : '[4.7 ~ 8.1)'
+    const showIonLabels = !isOrderQuiz || isAnalysisMode
+    const highlightBounds = isZn
+      ? { x1: 140, x2: 215 }
+      : isTi
+        ? { x1: 45, x2: 110 }
+        : isBattery
+          ? { x1: 140, x2: 235 }
+          : isMgCa
+            ? { x1: 145, x2: 260 }
+            : { x1: 140, x2: 260 }
 
     return (
       <div className={`my-2.5 p-3 bg-slate-50 border border-slate-200 rounded-lg ${className}`}>
@@ -316,11 +338,18 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
           {/* 拆解模式：高亮沉淀完全安全控制区间 (仅在 isAnalysisMode 为 true 时展现) */}
           {isAnalysisMode && (
             <g>
-              <rect x="140" y="25" width="120" height="120" fill="#10B981" opacity="0.12" />
-              <line x1="140" y1="25" x2="140" y2="145" stroke="#059669" strokeDasharray="3 3" strokeWidth="1.5" />
-              <line x1="260" y1="25" x2="260" y2="145" stroke="#059669" strokeDasharray="3 3" strokeWidth="1.5" />
-              <text x="200" y="35" fontSize="8" fill="#047857" fontWeight="bold" textAnchor="middle">
-                [解题切口] 最佳沉淀 pH 控制区间 [4.7 ~ 8.1)
+              <rect
+                x={highlightBounds.x1}
+                y="25"
+                width={highlightBounds.x2 - highlightBounds.x1}
+                height="120"
+                fill="#10B981"
+                opacity="0.12"
+              />
+              <line x1={highlightBounds.x1} y1="25" x2={highlightBounds.x1} y2="145" stroke="#059669" strokeDasharray="3 3" strokeWidth="1.5" />
+              <line x1={highlightBounds.x2} y1="25" x2={highlightBounds.x2} y2="145" stroke="#059669" strokeDasharray="3 3" strokeWidth="1.5" />
+              <text x={Math.max(118, (highlightBounds.x1 + highlightBounds.x2) / 2)} y="35" fontSize="8" fill="#047857" fontWeight="bold" textAnchor="middle">
+                [解题切口] 最佳沉淀 pH 控制区间 {analysisWindowLabel}
               </text>
             </g>
           )}
@@ -333,11 +362,15 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
             stroke="#EF4444"
             strokeWidth="2"
           />
-          <text x="80" y="38" fontSize="8.5" fill="#EF4444" fontWeight="bold">Fe³⁺</text>
+          <text x="80" y="38" fontSize="8.5" fill="#EF4444" fontWeight="bold">
+            {showIonLabels ? 'Fe³⁺' : '曲线 ①'}
+          </text>
           {/* Fe³⁺ 完全沉淀点 pH=3.2 (x=110, y=75) */}
           <circle cx="110" cy="75" r="2.5" fill="#EF4444" />
           <line x1="110" y1="75" x2="110" y2="145" stroke="#EF4444" strokeDasharray="2 2" opacity="0.4" />
-          <text x="110" y="155" fontSize="7.5" fill="#EF4444" textAnchor="middle">3.2</text>
+          <text x="110" y="155" fontSize="7.5" fill="#EF4444" textAnchor="middle">
+            {showIonLabels ? '3.2' : 'pH₁'}
+          </text>
 
           {/* 2. Al³⁺ (公共杂质) */}
           <path
@@ -346,11 +379,15 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
             stroke="#8B5CF6"
             strokeWidth="2"
           />
-          <text x="120" y="42" fontSize="8.5" fill="#8B5CF6" fontWeight="bold">Al³⁺</text>
+          <text x="120" y="42" fontSize="8.5" fill="#8B5CF6" fontWeight="bold">
+            {showIonLabels ? 'Al³⁺' : '曲线 ②'}
+          </text>
           {/* Al³⁺ 完全沉淀点 pH=4.7 (x=140, y=75) */}
           <circle cx="140" cy="75" r="2.5" fill="#8B5CF6" />
           <line x1="140" y1="75" x2="140" y2="145" stroke="#8B5CF6" strokeDasharray="2 2" opacity="0.4" />
-          <text x="140" y="155" fontSize="7.5" fill="#8B5CF6" textAnchor="middle">4.7</text>
+          <text x="140" y="155" fontSize="7.5" fill="#8B5CF6" textAnchor="middle">
+            {showIonLabels ? '4.7' : 'pH₂'}
+          </text>
 
           {/* 3. 目标离子曲线 (依照题目复现) */}
           {isZn ? (
@@ -362,7 +399,9 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
                 stroke="#10B981"
                 strokeWidth="2"
               />
-              <text x="160" y="52" fontSize="8.5" fill="#10B981" fontWeight="bold">Cu²⁺</text>
+              <text x="160" y="52" fontSize="8.5" fill="#10B981" fontWeight="bold">
+                {showIonLabels ? 'Cu²⁺' : '曲线 ③'}
+              </text>
 
               <path
                 d="M 150 25 Q 185 40 215 75 Q 240 115 255 145"
@@ -370,10 +409,14 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
                 stroke="#2563EB"
                 strokeWidth="2.5"
               />
-              <text x="200" y="55" fontSize="9" fill="#2563EB" fontWeight="bold">Zn²⁺</text>
+              <text x="200" y="55" fontSize="9" fill="#2563EB" fontWeight="bold">
+                {showIonLabels ? 'Zn²⁺' : '曲线 ④'}
+              </text>
               <circle cx="215" cy="75" r="3" fill="#2563EB" />
               <line x1="215" y1="75" x2="215" y2="145" stroke="#2563EB" strokeDasharray="2 2" opacity="0.5" />
-              <text x="215" y="155" fontSize="7.5" fill="#2563EB" textAnchor="middle">6.2</text>
+              <text x="215" y="155" fontSize="7.5" fill="#2563EB" textAnchor="middle">
+                {showIonLabels ? '6.2' : 'pH₃'}
+              </text>
             </g>
           ) : isTi ? (
             /* 钛铁矿：TiO²⁺ (极高极强水解) & Fe²⁺ (完全沉淀 pH ≈ 8.95) */
@@ -384,7 +427,9 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
                 stroke="#0284C7"
                 strokeWidth="2.5"
               />
-              <text x="55" y="45" fontSize="8.5" fill="#0284C7" fontWeight="bold">TiO²⁺</text>
+              <text x="55" y="45" fontSize="8.5" fill="#0284C7" fontWeight="bold">
+                {showIonLabels ? 'TiO²⁺' : '曲线 ③'}
+              </text>
 
               <path
                 d="M 190 25 Q 235 35 264 75 Q 282 110 292 145"
@@ -392,10 +437,14 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
                 stroke="#D97706"
                 strokeWidth="2"
               />
-              <text x="242" y="50" fontSize="8.5" fill="#D97706" fontWeight="bold">Fe²⁺</text>
+              <text x="242" y="50" fontSize="8.5" fill="#D97706" fontWeight="bold">
+                {showIonLabels ? 'Fe²⁺' : '曲线 ④'}
+              </text>
               <circle cx="264" cy="75" r="2.5" fill="#D97706" />
               <line x1="264" y1="75" x2="264" y2="145" stroke="#D97706" strokeDasharray="2 2" opacity="0.5" />
-              <text x="264" y="155" fontSize="7.5" fill="#D97706" textAnchor="middle">8.95</text>
+              <text x="264" y="155" fontSize="7.5" fill="#D97706" textAnchor="middle">
+                {showIonLabels ? '8.95' : 'pH₃'}
+              </text>
             </g>
           ) : isBattery ? (
             /* 三元锂电池：Co²⁺ (pH 7.2) & Ni²⁺ (pH 7.7) */
@@ -406,7 +455,9 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
                 stroke="#4338CA"
                 strokeWidth="2"
               />
-              <text x="215" y="50" fontSize="8.5" fill="#4338CA" fontWeight="bold">Co²⁺</text>
+              <text x="215" y="50" fontSize="8.5" fill="#4338CA" fontWeight="bold">
+                {showIonLabels ? 'Co²⁺' : '曲线 ③'}
+              </text>
 
               <path
                 d="M 185 25 Q 225 35 250 75 Q 270 110 280 145"
@@ -414,7 +465,9 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
                 stroke="#059669"
                 strokeWidth="2"
               />
-              <text x="245" y="55" fontSize="8.5" fill="#059669" fontWeight="bold">Ni²⁺</text>
+              <text x="245" y="55" fontSize="8.5" fill="#059669" fontWeight="bold">
+                {showIonLabels ? 'Ni²⁺' : '曲线 ④'}
+              </text>
             </g>
           ) : isMgCa ? (
             /* 盐湖卤水：Mg²⁺ (0.1 mol/L 开始沉淀 pH ≈ 8.9) & Ca²⁺ (pH ≈ 12.0) */
@@ -425,10 +478,14 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
                 stroke="#2563EB"
                 strokeWidth="2.5"
               />
-              <text x="252" y="50" fontSize="9" fill="#2563EB" fontWeight="bold">Mg²⁺</text>
+              <text x="252" y="50" fontSize="9" fill="#2563EB" fontWeight="bold">
+                {showIonLabels ? 'Mg²⁺' : '曲线 ③'}
+              </text>
               <circle cx="270" cy="75" r="3" fill="#2563EB" />
               <line x1="270" y1="75" x2="270" y2="145" stroke="#2563EB" strokeDasharray="2 2" opacity="0.5" />
-              <text x="270" y="155" fontSize="7.5" fill="#2563EB" textAnchor="middle">8.9</text>
+              <text x="270" y="155" fontSize="7.5" fill="#2563EB" textAnchor="middle">
+                {showIonLabels ? '8.9' : 'pH₃'}
+              </text>
 
               <path
                 d="M 270 25 Q 305 35 320 75 L 325 145"
@@ -437,7 +494,9 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
                 strokeWidth="1.5"
                 strokeDasharray="4 2"
               />
-              <text x="310" y="45" fontSize="8" fill="#D97706" fontWeight="bold">Ca²⁺</text>
+              <text x="310" y="45" fontSize="8" fill="#D97706" fontWeight="bold">
+                {showIonLabels ? 'Ca²⁺' : '曲线 ④'}
+              </text>
             </g>
           ) : (
             /* 软锰矿通用：Mn²⁺ (pH 8.1 开始沉淀) */
@@ -448,10 +507,14 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
                 stroke="#2563EB"
                 strokeWidth="2.5"
               />
-              <text x="240" y="50" fontSize="9" fill="#2563EB" fontWeight="bold">Mn²⁺</text>
+              <text x="240" y="50" fontSize="9" fill="#2563EB" fontWeight="bold">
+                {showIonLabels ? 'Mn²⁺' : '曲线 ③'}
+              </text>
               <circle cx="260" cy="75" r="3" fill="#2563EB" />
               <line x1="260" y1="75" x2="260" y2="145" stroke="#2563EB" strokeDasharray="2 2" opacity="0.5" />
-              <text x="260" y="155" fontSize="7.5" fill="#2563EB" textAnchor="middle">8.1</text>
+              <text x="260" y="155" fontSize="7.5" fill="#2563EB" textAnchor="middle">
+                {showIonLabels ? '8.1' : 'pH₃'}
+              </text>
             </g>
           )}
 
@@ -515,19 +578,25 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
         [2, 1.7],
       ]
     } else if (isDiprotic && typeof pKa2 === 'number') {
+      const eq2Low = Math.min(9.6, pKa2 + 2.2)
+      const eq2High = Math.min(11.0, Math.max(eq2Low + 1.2, pKa2 + 3.8))
+      const postEq1 = Math.max(eq2High + 0.3, 10.8)
+      const postEq2 = Math.max(postEq1 + 0.5, 11.6)
+      const postEq3 = Math.max(postEq2 + 0.4, 12.2)
+      const postEq4 = Math.max(postEq3 + 0.3, 12.5)
       anchors = [
         [0, Math.max(1.2, pKa1 - 1.0)],
         [0.25, pKa1],
         [0.4, (pKa1 + pKa2) / 2],
         [0.5, (pKa1 + pKa2) / 2],
         [0.75, pKa2],
-        [0.97, pKa2 + 1.6],
-        [0.999, pKa2 + 2.4],
-        [1.001, pKa2 + 4.4],
-        [1.05, 10.2],
-        [1.25, 11.5],
-        [1.5, 12.2],
-        [2, 12.5],
+        [0.97, Math.min(eq2Low - 0.4, pKa2 + 1.6)],
+        [0.999, eq2Low],
+        [1.001, eq2High],
+        [1.05, postEq1],
+        [1.25, postEq2],
+        [1.5, postEq3],
+        [2, postEq4],
       ]
     } else {
       anchors = [
@@ -732,13 +801,32 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
             <path d="M 245 85 L 260 85" stroke="#64748B" strokeWidth="1.5" strokeDasharray="2 2" />
             <polygon points="260,85 254,82 254,88" fill="#64748B" />
 
-            {/* 步骤 3：终点指示 (纯看图模式) */}
+            {/* 步骤 3：终点指示 (未作答时隐藏真实终点颜色，避免剧透选项) */}
             <g transform="translate(265, 20)">
               <rect x="0" y="0" width="75" height="135" rx="6" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="1" />
               <text x="37" y="18" fontSize="8.5" fill="#1E293B" fontWeight="bold" textAnchor="middle">③ 滴定终点</text>
-              <circle cx="37" cy="42" r="14" fill="#B91C1C" opacity="0.8" stroke="#7F1D1D" strokeWidth="1" />
-              <text x="37" y="45" fontSize="7.5" fill="#FFFFFF" fontWeight="bold" textAnchor="middle">红褐色</text>
-              <text x="37" y="68" fontSize="7" fill="#475569" textAnchor="middle">试亚铁灵指示</text>
+              <circle
+                cx="37"
+                cy="42"
+                r="14"
+                fill={isAnalysisMode ? '#B91C1C' : '#E2E8F0'}
+                opacity={isAnalysisMode ? 0.8 : 1}
+                stroke={isAnalysisMode ? '#7F1D1D' : '#94A3B8'}
+                strokeWidth="1"
+              />
+              <text
+                x="37"
+                y="45"
+                fontSize="7.5"
+                fill={isAnalysisMode ? '#FFFFFF' : '#475569'}
+                fontWeight="bold"
+                textAnchor="middle"
+              >
+                {isAnalysisMode ? '红褐色' : '终点变色'}
+              </text>
+              <text x="37" y="68" fontSize="6.5" fill="#475569" textAnchor="middle">
+                {isAnalysisMode ? '试亚铁灵指示' : '试亚铁灵指示(待定)'}
+              </text>
               <line x1="8" y1="78" x2="67" y2="78" stroke="#E2E8F0" />
               <text x="37" y="92" fontSize="7.5" fill="#334155" fontWeight="bold" textAnchor="middle">耗 FeSO₄ 溶液</text>
               <text x="37" y="105" fontSize="8" fill="#0284C7" fontWeight="bold" textAnchor="middle">12.00 mL</text>
@@ -875,20 +963,32 @@ export const GaokaoDiagram: React.FC<GaokaoDiagramProps> = ({
               </text>
             </g>
 
-            {/* 2. 滴定终点变色 (通用试卷层) */}
+            {/* 2. 滴定终点变色 (未作答时隐藏具体颜色与保持时间结论，避免剧透) */}
             <g transform="translate(15, 80)">
               <rect x="0" y="0" width="150" height="85" rx="5" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="1" />
-              <text x="75" y="18" fontSize="8" fill="#1E293B" fontWeight="bold" textAnchor="middle">🎨 滴定终点变色指示</text>
-              {/* 深蓝色 -> 无色 */}
-              <circle cx="45" cy="42" r="14" fill="#1E3A8A" stroke="#1E40AF" strokeWidth="1" />
-              <text x="45" y="45" fontSize="7" fill="#FFFFFF" fontWeight="bold" textAnchor="middle">蓝色</text>
-              <path d="M 67 42 L 87 42" stroke="#64748B" strokeWidth="1.5" strokeDasharray="2 2" />
-              <polygon points="87,42 81,39 81,45" fill="#64748B" />
-              <circle cx="110" cy="42" r="14" fill="#FFFFFF" stroke="#94A3B8" strokeWidth="1.2" />
-              <text x="110" y="45" fontSize="7" fill="#475569" fontWeight="bold" textAnchor="middle">无色</text>
-
-              <text x="75" y="68" fontSize="7" fill="#475569" textAnchor="middle">淀粉指示剂: 蓝色恰好褪去</text>
-              <text x="75" y="78" fontSize="6.5" fill="#64748B" textAnchor="middle">且半分钟内不恢复原色</text>
+              <text x="75" y="18" fontSize="8" fill="#1E293B" fontWeight="bold" textAnchor="middle">滴定终点变色指示</text>
+              {isAnalysisMode ? (
+                <g>
+                  <circle cx="45" cy="42" r="14" fill="#1E3A8A" stroke="#1E40AF" strokeWidth="1" />
+                  <text x="45" y="45" fontSize="7" fill="#FFFFFF" fontWeight="bold" textAnchor="middle">蓝色</text>
+                  <path d="M 67 42 L 87 42" stroke="#64748B" strokeWidth="1.5" strokeDasharray="2 2" />
+                  <polygon points="87,42 81,39 81,45" fill="#64748B" />
+                  <circle cx="110" cy="42" r="14" fill="#FFFFFF" stroke="#94A3B8" strokeWidth="1.2" />
+                  <text x="110" y="45" fontSize="7" fill="#475569" fontWeight="bold" textAnchor="middle">无色</text>
+                  <text x="75" y="68" fontSize="7" fill="#475569" textAnchor="middle">淀粉指示剂: 蓝色恰好褪去</text>
+                  <text x="75" y="78" fontSize="6.5" fill="#64748B" textAnchor="middle">且半分钟内不恢复原色</text>
+                </g>
+              ) : (
+                <g>
+                  <circle cx="45" cy="42" r="14" fill="#E2E8F0" stroke="#94A3B8" strokeWidth="1" />
+                  <text x="45" y="45" fontSize="7" fill="#475569" fontWeight="bold" textAnchor="middle">反应前</text>
+                  <path d="M 67 42 L 87 42" stroke="#64748B" strokeWidth="1.5" strokeDasharray="2 2" />
+                  <polygon points="87,42 81,39 81,45" fill="#64748B" />
+                  <circle cx="110" cy="42" r="14" fill="#F8FAFC" stroke="#94A3B8" strokeWidth="1.2" strokeDasharray="2 2" />
+                  <text x="110" y="45" fontSize="7" fill="#64748B" fontWeight="bold" textAnchor="middle">终点?</text>
+                  <text x="75" y="72" fontSize="6.5" fill="#64748B" textAnchor="middle">淀粉作指示剂（作答后揭晓终点变色）</text>
+                </g>
+              )}
             </g>
 
             {/* 3. 剖析解密模式：叠加解答计算卡 */}

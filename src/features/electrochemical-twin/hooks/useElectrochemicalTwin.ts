@@ -29,6 +29,7 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
     let gasVolumeLeft = 0
     let gasVolumeRight = 0
     let molesMembraneIon = 0
+    let netAcidMoles = 0
 
     if (mode === 0) {
       // 模式 0：Cu-Zn 原电池 (负极 Zn 溶解，正极 Cu 析出)
@@ -49,14 +50,25 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
       gasVolumeRight = 0
       molesMembraneIon = molesElectron // 穿膜 H⁺ 摩尔数与转移电子数严格 1:1
     } else if (mode === 2) {
-      // 模式 2：饱和食盐水电解（氯碱工业：阳极 Cl₂，阴极 H₂，生成 NaOH）
-      molesProductLeft = molesElectron / 2 // Cl₂
-      molesProductRight = molesElectron / 2 // H₂
-      massChangeLeft = 0
-      massChangeRight = 0
-      gasVolumeLeft = (molesElectron / 2) * 22.4 // 阳极 Cl₂ 标况体积
-      gasVolumeRight = (molesElectron / 2) * 22.4 // 阴极 H₂ 标况体积
-      molesMembraneIon = molesElectron // 穿膜 Na⁺ 或 Cl⁻ 或 BPM 裂解产物
+      if (membraneType === 3) {
+        // 模式 2 + 双极膜 BPM：三室双极膜电渗析制酸碱 (阳极 NaOH 室放 O₂，阴极 NaCl 室放 H₂ 并得 NaOH，中间酸室得 HCl)
+        molesProductLeft = molesElectron / 4 // 阳极 O₂
+        molesProductRight = molesElectron / 2 // 阴极 H₂
+        massChangeLeft = 0
+        massChangeRight = 0
+        gasVolumeLeft = (molesElectron / 4) * 22.4 // 阳极 O₂ 标况体积
+        gasVolumeRight = (molesElectron / 2) * 22.4 // 阴极 H₂ 标况体积
+        molesMembraneIon = molesElectron // BPM 解离生成 H⁺ 与 OH⁻ 各 molesElectron mol
+      } else {
+        // 模式 2（非 BPM）：饱和食盐水电解（氯碱工业：阳极 Cl₂，阴极 H₂，生成 NaOH）
+        molesProductLeft = molesElectron / 2 // Cl₂
+        molesProductRight = molesElectron / 2 // H₂
+        massChangeLeft = 0
+        massChangeRight = 0
+        gasVolumeLeft = (molesElectron / 2) * 22.4 // 阳极 Cl₂ 标况体积
+        gasVolumeRight = (molesElectron / 2) * 22.4 // 阴极 H₂ 标况体积
+        molesMembraneIon = molesElectron // 穿膜 Na⁺ 或 Cl⁻
+      }
     } else {
       // 模式 3：电解硫酸铜溶液（按 1 L 溶液计：Cu²⁺ 上限为 electrolyteConc mol）
       const maxCuElectrons = Math.max(0, electrolyteConc * 2)
@@ -69,15 +81,15 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
       gasVolumeLeft = (molesElectron / 4) * 22.4 // 阳极析出 O₂ 标况体积
       gasVolumeRight = (h2Electrons / 2) * 22.4 // 若 Cu²⁺ 耗尽则阴极继而产生 H₂
       molesMembraneIon = molesElectron
+      // 只有析出 Cu 阶段对应净产酸：Cu²⁺ 耗尽后阴极 2H₂O + 2e⁻ = H₂↑ + 2OH⁻ 与阳极产 H⁺ 等量中和
+      netAcidMoles = cuElectrons
     }
 
-    // 溶液 pH 变化（按 1 L 溶液估算）：仅模式 3（电解 CuSO₄）在阳极产生净 H⁺ 增量，
-    // 阳极 2H₂O - 4e⁻ = O₂↑ + 4H⁺，故 n(H⁺) = n(e⁻)，与右屏「电解产生酸量」同源。
-    // 起始按近中性 pH ≈ 7 计，c(H⁺) ≈ n(e⁻)，则 pH 降幅 ΔpH = 7 - (-lg c(H⁺)) = 7 + lg n(e⁻)。
-    // 其余模式（原电池 / 液流电池 / 氯碱）均无净 H⁺ 增量，该量不参与展示，置 0。
+    // 溶液 pH 变化（按 1 L 溶液估算）：仅模式 3 在电解 CuSO₄ 阶段产生净 H⁺ 增量（等于 cuElectrons）。
+    // 起始按近中性 pH ≈ 7 计，c(H⁺) ≈ netAcidMoles，则 pH 降幅 ΔpH = 7 - (-lg c(H⁺)) = 7 + lg netAcidMoles。
     const deltaPH =
-      mode === 3
-        ? +Math.min(7, Math.max(0, 7 + Math.log10(Math.max(molesElectron, 1e-14)))).toFixed(2)
+      mode === 3 && netAcidMoles > 0
+        ? +Math.min(7, Math.max(0, 7 + Math.log10(Math.max(netAcidMoles, 1e-14)))).toFixed(2)
         : 0
 
     return {
@@ -89,9 +101,10 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
       gasVolumeLeft: +gasVolumeLeft.toFixed(3),
       gasVolumeRight: +gasVolumeRight.toFixed(3),
       molesMembraneIon: +molesMembraneIon.toFixed(5),
+      netAcidMoles: +netAcidMoles.toFixed(5),
       deltaPH,
     }
-  }, [currentAmp, timeSec, mode, electrolyteConc])
+  }, [currentAmp, timeSec, mode, membraneType, electrolyteConc])
 
   /**
    * 反应与电极元数据构建
@@ -204,18 +217,40 @@ export function useElectrochemicalTwin(params: ElectrochemicalParams) {
     }
 
     if (mode === 2) {
-      // 模式 2：双极膜与膜法电解（对应右池布局：左阳极失电子放电析出 Cl2，右阴极得电子还原析出 H2）
+      if (membraneType === 3) {
+        return {
+          title: '双极膜 (BPM) 四室电渗析制高纯酸碱模型',
+          subtitle: '当前隔膜：双极膜 BPM（催化 H₂O → H⁺ + OH⁻，BPM|酸室|AEM|原料室|CEM|碱室 独立分盐防反迁）',
+          cellType: 'electrolytic',
+          leftElectrode: {
+            name: '阳极 (NaOH 室·接正极) - 氧化反应',
+            poleType: 'anode',
+            reactionFormula: '4\\text{OH}^- - 4e^- \\rightarrow \\text{O}_2\\uparrow + 2\\text{H}_2\\text{O}',
+            electronChange: '失去 4e⁻',
+            phenomenon: '阳极析出 O₂；BPM 左侧向阳极室补充 OH⁻，不与 Cl⁻ 接触故无 Cl₂ 生成',
+          },
+          rightElectrode: {
+            name: '阴极 (NaOH 碱室·接负极) - 还原反应',
+            poleType: 'cathode',
+            reactionFormula: '2\\text{H}_2\\text{O} + 2e^- \\rightarrow \\text{H}_2\\uparrow + 2\\text{OH}^-',
+            electronChange: '得到 2e⁻',
+            phenomenon: '阴极析出 H₂ 并接收穿阳膜 (CEM) 迁入的 Na⁺ 得高纯 NaOH；原料室 Cl⁻ 穿阴膜 (AEM) 入酸室得高纯 HCl',
+          },
+          overallReaction: '4\\text{NaCl} + 6\\text{H}_2\\text{O} \\xrightarrow{\\text{BPM+AEM+CEM}} 4\\text{HCl} + 4\\text{NaOH} + 2\\text{H}_2\\uparrow + \\text{O}_2\\uparrow',
+          energyConversion: '电能 \\rightarrow 化学能',
+          electrolyteInfo: '四室串联：阳极室(O₂) | BPM | 酸室(HCl) | AEM | 原料室(NaCl) | CEM | 阴极碱室(NaOH)',
+          membraneFunction: '双极膜 BPM 解离水供 H⁺/OH⁻；原料室两侧由 AEM 挡 Na⁺ 引 Cl⁻ 入酸室、CEM 挡 OH⁻ 反迁并引 Na⁺ 入阴极室，避免 NaCl 混杂与酸碱中和',
+        }
+      }
+
+      // 模式 2（非 BPM）：氯碱工业两室电解池
       let membraneDesc = '无膜/普通隔膜'
       if (membraneType === 1) membraneDesc = '阳离子交换膜（只透阳离子 $Na^+$ / $H^+$）'
       if (membraneType === 2) membraneDesc = '阴离子交换膜（只透阴离子 $Cl^-$ / $SO_4^{2-}$）'
-      if (membraneType === 3) membraneDesc = '双极膜 BPM（催化 $H_2O \\rightarrow H^+ + OH^-$）'
 
-      // membraneFunction 会被右屏「高考要点」当**纯文本**注脚渲染（同卡片已有 latex 字段承载公式），
-      // 因此必须另取一份不含 $…$ 数学定界符的表述，否则 $ 会字面显示在学生眼前。
       let membranePlain = '无膜/普通隔膜'
       if (membraneType === 1) membranePlain = '阳离子交换膜（只允许 Na⁺、H⁺ 等阳离子通过）'
       if (membraneType === 2) membranePlain = '阴离子交换膜（允许 Cl⁻、OH⁻ 迁向阳极；氯碱工业单用会引起 Cl₂ 与 OH⁻ 副反应）'
-      if (membraneType === 3) membranePlain = '双极膜 BPM（在电场作用下催化 H₂O 解离为 H⁺ 和 OH⁻）'
 
       return {
         title: '离子交换膜与多室电解池探究',

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { renderHook } from '@testing-library/react'
 import { useGasChainChemistry } from '../hooks/useGasChainChemistry'
-import { GAS_MATRIX_ITEMS } from '../data/gasMatrixItems'
+import { GAS_MATRIX_ITEMS, GAS_PRESET_CONFIGS } from '../data/gasMatrixItems'
 import { COLLECTION_DECISION_RULES } from '../data/gasDecisionModels'
 import type { GasChainParams } from '../types'
 
@@ -396,6 +396,81 @@ describe('GasChainChemistry — 实验一 气体制备装置链化学核查测�
       const cl2 = GAS_MATRIX_ITEMS.find((g) => g.formula === 'Cl₂')
       expect(cl2!.purifyPrinciple).toContain('同离子效应')
       expect(cl2!.purifyPrinciple).toContain('Cl₂ + H₂O')
+    })
+
+    it('NO 误配 NaOH 尾气吸收率归零；有毒气体直排报错；5 种排水集气法预设无多余干燥步且纯度 100%', async () => {
+      const { GAS_PRESET_CONFIGS } = await import('../data/gasChainMatrixData')
+      const noNaohParams: GasChainParams = {
+        viewMode: 0,
+        systemId: 'no-no2-chain',
+        targetGas: 'NO',
+        generator: 'flask-noheat',
+        washingSteps: [{ id: 's1', device: 'wash-bottle', reagent: 'water', role: 'purify' }],
+        collection: 'water-displacement',
+        tailGas: 'naoh-absorber',
+        flowRate: 50,
+        temp: 25,
+        heating: false,
+      }
+      const { result: noRes } = renderHook(() => useGasChainChemistry(noNaohParams))
+      expect(noRes.current.tailAbsorbRate).toBe(0)
+
+      const cl2NoTail: GasChainParams = {
+        viewMode: 0,
+        systemId: 'cl2-prep',
+        targetGas: 'Cl₂',
+        generator: 'flask-heat',
+        washingSteps: [{ id: 's1', device: 'wash-bottle', reagent: 'sat-nacl', role: 'purify' }],
+        collection: 'upward-air',
+        tailGas: 'none',
+        flowRate: 50,
+        temp: 90,
+        heating: true,
+      }
+      const { result: cl2Res } = renderHook(() => useGasChainChemistry(cl2NoTail))
+      expect(cl2Res.current.issues.some((i) => i.id === 'toxic-tailgas-missing')).toBe(true)
+
+      for (const gas of ['NO', 'C₂H₂', 'CO', 'O₂', 'H₂'] as const) {
+        const preset = GAS_PRESET_CONFIGS[gas]
+        expect(preset.collection).toBe('water-displacement')
+        expect((preset.washingSteps ?? []).some((s) => s.role === 'dry')).toBe(false)
+        const { result } = renderHook(() =>
+          useGasChainChemistry({
+            viewMode: 0,
+            systemId: preset.systemId ?? 'custom',
+            targetGas: gas,
+            generator: preset.generator ?? 'flask-noheat',
+            washingSteps: preset.washingSteps ?? [],
+            collection: preset.collection ?? 'water-displacement',
+            tailGas: preset.tailGas ?? 'none',
+            flowRate: 50,
+            temp: preset.temp ?? 25,
+            heating: Boolean(preset.heating),
+          })
+        )
+        expect(result.current.gasPurity).toBe(100)
+      }
+    })
+
+    it('无需单独洗气步骤的官方预设 (NO₂、HCl、H₂S、NH₃) 也应报告 100% 纯度而非误判 50%', () => {
+      for (const gas of ['NO₂', 'HCl', 'H₂S', 'NH₃'] as const) {
+        const preset = GAS_PRESET_CONFIGS[gas]
+        const { result } = renderHook(() =>
+          useGasChainChemistry({
+            viewMode: 0,
+            systemId: preset.systemId ?? 'custom',
+            targetGas: gas,
+            generator: preset.generator ?? 'flask-noheat',
+            washingSteps: preset.washingSteps ?? [],
+            collection: preset.collection ?? 'upward-air',
+            tailGas: preset.tailGas ?? 'naoh-absorber',
+            flowRate: 50,
+            temp: preset.temp ?? 25,
+            heating: Boolean(preset.heating),
+          })
+        )
+        expect(result.current.gasPurity).toBe(100)
+      }
     })
   })
 })

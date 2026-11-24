@@ -20,7 +20,7 @@ export const ElementPeriodicLeftPanel: React.FC<ElementPeriodicLeftPanelProps> =
     { label: '电子排布与轨道', value: 'orbital-config' },
     { label: '第一电离能反常', value: 'ion-energy' },
     { label: '逐级电离能突跃', value: 'step-ion-energy' },
-    { label: '等电子体微粒半径', value: 'radius-matrix' },
+    { label: '电子排布相同微粒半径', value: 'radius-matrix' },
     { label: '高考位构性推断', value: 'inference-nexus' },
   ]
 
@@ -139,7 +139,7 @@ export const ElementPeriodicLeftPanel: React.FC<ElementPeriodicLeftPanelProps> =
       )}
 
       {params.exploreMode === 'radius-matrix' && (
-        <LeftPanelSection title="3. 等电子体微粒组">
+        <LeftPanelSection title="3. 核外电子排布相同微粒组">
           <SegmentedControl
             options={isoOptions}
             value={params.isoGroupFilter}

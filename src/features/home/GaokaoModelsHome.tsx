@@ -4,6 +4,12 @@ import {
   Zap,
   FlaskConical,
   Atom,
+  TestTube,
+  Dna,
+  Split,
+  Layers,
+  GitCompare,
+  Layers3,
   Grid,
   ArrowRight,
   Sparkles,
@@ -37,6 +43,18 @@ export function GaokaoModelsHome({ onSwitchToTextbookTree }: GaokaoModelsHomePro
         return Zap
       case 'Atom':
         return Atom
+      case 'TestTube':
+        return TestTube
+      case 'Dna':
+        return Dna
+      case 'Split':
+        return Split
+      case 'Layers':
+        return Layers
+      case 'GitCompare':
+        return GitCompare
+      case 'Layers3':
+        return Layers3
       case 'Grid':
         return Grid
       case 'FlaskConical':
@@ -68,7 +86,7 @@ export function GaokaoModelsHome({ onSwitchToTextbookTree }: GaokaoModelsHomePro
             className="px-4 py-2 bg-white text-slate-800 hover:bg-orange-50 rounded-lg shadow font-medium text-xs flex items-center gap-1.5 transition-all self-start md:self-auto shrink-0"
           >
             <BookOpen className="w-4 h-4 text-indigo-600" />
-            切换至 📖 按教材章节浏览
+            切换至 按教材章节浏览
           </button>
         </div>
       </div>
@@ -94,7 +112,7 @@ export function GaokaoModelsHome({ onSwitchToTextbookTree }: GaokaoModelsHomePro
                 : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
             }`}
           >
-            🏆 高考解题母题 ({gaokaoModels.filter(m => m.category === 'master-model').length})
+            高考解题母题 ({gaokaoModels.filter(m => m.category === 'master-model').length})
           </button>
           <button
             onClick={() => setActiveCategory('memory-matrix')}
@@ -104,7 +122,7 @@ export function GaokaoModelsHome({ onSwitchToTextbookTree }: GaokaoModelsHomePro
                 : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
             }`}
           >
-            🎨 记忆强化矩阵 ({gaokaoModels.filter(m => m.category === 'memory-matrix').length})
+            记忆强化矩阵 ({gaokaoModels.filter(m => m.category === 'memory-matrix').length})
           </button>
           <button
             onClick={() => setActiveCategory('experiment-chain')}
@@ -114,7 +132,7 @@ export function GaokaoModelsHome({ onSwitchToTextbookTree }: GaokaoModelsHomePro
                 : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
             }`}
           >
-            🧪 综合实验流程链 ({gaokaoModels.filter(m => m.category === 'experiment-chain').length})
+            综合实验流程链 ({gaokaoModels.filter(m => m.category === 'experiment-chain').length})
           </button>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Sparkles, Compass, CheckCircle, XCircle, ChevronDown, ChevronUp, Lightbulb } from 'lucide-react'
+import { Sparkles, Compass, CheckCircle, XCircle, ChevronDown, ChevronUp, Lightbulb, RotateCcw } from 'lucide-react'
 import type { GaokaoVariantItem } from '@/data/gaokaoQuizData'
 import { GaokaoDiagram } from '@/components/Chemistry'
 import { KatexText } from './KatexText'
@@ -37,6 +37,15 @@ export const GaokaoVariantQuiz: React.FC<GaokaoVariantQuizProps> = ({ quizzes = 
 
   const toggleAnalysis = (quizId: string) => {
     setShowAnalysis(prev => ({ ...prev, [quizId]: !prev[quizId] }))
+  }
+
+  const handleResetQuiz = (quizId: string) => {
+    setSelectedOption(prev => {
+      const next = { ...prev }
+      delete next[quizId]
+      return next
+    })
+    setShowAnalysis(prev => ({ ...prev, [quizId]: false }))
   }
 
   return (
@@ -165,16 +174,27 @@ export const GaokaoVariantQuiz: React.FC<GaokaoVariantQuizProps> = ({ quizzes = 
                       <div className="p-2 bg-emerald-50/90 border border-emerald-200 rounded-lg text-[11px] text-emerald-950 flex items-center justify-between font-bold">
                         <span>【正确答案】 {correctOpt.label}</span>
                         {userChoice && (
-                          <span
-                            className={
-                              userChoice === correctOpt.label
-                                ? 'text-emerald-700'
-                                : 'text-rose-600 font-semibold'
-                            }
-                          >
-                            您的选择: {userChoice} (
-                            {userChoice === correctOpt.label ? '回答正确' : '回答错误'})
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={
+                                userChoice === correctOpt.label
+                                  ? 'text-emerald-700'
+                                  : 'text-rose-600 font-semibold'
+                              }
+                            >
+                              您的选择: {userChoice} (
+                              {userChoice === correctOpt.label ? '回答正确' : '回答错误'})
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleResetQuiz(quiz.id)}
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-white border border-emerald-300 text-slate-700 hover:bg-slate-50 font-semibold transition-colors"
+                              title="清除本题作答并重做"
+                            >
+                              <RotateCcw className="w-3 h-3" />
+                              重新作答
+                            </button>
+                          </div>
                         )}
                       </div>
                     )}

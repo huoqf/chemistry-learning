@@ -181,7 +181,17 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
     } else if (washReagent === 'kmno4') {
       purificationEquation = '5\\text{SO}_2 + 2\\text{MnO}_4^- + 2\\text{H}_2\\text{O} = 5\\text{SO}_4^{2-} + 2\\text{Mn}^{2+} + 4\\text{H}^+'
     } else if (washReagent === 'naoh') {
-      purificationEquation = '\\text{SO}_2 + 2\\text{NaOH} = \\text{Na}_2\\text{SO}_3 + \\text{H}_2\\text{O}'
+      if (targetGas === 'CO') {
+        purificationEquation = '\\text{CO}_2 + 2\\text{NaOH} = \\text{Na}_2\\text{CO}_3 + \\text{H}_2\\text{O}'
+      } else if (targetGas === 'C₂H₄') {
+        purificationEquation = '\\text{SO}_2/\\text{CO}_2 + 2\\text{NaOH} \\rightarrow \\text{Na}_2\\text{SO}_3/\\text{Na}_2\\text{CO}_3 + \\text{H}_2\\text{O}'
+      } else {
+        purificationEquation = '\\text{SO}_2 + 2\\text{NaOH} = \\text{Na}_2\\text{SO}_3 + \\text{H}_2\\text{O}'
+      }
+    } else if (washReagent === 'water') {
+      purificationEquation = targetGas === 'NO'
+        ? '3\\text{NO}_2 + \\text{H}_2\\text{O} = 2\\text{HNO}_3 + \\text{NO}'
+        : '\\text{水洗除去易溶性气体杂质}'
     } else {
       purificationEquation = '\\text{洗气瓶除杂中}'
     }
@@ -488,6 +498,34 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
       currentFlow = 0
     }
 
+    const isToxicGas = ['Cl₂', 'SO₂', 'NO₂', 'NO', 'CO', 'NH₃', 'HCl', 'H₂S'].includes(targetGas)
+    if (isToxicGas && tailGas === 'none' && collection !== 'water-displacement') {
+      issues.push({
+        id: 'toxic-tailgas-missing',
+        level: 'danger',
+        title: `环保与安全严重错误：有毒/污染性气体 ${targetGas} 未配置尾气处理！`,
+        description: `${targetGas} 具有毒性或强烈刺激性，非密闭排空气法收集末端严禁直接敞口排空！`,
+        examPoint: '高考实验必查：凡涉及 Cl₂、SO₂、NOₓ、CO、NH₃、HCl、H₂S 等有毒/污染气体，装置末端必须配备吸收/燃烧/收集尾气处理装置。',
+      })
+    }
+
+    if (isToxicGas && tailGas === 'none' && collection === 'water-displacement') {
+      issues.push({
+        id: 'tail-gas-water-vent-info',
+        level: 'info',
+        title: `实验提示：排水集气收集有毒气体 ${targetGas}，建议末段增设${targetGas === 'NO' ? '气球收集' : '尾气处理'}`,
+        description: `水封可阻隔气体大量逸散，但在取瓶或换瓶间隙仍有微量有毒 ${targetGas} 挥发，规范装置宜配合${targetGas === 'NO' ? '气球或氧化吸收装置' : '点燃/尾气吸收装置'}并在通风橱中进行。`,
+        examPoint: 'NO 等微溶/难溶有毒气体采用排水集气法收集时，仍应注意排气操作安全，必要时加气球收集余气。',
+      })
+    }
+
+    const allowsWaterDisplacement = ['NO', 'C₂H₂', 'CO', 'O₂', 'H₂', 'C₂H₄'].includes(targetGas)
+    const drySatisfied = dryer !== 'none' || (collection === 'water-displacement' && allowsWaterDisplacement)
+    const washSatisfied =
+      washReagent !== 'none' ||
+      (!issues.some((i) => i.id.startsWith('wash-')) &&
+        ['O₂', 'H₂', 'NH₃', 'NO₂', 'HCl', 'H₂S'].includes(targetGas))
+
     if (systemId === 'cl2-prep') {
       if (washReagent === 'sat-nacl') {
         impurityConc -= 60
@@ -512,19 +550,22 @@ export function useGasChainChemistry(params: GasChainParams): GasChainChemistryR
         impurityConc = 60
       }
     } else {
-      impurityConc = Math.max(0, 100 - (washReagent !== 'none' ? 50 : 0) - (dryer !== 'none' ? 50 : 0))
+      impurityConc = Math.max(0, 100 - (washSatisfied ? 50 : 0) - (drySatisfied ? 50 : 0))
     }
 
     gasPurity = Math.max(0, 100 - impurityConc)
 
-    if (tailGas === 'inverted-funnel' || tailGas === 'safety-bottle' || tailGas === 'naoh-absorber') {
+    const hasNoNaohInvalid = issues.some((i) => i.id === 'no-naoh-invalid')
+    if (hasNoNaohInvalid) {
+      tailAbsorbRate = 0
+    } else if (tailGas === 'inverted-funnel' || tailGas === 'safety-bottle' || tailGas === 'naoh-absorber') {
       tailAbsorbRate = 98
     } else if (tailGas === 'combustion' || tailGas === 'balloon') {
       tailAbsorbRate = 100
     } else if (tailGas === 'direct-pipe') {
       tailAbsorbRate = 75
     } else if (tailGas === 'none' && collection === 'water-displacement') {
-      tailAbsorbRate = 100 // 水槽排水集气完全封闭，无尾气外逸
+      tailAbsorbRate = isToxicGas ? 85 : 100 // 排水液封可减少外逸；非有毒气体无须尾气吸收，有毒气体建议加气球/灼烧处理
     }
 
     if (issues.length === 0) {

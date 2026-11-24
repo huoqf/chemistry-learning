@@ -23,7 +23,6 @@ export const HessLawCanvas: React.FC = () => {
     k2: HESS_PRESETS[0].equations[1]?.defaultK ?? -0.5,
     bondMoleculeIndex: 0,
     hasCatalyst: 0,
-    temperature: 298,
   })
 
   // 纯化学计算
@@ -41,7 +40,6 @@ export const HessLawCanvas: React.FC = () => {
       k2: HESS_PRESETS[0].equations[1]?.defaultK ?? -0.5,
       bondMoleculeIndex: 0,
       hasCatalyst: 0,
-      temperature: 298,
     })
   }
 

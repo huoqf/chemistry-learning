@@ -26,6 +26,9 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
     currentElement,
     orbitalBoxes,
     excitationShell,
+    excitationTargetShell,
+    excitationTransitionLabel,
+    shellLayers,
     periodIonizationData,
     stepIonizationAnalysis,
     isoParticles,
@@ -83,7 +86,6 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
     <div className="w-full h-full flex flex-row overflow-hidden select-none p-2 gap-2">
       {/* ── 左侧 420px 视口区 (CANVAS_PRESETS.splitH 420x650) ── */}
       <div
-        ref={containerRef}
         className="w-1/2 h-full shrink-0 border border-slate-200/90 relative rounded-xl shadow-2xs overflow-hidden"
       >
         <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
@@ -94,11 +96,15 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
           </defs>
           <rect x="0" y="0" width="420" height="650" fill="url(#atom-grid)" opacity="0.6" />
 
-          {/* 渲染独立的微观原子结构场景（激发态高亮层与轨道方框图共用 excitationShell） */}
+          {/* 渲染独立的微观原子结构场景（激发态高亮层与轨道方框图共用跃迁与壳层定义） */}
           <AtomShellScene
             element={currentElement}
             stateType={params.stateType}
             excitationShell={excitationShell}
+            excitationTargetShell={excitationTargetShell}
+            excitationTransitionLabel={excitationTransitionLabel}
+            shellLayers={shellLayers}
+            animate={viewMode === 0}
             font={font}
           />
         </AnimationSvgCanvas>
@@ -116,8 +122,10 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
                 {params.stateType === 'excited'
-                  ? '⚡ 激发态 (Excited State) - 存在高能跃迁电子'
-                  : '✨ 基态 (Ground State) - 遵循构造原理与洪特规则'}
+                  ? excitationTransitionLabel
+                    ? `激发态 (Excited State · ${excitationTransitionLabel}) - 存在高能跃迁电子`
+                    : '激发态 (Excited State) - 存在高能跃迁电子'
+                  : '基态 (Ground State) - 遵循构造原理与洪特规则'}
               </p>
             </div>
 
@@ -221,7 +229,7 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
                 <span className="text-slate-500">未成对电子数 / 稳定型：</span>
                 <span className="font-bold text-emerald-600">
                   {currentElement.unpairedElectrons} 个电子{' '}
-                  {currentElement.isHundSpecial ? '⭐ [洪特特例半/全充满]' : ''}
+                  {currentElement.isHundSpecial ? '[洪特特例半/全充满]' : ''}
                 </span>
               </div>
             </div>
@@ -236,8 +244,13 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
                 第 {params.periodFilter} 周期第一电离能 (I₁) 趋势与反常
               </h3>
               <p className="text-xs text-amber-600 font-semibold mt-0.5">
-                ⚠️ 高考高频：IIA &gt; IIIA (Be&gt;B, Mg&gt;Al) 与 VA &gt; VIA (N&gt;O, P&gt;S)
+                高考高频：IIA &gt; IIIA (Be&gt;B, Mg&gt;Al) 与 VA &gt; VIA (N&gt;O, P&gt;S)
               </p>
+              {currentElement.period !== params.periodFilter && (
+                <p className="text-xs text-slate-500 mt-0.5">
+                  当前元素 {currentElement.symbol} 位于第 {currentElement.period} 周期，未在第 {params.periodFilter} 周期对比曲线内
+                </p>
+              )}
             </div>
 
             {/* 复用 BaseChart 标准图表组件（铁律 1：图表区包裹 div 不得手写背景色） */}
@@ -255,8 +268,8 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
                 />
                 {(() => {
                   const selectedIdx = periodIonizationData.findIndex((d) => d.z === currentElement.z)
-                  const activeIdx = selectedIdx >= 0 ? selectedIdx : 0
-                  const activePt = chartPoints[activeIdx]
+                  if (selectedIdx < 0) return null
+                  const activePt = chartPoints[selectedIdx]
                   if (!activePt) return null
                   return (
                     <ChartCursor
@@ -277,7 +290,7 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
             {/* 规则剖析卡 */}
             <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900 leading-relaxed">
               <div className="font-bold mb-1 text-amber-800">
-                💡 高考第一电离能反常原理剖析：
+                高考第一电离能反常原理剖析：
               </div>
               <p className="mb-1">
                 1. IIA 族 (Be/Mg) 外层为 ns² 全充满极稳状态，失电子比 IIIA 族 (B/Al ns²np¹) 需克服更大阻力。
@@ -294,7 +307,7 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
           <div className="flex flex-col gap-4">
             <div className="border-b border-slate-200 pb-2">
               <h3 className="font-bold text-slate-800 text-sm">
-                {currentElement.symbol} ({currentElement.name}) 逐级电离能 (I₁ ~ I₄) 突跃分析
+                {currentElement.symbol} ({currentElement.name}) 逐级电离能 ({stepIonizationAnalysis.steps.length > 1 ? `I₁ ~ I${stepIonizationAnalysis.steps.length}` : 'I₁'}) 突跃分析
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
                 突跃倍率揭示主族元素最外层价电子数
@@ -306,7 +319,10 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
               <svg viewBox="0 0 360 180" className="w-full h-auto">
                 <line x1={30} y1={150} x2={340} y2={150} stroke={CANVAS_COLORS.axis} strokeWidth={1.5} />
                 {stepIonizationAnalysis.steps.map((val, idx) => {
-                  const x = 50 + idx * 75
+                  const totalSteps = stepIonizationAnalysis.steps.length
+                  const stepSpan = totalSteps > 0 ? 300 / totalSteps : 75
+                  const barWidth = Math.min(36, stepSpan * 0.52)
+                  const x = 35 + idx * stepSpan + (stepSpan - barWidth) / 2
                   const h = Math.min(110, Math.log10(val) * 28)
                   const y = 150 - h
                   const ratio = stepIonizationAnalysis.ratios[idx]
@@ -316,13 +332,13 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
                       <rect
                         x={x}
                         y={y}
-                        width={36}
+                        width={barWidth}
                         height={h}
                         rx={4}
                         fill={CHEMISTRY_COLORS.concentration}
                       />
                       <text
-                        x={x + 18}
+                        x={x + barWidth / 2}
                         y={y - 6}
                         textAnchor="middle"
                         fill={colors.neutral[800]}
@@ -332,7 +348,7 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
                         I{idx + 1}
                       </text>
                       <text
-                        x={x + 18}
+                        x={x + barWidth / 2}
                         y={165}
                         textAnchor="middle"
                         fill={colors.neutral[500]}
@@ -343,7 +359,7 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
 
                       {ratio && (
                         <text
-                          x={x + 55}
+                          x={x + barWidth / 2 + stepSpan / 2}
                           y={100}
                           textAnchor="middle"
                           fill={colors.danger[600]}
@@ -362,19 +378,19 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
             {/* 结论卡 */}
             <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-900 leading-relaxed">
               <div className="font-bold mb-1 text-emerald-800">
-                🎯 最外层价电子数判定结论：
+                最外层价电子数判定结论：
               </div>
               <p>{stepIonizationAnalysis.jumpDescription}</p>
             </div>
           </div>
         )}
 
-        {/* 模式 4: 微粒半径与等电子体 (radius-matrix) */}
+        {/* 模式 4: 微粒半径与核外电子排布相同微粒比较 (radius-matrix) */}
         {params.exploreMode === 'radius-matrix' && (
           <div className="flex flex-col gap-4">
             <div className="border-b border-slate-200 pb-2">
               <h3 className="font-bold text-slate-800 text-sm">
-                {params.isoGroupFilter.toUpperCase()} 电子体微粒半径对比矩阵
+                {params.isoGroupFilter.toUpperCase()} 核外电子排布相同微粒半径对比矩阵
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
                 电子层结构相同：核电荷数 (Z) 越大，原子核引力越强 ➔ 半径越小！
@@ -407,7 +423,7 @@ export const ElementPeriodicCenterView: React.FC<ElementPeriodicCenterViewProps>
             {/* 口诀卡 */}
             <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-900 leading-relaxed">
               <div className="font-bold mb-1 text-blue-800">
-                📐 阴阳离子半径三看口诀：
+                阴阳离子半径三看口诀：
               </div>
               <p>1. 一看电子层数：层数越多，半径越大；</p>
               <p>2. 二看核电荷数：层数相同时，Z 越大，半径越小；</p>

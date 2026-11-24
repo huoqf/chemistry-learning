@@ -2,7 +2,7 @@
 
 ## 当前周期
 
-- 当前日期：2026-W47（11-18）
+- 当前日期：2026-W48（11-24）
 - 当前里程碑：M2 高考母题与规范治理收口
 - 提交流程：[CHECKLIST.md](./CHECKLIST.md)
 
@@ -10,6 +10,7 @@
 
 | 日期 | 模块 | 类型 | 变更 |
 |------|------|------|------|
+| 11-24 | quiz/all-features | fix/test/refactor | 全库学科正确性校准与防剧透收口：判分卡归一化+关键词分组、题库 placeholder 去答案、GaokaoDiagram 非解析态隐藏结论、`gaokaoModels` 知识点双向联动、Avogadro/电解/晶体/VSEPR/滴定计算修正、工业流程动画拆分为 `useFlowAnimationPhase`、`isIndicative` 示意量级标注；新增 9 个守门测试 |
 | 11-18 | docs/scripts | docs/refactor | 规范、记忆与门禁一致性收口：统一 AGENTS/project_rules/docs/SKILL 口径、移除失效引用与错误骨架、补齐 `COMPONENT_REGISTRY`、升级 `check-font-size.mjs` 与新增 `check-theme-import.mjs`、归档根目录过程报告至 `docs/reports/`、移除 `.prettierrc` |
 | 11-17 | chemistry | fix | 全库高中化学合规性修复、移除伪真题署名并校准测试与 SKILL 规范（`0a45697`） |
 | 10-10 | 3d/lint | refactor/style | 统一 `WebGLFallback` 降级边框 `framed` 开关、补齐 8/8 场景 WebGL 降级守卫测试、增强 `check-code-style.mjs` |

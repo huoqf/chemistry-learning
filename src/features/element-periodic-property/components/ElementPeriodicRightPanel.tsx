@@ -43,15 +43,15 @@ export const ElementPeriodicRightPanel: React.FC<ElementPeriodicRightPanelProps>
           {
             name: '逐级电离能突跃与价电子数关系',
             latex: 'I_1 < I_2 < \\dots < I_n \\ll I_{n+1}',
-            condition: '剥离第 n+1 个电子时跨越内层，需克服强大有效核电荷，突跃倍率 reveal 价电子数为 n',
+            condition: '剥离第 n+1 个电子时跨越内层，需克服强大有效核电荷，突跃倍率揭示价电子数为 n',
           },
         ]
       case 'radius-matrix':
         return [
           {
-            name: '等电子体微粒半径比较律',
+            name: '核外电子排布相同微粒半径比较律',
             latex: '\\begin{aligned} r(\\text{O}^{2-}) &> r(\\text{F}^-) > r(\\text{Na}^+) \\\\ &> r(\\text{Mg}^{2+}) > r(\\text{Al}^{3+}) \\end{aligned}',
-            condition: '电子层结构相同时，核电荷数 Z 越大，有效核电荷吸引越强，半径越小',
+            condition: '核外电子层结构相同时，核电荷数 Z 越大，有效核电荷吸引越强，半径越小',
           },
         ]
       case 'inference-nexus':
@@ -110,7 +110,7 @@ export const ElementPeriodicRightPanel: React.FC<ElementPeriodicRightPanelProps>
       default:
         return [
           {
-            text: '高考压轴点：由电子排布式反推元素，必须回到"核外电子总数 = 原子序数"逐层核对。注意 Ar 为 3s²3p⁶（核外 s 轨共 6 个电子、p 轨共 12 个电子），可见"p 轨电子数 = s 轨电子数"只是个别元素的巧合（O: 4=4、Mg: 6=6），**并非普遍规律**，不可套用。',
+            text: '高考压轴点：由电子排布式反推元素，必须回到"核外电子总数 = 原子序数"逐层核对。注意 Ar 为 3s²3p⁶（核外 s 轨共 6 个电子、p 轨共 12 个电子），可见"p 轨电子数 = s 轨电子数"只是个别元素的巧合（O: 4=4、Mg: 6=6），并非普遍规律，不可套用。',
             importance: 'gaokao' as const,
           },
         ]
@@ -123,32 +123,32 @@ export const ElementPeriodicRightPanel: React.FC<ElementPeriodicRightPanelProps>
       case 'orbital-config':
         return [
           {
-            text: '⚠️ 易错坑点：写价电子排布式时，过渡元素须包含 3d 与 4s 轨道（如 Fe 为 3d⁶4s²，不能漏掉 3d）。',
+            text: '易错坑点：写价电子排布式时，过渡元素须包含 3d 与 4s 轨道（如 Fe 为 3d⁶4s²，不能漏掉 3d）。',
             level: 'danger' as const,
           },
           {
-            text: '⚠️ 易错坑点：核外电子排布式、价电子排布式与轨道表示图（方框图）概念严禁混淆。',
+            text: '易错坑点：核外电子排布式、价电子排布式与轨道表示图（方框图）概念严禁混淆。',
             level: 'warning' as const,
           },
         ]
       case 'ion-energy':
         return [
           {
-            text: '⚠️ 易错坑点：第二电离能 I₂ 反常位置会发生平移（如 I₂(Li) > I₂(Be)），不可僵化套用 I₁ 规律。',
+            text: '易错坑点：第二电离能 I₂ 反常位置会发生平移（如 I₂(Li) > I₂(Be)），不可僵化套用 I₁ 规律。',
             level: 'danger' as const,
           },
         ]
       case 'step-ion-energy':
         return [
           {
-            text: '⚠️ 易错坑点：计算逐级电离能差值时，须关注“突跃发生在哪一步”，倍数 > 4~5 倍即为跨层标志。',
+            text: '易错坑点：计算逐级电离能差值时，须关注“突跃发生在哪一步”，倍数 > 4~5 倍即为跨层标志。',
             level: 'info' as const,
           },
         ]
       case 'radius-matrix':
         return [
           {
-            text: '⚠️ 易错坑点：比较微粒半径时，切记阳离子半径远小于其对应原子半径 (如 r(Na⁺) < r(Na))。',
+            text: '易错坑点：比较微粒半径时，切记阳离子半径远小于其对应原子半径 (如 r(Na⁺) < r(Na))。',
             level: 'warning' as const,
           },
         ]
@@ -156,7 +156,7 @@ export const ElementPeriodicRightPanel: React.FC<ElementPeriodicRightPanelProps>
       default:
         return [
           {
-            text: '⚠️ 易错坑点：推断题注意审清是“短周期元素”还是“前四周期元素”，避免遗漏过渡元素。',
+            text: '易错坑点：推断题注意审清是“短周期元素”还是“前四周期元素”，避免遗漏过渡元素。',
             level: 'danger' as const,
           },
         ]

@@ -91,4 +91,27 @@ describe('useIonCoexistence', () => {
     expect(rCaAlO2.current.canCoexist).toBe(true)
     expect(rCaAlO2.current.conflicts.length).toBe(0)
   })
+
+  it('强酸性介质 (含 H+) 下 MnO4- 与 S2-、ClO- 与 I- 的氧化还原方程式严禁生成 OH-', () => {
+    const { result: rMno4S2 } = renderHook(() => useIonCoexistence(['H+', 'MnO4-', 'S2-']))
+    expect(rMno4S2.current.canCoexist).toBe(false)
+    const eq1 = rMno4S2.current.conflicts.find((c) => c.id === 'redox-MnO4--S2-')?.equation ?? ''
+    expect(eq1).toContain('H^+')
+    expect(eq1).not.toContain('OH^-')
+
+    const { result: rCloI } = renderHook(() => useIonCoexistence(['H+', 'ClO-', 'I-']))
+    expect(rCloI.current.canCoexist).toBe(false)
+    const eq2 = rCloI.current.conflicts.find((c) => c.id === 'redox-ClO--I-')?.equation ?? ''
+    expect(eq2).toContain('H^+')
+    expect(eq2).not.toContain('OH^-')
+  })
+
+  it('碱性介质 (含 OH-) 下 ClO- 与 S2O32- 的氧化还原方程式需配平为消耗 OH- 且不产生 H+', () => {
+    const { result } = renderHook(() => useIonCoexistence(['OH-', 'ClO-', 'S2O32-']))
+    expect(result.current.canCoexist).toBe(false)
+    const eq = result.current.conflicts.find((c) => c.id === 'redox-ClO--S2O32-')?.equation ?? ''
+    expect(eq).toBe('4ClO^- + S_2O_3^{2-} + 2OH^- = 4Cl^- + 2SO_4^{2-} + H_2O')
+    expect(eq).toContain('2OH^-')
+    expect(eq).not.toContain('H^+')
+  })
 })

@@ -167,7 +167,7 @@ export const IndustrialFlowLeftPanel: React.FC<IndustrialFlowLeftPanelProps> = (
               updateParam('reagent', 'MnO')
               updateParam('pH', 5.2)
               updateParam('oxidantAmount', 'sufficient')
-              updateParam('crystallizeMethod', 'cooling')
+              updateParam('crystallizeMethod', 'evaporation')
               updateParam('washSolvent', 'ethanol')
             } else if (val === 'fe-cu-zn') {
               updateParam('reagent', 'ZnO')
@@ -180,10 +180,13 @@ export const IndustrialFlowLeftPanel: React.FC<IndustrialFlowLeftPanelProps> = (
               updateParam('pH', 1.5)
               updateParam('oxidantAmount', 'sufficient')
               updateParam('crystallizeMethod', 'cooling')
+              updateParam('washSolvent', 'water')
             } else if (val === 'ni-co-li') {
               updateParam('reagent', 'Na2CO3')
               updateParam('pH', 4.8)
               updateParam('oxidantAmount', 'sufficient')
+              updateParam('crystallizeMethod', 'cooling')
+              updateParam('washSolvent', 'water')
             } else if (val === 'al-fe-si') {
               updateParam('reagent', 'CO2')
               updateParam('pH', 10.2)
@@ -204,6 +207,8 @@ export const IndustrialFlowLeftPanel: React.FC<IndustrialFlowLeftPanelProps> = (
               updateParam('reagent', 'MgO')
               updateParam('pH', 5.0)
               updateParam('oxidantAmount', 'sufficient')
+              updateParam('crystallizeMethod', 'cooling')
+              updateParam('washSolvent', 'water')
             }
           }}
           cols={2}
@@ -393,13 +398,20 @@ export const IndustrialFlowLeftPanel: React.FC<IndustrialFlowLeftPanelProps> = (
           <div className="flex flex-col gap-3">
             <div>
               <label className="text-[11px] font-semibold text-slate-600 mb-1.5 block">
-                结晶方式
+                {params.systemId === 'li-fe-p' ? '沉锂析晶方式' : '结晶方式'}
               </label>
               <SegmentedControl
-                options={[
-                  { label: '降温结晶', value: 'cooling' },
-                  { label: '蒸发浓缩', value: 'evaporation' },
-                ]}
+                options={
+                  params.systemId === 'li-fe-p'
+                    ? [
+                        { label: '高温沉锂 (90℃)', value: 'heating' },
+                        { label: '降温结晶 (对比)', value: 'cooling' },
+                      ]
+                    : [
+                        { label: '降温结晶', value: 'cooling' },
+                        { label: '蒸发浓缩', value: 'evaporation' },
+                      ]
+                }
                 value={params.crystallizeMethod}
                 onChange={(val) => updateParam('crystallizeMethod', val)}
               />
@@ -410,17 +422,26 @@ export const IndustrialFlowLeftPanel: React.FC<IndustrialFlowLeftPanelProps> = (
                 洗涤试剂
               </label>
               <SegmentedControl
-                options={[
-                  { label: '无水乙醇', value: 'ethanol' },
-                  { label: '冷水洗涤', value: 'water' },
-                ]}
+                options={
+                  params.systemId === 'li-fe-p'
+                    ? [
+                        { label: '热水洗涤 (优选)', value: 'hot-water' },
+                        { label: '冷水洗涤 (对比)', value: 'water' },
+                      ]
+                    : [
+                        { label: '无水乙醇', value: 'ethanol' },
+                        { label: '冷水洗涤', value: 'water' },
+                      ]
+                }
                 value={params.washSolvent}
                 onChange={(val) => updateParam('washSolvent', val)}
               />
             </div>
 
             <div className="p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-tight">
-              {params.washSolvent === 'ethanol'
+              {params.washSolvent === 'hot-water'
+                ? '热水洗涤：Li₂CO₃ 温度越高溶解度越小，热水洗涤既能洗净 Na₂SO₄ 杂质，又可减少产物溶解损耗。'
+                : params.washSolvent === 'ethanol'
                 ? '无水乙醇洗涤：洗去表面杂质；降低晶体溶解损耗；易挥发便于快速干燥。'
                 : '冷水洗涤：洗去表面残留可溶性杂质离子，降低晶体常温溶解损耗。'}
             </div>

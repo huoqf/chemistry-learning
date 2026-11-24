@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Eye, FileCheck, HelpCircle, GitCompare, Compass, BookOpen } from 'lucide-react'
+import { useState, useRef } from 'react'
+import { Eye, FileCheck, HelpCircle, GitCompare, Compass, BookOpen, Play, Pause } from 'lucide-react'
 import { ThreePanel, AnimationSvgCanvas } from '@/components/Layout'
 import {
   LeftPanel,
@@ -11,9 +11,10 @@ import {
   GaokaoToolHeader,
 } from '@/components/UI'
 import { useAnimationViewport } from '@/hooks/useAnimationViewport'
+import { useAnimationFrame } from '@/utils/animation'
 import { CANVAS_PRESETS } from '@/theme'
 import type { ControlMeta } from '@/data/types'
-import { getModelQuizData } from '@/data/gaokaoQuizData'
+import { getModelQuizData } from '@/data/quiz'
 import { getKnowledgeNode } from '@/data/knowledgeTree'
 import { getGaokaoModel } from '@/data/gaokaoModels'
 import {
@@ -104,13 +105,36 @@ export function OrganicMechanismCanvas() {
     preset: CANVAS_PRESETS.full,
   })
 
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false)
+  const autoTimerRef = useRef<number>(0)
+
+  useAnimationFrame(
+    (deltaTime) => {
+      autoTimerRef.current += deltaTime
+      if (autoTimerRef.current >= 1800) {
+        autoTimerRef.current = 0
+        setParamsState((prev) => ({
+          ...prev,
+          stage: (prev.stage + 1) % 3,
+        }))
+      }
+    },
+    { playing: isAutoPlaying && params.viewMode === 0 },
+  )
+
   const font = canvasSize?.font || ((n: number) => n)
 
   const updateParam = (key: string, value: number) => {
+    if (key === 'stage' || key === 'mechanism') {
+      autoTimerRef.current = 0
+      setIsAutoPlaying(false)
+    }
     setParamsState((prev) => ({ ...prev, [key]: value }))
   }
 
   const setParams = (newParams: Record<string, number>) => {
+    autoTimerRef.current = 0
+    setIsAutoPlaying(false)
     setParamsState(newParams)
   }
 
@@ -225,7 +249,11 @@ export function OrganicMechanismCanvas() {
                   <button
                     key={step.stage}
                     type="button"
-                    onClick={() => updateParam('stage', step.stage)}
+                    onClick={() => {
+                      setIsAutoPlaying(false)
+                      autoTimerRef.current = 0
+                      updateParam('stage', step.stage)
+                    }}
                     className={`px-3 py-1 text-xs rounded-md whitespace-nowrap transition-all ${
                       isActive
                         ? 'bg-white text-indigo-700 font-bold shadow-2xs'
@@ -236,6 +264,21 @@ export function OrganicMechanismCanvas() {
                   </button>
                 )
               })}
+              <button
+                type="button"
+                onClick={() => {
+                  autoTimerRef.current = 0
+                  setIsAutoPlaying((prev) => !prev)
+                }}
+                className={`px-2.5 py-1 text-xs rounded-md whitespace-nowrap transition-all flex items-center gap-1 ${
+                  isAutoPlaying
+                    ? 'bg-indigo-600 text-white font-bold shadow-2xs'
+                    : 'text-indigo-700 hover:bg-white/80 font-medium'
+                }`}
+              >
+                {isAutoPlaying ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
+                {isAutoPlaying ? '暂停' : '自动演示'}
+              </button>
             </div>
 
             {/* 右侧微观方程式与特征 */}
@@ -245,7 +288,17 @@ export function OrganicMechanismCanvas() {
           </div>
 
           {/* SVG 纯净视口画布容器 */}
-          <div ref={containerRef} className="relative w-full flex-1 min-h-[460px] overflow-hidden rounded-xl border border-neutral-200/60 shadow-2xs">
+          <div className="relative w-full flex-1 min-h-[460px] overflow-hidden rounded-xl border border-neutral-200/60 shadow-2xs">
+            <div className="absolute top-0 left-0 right-0 z-10 h-1 bg-neutral-200/70 flex">
+              {STAGE_STEPS.map((step) => (
+                <div
+                  key={step.stage}
+                  className={`flex-1 transition-colors duration-300 ${
+                    params.stage >= step.stage ? 'bg-indigo-500' : 'bg-transparent'
+                  }`}
+                />
+              ))}
+            </div>
             <AnimationSvgCanvas containerRef={containerRef} transform={vp.transform}>
               {renderMechanismSvgScene()}
             </AnimationSvgCanvas>
@@ -297,14 +350,14 @@ export function OrganicMechanismCanvas() {
         scrollable={false}
       />
 
-      {/* 易混反应双向对比矩阵 */}
+      {/* 当前反应专属易混对比对照 */}
       <div className="p-3.5 bg-white rounded-xl border border-neutral-200/80 flex flex-col gap-2.5 shadow-2xs">
         <h4 className="font-bold text-neutral-800 text-sm flex items-center gap-1.5 pb-1.5 border-b border-neutral-100 whitespace-nowrap">
           <GitCompare className="w-4 h-4 text-emerald-600 shrink-0" />
-          高考易混反应对比矩阵 (4组对照)
+          当前机理易混对比
         </h4>
         <div className="flex flex-col gap-2.5">
-          {CONTRAST_MATRICES.map((matrix, idx) => (
+          {CONTRAST_MATRICES.filter((matrix) => matrix.mechanism === params.mechanism).map((matrix, idx) => (
             <div key={idx} className="p-2.5 rounded-lg bg-emerald-50/40 border border-emerald-100/90 flex flex-col gap-1.5">
               <span className="text-xs font-bold text-emerald-950 flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
@@ -319,7 +372,7 @@ export function OrganicMechanismCanvas() {
                 </div>
               </div>
               <div className="text-xs text-emerald-900 font-medium bg-emerald-100/80 px-2 py-1 rounded-md leading-relaxed">
-                💡 <span className="font-semibold text-emerald-950">速记口诀：</span>{matrix.memoryTip}
+                <span className="font-semibold text-emerald-950">速记口诀：</span>{matrix.memoryTip}
               </div>
             </div>
           ))}

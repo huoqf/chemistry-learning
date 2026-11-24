@@ -32,15 +32,19 @@ export const ElectrochemicalTwinLeftPanel: React.FC<Props> = ({ params, onChange
       unit: 's',
       value: params.timeSec,
     },
-    {
-      key: 'electrolyteConc',
-      label: '电解质初始浓度 c₀',
-      min: 0.1,
-      max: 2.0,
-      step: 0.1,
-      unit: 'mol/L',
-      value: params.electrolyteConc,
-    },
+    ...(params.mode === 3
+      ? [
+          {
+            key: 'electrolyteConc',
+            label: 'CuSO₄ 初始浓度 c₀',
+            min: 0.1,
+            max: 2.0,
+            step: 0.1,
+            unit: 'mol/L',
+            value: params.electrolyteConc,
+          },
+        ]
+      : []),
   ]
 
   const handleParamChange = (key: string, val: number) => {
@@ -88,7 +92,7 @@ export const ElectrochemicalTwinLeftPanel: React.FC<Props> = ({ params, onChange
                   : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
               }`}
             >
-              <span>⚡ 放电模式</span>
+              <span>放电模式</span>
               <span className="text-[10px] text-emerald-600 font-normal">原电池 (化学能→电能)</span>
             </button>
 
@@ -100,7 +104,7 @@ export const ElectrochemicalTwinLeftPanel: React.FC<Props> = ({ params, onChange
                   : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
               }`}
             >
-              <span>🔌 充电模式</span>
+              <span>充电模式</span>
               <span className="text-[10px] text-amber-600 font-normal">电解池 (电能→化学能)</span>
             </button>
           </div>
@@ -160,15 +164,17 @@ export const ElectrochemicalTwinLeftPanel: React.FC<Props> = ({ params, onChange
               className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4"
             />
           </label>
-          <label className="flex items-center justify-between text-xs text-slate-600 cursor-pointer">
-            <span>膜穿透细节高亮</span>
-            <input
-              type="checkbox"
-              checked={params.showMembraneFlow === 1}
-              onChange={e => onChange('showMembraneFlow', e.target.checked ? 1 : 0)}
-              className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4"
-            />
-          </label>
+          {(params.mode === 1 || params.mode === 2) && (
+            <label className="flex items-center justify-between text-xs text-slate-600 cursor-pointer">
+              <span>膜穿透细节高亮</span>
+              <input
+                type="checkbox"
+                checked={params.showMembraneFlow === 1}
+                onChange={e => onChange('showMembraneFlow', e.target.checked ? 1 : 0)}
+                className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4"
+              />
+            </label>
+          )}
         </div>
       </LeftPanelSection>
     </LeftPanel>

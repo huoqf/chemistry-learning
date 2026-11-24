@@ -85,7 +85,12 @@ export const AvogadroScene: React.FC<AvogadroSceneProps> = ({
           opacity={0.6}
         />
         <text x="34" y="22" fill="#1e293b" fontSize={canvasSize.font(12)} fontWeight="bold">
-          {chemistry.physicalState} · {chemistry.isStateGas ? `Vm = ${chemistry.vmValue} L/mol` : '标况非气体'}
+          {chemistry.physicalState} ·{' '}
+          {chemistry.isStateGas
+            ? `Vm = ${chemistry.vmValue} L/mol`
+            : params.temperatureCondition === 'standard'
+            ? '标况非气体'
+            : '常温非气体'}
         </text>
         <text
           x="364"
@@ -117,7 +122,7 @@ export const AvogadroScene: React.FC<AvogadroSceneProps> = ({
             strokeDasharray={chemistry.isStateGas ? 'none' : '5 4'}
           />
           <text x="95" y="24" fill="#334155" fontSize={canvasSize.font(11.5)} textAnchor="middle" fontWeight="bold">
-            22.4 L 空间容器 (0℃, 101 kPa)
+            {chemistry.vmValue.toFixed(1)} L 空间容器 ({params.temperatureCondition === 'standard' ? '0℃' : '25℃'}, 101 kPa)
           </text>
 
           {chemistry.isStateGas ? (
@@ -155,75 +160,112 @@ export const AvogadroScene: React.FC<AvogadroSceneProps> = ({
                 非气态！禁用 22.4 L/mol
               </text>
               <text x="95" y="134" fill="#64748b" fontSize={canvasSize.font(10)} textAnchor="middle">
-                实际分子数远超 1 NA (500+ NA)
+                同体积凝聚态粒子数远超气体基准
               </text>
             </g>
           )}
 
           {/* 中间体积落差指示对比区 (x: 195, y: 95) */}
-          {!chemistry.isStateGas ? (
-            <g transform="translate(195, 95)">
-              <VectorArrow
-                originDesign={{ x: 5, y: 15 }}
-                vector={{ x: 55, y: 0 }}
-                type="equilibriumShift"
-                sceneScale={sceneScale}
-                pixelLength={50}
-                color="#ef4444"
-                strokeWidth={2}
-                font={canvasSize.font}
-              />
-              <rect x="18" y="-6" width="46" height="18" rx="4" fill="#fee2e2" stroke="#fca5a5" strokeWidth="0.8" />
-              <text x="41" y="7" fill="#dc2626" fontSize={canvasSize.font(9.5)} textAnchor="middle" fontWeight="bold">
-                1200×
-              </text>
-              <text x="41" y="38" fill="#991b1b" fontSize={canvasSize.font(9)} textAnchor="middle">
-                体积落差
-              </text>
-            </g>
-          ) : (
-            <g transform="translate(198, 105)">
-              <line x1="5" y1="10" x2="55" y2="10" stroke="#0284c7" strokeWidth="1.5" strokeDasharray="3 3" />
-              <text x="30" y="4" fill="#0284c7" fontSize={canvasSize.font(9)} textAnchor="middle" fontWeight="bold">
-                对比
-              </text>
-            </g>
-          )}
+          {(() => {
+            const condensedSpec: Record<string, { mvMl: number; mvText: string; ratioText: string; labelText: string }> = {
+              H2O: { mvMl: 18, mvText: '~18 mL', ratioText: '1244×', labelText: '实际液态体积' },
+              SO3: { mvMl: 42, mvText: '~42 mL', ratioText: '537×', labelText: '实际聚集体积' },
+              HF: { mvMl: 20, mvText: '~20 mL', ratioText: '1120×', labelText: '实际液态体积' },
+              CCl4: { mvMl: 97, mvText: '~97 mL', ratioText: '231×', labelText: '实际液态体积' },
+              CH3OH: { mvMl: 41, mvText: '~41 mL', ratioText: '553×', labelText: '实际液态体积' },
+            }
+            const spec = condensedSpec[params.stateItem] ?? {
+              mvMl: 40,
+              mvText: '~40 mL',
+              ratioText: '500+×',
+              labelText: '实际凝聚体积',
+            }
+            // 将 1 mol 凝聚态体积 (0~100 mL) 线性映射至右侧刻度线：25 mL -> y=170, 50 mL -> y=130, 75 mL -> y=90, 100 mL -> y=50
+            const liquidTopY = Math.max(46, Math.min(205, 210 - (spec.mvMl / 25) * 40))
+            const waveY = liquidTopY + Math.sin(animTime * 3) * 1.5
+            const liquidHeight = Math.max(22, 228 - waveY)
+            return (
+              <>
+                {!chemistry.isStateGas ? (
+                  <g transform="translate(195, 95)">
+                    <VectorArrow
+                      originDesign={{ x: 5, y: 15 }}
+                      vector={{ x: 55, y: 0 }}
+                      type="equilibriumShift"
+                      sceneScale={sceneScale}
+                      pixelLength={50}
+                      color="#ef4444"
+                      strokeWidth={2}
+                      font={canvasSize.font}
+                    />
+                    <rect x="14" y="-6" width="54" height="18" rx="4" fill="#fee2e2" stroke="#fca5a5" strokeWidth="0.8" />
+                    <text x="41" y="7" fill="#dc2626" fontSize={canvasSize.font(9.5)} textAnchor="middle" fontWeight="bold">
+                      {spec.ratioText}
+                    </text>
+                    <text x="41" y="38" fill="#991b1b" fontSize={canvasSize.font(9)} textAnchor="middle">
+                      体积落差
+                    </text>
+                  </g>
+                ) : (
+                  <g transform="translate(198, 105)">
+                    <line x1="5" y1="10" x2="55" y2="10" stroke="#0284c7" strokeWidth="1.5" strokeDasharray="3 3" />
+                    <text x="30" y="4" fill="#0284c7" fontSize={canvasSize.font(9)} textAnchor="middle" fontWeight="bold">
+                      气态同阶
+                    </text>
+                  </g>
+                )}
 
-          {/* 右室：真实 1 mol 聚集液体刻度管 (x: 275, y: 10, 宽 85, 高 215) */}
-          <g transform="translate(270, 0)">
-            <rect x="0" y="0" width="85" height="235" rx="10" fill="#f8fafc" stroke="#64748b" strokeWidth="1.5" />
-            <text x="42" y="24" fill="#334155" fontSize={canvasSize.font(11)} textAnchor="middle" fontWeight="bold">
-              1 mol 真实物料
-            </text>
+                {/* 右室：真实 1 mol 物料体积对比管 */}
+                <g transform="translate(270, 0)">
+                  <rect x="0" y="0" width="85" height="235" rx="10" fill="#f8fafc" stroke="#64748b" strokeWidth="1.5" />
+                  <text x="42" y="24" fill="#334155" fontSize={canvasSize.font(11)} textAnchor="middle" fontWeight="bold">
+                    1 mol 真实物料
+                  </text>
 
-            {/* 刻度线与标注 */}
-            {[50, 90, 130, 170].map((ly, idx) => (
-              <g key={idx}>
-                <line x1="68" y1={ly} x2="78" y2={ly} stroke="#94a3b8" strokeWidth="1" />
-                <text x="64" y={ly + 3} fill="#94a3b8" fontSize={canvasSize.font(7.5)} textAnchor="end">
-                  {(4 - idx) * 10}mL
-                </text>
-              </g>
-            ))}
+                  {/* 刻度线与标注 */}
+                  {!chemistry.isStateGas &&
+                    [50, 90, 130, 170].map((ly, idx) => (
+                      <g key={idx}>
+                        <line x1="68" y1={ly} x2="78" y2={ly} stroke="#94a3b8" strokeWidth="1" />
+                        <text x="64" y={ly + 3} fill="#94a3b8" fontSize={canvasSize.font(7.5)} textAnchor="end">
+                          {(4 - idx) * 25}mL
+                        </text>
+                      </g>
+                    ))}
 
-            {/* 液体填充与微波动 */}
-            <rect
-              x="6"
-              y={170 + Math.sin(animTime * 3) * 1.5}
-              width="73"
-              height={58 - Math.sin(animTime * 3) * 1.5}
-              rx="4"
-              fill={chemistry.isStateGas ? '#38bdf8' : '#fb7175'}
-              opacity={0.7}
-            />
-            <text x="42" y="198" fill={chemistry.isStateGas ? '#0369a1' : '#991b1b'} fontSize={canvasSize.font(11.5)} textAnchor="middle" fontWeight="bold">
-              ~18 mL
-            </text>
-            <text x="42" y="214" fill="#64748b" fontSize={canvasSize.font(8.5)} textAnchor="middle">
-              实际所占体积
-            </text>
-          </g>
+                  {/* 气态 vs 凝聚态填充示意（液面随 1 mol 真实体积与右侧刻度对齐） */}
+                  <rect
+                    x="6"
+                    y={chemistry.isStateGas ? 42 : waveY}
+                    width="73"
+                    height={chemistry.isStateGas ? 186 : liquidHeight}
+                    rx="4"
+                    fill={chemistry.isStateGas ? '#38bdf8' : '#fb7175'}
+                    opacity={chemistry.isStateGas ? 0.22 : 0.7}
+                  />
+                  <text
+                    x="42"
+                    y={chemistry.isStateGas ? 132 : 198}
+                    fill={chemistry.isStateGas ? '#0369a1' : '#991b1b'}
+                    fontSize={canvasSize.font(11)}
+                    textAnchor="middle"
+                    fontWeight="bold"
+                  >
+                    {chemistry.isStateGas ? `${chemistry.vmValue.toFixed(1)} L` : spec.mvText}
+                  </text>
+                  <text
+                    x="42"
+                    y={chemistry.isStateGas ? 150 : 214}
+                    fill="#64748b"
+                    fontSize={canvasSize.font(8.5)}
+                    textAnchor="middle"
+                  >
+                    {chemistry.isStateGas ? '气体摩尔体积' : spec.labelText}
+                  </text>
+                </g>
+              </>
+            )
+          })()}
         </g>
       )}
 

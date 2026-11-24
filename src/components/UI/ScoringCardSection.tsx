@@ -1,7 +1,45 @@
 import React, { useState } from 'react'
 import { Award, HelpCircle, RefreshCw, PenTool } from 'lucide-react'
 import { KatexFormula } from './KatexFormula'
+import { KatexText } from './KatexText'
 import type { ScoringStep } from '@/data/gaokaoQuizData'
+
+const SUB_SUP_CHAR_MAP: Record<string, string> = {
+  '₀': '0',
+  '₁': '1',
+  '₂': '2',
+  '₃': '3',
+  '₄': '4',
+  '₅': '5',
+  '₆': '6',
+  '₇': '7',
+  '₈': '8',
+  '₉': '9',
+  '⁰': '0',
+  '¹': '1',
+  '²': '2',
+  '³': '3',
+  '⁴': '4',
+  '⁵': '5',
+  '⁶': '6',
+  '⁷': '7',
+  '⁸': '8',
+  '⁹': '9',
+  '⁺': '+',
+  '⁻': '-',
+}
+
+function normalizeAnswer(raw: string): string {
+  return raw
+    .trim()
+    .toLowerCase()
+    .replace(/[₀-₉⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻]/g, (ch) => SUB_SUP_CHAR_MAP[ch] ?? ch)
+    .replace(/，/g, ',')
+    .replace(/；/g, ';')
+    .replace(/：/g, ':')
+    .replace(/、/g, ',')
+    .replace(/[\s()[\]{}^\\]/g, '')
+}
 
 interface ScoringCardSectionProps {
   steps?: ScoringStep[]
@@ -31,6 +69,7 @@ export const ScoringCardSection: React.FC<ScoringCardSectionProps> = ({
   }
 
   const handleSubmit = (step: ScoringStep) => {
+    if (!(userInputs[step.id] || '').trim()) return
     setSubmitted((prev) => ({ ...prev, [step.id]: true }))
   }
 
@@ -42,14 +81,74 @@ export const ScoringCardSection: React.FC<ScoringCardSectionProps> = ({
 
   const checkIsCorrect = (step: ScoringStep) => {
     if (!step || !step.correctAnswer) return false
-    const input = (userInputs[step.id] || '').trim().toLowerCase()
-    if (!input) return false
+    const rawInput = (userInputs[step.id] || '').trim()
+    if (!rawInput) return false
+    const normInput = normalizeAnswer(rawInput)
+    if (!normInput) return false
 
     try {
-      if (Array.isArray(step.correctAnswer)) {
-        return step.correctAnswer.some((ans) => ans && input.includes(ans.toLowerCase()))
+      const matchGroup = (group: string[]): boolean => {
+        const norms = group.map((ans) => normalizeAnswer(String(ans))).filter((n) => n.length > 0)
+        return norms.some((kw) => normInput.includes(kw))
       }
-      return input === String(step.correctAnswer).toLowerCase()
+
+      if (step.type === 'keywords') {
+        if (step.alternativeKeywordGroups && step.alternativeKeywordGroups.length > 0) {
+          return step.alternativeKeywordGroups.some(
+            (scheme) => scheme.length > 0 && scheme.every(matchGroup),
+          )
+        }
+        if (step.requiredKeywordGroups && step.requiredKeywordGroups.length > 0) {
+          return step.requiredKeywordGroups.every(matchGroup)
+        }
+      }
+
+      if (Array.isArray(step.correctAnswer)) {
+        const candidates = step.correctAnswer
+          .map((ans) => ({ raw: ans, norm: normalizeAnswer(String(ans)) }))
+          .filter((item) => item.norm.length > 0)
+        if (candidates.length === 0) return false
+
+        if (step.type === 'keywords') {
+          // 归一化去重
+          const deduped: string[] = []
+          for (const item of candidates) {
+            if (!deduped.includes(item.norm)) deduped.push(item.norm)
+          }
+          // 排除任何已包含更短候选词的复合超集，避免相同概念被重复计分
+          const nonRedundant = deduped.filter(
+            (item) => !deduped.some((other) => other !== item && other.length < item.length && item.includes(other)),
+          )
+          const targetKeywords = nonRedundant.length > 0 ? nonRedundant : deduped
+          if (targetKeywords.length === 1) {
+            return normInput.includes(targetKeywords[0])
+          }
+          const hitCount = targetKeywords.filter((kw) => normInput.includes(kw)).length
+          const requiredCount = Math.ceil(targetKeywords.length * 0.6)
+          return hitCount >= requiredCount
+        }
+
+        return candidates.some((item) => normInput === item.norm)
+      }
+
+      const expectedRaw = String(step.correctAnswer)
+      const normExpected = normalizeAnswer(expectedRaw)
+      if (!normExpected) return false
+      if (normInput === normExpected) return true
+
+      if (step.type === 'keywords') {
+        const parts = expectedRaw
+          .split(/[；;、\n]+/)
+          .map((p) => normalizeAnswer(p))
+          .filter((p) => p.length > 0)
+        if (parts.length >= 2) {
+          const hitCount = parts.filter((kw) => normInput.includes(kw)).length
+          return hitCount >= Math.ceil(parts.length * 0.6)
+        }
+        return normInput.includes(normExpected)
+      }
+
+      return false
     } catch {
       return false
     }
@@ -92,7 +191,9 @@ export const ScoringCardSection: React.FC<ScoringCardSectionProps> = ({
               }`}
             >
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs font-bold text-slate-700">{step.title}</span>
+                <span className="text-xs font-bold text-slate-700">
+                  <KatexText text={step.title} />
+                </span>
                 {isDone && (
                   <span
                     className={`text-[11px] font-semibold px-2 py-0.5 rounded ${
@@ -104,7 +205,9 @@ export const ScoringCardSection: React.FC<ScoringCardSectionProps> = ({
                 )}
               </div>
 
-              <p className="text-xs text-slate-600 mb-2 leading-relaxed">{step.questionText}</p>
+              <p className="text-xs text-slate-600 mb-2 leading-relaxed">
+                <KatexText text={step.questionText} />
+              </p>
 
               {step.formulaLatex && (
                 <div className="my-2 p-2 bg-slate-100/80 rounded border border-slate-200/60 text-slate-800 flex justify-center overflow-x-auto">
@@ -125,7 +228,8 @@ export const ScoringCardSection: React.FC<ScoringCardSectionProps> = ({
                 {!isDone ? (
                   <button
                     onClick={() => handleSubmit(step)}
-                    className="px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 rounded-md transition-colors shadow-sm"
+                    disabled={!(userInputs[step.id] || '').trim()}
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 disabled:bg-slate-300 disabled:cursor-not-allowed rounded-md transition-colors shadow-sm"
                   >
                     提交验证
                   </button>
@@ -163,11 +267,11 @@ export const ScoringCardSection: React.FC<ScoringCardSectionProps> = ({
                     </button>
                   </div>
 
-                  {/* 踩分关键词得分气泡标签 */}
+                  {/* 踩分关键词 / 等价参考答案标签 */}
                   {Array.isArray(step.correctAnswer) && step.correctAnswer.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 my-1.5">
                       <span className="text-[10px] text-slate-400 font-bold self-center">
-                        得分关键词:
+                        {step.type === 'keywords' ? '得分关键词:' : '等价参考答案:'}
                       </span>
                       {step.correctAnswer.map((kw, idx) => (
                         <span
@@ -182,7 +286,7 @@ export const ScoringCardSection: React.FC<ScoringCardSectionProps> = ({
 
                   {showExp && (
                     <div className="p-2 bg-indigo-50/70 text-indigo-900 rounded border border-indigo-100 text-[11px] leading-relaxed mt-1">
-                      {step.explanation}
+                      <KatexText text={step.explanation} />
                     </div>
                   )}
                 </div>

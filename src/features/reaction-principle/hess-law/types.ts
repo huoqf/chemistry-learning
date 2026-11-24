@@ -53,5 +53,5 @@ export interface HessLawParams {
   bondMoleculeIndex: number
   // 反应高程模式
   hasCatalyst: number // 1: 有催化剂, 0: 无
-  temperature: number // K
+  temperature?: number // K（保留可选字段以兼容历史调用，当前页面不渲染温度滑块）
 }

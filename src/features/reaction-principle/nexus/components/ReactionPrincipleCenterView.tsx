@@ -124,6 +124,7 @@ export const ReactionPrincipleCenterView: React.FC<ReactionPrincipleCenterViewPr
                   catalyst={params.catalyst}
                   stepBarriers={chemistry.stepBarriers}
                   rdsIndex={chemistry.rdsIndex}
+                  animate={viewMode === 0 && params.chartTab === 'energy-profile'}
                 />
               </div>
             </div>

@@ -1,5 +1,5 @@
 import { colors, FONT, CHEMISTRY_COLORS, withAlpha } from '@/theme'
-import { ATOM_COLORS, BOND_COLORS } from '../constants'
+import { ATOM_COLORS, BOND_COLORS, REACTION_COLORS } from '../constants'
 import type { AlcoholOxidationSceneProps } from '../types'
 
 export function AlcoholOxidationScene({ reactionStage, font, useTertiaryAlcohol }: AlcoholOxidationSceneProps) {
@@ -18,7 +18,7 @@ export function AlcoholOxidationScene({ reactionStage, font, useTertiaryAlcohol 
           : '乙醇 (含 α-H) 催化氧化生成乙醛'}
       </text>
 
-      {/* 阶段 0 与阶段 1 或叔丁醇反例：显示底物与脱氢过渡 */}
+      {/* 阶段 0 与阶段 1 或叔丁醇反例：显示底物与脱氢过渡（明确拆分 O 与 H 原子，绝不断 C-O 键） */}
       {(reactionStage < 2 || useTertiaryAlcohol) && (
         <g transform="translate(270, 130)">
           {/* α-C */}
@@ -43,21 +43,14 @@ export function AlcoholOxidationScene({ reactionStage, font, useTertiaryAlcohol 
             α-C
           </text>
 
-          {/* 上方 -OH */}
+          {/* 上方 C-O 键（催化氧化时保留并增强为双键，绝不断裂）与拆分开的 O—H 键 */}
           <line
             x1={150}
             y1={54}
             x2={150}
-            y2={22}
-            stroke={
-              !useTertiaryAlcohol && reactionStage >= 1
-                ? BOND_COLORS.cleaved
-                : colors.neutral[400]
-            }
-            strokeWidth={3}
-            strokeDasharray={
-              !useTertiaryAlcohol && reactionStage === 1 ? '4,4' : undefined
-            }
+            y2={18}
+            stroke={colors.neutral[500]}
+            strokeWidth={3.5}
           />
           <circle
             cx={150}
@@ -73,8 +66,48 @@ export function AlcoholOxidationScene({ reactionStage, font, useTertiaryAlcohol 
             fontSize={font(FONT.axis)}
             fontWeight="bold"
           >
-            OH
+            O
           </text>
+
+          {/* O—H 键及羟基 H：阶段 1 发生断裂 */}
+          <line
+            x1={172}
+            y1={-4}
+            x2={210}
+            y2={-4}
+            stroke={
+              !useTertiaryAlcohol && reactionStage === 1
+                ? BOND_COLORS.cleaved
+                : colors.neutral[400]
+            }
+            strokeWidth={3}
+            strokeDasharray={
+              !useTertiaryAlcohol && reactionStage === 1 ? '4,4' : undefined
+            }
+          />
+          <circle cx={230} cy={-4} r={18} fill={ATOM_COLORS.hydrogen} />
+          <text
+            x={230}
+            y={1}
+            textAnchor="middle"
+            fill="#333"
+            fontSize={font(FONT.axis)}
+            fontWeight="bold"
+          >
+            H
+          </text>
+          {!useTertiaryAlcohol && reactionStage === 1 && (
+            <text
+              x={195}
+              y={-30}
+              textAnchor="middle"
+              fill={REACTION_COLORS.cleavage}
+              fontSize={font(FONT.annotation)}
+              fontWeight="bold"
+            >
+              ✂ 断 O-H 键
+            </text>
+          )}
 
           {/* 左侧 -CH3 / R */}
           <line
@@ -127,14 +160,14 @@ export function AlcoholOxidationScene({ reactionStage, font, useTertiaryAlcohol 
             {useTertiaryAlcohol ? 'CH₃' : 'H'}
           </text>
 
-          {/* 下方 α-H / CH3 */}
+          {/* 下方 α-C—H / CH3：非叔丁醇在阶段 1 断裂 */}
           <line
             x1={150}
             y1={106}
             x2={150}
             y2={140}
             stroke={
-              !useTertiaryAlcohol && reactionStage >= 1
+              !useTertiaryAlcohol && reactionStage === 1
                 ? BOND_COLORS.cleaved
                 : colors.neutral[400]
             }
@@ -163,6 +196,18 @@ export function AlcoholOxidationScene({ reactionStage, font, useTertiaryAlcohol 
           >
             {useTertiaryAlcohol ? 'CH₃' : 'H'}
           </text>
+          {!useTertiaryAlcohol && reactionStage === 1 && (
+            <text
+              x={150}
+              y={198}
+              textAnchor="middle"
+              fill={REACTION_COLORS.cleavage}
+              fontSize={font(FONT.annotation)}
+              fontWeight="bold"
+            >
+              ✂ 断 α-C-H 键
+            </text>
+          )}
         </g>
       )}
 

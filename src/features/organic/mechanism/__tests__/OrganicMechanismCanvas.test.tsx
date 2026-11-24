@@ -242,4 +242,23 @@ describe('OrganicMechanismCanvas Component', () => {
     fireEvent.click(screen.getAllByText('肽键生成与水解机制')[0])
     expect(screen.getAllByText(/肽键的结构简式为 -CO-NH-/i)[0]).toBeDefined()
   })
+
+  it('should render cleaved O-H & α-C-H bonds in alcohol oxidation and methyl side-chain on alanine', () => {
+    render(
+      <MemoryRouter>
+        <OrganicMechanismCanvas />
+      </MemoryRouter>
+    )
+
+    // 机制 2：断键过渡态明确拆出 O 与 H 且断开 O-H 键与 α-C-H 键
+    fireEvent.click(screen.getAllByText('醇的催化氧化机制')[0])
+    fireEvent.click(screen.getAllByText('断键过渡态')[0])
+    expect(screen.getByText('✂ 断 O-H 键')).toBeDefined()
+    expect(screen.getByText('✂ 断 α-C-H 键')).toBeDefined()
+
+    // 机制 5：丙氨酸始态必须保留完整 CH₃ 甲基侧链（避免三价碳）
+    fireEvent.click(screen.getAllByText('肽键生成与水解机制')[0])
+    fireEvent.click(screen.getAllByText('反应物始态')[0])
+    expect(screen.getAllByText('CH₃').length).toBeGreaterThanOrEqual(1)
+  })
 })

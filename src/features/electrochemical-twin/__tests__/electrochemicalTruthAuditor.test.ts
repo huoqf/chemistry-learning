@@ -120,8 +120,8 @@ describe('母题二：原电池 vs 电解池 高中化学学科真理与新高�
       const details = result.current.cellDetails
 
       expect(details.subtitle).toContain('双极膜 BPM')
-      expect(details.subtitle).toContain('H_2O')
-      expect(details.subtitle).toContain('H^+')
+      expect(details.subtitle).toContain('H₂O')
+      expect(details.subtitle).toContain('H⁺')
     })
   })
 
@@ -162,6 +162,29 @@ describe('母题二：原电池 vs 电解池 高中化学学科真理与新高�
 
       expect(quant.massChangeLeft).toBe(0)
       expect(quant.massChangeRight).toBe(0)
+    })
+
+    it('模式 2 双极膜 (BPM) 切为四室制酸碱：阳极 O₂ 与阴极 H₂ 体积比严格为 1:2，且不生成 Cl₂', () => {
+      const { result } = renderHook(() => useElectrochemicalTwin(createParams({ mode: 2, membraneType: 3 })))
+      const { quantResult, cellDetails } = result.current
+
+      expect(cellDetails.overallReaction).not.toContain('Cl_2')
+      expect(cellDetails.leftElectrode.reactionFormula).toContain('\\text{O}_2')
+      expect(quantResult.gasVolumeRight).toBeCloseTo((quantResult.gasVolumeLeft ?? 0) * 2, 3)
+    })
+
+    it('模式 3 Cu²⁺ 耗尽后转为电解水：净产酸量锁定在 2·c₀(Cu²⁺) 且阴极析出 H₂ 体积大于 0', () => {
+      const { result } = renderHook(() =>
+        useElectrochemicalTwin(
+          createParams({ mode: 3, electrolyteConc: 0.1, currentAmp: 5.0, timeSec: 5000 })
+        )
+      )
+      const quant = result.current.quantResult
+
+      // n(e⁻) = 5*5000/96485 ≈ 0.259 mol > maxCuElectrons(0.2 mol)
+      expect(quant.molesElectron).toBeGreaterThan(0.25)
+      expect(quant.netAcidMoles).toBeCloseTo(0.2, 4)
+      expect(quant.gasVolumeRight).toBeGreaterThan(0)
     })
   })
 })

@@ -23,16 +23,21 @@ export const AvogadroLeftPanel: React.FC<AvogadroLeftPanelProps> = ({
   // 判断当前物料是否为非气体
   const isCurrentNonGas = React.useMemo(() => {
     if (params.trapCategory === 'state-volume') {
-      return ['SO3', 'HF', 'CCl4', 'H2O', 'CH3OH'].includes(params.stateItem)
+      return params.temperatureCondition === 'standard'
+        ? ['SO3', 'HF', 'CCl4', 'H2O', 'CH3OH'].includes(params.stateItem)
+        : ['SO3', 'CCl4', 'H2O', 'CH3OH'].includes(params.stateItem)
     }
     if (params.trapCategory === 'structure-bonds') {
       return true // 结构化学均为固/液晶体
     }
-    if (params.trapCategory === 'redox-electron' && params.redoxItem === 'Cu-S') {
-      return true // Cu 与 S 均为固体反应
+    if (
+      params.trapCategory === 'redox-electron' &&
+      ['Cu-S', 'Fe-HNO3', 'Na2O2-H2O'].includes(params.redoxItem)
+    ) {
+      return true // 固态反应物，禁选气体体积 L
     }
     return false
-  }, [params.trapCategory, params.stateItem, params.redoxItem])
+  }, [params.trapCategory, params.stateItem, params.temperatureCondition, params.redoxItem])
 
   // 当切换到结构化学或 Cu-S 等 100% 固态物料时，自动将 L 单位强修正为 g
   useEffect(() => {
@@ -101,7 +106,7 @@ export const AvogadroLeftPanel: React.FC<AvogadroLeftPanelProps> = ({
             { label: '结构键数', value: 'structure-bonds' },
             { label: '弱电水解', value: 'electrolyte-hydrolysis' },
             { label: '氧化还原', value: 'redox-electron' },
-            { label: '✨ 五步秒杀', value: '5-step-matrix' },
+            { label: '五步秒杀', value: '5-step-matrix' },
           ]}
         />
       </LeftPanelSection>
@@ -115,11 +120,13 @@ export const AvogadroLeftPanel: React.FC<AvogadroLeftPanelProps> = ({
             value={params.stateItem}
             onChange={(val) => onUpdateParams({ stateItem: val as any })}
             options={[
-              { label: 'SO₃ (固态晶体)', value: 'SO3' },
-              { label: 'HF (缔合液体)', value: 'HF' },
+              { label: 'SO₃ (非气态)', value: 'SO3' },
+              { label: 'HF (液态/缔合)', value: 'HF' },
               { label: 'CCl₄ (液态)', value: 'CCl4' },
               { label: 'H₂O (冰/水)', value: 'H2O' },
+              { label: 'CH₃OH (液态)', value: 'CH3OH' },
               { label: 'Cl₂ (标况气体)', value: 'Cl2' },
+              { label: 'O₂ (标况气体)', value: 'O2' },
             ]}
           />
 
@@ -175,12 +182,15 @@ export const AvogadroLeftPanel: React.FC<AvogadroLeftPanelProps> = ({
             onChange={(val) => onUpdateParams({ structureItem: val as any })}
             options={[
               { label: 'SiO₂ (4键/Si)', value: 'SiO2' },
+              { label: '金刚石 (2键/C)', value: 'diamond' },
               { label: '石墨 (1.5键/C)', value: 'graphite' },
               { label: 'P₄ 白磷 (6键)', value: 'P4' },
               { label: 'S₈ 硫 (8键)', value: 'S8' },
               { label: '冰 (2氢键/水)', value: 'ice' },
+              { label: 'D₂O (10中子)', value: 'D2O' },
               { label: 'T₂O (12中子)', value: 'T2O' },
               { label: 'Na₂O₂ (1:2)', value: 'Na2O2' },
+              { label: 'NH₄Cl (配位键)', value: 'NH4Cl' },
             ]}
           />
 
@@ -223,6 +233,7 @@ export const AvogadroLeftPanel: React.FC<AvogadroLeftPanelProps> = ({
               { label: 'FeCl₃ 胶体聚集', value: 'FeCl3' },
               { label: 'NaHSO₄ 熔融离解', value: 'NaHSO4-molten' },
               { label: 'Na₂CO₃ 水解', value: 'Na2CO3' },
+              { label: '纯水电离 (10⁻⁷)', value: 'pureH2O' },
             ]}
           />
 
@@ -293,6 +304,9 @@ export const AvogadroLeftPanel: React.FC<AvogadroLeftPanelProps> = ({
               { label: 'Na₂O₂ 歧化 (1e⁻)', value: 'Na2O2-H2O' },
               { label: 'Cu+S 变价 (1e⁻)', value: 'Cu-S' },
               { label: '2NO₂ 二聚平衡', value: 'NO2-N2O4-reversible' },
+              { label: 'NO₂+H₂O (2/3e⁻)', value: 'NO2-H2O' },
+              { label: 'Fe+稀HNO₃ (3e⁻)', value: 'Fe-HNO3' },
+              { label: '2SO₂+O₂ 可逆', value: 'SO2-O2-reversible' },
             ]}
           />
 
@@ -309,11 +323,15 @@ export const AvogadroLeftPanel: React.FC<AvogadroLeftPanelProps> = ({
           </div>
           <div className="mt-2 w-full overflow-hidden">
             <SegmentedControl
-              cols={params.redoxItem === 'Cu-S' || params.redoxItem === 'Na2O2-H2O' ? 2 : 3}
-              value={params.amountUnit}
+              cols={['Cu-S', 'Fe-HNO3', 'Na2O2-H2O'].includes(params.redoxItem) ? 2 : 3}
+              value={
+                ['Cu-S', 'Fe-HNO3', 'Na2O2-H2O'].includes(params.redoxItem) && params.amountUnit === 'L'
+                  ? 'g'
+                  : params.amountUnit
+              }
               onChange={(val) => onUpdateParams({ amountUnit: val as any })}
               options={
-                params.redoxItem === 'Cu-S' || params.redoxItem === 'Na2O2-H2O'
+                ['Cu-S', 'Fe-HNO3', 'Na2O2-H2O'].includes(params.redoxItem)
                   ? [
                       { label: '克 (g)', value: 'g' },
                       { label: '摩尔 (mol)', value: 'mol' },

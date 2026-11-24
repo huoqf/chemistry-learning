@@ -288,5 +288,16 @@ describe('母题五：VSEPR 与杂化轨道高中化学真理性守门审计', (
         expect(f.position[1], 'XeF₄ 赤道 F 原子 Y 坐标应为 0 (平面正方形)').toBeCloseTo(0, 4)
       })
     })
+
+    it('H₂O 两对孤电子对严格位于垂直于 H-O-H (XY) 平面的 YZ 平面内，电荷修正项紧跟中心价电子 a', () => {
+      const h2o = VSEPR_MOLECULE_MAP.h2o
+      expect(h2o.lonePairNodes.length).toBe(2)
+      expect(h2o.lonePairNodes[0].direction[0]).toBeCloseTo(0, 4)
+      expect(h2o.lonePairNodes[1].direction[0]).toBeCloseTo(0, 4)
+      expect(h2o.lonePairNodes[0].direction[2]).toBeCloseTo(-h2o.lonePairNodes[1].direction[2], 4)
+
+      const { result } = renderHook(() => useVseprChemistry(VSEPR_MOLECULE_MAP.co3_2minus))
+      expect(result.current.vseprFormulaText).toContain('a + 2 - xb')
+    })
   })
 })

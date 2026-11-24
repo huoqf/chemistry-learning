@@ -167,5 +167,45 @@ describe('useHessLawChemistry — 盖斯定律与键能计算测试', () => {
       expect(productEnergy - reactantEnergy).toBe(deltaH)
       expect(deltaH).toBe(-90)
     })
+
+    it('回归：仅有 ΔH 数值巧合相等但系数 k1/k2 未对齐目标方程时，isMatchTarget 必须为 false，且正确抽出被消去中间体', () => {
+      // 第 1 组 C(s) + ½O₂(g) = CO(g)：targetDeltaH = -110.5 (eq1=-393.5 defaultK=1, eq2=-566.0 defaultK=-0.5)
+      const { result: matched } = renderHook(() =>
+        useHessLawChemistry({ ...defaultParams, hessGroupIndex: 0, k1: 1, k2: -0.5 })
+      )
+      expect(matched.current.hessCalculated.isMatchTarget).toBe(true)
+      expect(matched.current.hessCalculated.isCoeffsMatched).toBe(true)
+      expect(matched.current.hessCalculated.eliminatedIntermediates).toContain('CO₂(g)')
+
+      // 凑数值：k1 = 110.5 / 393.5, k2 = 0，ΔH_total ≈ -110.5 但化学方程式并未消去 CO₂
+      const { result: spoofed } = renderHook(() =>
+        useHessLawChemistry({ ...defaultParams, hessGroupIndex: 0, k1: 110.5 / 393.5, k2: 0 })
+      )
+      expect(Math.abs(spoofed.current.hessCalculated.totalDeltaH - -110.5)).toBeLessThan(0.1)
+      expect(spoofed.current.hessCalculated.isCoeffsMatched).toBe(false)
+      expect(spoofed.current.hessCalculated.isMatchTarget).toBe(false)
+    })
+
+    it('新增预设：甲烷燃烧热叠加 (k1=1, k2=2) 消去 2H₂O(g) 并得到 ΔH = -890.3 kJ/mol', () => {
+      const { result } = renderHook(() =>
+        useHessLawChemistry({ ...defaultParams, hessGroupIndex: 3, k1: 1, k2: 2 })
+      )
+
+      expect(result.current.currentHessGroup.id).toBe('methane-combustion')
+      expect(result.current.hessCalculated.totalDeltaH).toBeCloseTo(-890.3, 1)
+      expect(result.current.hessCalculated.isMatchTarget).toBe(true)
+      expect(result.current.hessCalculated.eliminatedIntermediates).toContain('H₂O(g)')
+    })
+
+    it('新增预设：甲烷完全燃烧键能计算 ΔH = (4×413 + 2×498) - (2×799 + 4×463) = -802 kJ/mol', () => {
+      const { result } = renderHook(() =>
+        useHessLawChemistry({ ...defaultParams, mode: 'bond-energy', bondMoleculeIndex: 4 })
+      )
+
+      expect(result.current.currentBondPreset.id).toBe('ch4-combustion')
+      expect(result.current.bondCalculated.reactantEnergySum).toBe(2648)
+      expect(result.current.bondCalculated.productEnergySum).toBe(3450)
+      expect(result.current.bondCalculated.deltaH).toBe(-802)
+    })
   })
 })

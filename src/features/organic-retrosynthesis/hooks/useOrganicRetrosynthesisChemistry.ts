@@ -29,13 +29,33 @@ export function useOrganicRetrosynthesisChemistry() {
     return currentModel.steps[currentStepIndex] || currentModel.steps[0]
   }, [currentModel, currentStepIndex])
 
-  // 3. 模型切换与状态重置
+  // 3. 模型切换、视角协同与状态重置
   const selectModel = useCallback((id: RetrosynthesisModelId) => {
     setModelId(id)
+    setSynthesisMode('retrosynthetic')
     setCurrentStepIndex(0)
     setIsPlaying(false)
     setShowCrashContrast(false)
   }, [])
+
+  const changeSynthesisMode = useCallback(
+    (mode: SynthesisMode) => {
+      setSynthesisMode(mode)
+      setIsPlaying(false)
+      if (mode === 'retrosynthetic') {
+        setCurrentStepIndex(0)
+      } else if (mode === 'protection-breakdown') {
+        const protIdx = currentModel.steps.findIndex((s) => s.protectionStatus?.isProtected)
+        setCurrentStepIndex(protIdx >= 0 ? protIdx : Math.min(1, totalSteps - 1))
+      } else {
+        const firstForwardIdx = currentModel.steps.findIndex(
+          (s) => !(s.cutBond && s.nodes.some((n) => n.isTarget))
+        )
+        setCurrentStepIndex(firstForwardIdx >= 0 ? firstForwardIdx : 0)
+      }
+    },
+    [currentModel, totalSteps]
+  )
 
   // 4. 步骤控制
   const handleNextStep = useCallback(() => {
@@ -61,7 +81,7 @@ export function useOrganicRetrosynthesisChemistry() {
     modelId,
     selectModel,
     synthesisMode,
-    setSynthesisMode,
+    setSynthesisMode: changeSynthesisMode,
     currentModel,
     currentStepIndex,
     setCurrentStepIndex,

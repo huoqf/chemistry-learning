@@ -13,6 +13,7 @@ interface IndustrialFlowSvgFlowchartProps {
   onSelectStep: (step: number) => void
   chemistry: IndustrialFlowChemistry
   pH: number
+  flowPhase?: number
 }
 
 interface StepNodeConfig {
@@ -32,6 +33,7 @@ export const IndustrialFlowSvgFlowchart: React.FC<IndustrialFlowSvgFlowchartProp
   onSelectStep,
   chemistry,
   pH,
+  flowPhase = 0,
 }) => {
   const { isPhInSafeRange, isOxidized, leachRate } = chemistry
 
@@ -177,23 +179,23 @@ export const IndustrialFlowSvgFlowchart: React.FC<IndustrialFlowSvgFlowchartProp
         },
         {
           step: 2,
-          title: '调 pH 沉淀除杂',
-          subTitle: '水解脱铁铝',
-          reagentIn: 'Li₂CO₃ / 氨水',
-          wasteOut: '滤渣: Fe(OH)₃,Al(OH)₃',
-          filtrateOut: '含 Co²⁺,Ni²⁺,Li⁺,Ca²⁺,Mg²⁺',
-          statusTag: isPhInSafeRange ? 'Fe/Al 水解彻底' : '注意 pH 控制',
-          statusColor: isPhInSafeRange ? '#059669' : '#d97706',
+          title: 'H₂O₂ 还原调价',
+          subTitle: '钴价态调控',
+          reagentIn: 'H₂O₂ 还原剂',
+          wasteOut: '少量气体 O₂↑ 逸出',
+          filtrateOut: '全 Co²⁺,Ni²⁺,Li⁺,Fe³⁺,Al³⁺',
+          statusTag: 'H₂O₂ 作还原剂调价',
+          statusColor: '#059669',
         },
         {
           step: 3,
-          title: '加入 NaF 除钙镁',
-          subTitle: '深度沉淀转化',
-          reagentIn: 'NaF 溶液',
-          wasteOut: '氟化物渣: CaF₂,MgF₂',
+          title: '调 pH 与氟化除杂',
+          subTitle: '沉铁铝与除钙镁',
+          reagentIn: 'Li₂CO₃ / NaF 沉淀',
+          wasteOut: '渣: Fe(OH)₃,Al(OH)₃,CaF₂',
           filtrateOut: '除杂后锂电池主液',
-          statusTag: 'Ksp极小沉淀除杂',
-          statusColor: '#059669',
+          statusTag: isPhInSafeRange ? '杂质沉降彻底' : '注意 pH 控制',
+          statusColor: isPhInSafeRange ? '#059669' : '#d97706',
         },
         {
           step: 4,
@@ -215,29 +217,29 @@ export const IndustrialFlowSvgFlowchart: React.FC<IndustrialFlowSvgFlowchartProp
           subTitle: '矿粉浸出',
           reagentIn: '稀盐酸 / 硫酸',
           wasteOut: '滤渣: SiO₂ 泥沙',
-          filtrateOut: '含 Mg²⁺,Ca²⁺,Fe³⁺,Al³⁺',
+          filtrateOut: '含 Mg²⁺,Ca²⁺,Fe²⁺/Fe³⁺,Al³⁺',
           statusTag: `浸出率 ${leachRate}%`,
           statusColor: '#d97706',
         },
         {
           step: 2,
-          title: '调 pH 沉淀铁铝',
-          subTitle: '中和水解',
-          reagentIn: 'MgO 浆料',
-          wasteOut: '滤渣: Fe(OH)₃,Al(OH)₃',
-          filtrateOut: '含 Mg²⁺,Ca²⁺ 溶液',
-          statusTag: 'MgO 不增杂中和',
-          statusColor: '#059669',
+          title: '杂质价态调控',
+          subTitle: '氧化预处理',
+          reagentIn: 'H₂O₂ 氧化剂',
+          wasteOut: '无有害副渣',
+          filtrateOut: '全 Fe³⁺,Al³⁺ 混合滤液',
+          statusTag: isOxidized ? 'Fe²⁺ 氧化充分' : '未充分氧化',
+          statusColor: isOxidized ? '#059669' : '#e11d48',
         },
         {
           step: 3,
-          title: '沉淀分离 Ca²⁺',
-          subTitle: '草酸盐沉淀',
-          reagentIn: '(NH₄)₂C₂O₄ 溶液',
-          wasteOut: 'CaC₂O₄ 沉淀分离',
+          title: '调 pH 除铁铝与除钙',
+          subTitle: '中和除杂沉淀',
+          reagentIn: 'MgO + 草酸铵',
+          wasteOut: 'Fe(OH)₃,Al(OH)₃,CaC₂O₄',
           filtrateOut: '纯净 Mg²⁺ 滤液',
-          statusTag: 'Ksp 差异选择沉淀',
-          statusColor: '#059669',
+          statusTag: isPhInSafeRange ? 'MgO 不增杂除杂' : '注意 pH 控制',
+          statusColor: isPhInSafeRange ? '#059669' : '#d97706',
         },
         {
           step: 4,
@@ -539,7 +541,7 @@ export const IndustrialFlowSvgFlowchart: React.FC<IndustrialFlowSvgFlowchartProp
                   rx="8"
                   fill={isActive ? '#ffffff' : '#f8fafc'}
                   stroke={isActive ? '#4f46e5' : '#cbd5e1'}
-                  strokeWidth={isActive ? '2.5' : '1.2'}
+                  strokeWidth={isActive ? (2.2 + 0.8 * Math.sin(flowPhase * Math.PI * 2)).toFixed(2) : '1.2'}
                   filter={isActive ? 'url(#node-glow)' : undefined}
                 />
 
@@ -663,6 +665,17 @@ export const IndustrialFlowSvgFlowchart: React.FC<IndustrialFlowSvgFlowchartProp
                       y2={nodeY + nodeHeight / 2}
                       stroke="#64748b"
                       strokeWidth="2.2"
+                    />
+                    <line
+                      x1={x + nodeWidth + 3}
+                      y1={nodeY + nodeHeight / 2}
+                      x2={x + nodeWidth + gapX - 6}
+                      y2={nodeY + nodeHeight / 2}
+                      stroke="#4f46e5"
+                      strokeWidth="2.2"
+                      strokeDasharray="5 7"
+                      strokeDashoffset={-(flowPhase * 24)}
+                      opacity={0.75}
                     />
                     <polygon
                       points={`${x + nodeWidth + gapX - 8},${nodeY + nodeHeight / 2 - 4} ${x + nodeWidth + gapX - 1},${nodeY + nodeHeight / 2} ${x + nodeWidth + gapX - 8},${nodeY + nodeHeight / 2 + 4}`}

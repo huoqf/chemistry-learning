@@ -28,7 +28,7 @@ export const modelCrystal3dSplit: ModelQuizData = {
       type: 'fill-in',
       questionText: '某金属 M 的晶胞为体心立方 (BCC)，晶胞密度为 ρ g/cm³，摩尔质量为 M_m g/mol，晶胞边长为 a cm。则阿伏加德罗常数 N_A 的表达式为 (N_A = ___ / (ρ · a³))。请填入分子中的常数或字母：',
       placeholder: '如 2*M_m 或 2Mm',
-      correctAnswer: ['2M_m', '2M', '2*M_m', '2M_m'],
+      correctAnswer: ['2M_m', '2M', '2*M_m'],
       explanation: '体心立方晶胞中净原子数 N = 8×1/8 + 1 = 2。密度 ρ = 2M_m / (a³ N_A) ⟹ N_A = 2M_m / (ρ a³)。',
     },
     {

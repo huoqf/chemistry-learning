@@ -52,9 +52,10 @@ export const modelValenceMatrix: ModelQuizData = {
       id: 'step-p-acid',
       title: '【P 酸元数规范】次磷酸 (H₃PO₂) 与过量 NaOH 反应方程式书写',
       type: 'keywords',
-      questionText: '次磷酸 (H₃PO₂) 为一元中强酸。写出 H₃PO₂ 与过量 NaOH 溶液反应生成的正盐化学式及离子方程式踩分点。',
+      questionText: '次磷酸 (H₃PO₂) 为一元中强酸（弱电解质，部分电离）。写出 H₃PO₂ 与过量 NaOH 溶液反应生成的正盐化学式及离子方程式踩分点。',
       correctAnswer: ['NaH2PO2', 'H3PO2 + OH- = H2PO2- + H2O'],
-      explanation: '踩分点：H₃PO₂ 为一元弱酸，不能拆分成 3 个 H⁺，且与过量 NaOH 反应生成的正盐为 NaH₂PO₂（非酸式盐），离子方程式为 H₃PO₂ + OH⁻ = H₂PO₂⁻ + H₂O。',
+      requiredKeywordGroups: [['NaH2PO2', 'NaH₂PO₂'], ['H3PO2 + OH- = H2PO2- + H2O', 'H₂PO₂⁻']],
+      explanation: '踩分点：H₃PO₂ 为一元中强酸（弱电解质，部分电离），不能拆分成 3 个 H⁺，且与过量 NaOH 反应生成的正盐为 NaH₂PO₂（非酸式盐），离子方程式为 H₃PO₂ + OH⁻ = H₂PO₂⁻ + H₂O。',
     },
     {
       id: 'step-al-amphoteric',
@@ -62,6 +63,7 @@ export const modelValenceMatrix: ModelQuizData = {
       type: 'keywords',
       questionText: '向 AlCl₃ 溶液中逐滴加入 NaOH 溶液至过量，描述观察到的实验现象及最终主要铝元素存在离子。',
       correctAnswer: ['沉淀', '溶解', 'AlO2-', 'Al(OH)4-'],
+      requiredKeywordGroups: [['沉淀'], ['溶解'], ['AlO2-', 'Al(OH)4-', 'AlO₂⁻', '四羟基合铝酸根']],
       explanation: '踩分点：现象为“先产生白色胶状沉淀，后沉淀逐渐溶解形成无色溶液”；最终主要存在离子为 [Al(OH)₄]⁻（或 AlO₂⁻）。',
     },
     {
@@ -78,6 +80,7 @@ export const modelValenceMatrix: ModelQuizData = {
       type: 'keywords',
       questionText: '检验溶液中是否含有 SO₄²⁻ 的规范答题步骤：取待测液，先加入过量____，无明显现象，再加入____溶液，产生白色沉淀。',
       correctAnswer: ['盐酸', 'BaCl2', '氯化钡'],
+      requiredKeywordGroups: [['盐酸', 'HCl'], ['BaCl2', '氯化钡', 'BaCl₂']],
       explanation: '踩分点：先加稀盐酸酸化（排除 CO₃²⁻、SO₃²⁻、Ag⁺ 干扰），无明显现象/无气体/无沉淀，再加 BaCl₂ 溶液出现白色沉淀（BaSO₄）。',
     },
     {
@@ -106,6 +109,7 @@ export const modelValenceMatrix: ModelQuizData = {
       type: 'keywords',
       questionText: '无水 TiCl₄ 在潮湿空气中会剧烈产生浓厚白烟，写出产生该现象的化学原因规范踩分点。',
       correctAnswer: ['水解', '盐酸', '白雾', '酸雾'],
+      requiredKeywordGroups: [['水解'], ['盐酸', 'HCl', '氯化氢'], ['白雾', '酸雾', '白烟']],
       explanation: '踩分点：TiCl₄ 极易与空气中的水蒸气发生“水解”，生成难溶的 TiO₂·xH₂O（或 H₂TiO₃）和挥发性酸 HCl，HCl 吸收水蒸气形成“盐酸酸雾/白雾”。',
     },
     {
@@ -140,6 +144,11 @@ export const modelValenceMatrix: ModelQuizData = {
       type: 'keywords',
       questionText: '用酸性 KMnO₄ 标准溶液滴定未知浓度的 Fe²⁺ 溶液时，如何判断滴定已到达终点？写出规范答题要点。',
       correctAnswer: ['浅粉红', '浅紫', '半分钟', '不褪色'],
+      requiredKeywordGroups: [
+        ['浅粉红', '浅紫', '粉红', '紫红'],
+        ['半分钟', '30s', '30秒'],
+        ['不褪色', '不复色', '不消失'],
+      ],
       explanation: '踩分点：当滴入最后半滴 KMnO₄ 标准液，溶液“由无色变为浅粉红色（或浅紫色）”，且“半分钟内不复色/不褪色”，即达到滴定终点。',
     },
   ],

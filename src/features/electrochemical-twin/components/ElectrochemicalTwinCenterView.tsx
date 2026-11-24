@@ -46,12 +46,15 @@ export const ElectrochemicalTwinCenterView: React.FC<Props> = ({
     anchor: 'center',
   })
 
-  // 60 FPS 连续动画相位
+  // 60 FPS 连续动画相位（基于真实 dt，非探究视图时自动暂停）
   const [animProgress, setAnimProgress] = useState(0)
 
-  useSimulationFrame(() => {
-    setAnimProgress(prev => (prev + 0.012) % 1)
-  })
+  useSimulationFrame(
+    (dt) => {
+      setAnimProgress(prev => (prev + dt * 0.0006) % 1)
+    },
+    { active: viewMode === 0 }
+  )
 
   const tick = animProgress
 
@@ -258,6 +261,22 @@ export const ElectrochemicalTwinCenterView: React.FC<Props> = ({
                   电解池 (电能 → 化学能)
                 </text>
 
+                {/* 外电路电子流向：左阳极失电子经电源正极流入、负极流向右阴极 */}
+                {params.showElectrons === 1 && (
+                  <g transform="translate(0, -105)">
+                    <VectorArrow
+                      originDesign={{ x: 57, y: 0 }}
+                      vector={{ x: 48, y: 0 }}
+                      type="electron"
+                      sceneScale={sceneScale}
+                      label="e⁻"
+                      color={CHEMISTRY_COLORS.electron}
+                    />
+                    <circle cx={57 + tick * 60} cy={0} r="4" fill="#EF4444" />
+                    <circle cx={195 + tick * 58} cy={0} r="4" fill="#EF4444" />
+                  </g>
+                )}
+
                 {/* 电解池溶液离子流动：Cu²⁺往阴极，SO₄²⁻往阳极 */}
                 {params.showIons === 1 && (
                   <g>
@@ -281,10 +300,8 @@ export const ElectrochemicalTwinCenterView: React.FC<Props> = ({
           {/* ========================================================= */}
           {params.mode === 1 && (
             <>
-              {/* ------------------------------------------------------- */}
               {/* 左池：放电工作态 (原电池，x: 60, y: 195) */}
-              {/* ------------------------------------------------------- */}
-              <g transform="translate(60, 195)">
+              <g transform="translate(60, 195)" opacity={params.batteryState === 0 ? 1 : 0.45}>
                 <rect
                   x="0"
                   y="0"
@@ -292,8 +309,8 @@ export const ElectrochemicalTwinCenterView: React.FC<Props> = ({
                   height="320"
                   rx="10"
                   fill={withAlpha(SCENE_COLORS.container.beaker, 0.12)}
-                  stroke={SCENE_COLORS.container.beakerBorder}
-                  strokeWidth="2.5"
+                  stroke={params.batteryState === 0 ? '#10B981' : SCENE_COLORS.container.beakerBorder}
+                  strokeWidth={params.batteryState === 0 ? '3' : '2.5'}
                 />
                 <rect x="-4" y="-3" width="318" height="6" rx="3" fill="#94A3B8" opacity={0.6} />
 
@@ -331,7 +348,17 @@ export const ElectrochemicalTwinCenterView: React.FC<Props> = ({
                 </text>
 
                 {/* 质子交换膜 (PEM) */}
-                <rect x="149" y="30" width="12" height="286" rx="2" fill="#F59E0B" stroke="#D97706" strokeWidth="1.5" />
+                <rect
+                  x="149"
+                  y="30"
+                  width="12"
+                  height="286"
+                  rx="2"
+                  fill="#F59E0B"
+                  stroke={params.showMembraneFlow === 1 ? '#B45309' : '#D97706'}
+                  strokeWidth={params.showMembraneFlow === 1 ? '2.5' : '1.5'}
+                  strokeDasharray={params.showMembraneFlow === 1 ? '4 2' : 'none'}
+                />
                 <text x="155" y="18" textAnchor="middle" fill="#B45309" fontSize={f(11)} fontWeight="bold">
                   质子膜
                 </text>
@@ -343,24 +370,33 @@ export const ElectrochemicalTwinCenterView: React.FC<Props> = ({
                   A
                 </text>
 
-                <rect x="55" y="-142" width="200" height="24" rx="4" fill="#ECFDF5" stroke="#A7F3D0" strokeWidth="1" />
+                <rect x="45" y="-142" width="220" height="24" rx="4" fill="#ECFDF5" stroke="#A7F3D0" strokeWidth="1" />
                 <text x="155" y="-126" textAnchor="middle" fill="#047857" fontSize={f(12)} fontWeight="bold">
-                  放电态 (原电池：阳离子H⁺往正极)
+                  {params.batteryState === 0 ? '[激活] 放电态 (H⁺往正极)' : '放电态 (原电池：H⁺往正极)'}
                 </text>
 
+                {/* 放电外电路电子流向：负极(左) → 正极(右) */}
+                {params.showElectrons === 1 && (
+                  <g transform="translate(0, -105)">
+                    <VectorArrow originDesign={{ x: 57, y: 0 }} vector={{ x: 50, y: 0 }} type="electron" sceneScale={sceneScale} label="e⁻" color={CHEMISTRY_COLORS.electron} />
+                    <circle cx={65 + tick * 65} cy={0} r="4" fill="#EF4444" />
+                    <circle cx={180 + tick * 65} cy={0} r="4" fill="#EF4444" />
+                  </g>
+                )}
+
                 {/* 质子定向穿膜 (放电：负极向正极，H⁺ 向右) */}
-                <g>
-                  <circle cx={125 + tick * 60} cy={180} r="5" fill="#2563EB" />
-                  <text x={125 + tick * 60} y={170} textAnchor="middle" fill="#2563EB" fontSize={f(10)} fontWeight="bold">
-                    H⁺→
-                  </text>
-                </g>
+                {params.showIons === 1 && (
+                  <g>
+                    <circle cx={125 + tick * 60} cy={180} r="5" fill="#2563EB" />
+                    <text x={125 + tick * 60} y={170} textAnchor="middle" fill="#2563EB" fontSize={f(10)} fontWeight="bold">
+                      H⁺→
+                    </text>
+                  </g>
+                )}
               </g>
 
-              {/* ------------------------------------------------------- */}
               {/* 右池：充电工作态 (电解池，x: 470, y: 195) */}
-              {/* ------------------------------------------------------- */}
-              <g transform="translate(470, 195)">
+              <g transform="translate(470, 195)" opacity={params.batteryState === 1 ? 1 : 0.45}>
                 <rect
                   x="0"
                   y="0"
@@ -368,8 +404,8 @@ export const ElectrochemicalTwinCenterView: React.FC<Props> = ({
                   height="320"
                   rx="10"
                   fill={withAlpha(SCENE_COLORS.container.beaker, 0.12)}
-                  stroke={SCENE_COLORS.container.beakerBorder}
-                  strokeWidth="2.5"
+                  stroke={params.batteryState === 1 ? '#DB2777' : SCENE_COLORS.container.beakerBorder}
+                  strokeWidth={params.batteryState === 1 ? '3' : '2.5'}
                 />
                 <rect x="-4" y="-3" width="318" height="6" rx="3" fill="#94A3B8" opacity={0.6} />
 
@@ -407,7 +443,17 @@ export const ElectrochemicalTwinCenterView: React.FC<Props> = ({
                 </text>
 
                 {/* 质子交换膜 */}
-                <rect x="149" y="30" width="12" height="286" rx="2" fill="#F59E0B" stroke="#D97706" strokeWidth="1.5" />
+                <rect
+                  x="149"
+                  y="30"
+                  width="12"
+                  height="286"
+                  rx="2"
+                  fill="#F59E0B"
+                  stroke={params.showMembraneFlow === 1 ? '#B45309' : '#D97706'}
+                  strokeWidth={params.showMembraneFlow === 1 ? '2.5' : '1.5'}
+                  strokeDasharray={params.showMembraneFlow === 1 ? '4 2' : 'none'}
+                />
                 <text x="155" y="18" textAnchor="middle" fill="#B45309" fontSize={f(11)} fontWeight="bold">
                   质子膜
                 </text>
@@ -421,207 +467,190 @@ export const ElectrochemicalTwinCenterView: React.FC<Props> = ({
                   - DC +
                 </text>
 
-                <rect x="55" y="-142" width="200" height="24" rx="4" fill="#FDF2F8" stroke="#FBCFE8" strokeWidth="1" />
+                <rect x="45" y="-142" width="220" height="24" rx="4" fill="#FDF2F8" stroke="#FBCFE8" strokeWidth="1" />
                 <text x="155" y="-126" textAnchor="middle" fill="#BE185D" fontSize={f(12)} fontWeight="bold">
-                  充电态 (电解池：阳离子H⁺往阴极)
+                  {params.batteryState === 1 ? '[激活] 充电态 (H⁺往阴极)' : '充电态 (电解池：H⁺往阴极)'}
                 </text>
 
+                {/* 充电外电路电子流向：右阳极失电子向左入 DC+，DC- 向左入阴极 */}
+                {params.showElectrons === 1 && (
+                  <g transform="translate(0, -105)">
+                    <VectorArrow originDesign={{ x: 253, y: 0 }} vector={{ x: -50, y: 0 }} type="electron" sceneScale={sceneScale} label="e⁻" color={CHEMISTRY_COLORS.electron} />
+                    <circle cx={250 - tick * 60} cy={0} r="4" fill="#EF4444" />
+                    <circle cx={125 - tick * 65} cy={0} r="4" fill="#EF4444" />
+                  </g>
+                )}
+
                 {/* 质子定向穿膜 (充电：阳极向阴极，H⁺ 向左) */}
-                <g>
-                  <circle cx={185 - tick * 60} cy={180} r="5" fill="#2563EB" />
-                  <text x={185 - tick * 60} y={170} textAnchor="middle" fill="#2563EB" fontSize={f(10)} fontWeight="bold">
-                    ←H⁺
-                  </text>
-                </g>
+                {params.showIons === 1 && (
+                  <g>
+                    <circle cx={185 - tick * 60} cy={180} r="5" fill="#2563EB" />
+                    <text x={185 - tick * 60} y={170} textAnchor="middle" fill="#2563EB" fontSize={f(10)} fontWeight="bold">
+                      ←H⁺
+                    </text>
+                  </g>
+                )}
               </g>
             </>
           )}
 
-          {/* ========================================================= */}
-          {/* 模式 2：工业离子交换膜多室电解槽居中全景 (x: 170, y: 195) */}
-          {/* ========================================================= */}
+          {/* 模式 2：工业离子交换膜电解槽 (membraneType===3 时为四室双极膜电渗析制高纯酸碱，否则为氯碱两室) */}
           {params.mode === 2 && (
             <g transform="translate(170, 195)">
-              {/* 大槽外框 */}
-              <rect
-                x="0"
-                y="0"
-                width="500"
-                height="320"
-                rx="12"
-                fill={withAlpha(SCENE_COLORS.container.beaker, 0.12)}
-                stroke={SCENE_COLORS.container.beakerBorder}
-                strokeWidth="2.5"
-              />
+              <rect x="0" y="0" width="500" height="320" rx="12" fill={withAlpha(SCENE_COLORS.container.beaker, 0.12)} stroke={SCENE_COLORS.container.beakerBorder} strokeWidth="2.5" />
               <rect x="-4" y="-3" width="508" height="6" rx="3" fill="#94A3B8" opacity={0.6} />
 
-              {/* 阳极室溶液 (NaCl) 与 阴极室溶液 (NaOH) */}
-              <rect x="4" y="60" width="242" height="256" rx="6" fill={withAlpha('#3B82F6', 0.18)} />
-              <rect x="254" y="60" width="242" height="256" rx="6" fill={withAlpha('#10B981', 0.18)} />
+              {params.membraneType === 3 ? (
+                <>
+                  {/* 四室标准溶液区：阳极室(放O₂) | BPM | 酸室(HCl) | AEM | NaCl原料室 | CEM | 阴极碱室(NaOH) */}
+                  <rect x="4" y="60" width="112" height="256" rx="6" fill={withAlpha('#8B5CF6', 0.14)} />
+                  <rect x="128" y="60" width="116" height="256" rx="4" fill={withAlpha('#F59E0B', 0.15)} />
+                  <rect x="256" y="60" width="116" height="256" rx="4" fill={withAlpha('#3B82F6', 0.13)} />
+                  <rect x="384" y="60" width="112" height="256" rx="6" fill={withAlpha('#10B981', 0.18)} />
+                  <text x="60" y="283" textAnchor="middle" fill="#6D28D9" fontSize={f(10.5)} fontWeight="bold">
+                    阳极室
+                    <tspan x="60" dy={f(14)}>(消耗 OH⁻ 放 O₂)</tspan>
+                  </text>
+                  <text x="186" y="283" textAnchor="middle" fill="#B45309" fontSize={f(10.5)} fontWeight="bold">
+                    酸室
+                    <tspan x="186" dy={f(14)}>(生成高纯 HCl)</tspan>
+                  </text>
+                  <text x="314" y="283" textAnchor="middle" fill="#1D4ED8" fontSize={f(10.5)} fontWeight="bold">
+                    原料室
+                    <tspan x="314" dy={f(14)}>(NaCl 脱盐)</tspan>
+                  </text>
+                  <text x="440" y="283" textAnchor="middle" fill="#047857" fontSize={f(10.5)} fontWeight="bold">
+                    阴极碱室
+                    <tspan x="440" dy={f(14)}>(生成高纯 NaOH)</tspan>
+                  </text>
+                  {/* 三道选择性离子膜：BPM + AEM + CEM */}
+                  <rect x="116" y="20" width="12" height="296" rx="2" fill="#A855F7" stroke={params.showMembraneFlow === 1 ? '#6D28D9' : '#7E22CE'} strokeDasharray="4 2" strokeWidth={params.showMembraneFlow === 1 ? '2.5' : '1.5'} />
+                  <text x="122" y="12" textAnchor="middle" fill="#7E22CE" fontSize={f(10)} fontWeight="bold">双极膜 BPM</text>
+                  <rect x="244" y="20" width="12" height="296" rx="2" fill="#0EA5E9" stroke={params.showMembraneFlow === 1 ? '#0369A1' : '#0284C7'} strokeDasharray="4 2" strokeWidth={params.showMembraneFlow === 1 ? '2.5' : '1.5'} />
+                  <text x="250" y="12" textAnchor="middle" fill="#0369A1" fontSize={f(10)} fontWeight="bold">阴膜 AEM</text>
+                  <rect x="372" y="20" width="12" height="296" rx="2" fill="#10B981" stroke={params.showMembraneFlow === 1 ? '#047857' : '#059669'} strokeDasharray="4 2" strokeWidth={params.showMembraneFlow === 1 ? '2.5' : '1.5'} />
+                  <text x="378" y="12" textAnchor="middle" fill="#047857" fontSize={f(10)} fontWeight="bold">阳膜 CEM</text>
+                </>
+              ) : (
+                <>
+                  {/* 氯碱两室溶液与隔膜 */}
+                  <rect x="4" y="60" width="242" height="256" rx="6" fill={withAlpha('#3B82F6', 0.18)} />
+                  <rect x="254" y="60" width="242" height="256" rx="6" fill={withAlpha('#10B981', 0.18)} />
+                  <text x="125" y="295" textAnchor="middle" fill="#1E40AF" fontSize={f(13)} fontWeight="bold">阳极室 (饱和 NaCl 盐水)</text>
+                  <text x="375" y="295" textAnchor="middle" fill="#047857" fontSize={f(13)} fontWeight="bold">阴极室 (浓缩烧碱 NaOH 溶液)</text>
+                  <rect x="242" y="20" width="16" height="296" rx="2" fill="#F59E0B" stroke={params.showMembraneFlow === 1 ? '#B45309' : '#D97706'} strokeDasharray={params.membraneType > 0 ? '5 3' : 'none'} strokeWidth={params.showMembraneFlow === 1 ? '2.5' : '1.5'} />
+                  <text x="250" y="12" textAnchor="middle" fill="#B45309" fontSize={f(11)} fontWeight="bold">
+                    {params.membraneType === 0 ? '多孔隔膜' : params.membraneType === 1 ? '阳离子交换膜 (只透Na⁺)' : '阴离子交换膜 (反例: OH⁻/Cl⁻ 串流)'}
+                  </text>
+                </>
+              )}
 
-              <text x="125" y="295" textAnchor="middle" fill="#1E40AF" fontSize={f(13)} fontWeight="bold">
-                阳极室 (饱和 NaCl 盐水)
-              </text>
-              <text x="375" y="295" textAnchor="middle" fill="#047857" fontSize={f(13)} fontWeight="bold">
-                阴极室 (浓缩烧碱 NaOH 溶液)
-              </text>
-
-              {/* 阳极 (C, 接直流电源正极) */}
-              <rect x="55" y="-50" width="30" height="250" rx="4" fill="#334155" stroke="#0F172A" strokeWidth="2" />
-              <rect x="51" y="-55" width="38" height="10" rx="2" fill="#DC2626" />
-              <text x="70" y="-66" textAnchor="middle" fill="#1E293B" fontSize={f(13)} fontWeight="bold">
-                阳极 (C)
-              </text>
-              <text x="70" y="100" textAnchor="middle" fill="#FFFFFF" fontSize={f(11)}>
-                2Cl⁻ - 2e⁻ → Cl₂↑
+              {/* 阳极与阴极 */}
+              <rect x="45" y="-50" width="30" height="250" rx="4" fill="#334155" stroke="#0F172A" strokeWidth="2" />
+              <rect x="41" y="-55" width="38" height="10" rx="2" fill="#DC2626" />
+              <text x="60" y="-66" textAnchor="middle" fill="#1E293B" fontSize={f(13)} fontWeight="bold">{params.membraneType === 3 ? '阳极 (惰性)' : '阳极 (C)'}</text>
+              <text x="60" y="100" textAnchor="middle" fill="#FFFFFF" fontSize={f(10.5)}>
+                {params.membraneType === 3 ? '4OH⁻-4e⁻→O₂↑' : '2Cl⁻-2e⁻→Cl₂↑'}
               </text>
 
-              {/* 阴极 (Fe/C, 接直流电源负极) */}
-              <rect x="415" y="-50" width="30" height="250" rx="4" fill="#64748B" stroke="#334155" strokeWidth="2" />
-              <rect x="411" y="-55" width="38" height="10" rx="2" fill="#2563EB" />
-              <text x="430" y="-66" textAnchor="middle" fill="#1E293B" fontSize={f(13)} fontWeight="bold">
-                阴极 (Fe/C)
-              </text>
-              <text x="430" y="100" textAnchor="middle" fill="#FFFFFF" fontSize={f(11)}>
+              <rect x="425" y="-50" width="30" height="250" rx="4" fill="#64748B" stroke="#334155" strokeWidth="2" />
+              <rect x="421" y="-55" width="38" height="10" rx="2" fill="#2563EB" />
+              <text x="440" y="-66" textAnchor="middle" fill="#1E293B" fontSize={f(13)} fontWeight="bold">阴极 (Fe/C)</text>
+              <text x="440" y="100" textAnchor="middle" fill="#FFFFFF" fontSize={f(10)}>
                 2H₂O + 2e⁻ → H₂↑ + 2OH⁻
               </text>
 
-              {/* 中央隔膜 */}
-              <rect
-                x="242"
-                y="20"
-                width="16"
-                height="296"
-                rx="2"
-                fill={params.membraneType === 3 ? '#A855F7' : '#F59E0B'}
-                stroke="#D97706"
-                strokeDasharray={params.membraneType > 0 ? '5 3' : 'none'}
-                strokeWidth="2"
-              />
-              <text x="250" y="12" textAnchor="middle" fill="#B45309" fontSize={f(11)} fontWeight="bold">
-                {params.membraneType === 0
-                  ? '多孔隔膜'
-                  : params.membraneType === 1
-                  ? '阳离子交换膜 (只透Na⁺)'
-                  : params.membraneType === 2
-                  ? '阴离子交换膜 (反例: OH⁻/Cl⁻ 串流)'
-                  : '双极膜 (BPM 水解离)'}
-              </text>
-
-              {/* 外接 DC 电源 */}
-              <path d="M 70 -55 L 70 -105 L 430 -105 L 430 -55" fill="none" stroke="#DC2626" strokeWidth="3" />
+              {/* 外接 DC 电源与电子流向 */}
+              <path d="M 60 -55 L 60 -105 L 440 -105 L 440 -55" fill="none" stroke="#DC2626" strokeWidth="3" />
               <rect x="210" y="-123" width="80" height="36" rx="5" fill="#1E293B" stroke="#0F172A" strokeWidth="2" />
               <circle cx="225" cy="-105" r="5" fill="#EF4444" />
               <circle cx="275" cy="-105" r="5" fill="#3B82F6" />
-              <text x="250" y="-100" textAnchor="middle" fill="#F8FAFC" fontSize={f(11)} fontWeight="bold">
-                + DC -
-              </text>
-
-              <rect x="150" y="-142" width="200" height="24" rx="4" fill="#F5F3FF" stroke="#DDD6FE" strokeWidth="1" />
+              <text x="250" y="-100" textAnchor="middle" fill="#F8FAFC" fontSize={f(11)} fontWeight="bold">+ DC -</text>
+              <rect x="130" y="-142" width="240" height="24" rx="4" fill="#F5F3FF" stroke="#DDD6FE" strokeWidth="1" />
               <text x="250" y="-126" textAnchor="middle" fill="#6D28D9" fontSize={f(12)} fontWeight="bold">
-                离子膜电解池 (氯碱工业模型)
+                {params.membraneType === 3 ? '四室双极膜电渗析制高纯酸碱' : '离子膜电解池 (氯碱工业模型)'}
               </text>
+              {params.showElectrons === 1 && (
+                <g transform="translate(0, -105)">
+                  <VectorArrow originDesign={{ x: 60, y: 0 }} vector={{ x: 60, y: 0 }} type="electron" sceneScale={sceneScale} label="e⁻" color={CHEMISTRY_COLORS.electron} />
+                  <circle cx={65 + tick * 135} cy={0} r="4" fill="#EF4444" />
+                  <circle cx={295 + tick * 140} cy={0} r="4" fill="#EF4444" />
+                </g>
+              )}
 
-              {/* 阳极 Cl₂ 黄绿色气泡 */}
-              <g transform="translate(70, 150)">
-                <circle cx="-6" cy={-((tick * 70) % 70)} r="3.5" fill="#10B981" opacity={0.85} />
-                <circle cx="6" cy={-(((tick + 0.5) * 70) % 70)} r="4.5" fill="#10B981" opacity={0.9} />
-                <text x="-32" y="-50" fill="#047857" fontSize={f(11)} fontWeight="bold">
-                  Cl₂ 气体↑
+              {/* 两极气泡 */}
+              <g transform="translate(60, 150)">
+                <circle cx="-6" cy={-((tick * 70) % 70)} r="3.5" fill={params.membraneType === 3 ? '#34D399' : '#10B981'} opacity={0.85} />
+                <circle cx="6" cy={-(((tick + 0.5) * 70) % 70)} r="4.5" fill={params.membraneType === 3 ? '#34D399' : '#10B981'} opacity={0.9} />
+                <text x="-30" y="-50" fill="#047857" fontSize={f(11)} fontWeight="bold">
+                  {params.membraneType === 3 ? 'O₂ 气体↑' : 'Cl₂ 气体↑'}
                 </text>
               </g>
-
-              {/* 阴极 H₂ 气泡 */}
-              <g transform="translate(430, 150)">
+              <g transform="translate(440, 150)">
                 <circle cx="-6" cy={-((tick * 70) % 70)} r="3" fill="#60A5FA" opacity={0.8} />
                 <circle cx="6" cy={-(((tick + 0.5) * 70) % 70)} r="4" fill="#60A5FA" opacity={0.9} />
-                <text x="-15" y="-50" fill="#2563EB" fontSize={f(11)} fontWeight="bold">
-                  H₂ 气体↑
-                </text>
+                <text x="-15" y="-50" fill="#2563EB" fontSize={f(11)} fontWeight="bold">H₂ 气体↑</text>
               </g>
 
-              {/* 膜定向穿透微粒 */}
-              {params.membraneType === 1 && (
+              {/* 离子穿膜穿透动效 (受 showIons 控制) */}
+              {params.showIons === 1 && params.membraneType === 1 && (
                 <g>
                   <circle cx={205 + tick * 90} cy={180} r="5" fill="#3B82F6" />
-                  <text x={205 + tick * 90} y={170} textAnchor="middle" fill="#2563EB" fontSize={f(11)} fontWeight="bold">
-                    Na⁺→
-                  </text>
+                  <text x={205 + tick * 90} y={170} textAnchor="middle" fill="#2563EB" fontSize={f(11)} fontWeight="bold">Na⁺→</text>
                 </g>
               )}
-              {params.membraneType === 2 && (
+              {params.showIons === 1 && params.membraneType === 2 && (
                 <g>
                   <circle cx={295 - tick * 90} cy={180} r="5" fill="#EF4444" />
-                  <text x={295 - tick * 90} y={170} textAnchor="middle" fill="#DC2626" fontSize={f(10)} fontWeight="bold">
-                    ←OH⁻/Cl⁻ (副反应)
-                  </text>
+                  <text x={295 - tick * 90} y={170} textAnchor="middle" fill="#DC2626" fontSize={f(10)} fontWeight="bold">←OH⁻/Cl⁻ (副反应)</text>
                 </g>
               )}
-              {params.membraneType === 3 && (
+              {params.showIons === 1 && params.membraneType === 3 && (
                 <g>
-                  <circle cx={250 + tick * 60} cy={170} r="5" fill="#2563EB" />
-                  <text x={250 + tick * 60} y={158} textAnchor="middle" fill="#2563EB" fontSize={f(10)} fontWeight="bold">
-                    H⁺→ (往阴极)
-                  </text>
-                  <circle cx={250 - tick * 60} cy={215} r="5" fill="#EF4444" />
-                  <text x={250 - tick * 60} y={203} textAnchor="middle" fill="#DC2626" fontSize={f(10)} fontWeight="bold">
-                    ←OH⁻ (往阳极)
-                  </text>
+                  <circle cx={120 - tick * 28} cy={165} r="5" fill="#EF4444" />
+                  <text x={120 - tick * 28} y={153} textAnchor="middle" fill="#DC2626" fontSize={f(10)} fontWeight="bold">←OH⁻</text>
+                  <circle cx={125 + tick * 50} cy={205} r="5" fill="#2563EB" />
+                  <text x={125 + tick * 50} y={193} textAnchor="middle" fill="#2563EB" fontSize={f(10)} fontWeight="bold">H⁺→</text>
+                  <circle cx={278 - tick * 58} cy={205} r="5" fill="#0284C7" />
+                  <text x={278 - tick * 58} y={193} textAnchor="middle" fill="#0369A1" fontSize={f(10)} fontWeight="bold">←Cl⁻(穿AEM)</text>
+                  <circle cx={344 + tick * 58} cy={165} r="5" fill="#059669" />
+                  <text x={344 + tick * 58} y={153} textAnchor="middle" fill="#047857" fontSize={f(10)} fontWeight="bold">Na⁺→(穿CEM)</text>
                 </g>
               )}
             </g>
           )}
 
-          {/* ========================================================= */}
-          {/* 模式 3：法拉第电解定律与定量守恒电解槽居中全景 (x: 170, y: 195) */}
-          {/* ========================================================= */}
+          {/* 模式 3：法拉第电解定律与定量守恒电解槽居中全景 */}
           {params.mode === 3 && (
             <g transform="translate(170, 195)">
-              <rect
-                x="0"
-                y="0"
-                width="500"
-                height="320"
-                rx="12"
-                fill={withAlpha(SCENE_COLORS.container.beaker, 0.12)}
-                stroke={SCENE_COLORS.container.beakerBorder}
-                strokeWidth="2.5"
-              />
+              <rect x="0" y="0" width="500" height="320" rx="12" fill={withAlpha(SCENE_COLORS.container.beaker, 0.12)} stroke={SCENE_COLORS.container.beakerBorder} strokeWidth="2.5" />
               <rect x="-4" y="-3" width="508" height="6" rx="3" fill="#94A3B8" opacity={0.6} />
-
               <rect x="4" y="60" width="492" height="256" rx="6" fill={withAlpha('#3B82F6', 0.18)} />
               <text x="250" y="295" textAnchor="middle" fill="#1E40AF" fontSize={f(13)} fontWeight="bold">
                 CuSO₄ 溶液 (c₀ = {params.electrolyteConc} mol/L)
               </text>
-
-              {/* 阳极 (Pt 惰性极板) */}
               <rect x="65" y="-50" width="30" height="250" rx="4" fill="#334155" stroke="#0F172A" strokeWidth="2" />
               <rect x="61" y="-55" width="38" height="10" rx="2" fill="#DC2626" />
-              <text x="80" y="-66" textAnchor="middle" fill="#1E293B" fontSize={f(13)} fontWeight="bold">
-                阳极 (Pt)
-              </text>
-              <text x="80" y="94" textAnchor="middle" fill="#FFFFFF" fontSize={f(9.5)}>
-                2H₂O - 4e⁻
-                <tspan x="80" dy={f(13)}>→ O₂↑ + 4H⁺</tspan>
-              </text>
-
-              {/* 阴极 (Cu 极板，析出增重) */}
+              <text x="80" y="-66" textAnchor="middle" fill="#1E293B" fontSize={f(13)} fontWeight="bold">阳极 (Pt)</text>
+              <text x="80" y="94" textAnchor="middle" fill="#FFFFFF" fontSize={f(9.5)}>2H₂O - 4e⁻<tspan x="80" dy={f(13)}>→ O₂↑ + 4H⁺</tspan></text>
               <rect x="405" y="-50" width="30" height="250" rx="4" fill="#B45309" stroke="#78350F" strokeWidth="2" />
               <rect x="401" y="-55" width="38" height="10" rx="2" fill="#2563EB" />
-              <text x="420" y="-66" textAnchor="middle" fill="#1E293B" fontSize={f(13)} fontWeight="bold">
-                阴极 (Cu)
-              </text>
-              <text x="420" y="100" textAnchor="middle" fill="#FFFFFF" fontSize={f(11)}>
-                Cu²⁺ + 2e⁻ → Cu
-              </text>
-
-              {/* Cu 附着增厚层 */}
+              <text x="420" y="-66" textAnchor="middle" fill="#1E293B" fontSize={f(13)} fontWeight="bold">阴极 (Cu)</text>
+              <text x="420" y="100" textAnchor="middle" fill="#FFFFFF" fontSize={f(11)}>Cu²⁺ + 2e⁻ → Cu</text>
               <rect x="398" y="70" width="7" height="140" rx="2" fill="#D97706" opacity={0.9} />
               <text x="420" y="240" textAnchor="middle" fill="#B45309" fontSize={f(12)} fontWeight="bold">
                 Δm(Cu) = +{quantResult.massChangeRight} g
               </text>
-
-              {/* 阳极气泡与定量产物标注 */}
+              {/* Cu²⁺ 耗尽后阴极续析出 H₂ 气泡与体积 */}
+              {quantResult.gasVolumeRight > 0 && (
+                <g transform="translate(420, 150)">
+                  <circle cx="-6" cy={-((tick * 70) % 70)} r="3.5" fill="#60A5FA" opacity={0.85} />
+                  <circle cx="6" cy={-(((tick + 0.5) * 70) % 70)} r="4" fill="#60A5FA" opacity={0.9} />
+                  <text x="-20" y="-50" fill="#2563EB" fontSize={f(11)} fontWeight="bold">
+                    H₂↑ V={quantResult.gasVolumeRight} L
+                  </text>
+                </g>
+              )}
               <g transform="translate(80, 150)">
                 <circle cx="-6" cy={-((tick * 70) % 70)} r="3.5" fill="#34D399" opacity={0.8} />
                 <circle cx="6" cy={-(((tick + 0.5) * 70) % 70)} r="4.5" fill="#34D399" opacity={0.9} />
@@ -629,34 +658,28 @@ export const ElectrochemicalTwinCenterView: React.FC<Props> = ({
                   V(O₂) = {quantResult.gasVolumeLeft} L
                 </text>
               </g>
-
-              {/* 外接 DC 电源 */}
               <path d="M 80 -55 L 80 -105 L 420 -105 L 420 -55" fill="none" stroke="#DC2626" strokeWidth="3" />
               <rect x="210" y="-123" width="80" height="36" rx="5" fill="#1E293B" stroke="#0F172A" strokeWidth="2" />
               <circle cx="225" cy="-105" r="5" fill="#EF4444" />
               <circle cx="275" cy="-105" r="5" fill="#3B82F6" />
-              <text x="250" y="-100" textAnchor="middle" fill="#F8FAFC" fontSize={f(11)} fontWeight="bold">
-                + DC -
-              </text>
-
-              {/* 居中定量参数徽章 */}
+              <text x="250" y="-100" textAnchor="middle" fill="#F8FAFC" fontSize={f(11)} fontWeight="bold">+ DC -</text>
               <rect x="140" y="-142" width="220" height="24" rx="4" fill="#EFF6FF" stroke="#BFDBFE" strokeWidth="1" />
               <text x="250" y="-126" textAnchor="middle" fill="#1D4ED8" fontSize={f(12)} fontWeight="bold">
                 I = {params.currentAmp} A | t = {params.timeSec} s | n(e⁻) = {quantResult.molesElectron} mol
               </text>
-
-              {/* 溶液离子流动 */}
+              {params.showElectrons === 1 && (
+                <g transform="translate(0, -105)">
+                  <VectorArrow originDesign={{ x: 80, y: 0 }} vector={{ x: 55, y: 0 }} type="electron" sceneScale={sceneScale} label="e⁻" color={CHEMISTRY_COLORS.electron} />
+                  <circle cx={85 + tick * 120} cy={0} r="4" fill="#EF4444" />
+                  <circle cx={295 + tick * 120} cy={0} r="4" fill="#EF4444" />
+                </g>
+              )}
               {params.showIons === 1 && (
                 <g>
                   <circle cx={140 + tick * 180} cy={180} r="5" fill="#3B82F6" />
-                  <text x={140 + tick * 180} y={170} textAnchor="middle" fill="#2563EB" fontSize={f(11)} fontWeight="bold">
-                    Cu²⁺→
-                  </text>
-
+                  <text x={140 + tick * 180} y={170} textAnchor="middle" fill="#2563EB" fontSize={f(11)} fontWeight="bold">Cu²⁺→</text>
                   <circle cx={340 - tick * 180} cy={220} r="5" fill="#EF4444" />
-                  <text x={340 - tick * 180} y={210} textAnchor="middle" fill="#DC2626" fontSize={f(11)} fontWeight="bold">
-                    ←SO₄²⁻
-                  </text>
+                  <text x={340 - tick * 180} y={210} textAnchor="middle" fill="#DC2626" fontSize={f(11)} fontWeight="bold">←SO₄²⁻</text>
                 </g>
               )}
             </g>

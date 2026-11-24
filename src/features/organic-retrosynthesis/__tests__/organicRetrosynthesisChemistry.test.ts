@@ -1,4 +1,7 @@
 import { describe, it, expect } from 'vitest'
+import { renderHook, act } from '@testing-library/react'
+import { useOrganicRetrosynthesisChemistry } from '../hooks/useOrganicRetrosynthesisChemistry'
+import { MODEL_CARBON_CARBON_BUILDER } from '../data/carbonChainBuilderModels'
 import {
   MODEL_ASPIRIN_BENORILATE,
   MODEL_DIELS_ALDER_ACETAL,
@@ -96,5 +99,44 @@ describe('母题十 有机逆合成与官能团保护 化学正确性守门', ()
       expect(item.tolerance.length, `${item.targetGroup} 缺少耐受性描述`).toBeGreaterThan(0)
       expect(LEGAL_TIERS.has(item.syllabusTier), `${item.targetGroup} 层级取值非法: ${item.syllabusTier}`).toBe(true)
     }
+  })
+
+  it('7. 回归：synthesisMode 协调定位对应步数，且碳链构建逆合成亲核合成子含 [CH₂-CO-Ph]⁻', () => {
+    expect(MODEL_CARBON_CARBON_BUILDER.steps[0].cutBond?.retroSynthon).toContain('[CH₂-CO-Ph]⁻')
+
+    const { result } = renderHook(() => useOrganicRetrosynthesisChemistry())
+    expect(result.current.currentStepIndex).toBe(0)
+
+    act(() => {
+      result.current.setSynthesisMode('protection-breakdown')
+    })
+    expect(result.current.currentStep.protectionStatus?.isProtected).toBe(true)
+    expect(result.current.currentStepIndex).toBeGreaterThan(0)
+
+    act(() => {
+      result.current.setSynthesisMode('retrosynthetic')
+    })
+    expect(result.current.currentStepIndex).toBe(0)
+  })
+
+  it('8. 回归：selectModel 重置视角为 retrosynthetic；切至 forward 时 diels-alder 保留第 1 步且碳链模型含 [Ph-CH(OH)]⁺', () => {
+    expect(MODEL_CARBON_CARBON_BUILDER.steps[0].cutBond?.retroSynthon).toContain('[Ph-CH(OH)]⁺')
+
+    const { result } = renderHook(() => useOrganicRetrosynthesisChemistry())
+    act(() => {
+      result.current.setSynthesisMode('forward')
+    })
+    expect(result.current.synthesisMode).toBe('forward')
+
+    act(() => {
+      result.current.selectModel('diels-alder-acetal')
+    })
+    expect(result.current.synthesisMode).toBe('retrosynthetic')
+    expect(result.current.currentStepIndex).toBe(0)
+
+    act(() => {
+      result.current.setSynthesisMode('forward')
+    })
+    expect(result.current.currentStepIndex).toBe(0)
   })
 })

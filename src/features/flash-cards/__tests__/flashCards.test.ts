@@ -40,4 +40,15 @@ describe('FlashCards 易错盲盒与新高考实验规范题库完整性审计',
       expect(definedCategoryValues).toContain(card.category)
     })
   })
+
+  it('card-7 不得误称加水不改变平衡浓度，且 A/B 正确选项分布均衡', () => {
+    const card7 = FLASH_CARDS.find((c) => c.id === 'card-7')
+    expect(card7).toBeDefined()
+    expect(card7!.warningTip).not.toContain('或水（溶剂）时才不改变浓度')
+
+    const countA = FLASH_CARDS.filter((c) => c.correctOption === 'A').length
+    const countB = FLASH_CARDS.filter((c) => c.correctOption === 'B').length
+    expect(countA).toBeGreaterThanOrEqual(8)
+    expect(countB).toBeGreaterThanOrEqual(8)
+  })
 })

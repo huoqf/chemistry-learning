@@ -37,7 +37,12 @@ export const AvogadroCenterView: React.FC<AvogadroCenterViewProps> = ({
     (dt) => {
       setAnimTime((t) => t + dt * 0.001)
     },
-    { playing: true }
+    { playing: viewMode === 0 }
+  )
+
+  const primaryStat = useMemo(
+    () => chemistry.particleStats.find((s) => s.isTrap) ?? chemistry.particleStats[0],
+    [chemistry.particleStats]
   )
 
   // 3. 右侧图表科学对比曲线（全量预计算：真实微粒数 vs 错解陷阱误判数）
@@ -58,8 +63,8 @@ export const AvogadroCenterView: React.FC<AvogadroCenterViewProps> = ({
       yName = '微粒数 (NA)'
       maxX = Math.max(50, Math.ceil(params.amountValue / 10) * 10)
 
-      // 由计算层当前结果严格反推同源斜率，确保曲线与右屏粒子数 100% 吻合
-      const curStat = chemistry.particleStats[0]
+      // 由计算层当前主对比结果严格反推同源斜率，确保曲线与右屏粒子数 100% 吻合
+      const curStat = primaryStat
       const xCur = Math.max(0.01, params.amountValue)
       const actualSlope = curStat ? curStat.actualMoles / xCur : 1 / 22.4
       const trapSlope = curStat ? curStat.theoreticalMoles / xCur : 1 / 22.4
@@ -88,11 +93,15 @@ export const AvogadroCenterView: React.FC<AvogadroCenterViewProps> = ({
         } else if (params.structureItem === 'S8') {
           const moles = params.amountUnit === 'g' ? x / 256 : x
           yReal = moles * 8 // 8 元环 8 条 S-S 键
-          yTrap = moles * 7
+          yTrap = moles * 2 // 错按 S₂ 计算
         } else if (params.structureItem === 'SiO2') {
           const moles = params.amountUnit === 'g' ? x / 60 : x
           yReal = moles * 4 // 真实 4 条 Si-O 键
           yTrap = moles * 2 // 错看分子式 2 个 O
+        } else if (params.structureItem === 'diamond') {
+          const moles = params.amountUnit === 'g' ? x / 12 : x
+          yReal = moles * 2 // 金刚石均摊 2 键
+          yTrap = moles * 4 // 未均摊 4 键
         } else if (params.structureItem === 'graphite') {
           const moles = params.amountUnit === 'g' ? x / 12 : x
           yReal = moles * 1.5 // 均摊 1.5 键
@@ -111,14 +120,14 @@ export const AvogadroCenterView: React.FC<AvogadroCenterViewProps> = ({
           yTrap = (params.amountUnit === 'g' ? x / 18 : x) * 8
         } else if (params.structureItem === 'NH4Cl') {
           const moles = params.amountUnit === 'g' ? x / 53.5 : x
-          yReal = moles * 4 // 4 条 N-H 共价键
-          yTrap = moles * 5 // 误计离子键
+          yReal = moles * 4 // 4 条 N-H 共价键 (含 1 条配位键)
+          yTrap = moles * 4
         } else if (params.structureItem === 'Na2O2') {
           const moles = params.amountUnit === 'g' ? x / 78 : x
           yReal = moles * 1 // 1 mol 阴离子
           yTrap = moles * 2 // 拆成 2 个 O-
         } else {
-          const curStat = chemistry.particleStats[0]
+          const curStat = primaryStat
           const xCur = Math.max(0.01, params.amountValue)
           yReal = curStat ? (curStat.actualMoles / xCur) * x : x
           yTrap = curStat ? (curStat.theoreticalMoles / xCur) * x : x
@@ -130,9 +139,15 @@ export const AvogadroCenterView: React.FC<AvogadroCenterViewProps> = ({
       const peakY = Math.max(...act.map((p) => p.y), ...fal.map((p) => p.y), 6)
       maxY = Math.ceil(peakY * 1.1)
     } else if (cat === 'electrolyte-hydrolysis') {
-      xName = params.electrolyteItem === 'NaHSO4-molten' ? '用量 n (mol)' : '浓度 c (mol/L)'
+      const isMolten = params.electrolyteItem === 'NaHSO4-molten'
+      const isMoltenGrams = isMolten && params.amountUnit === 'g'
+      xName = isMolten ? (isMoltenGrams ? '质量 m (g)' : '用量 n (mol)') : '浓度 c (mol/L)'
       yName = '离子 / 微粒数 (NA)'
-      maxX = params.electrolyteItem === 'NaHSO4-molten' ? Math.max(2, Math.ceil(params.amountValue)) : 2
+      maxX = isMolten
+        ? isMoltenGrams
+          ? Math.max(120, Math.ceil(params.amountValue / 20) * 20)
+          : Math.max(2, Math.ceil(params.amountValue))
+        : 2
       maxY = 4
 
       for (let i = 0; i <= count; i++) {
@@ -140,11 +155,14 @@ export const AvogadroCenterView: React.FC<AvogadroCenterViewProps> = ({
         let yReal = 0
         let yTrap = 0
 
-        if (params.electrolyteItem === 'NaHSO4-molten') {
-          yReal = x * 2 // 熔融态 2 mol
-          yTrap = x * 3 // 水溶液 3 mol
+        if (isMolten) {
+          const moltenMoles = isMoltenGrams ? x / 120 : x
+          yReal = moltenMoles * 2 // 熔融态 2 mol
+          yTrap = moltenMoles * 3 // 水溶液 3 mol
         } else if (params.electrolyteItem === 'CH3COOH') {
-          yReal = x * params.solutionVolume * 0.013
+          const ka = 1.75e-5
+          const alpha = x > 0 ? (-ka + Math.sqrt(ka * ka + 4 * ka * x)) / (2 * x) : 0
+          yReal = x * params.solutionVolume * alpha
           yTrap = x * params.solutionVolume * 1.0
         } else if (params.electrolyteItem === 'FeCl3') {
           yReal = x * params.solutionVolume * 0.001
@@ -153,8 +171,8 @@ export const AvogadroCenterView: React.FC<AvogadroCenterViewProps> = ({
           yReal = params.solutionVolume * 1e-7
           yTrap = params.solutionVolume * 1.0
         } else {
-          // Na2CO3 阴离子数微增（水解 1 -> 2 阴离子）
-          yReal = x * params.solutionVolume * 1.1
+          // Na2CO3 阴离子部分水解（CO₃²⁻ 实际余量小于 cV，与 primaryStat 的 CO₃²⁻ 离子数同源）
+          yReal = x * params.solutionVolume * 0.9
           yTrap = x * params.solutionVolume * 1.0
         }
 
@@ -168,7 +186,7 @@ export const AvogadroCenterView: React.FC<AvogadroCenterViewProps> = ({
       yName = '转移电子 / 微粒数 (NA)'
       maxX = params.amountUnit === 'L' ? 44.8 : params.amountUnit === 'g' ? 100 : 2
 
-      const curStat = chemistry.particleStats[0]
+      const curStat = primaryStat
       const xCur = Math.max(0.01, params.amountValue)
       const actualSlope = curStat ? curStat.actualMoles / xCur : 1
       const trapSlope = curStat ? curStat.theoreticalMoles / xCur : 2
@@ -200,7 +218,7 @@ export const AvogadroCenterView: React.FC<AvogadroCenterViewProps> = ({
       maxRangeX: maxX,
       maxRangeY: maxY,
     }
-  }, [params, chemistry.particleStats])
+  }, [params, primaryStat])
 
   // 当前游标横坐标
   const cursorX = useMemo(() => {
@@ -324,12 +342,12 @@ export const AvogadroCenterView: React.FC<AvogadroCenterViewProps> = ({
                   y: actualPoints.length > 0
                     ? actualPoints[Math.min(actualPoints.length - 1, Math.max(0, Math.round((cursorX / Math.max(0.01, maxRangeX)) * (actualPoints.length - 1))))].y
                     : 1,
-                  label: `${chemistry.particleStats[0]?.isIndicative ? '示意' : '实际'}: ${
-                    chemistry.particleStats[0]?.actualMoles >= 100
-                      ? `${chemistry.particleStats[0].actualMoles.toFixed(0)}+ NA`
-                      : chemistry.particleStats[0]?.actualMoles !== undefined && chemistry.particleStats[0].actualMoles < 0.001
-                      ? `${chemistry.particleStats[0].actualMoles.toExponential(1)} NA`
-                      : `${chemistry.particleStats[0]?.isIndicative ? '≈' : ''}${(chemistry.particleStats[0]?.actualMoles ?? 1).toFixed(2)} NA`
+                  label: `${primaryStat?.isIndicative ? '示意' : '实际'}: ${
+                    primaryStat?.actualMoles >= 100
+                      ? `${primaryStat.actualMoles.toFixed(0)}+ NA`
+                      : primaryStat?.actualMoles !== undefined && primaryStat.actualMoles < 0.001
+                      ? `${primaryStat.actualMoles.toExponential(1)} NA`
+                      : `${primaryStat?.isIndicative ? '≈' : ''}${(primaryStat?.actualMoles ?? 1).toFixed(2)} NA`
                   }`,
                   series: 'primary',
                 },

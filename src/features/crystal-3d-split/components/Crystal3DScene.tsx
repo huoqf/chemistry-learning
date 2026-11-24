@@ -46,6 +46,11 @@ export function Crystal3DScene({
   const [isHovered, setIsHovered] = useState(false)
   const [viewMode, setViewMode] = useState<'3d' | 'top'>('3d')
 
+  // 切换晶胞体系时重置原子选中浮窗，防止旧 ID 与新模型脱节
+  useEffect(() => {
+    setSelectedAtomId(null)
+  }, [crystalData.id])
+
   const selectedAtom = useMemo(() => {
     if (!selectedAtomId) return null
     return crystalData.atoms.find((a) => a.id === selectedAtomId) || null
@@ -60,6 +65,11 @@ export function Crystal3DScene({
       onSelectLocationType?.(atom?.locationType ?? null)
     }
   }
+
+  const tangentLegends = useMemo(() => {
+    if (displayMode !== 'geometry' || !crystalData.tangentLines) return []
+    return crystalData.tangentLines.filter((line) => Boolean(line.label))
+  }, [displayMode, crystalData.tangentLines])
 
   if (!isWebGLAvailable()) {
     return (
@@ -103,28 +113,45 @@ export function Crystal3DScene({
       </Canvas>
 
       {/* 左上角高考投影视角切换器 */}
-      <div className="absolute top-3 left-3 z-10 flex items-center bg-white/95 backdrop-blur border border-slate-200 rounded-lg p-0.5 shadow-sm text-xs font-medium">
-        <button
-          onClick={() => setViewMode('3d')}
-          className={`px-2.5 py-1 rounded-md transition-colors ${
-            viewMode === '3d'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-          }`}
-        >
-          🧊 3D 透视
-        </button>
-        <button
-          onClick={() => setViewMode('top')}
-          className={`px-2.5 py-1 rounded-md transition-colors ${
-            viewMode === 'top'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-          }`}
-          title="高考常见解题视角：沿 c 轴向底面正交投影"
-        >
-          👁️ 沿 c 轴正交投影
-        </button>
+      <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5 items-start">
+        <div className="flex items-center bg-white/95 backdrop-blur border border-slate-200 rounded-lg p-0.5 shadow-sm text-xs font-medium">
+          <button
+            onClick={() => setViewMode('3d')}
+            className={`px-2.5 py-1 rounded-md transition-colors ${
+              viewMode === '3d'
+                ? 'bg-blue-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            }`}
+          >
+            3D 透视
+          </button>
+          <button
+            onClick={() => setViewMode('top')}
+            className={`px-2.5 py-1 rounded-md transition-colors ${
+              viewMode === 'top'
+                ? 'bg-blue-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            }`}
+            title="高考常见解题视角：沿 c 轴向底面正交投影"
+          >
+            沿 c 轴正交投影
+          </button>
+        </div>
+
+        {/* 几何相切辅助线图例 */}
+        {tangentLegends.length > 0 && (
+          <div className="px-2.5 py-1.5 rounded-lg bg-white/95 backdrop-blur border border-slate-200 shadow-sm flex flex-col gap-1 text-[11px] font-medium text-slate-700 pointer-events-none">
+            {tangentLegends.map((line, idx) => (
+              <div key={idx} className="flex items-center gap-1.5">
+                <span
+                  className="inline-block w-4 border-t-2 border-dashed shrink-0"
+                  style={{ borderColor: line.color || CANVAS_COLORS.diagonalFace }}
+                />
+                <span>{line.label}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* 右上角 2D 晶胞边长与参数水滴标注 */}
@@ -178,7 +205,7 @@ export function Crystal3DScene({
 
       {/* 底部 3D 操作提示 */}
       <div className="absolute bottom-3 left-3 pointer-events-none px-3 py-1.5 rounded-lg bg-white/95 backdrop-blur border border-slate-200 text-[11px] text-slate-600 shadow-sm flex items-center gap-2">
-        <span>💡 拖拽旋转 | 滚轮缩放 | 点击原子右侧联动高亮均摊表格</span>
+        <span>拖拽旋转 | 滚轮缩放 | 点击原子右侧联动高亮均摊表格</span>
       </div>
     </div>
   )
