@@ -69,7 +69,7 @@
 | 3 | 组件职责边界：页面组件薄壳（路由+布局+数据注入）；三屏不交叉；动画状态统一 useAnimationStore | 页面塞业务逻辑；右侧屏放参数控件；左侧屏放公式推导；另建孤立状态池 |
 | 4 | HashRouter only：禁止 BrowserRouter（Electron file:// 下路由 404） | BrowserRouter |
 | 5 | 组件复用优先：场景中存在可复用组件时必须直接使用，禁止在 features/ 中重复手写等效实现 | 手写已有组件实现（烧杯/试管/分子模型/矢量箭头/图表轴等） |
-| 6 | 左屏控制台声明式优先：左屏必须使用 LeftPanel 体系；数值参数优先 paramMeta -> ParamControl，模式/开关/预设/提示优先 controlMeta -> ControlPanel | 新页面手写散乱左屏容器、简单模式切换/开关仍写 SidebarExtra、直接手写 input[type=range] |
+| 6 | 左屏控制台声明式优先：左屏必须使用 LeftPanel 体系；数值参数优先 paramMeta -> ParamControl，模式/开关/预设/提示优先 controlMeta -> ControlPanel | 新页面手写散乱左屏容器、简单模式切换/开关绕过 controlMeta 手写自定义左屏、直接手写 input[type=range] |
 | 7 | 颜色语义层级隔离与主题统一入口（同 AGENTS.md 铁律 4B/4C） | UI色/器材色/图表色/化学量色混用；业务代码使用 `@/theme/*` 子路径导入 |
 | 8 | 时序图全量预计算与状态生命周期闭环（同 AGENTS.md 铁律 8） | 随 time 动态采样拉斜 X 轴；reset 路径漏清 `equilibriumReached` |
 | 9 | 高考命题合规、双视角关联与领域内聚拆分（同 GAOKAO_CHEMISTRY_RULES 与 AGENTS.md 铁律 9/10） | 超纲试剂替代基础检验；纯按行数机械拆文件 |

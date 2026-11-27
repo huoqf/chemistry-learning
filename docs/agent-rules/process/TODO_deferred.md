@@ -1,11 +1,11 @@
 # 延后处理待办事项
 
 > **本文档是待完成计划，不是完成记录。**
-> 最后更新：2026-11-18
+> 最后更新：2026-11-27
 
 ---
 
-## 文件规模标准：统一为单一门禁（已收敛，遗留 400 行软目标）
+## 文件规模标准：统一为单一门禁（已收敛，按需关注高行数文件）
 
 **背景**：原仓库并存两套文件规模口径，互相矛盾且易造成认知混乱（审查报告 G11）：
 
@@ -14,61 +14,34 @@
 | 架构门禁 | `scripts/check-large-files.mjs` | SOFT 800 / HARD 1000（带理由豁免名单） | ✅ CI + lefthook pre-push |
 | 孤立脚本 | `scripts/check-file-size.cjs` | 逻辑文件 400 行 | ❌ 仅 `npm run lint:filesize` 手动可达 |
 
-**已处理**：删除 `scripts/check-file-size.cjs` 与 `package.json` 的 `lint:filesize` 脚本。
-**唯一有效标准**：`scripts/check-large-files.mjs`（SOFT 800 / HARD 1000）。新增超标文件必须
-拆分，或在 `ALLOWLIST` 中登记**带理由**的条目（既有 3 条即为此机制）。
+**已处理**：删除 `scripts/check-file-size.cjs` 与 `package.json` 的 `lint:filesize` 脚本；`src/data/knowledgeTree.ts` 已拆分至 98 行并移出豁免名单。
+**唯一有效标准**：`scripts/check-large-files.mjs`（SOFT 800 / HARD 1000）。当前有效豁免 **4 条**，新增超标文件必须拆分，或在 `ALLOWLIST` 中登记**带理由**的条目。
 
-**遗留待办**：400 行「逻辑文件」软目标已被放弃作为门禁，但清单本身仍有参考价值。
-下述文件在 400 行软目标下超线（按行数降序），**不构成必须拆分**，仅提示可能存在职责混合：
+**重点关注清单（2026-11-27 实测 ≥ 700 行源码，非测试）**：
 
 ```
-818  src/components/Chemistry/GaokaoDiagram/index.tsx            (已在 800 门禁豁免)
-813  src/features/industrial-flow/hooks/useIndustrialFlowChemistry.ts (已在 800 门禁豁免)
-756  src/features/industrial-flow/components/IndustrialFlowCenterView.tsx
-756  src/features/industrial-flow/components/IndustrialFlowSvgFlowchart.tsx
-718  src/features/avogadro-constant/components/AvogadroScene.tsx
-709  src/features/inorganic-ion-matrix/components/IonCoexistenceMatrixView.tsx
-699  src/features/gas-chain/components/GasChainCenterView.tsx     (已在 800 门禁豁免)
-698  src/features/organic-functional-matrix/components/OrganicFullMatrixView.tsx
-680  src/features/electrochemical-twin/components/ElectrochemicalTwinCenterView.tsx
-626  src/features/inorganic-ion-matrix/components/IonMatrixScene.tsx
-611  src/components/Chemistry/ValenceMatrixCanvas.tsx
-604  src/features/organic-retrosynthesis/components/OrganicRetrosynthesisCenterView.tsx
-582  src/features/inorganic-ion-matrix/components/anionStepChemistry.ts
-581  src/features/avogadro-constant/hooks/avogadroStateStructureCalculations.ts
-547  src/features/inorganic-ion-matrix/components/cationStepChemistry.ts
-534  src/components/Chemistry/apparatusPorts.ts
-533  src/features/inorganic-ion-matrix/components/IonLeftPanel.tsx
-513  src/features/industrial-flow/components/IndustrialFlowRightPanel.tsx
-484  src/features/gas-chain/hooks/useGasChainChemistry.ts
-471  src/components/UI/ChemistryPanel.tsx
-467  src/features/industrial-flow/components/IndustrialFlowLeftPanel.tsx
-465  src/features/gas-chain/physics/layoutEngine.ts
-465  src/features/home/KnowledgeTreeHome.tsx
-460  src/features/avogadro-constant/hooks/avogadroReactionCalculations.ts
-443  src/features/element-periodic-property/components/ElementPeriodicCenterView.tsx
-435  src/features/gas-chain/components/GasChainLeftPanel.tsx
-432  src/features/inorganic-ion-matrix/components/IonRightPanel.tsx
-426  src/components/UI/ControlPanel.tsx
-411  src/features/organic-functional-matrix/components/OrganicMolecule3DModal.tsx
-410  src/components/Chart/BaseChart.tsx
-407  src/features/flash-cards/components/FlashCardSvgScene.tsx
-407  src/features/industrial-flow/components/IndustrialFlowGuideModal.tsx
-406  src/features/experiment/extraction-distillation/hooks/useExtractionDistillationChemistry.ts
-406  src/features/organic/mechanism/scenes/EsterificationScene.tsx
-404  src/features/avogadro-constant/components/AvogadroLeftPanel.tsx
-402  src/features/titration-balance/hooks/useTitrationChemistry.ts
+1020  src/components/Chemistry/GaokaoDiagram/index.tsx               (已在 ALLOWLIST 豁免，超过 1000 行硬阈值)
+ 845  src/features/industrial-flow/hooks/useIndustrialFlowChemistry.ts (已在 ALLOWLIST 豁免)
+ 835  src/features/organic-functional-matrix/constants.ts            (已在 ALLOWLIST 豁免)
+ 817  src/features/gas-chain/components/GasChainCenterView.tsx        (已在 ALLOWLIST 豁免)
+ 800  src/features/organic-retrosynthesis/data/protectionStrategyModels.ts
+ 788  src/features/vsepr-hybrid-3d/data/vseprData.ts
+ 768  src/features/industrial-flow/components/IndustrialFlowSvgFlowchart.tsx
+ 739  src/features/inorganic-ion-matrix/components/IonCoexistenceMatrixView.tsx
+ 705  src/features/electrochemical-twin/components/ElectrochemicalTwinCenterView.tsx
+ 701  src/features/organic-functional-matrix/components/OrganicFullMatrixView.tsx
 ```
 
-**现状**：`useIndustrialFlowChemistry.ts` 已随技术理由登记于 `scripts/check-large-files.mjs` 的 `ALLOWLIST`；若后续继续膨胀接近 1000 行，可评估将纯静态体系文本表与 Ksp/守恒计算进一步解耦。
+> 注：原 756 行的 `IndustrialFlowCenterView.tsx` 已于 11-24 拆分为阶段 Hook 与渲染器，降至 238 行。
+> 现状：`GaokaoDiagram/index.tsx`（1020 行）与 `useIndustrialFlowChemistry.ts`（845 行）已随技术理由登记于 `scripts/check-large-files.mjs` 的 `ALLOWLIST`；后续若继续增长可按图形品类或纯静态体系文本表做领域内聚拆分。
 
 ---
 
 ## GaokaoModelsHome Filter Tabs a11y 注入（暂缓）
 
-**位置**：`src/features/home/GaokaoModelsHome.tsx:82-110`（分类 Filter Tabs）
+**位置**：`src/features/home/GaokaoModelsHome.tsx:94-140`（分类 Filter Tabs）
 
-**现状**：三个 pill 形按钮，每项选中色不同（slate-800 / amber-600 / rose-600），带 emoji 和计数，是"分类筛选 chip"UI 范式。
+**现状**：四个 pill 形按钮（`all` / `master-model` / `memory-matrix` / `experiment-chain`，无 emoji，每项选中色不同，带计数），是"分类筛选 chip"UI 范式。
 
 **暂缓原因**：
 - `SegmentedControl` 无法承载"每项不同选中色 + pill 形状"，强行套用会破坏视觉

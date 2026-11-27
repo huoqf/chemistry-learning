@@ -58,7 +58,6 @@ src/
 └── stores/
     ├── useAnimationStore.ts
     ├── useAppStore.ts
-    ├── useKnowledgeStore.ts
     └── useProgressStore.ts
 
 src/theme/                  # 设计 token（统一入口 @/theme）
@@ -94,7 +93,7 @@ src/theme/                  # 设计 token（统一入口 @/theme）
                               ^
               viewModel -> hooks
                     ^
-            chemistry/ & math/
+                chemistry/
 ```
 
 - `chemistry/` **不得**依赖 React、DOM、window、document
@@ -141,7 +140,6 @@ src/theme/                  # 设计 token（统一入口 @/theme）
 | Store | 职责 |
 |-------|------|
 | useAnimationStore | 播放状态、时间轴、速度、参数、显示开关 |
-| useKnowledgeStore | 知识树展开、当前节点、浏览历史 |
 | useAppStore（可选） | 全局 UI 状态 |
 | useProgressStore | 学习进度，持久化至 IndexedDB |
 
@@ -215,6 +213,9 @@ src/theme/                  # 设计 token（统一入口 @/theme）
 | 完整控制栏 | 'timed'（默认） | 播放/暂停 + 重置 + 速度 + 进度条 | 动画有明确起点/终点 |
 | 循环速度栏 | 'loop' | 循环运行中徽章 + 速度选择器 | 永续循环无终点 |
 | 参数提示条 | 'param' | 参数面板提示条 | 画面由参数直接决定 |
+| 仅暂停/继续 | 'pause-only' | 播放/暂停控制，到达终点自动停止 | 只需启停而无需进度拖拽/调速 |
+
+> `controlsMode` 亦支持动态函数 `(params) => 'timed' | 'loop' | 'param' | 'pause-only'`，随左屏参数切换模式。
 
 ### 8.2 storage 接口约定
 

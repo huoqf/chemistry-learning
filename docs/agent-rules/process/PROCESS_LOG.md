@@ -2,7 +2,7 @@
 
 ## 当前周期
 
-- 当前日期：2026-W48（11-24）
+- 当前日期：2026-W48（11-27）
 - 当前里程碑：M2 高考母题与规范治理收口
 - 提交流程：[CHECKLIST.md](./CHECKLIST.md)
 
@@ -10,6 +10,7 @@
 
 | 日期 | 模块 | 类型 | 变更 |
 |------|------|------|------|
+| 11-27 | docs/scripts | docs/chore | 移除过期 `.codebase-memory/` 与 MCP 配置，重写 Trae 项目记忆，校准 `FORMATTING_POLICY` / `TODO_deferred` / `ARCHITECTURE_RULES` / `08_THREE_PANEL_RULES` 与 `check-large-files` 豁免名单 |
 | 11-24 | quiz/all-features | fix/test/refactor | 全库学科正确性校准与防剧透收口：判分卡归一化+关键词分组、题库 placeholder 去答案、GaokaoDiagram 非解析态隐藏结论、`gaokaoModels` 知识点双向联动、Avogadro/电解/晶体/VSEPR/滴定计算修正、工业流程动画拆分为 `useFlowAnimationPhase`、`isIndicative` 示意量级标注；新增 9 个守门测试 |
 | 11-18 | docs/scripts | docs/refactor | 规范、记忆与门禁一致性收口：统一 AGENTS/project_rules/docs/SKILL 口径、移除失效引用与错误骨架、补齐 `COMPONENT_REGISTRY`、升级 `check-font-size.mjs` 与新增 `check-theme-import.mjs`、归档根目录过程报告至 `docs/reports/`、移除 `.prettierrc` |
 | 11-17 | chemistry | fix | 全库高中化学合规性修复、移除伪真题署名并校准测试与 SKILL 规范（`0a45697`） |
@@ -20,10 +21,6 @@
 | 09-03 | ci | fix | 修复 GitHub CI oxlint 零警告门禁失败 |
 | 08-05 | chemistry/titration | feature | 新增 6 个化学装置组件与 `titration-error-purity` 高考母题专题 |
 | 07-19 | project | init | 项目规范框架建立与目录结构初始化 |
-
-## 已知外部工具记忆状态
-
-- `.codebase-memory/`（`artifact.json` / `graph.db.zst`）停留在 `2026-08-05`（commit `8343784`），未在本仓库内自动刷新；代码检索请直接以当前源码为准，待原索引器环境可用时再重建。
 
 ## 日志记录规范
 

@@ -39,7 +39,7 @@ description: 重构动画页面 / 重构已有组件 / 迁移旧动画 / 修复�
 | 左屏 | 手写 button 模式切换 / toggle 开关 | 迁移到 controlMeta.segmented / .toggle |
 | 左屏 | 手写预设按钮 | 迁移到 controlMeta.preset |
 | 左屏 | 手写 border-t/rounded-xl/p-4 容器 | 改用 LeftPanelSection |
-| 左屏 | SidebarExtra 直接访问 useAnimationStore | 改为 props 注入 |
+| 左屏 | 左屏自定义子组件直接访问 useAnimationStore | 改为 props 注入 |
 | 右屏 | 参数调节控件 | 移至左屏 |
 
 ### 0B：布局与 Viewport 违规识别

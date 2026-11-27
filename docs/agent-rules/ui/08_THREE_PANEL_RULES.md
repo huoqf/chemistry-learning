@@ -2,7 +2,7 @@
 
 > 优先级：低于 02_UI_RULES.md
 > AI任务入口：实现或修改左侧屏、右侧屏时必须读本文件
-> 最后更新：2026-11-24
+> 最后更新：2026-11-27
 
 ---
 
@@ -25,13 +25,13 @@
 ### 2.1 左侧屏标准结构
 
 ```text
-LeftPanel                         <- AnimationPage 左屏唯一顶层容器
-  +- LeftPanelSection             <- 同考点模型切换 / 声明式控件分组 / 自定义分区
+LeftPanel                         <- 左屏唯一顶层容器
+  +- ParamControl                 <- 由 animationRegistry.paramMeta 生成（AnimationPage 优先渲染）
   +- ControlPanel                 <- 由 animationRegistry.controlMeta 生成
-  +- ParamControl                 <- 由 animationRegistry.paramMeta 生成
+  +- LeftPanelSection             <- 同考点模型切换 / 分组卡片 / 高考母题专属左屏 (XxxLeftPanel)
 ```
 
-**布局顺序**：同考点模型切换 -> controlMeta 声明式控件 -> paramMeta 数值参数 -> 复杂 SidebarExtra。
+**`AnimationPage` 实际渲染顺序**：`paramMeta`（`ParamControl`）-> `controlMeta`（`ControlPanel`）。高考母题页面（`/gaokao-tool/:id`）可在 `XxxLeftPanel` 中按“模型切换 -> 参数滑块 -> 底部教学提示”组织 `LeftPanelSection`。
 
 ### 2.2 声明式优先级（执行规范权威来源）
 
@@ -39,20 +39,20 @@ LeftPanel                         <- AnimationPage 左屏唯一顶层容器
 |---:|------|----------|
 | 1 | paramMeta -> ParamControl | 连续数值型化学参数 |
 | 2 | controlMeta -> ControlPanel | 模式、开关、预设、提示 |
-| 3 | SidebarExtra | 真正复杂的页面专属控制 |
+| 3 | 高考母题专属左屏（`XxxLeftPanel`） | 仅 `/gaokao-tool/:id` 等复杂母题页面的定制左屏控制 |
 
 ### 2.3 组件使用边界
 
 | 组件 / 协议 | 语义 | 使用场景 |
 |------|------|----------|
-| LeftPanel | 左屏顶层控制台容器 | AnimationPage 左侧屏 |
+| LeftPanel | 左屏顶层控制台容器 | AnimationPage / GaokaoToolPage 左侧屏 |
 | LeftPanelSection | 左屏分区卡片 | 模型选择、显示辅助、预设、提示 |
 | ParamControl | 标准数值参数组 | registry paramMeta |
 | ControlPanel | 标准非数值控制组 | registry controlMeta |
-| Slider | 连续参数调节 | 仅在复杂 SidebarExtra 中临时使用 |
-| SegmentedControl | 互斥视图切换 | 复杂 SidebarExtra 中临时使用 |
+| Slider | 连续参数调节 | 仅在高考母题 `XxxLeftPanel` 中按需使用 |
+| SegmentedControl | 互斥视图切换 | 高考母题 `XxxLeftPanel` 中按需使用 |
 
-**禁止**：新 SidebarExtra 中手写按钮组、自定义 toggle、原生 input[type="range"]。
+**禁止**：在 `/animation/:id` 绕过 `paramMeta`/`controlMeta` 手写按钮组、自定义 toggle 或原生 `input[type="range"]`。
 
 ### 2.4 条件显示与公式渲染
 
@@ -180,26 +180,24 @@ Formula
 
 ---
 
-## 4. SidebarExtraProps 接口规范
+## 4. 自定义左屏注入规范（原 SidebarExtra 说明）
 
-### 4.1 接口定义
+> 注：`SidebarExtra` / `SidebarExtraProps` 为历史设计概念，`AnimationConfig`（`src/data/types.ts`）未声明该字段，`AnimationPage.tsx` 亦不消费它。教材章节动画（`/animation/:id`）左屏一律由 `paramMeta` + `controlMeta` 驱动；需要高度定制左屏的母题专题（`/gaokao-tool/:id`）通过 `XxxLeftPanel` 组件实现，并遵守下述 props 注入约定。
+
+### 4.1 推荐接口约定（`XxxLeftPanelProps`）
 
 ```text
-SidebarExtraProps
-  +- params: Record<string, number>
-  +- updateParam: (key, value) => void
-  +- setParams: (params) => void
-  +- disabled: boolean
-  +- animationActions
-      +- resetAnimation: () => void
-      +- pauseAnimation: () => void
-      +- restartAnimation: () => void
+XxxLeftPanelProps
+  +- params / 当前模式状态
+  +- onParamChange / onModeChange / updateParam 回调
+  +- disabled?: boolean
+  +- animationActions（按需传入 reset / pause / restart）
 ```
 
 ### 4.2 禁止事项
 
-- SidebarExtra **不得**直接访问 animation store
-- 所需动画数据和动作必须由 AnimationPage 通过 props 注入
+- 纯展示/子控制面板组件（如 `XxxLeftPanel`）**不得**直接耦合全局 `useAnimationStore`
+- 所需状态与回调应由页面入口（如 `XxxCanvas`）通过 props 显式注入
 
 ---
 
@@ -224,10 +222,10 @@ SidebarExtraProps
 | 检查项 | 标准 |
 |--------|------|
 | 左侧屏是否只包含控制类内容 | 是 |
-| 参数是否通过 paramMeta / controlMeta 生成 | 是 |
-| SidebarExtra 是否仅保留复杂自定义控制 | 是 |
+| `/animation/:id` 参数与开关是否通过 paramMeta / controlMeta 生成 | 是 |
+| 高考母题专属左屏（`XxxLeftPanel`）是否仅保留必要定制控制 | 是 |
 | 是否存在硬编码控件状态色 | 否 |
-| SidebarExtra 是否直接访问 animation store | 否 |
+| 自定义左屏子组件是否直接访问全局 animation store | 否 |
 | 右侧屏是否包含化学量、公式、高考要点三段 | 是 |
 | 公式是否包含适用条件 | 是（如适用） |
 | 近似/经验估算数值是否显式标记 `isIndicative` 与“示意量级” | 是 |

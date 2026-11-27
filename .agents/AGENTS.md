@@ -12,7 +12,7 @@
 ──────────────────        ──────────────────────────        ──────────────────────
 • paramMeta 数值参数      • 动画场景（SVG 主体）            • 化学量（quantities）
 • controlMeta 模式开关    • flex 分区图表（可选）           • FormulaSection（公式+条件）
-• SidebarExtra（复杂）    禁止大段教学文字                  • GaokaoSection（高考要点）
+• XxxLeftPanel（母题）    禁止大段教学文字                  • GaokaoSection（高考要点）
                           禁止完整公式推导                  • WarningSection（易错警示）
                           禁止高考考点总结                  禁止动画控制控件
 ```
@@ -70,7 +70,7 @@ paramMeta -> 由 registry 驱动 ParamControl（数值参数）
 controlMeta -> 由 registry 驱动 ControlPanel（模式/开关/提示）
 // 禁止
 手写 <input type="range" />   // 散乱控件
-新建 SidebarExtra 放简单开关  // 仅复杂自定义才用
+在 /animation/:id 绕过 controlMeta 手写自定义左屏开关  // 高考母题专属左屏才用 XxxLeftPanel
 ```
 
 ### 铁律 3B：化学专用控件
